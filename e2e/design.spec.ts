@@ -239,3 +239,17 @@ test.describe('laptop screen', () => {
       .toBeGreaterThanOrEqual(300);
   });
 });
+
+for (const width of [900, 1000, 1100]) {
+  test(`at ${width} × 700 the explorer fits the screen without page scrolling`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 700 });
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Flight controller', exact: true }).click();
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollHeight - window.innerHeight,
+    );
+    expect(overflow).toBeLessThanOrEqual(0);
+  });
+}

@@ -640,8 +640,8 @@ a {
   text-decoration-color: var(--color-ink);
 }
 
-/* A field wide enough for two columns of part names, even 40 % longer translated ones. */
-@container field (min-width: 34rem) {
+/* A field wide enough for two columns of part names; longer translated names wrap. */
+@container field (min-width: 28rem) {
   .part-list {
     /* Clips the last rows' bottom rules under the list's own border. */
     overflow: hidden;
@@ -685,7 +685,9 @@ a {
 @container main (min-width: 56rem) {
   .part-explorer {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(20rem, 36rem);
+    /* The sheet takes at most 44 % of the width, so mid-size windows still leave the drawing
+       field room for a two-column parts list. */
+    grid-template-columns: minmax(0, 1fr) clamp(20rem, 44%, 36rem);
     height: 100%;
   }
 
