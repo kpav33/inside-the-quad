@@ -130,7 +130,7 @@ Confirmed rejections (from the direction contract): the dark docs site with a si
 
 - 3D selection is a redline _fill_ with ground-coloured drafting edges, not a redline outline. drei `Outlines` rendered artifacts and was invisible on box geometry. Unselected parts are dark fills with ink edges, so redline is the only filled colour in the drawing.
 - On wide screens the 3D viewer is inset above the docked parts list, so the list never covers the drone.
-- The parts list splits into two columns (each with its own ITEM / PART / QTY headings, filled top to bottom) whenever the drawing field is at least 34rem wide, so the 3D view keeps its height as parts are added.
+- The parts list splits into two columns (each with its own ITEM / PART / QTY headings, filled top to bottom) whenever the drawing field is at least 28rem wide, so the 3D view keeps its height as parts are added.
 - Selecting a board inside the frame (ESC, flight controller) opens the stack as an exploded-view drawing: the ESC, the FC and the top plate with the battery lift apart in order, the standoffs stay put. It eases to about 95 % in 200 ms and jumps under reduced motion.
 - Spec values in the title block are unbreakable groups, so a number is never split from its unit.
 - The "current sheet" is marked by the selected parts-list row (redline rule and filled balloon); the title block's Sheet field itself stays ink.
@@ -193,11 +193,11 @@ The ramp is a fixed rem scale at ratio 1.2 (0.833, 1, 1.2, 1.44, 1.728, 2.488rem
 
 Spacing is a 7-step scale (0.25, 0.5, 0.75, 1, 1.5, 2, 3rem); touch targets are at least 2.75rem, parts-list rows 3rem.
 
-**Wide (when the main area is at least 56rem wide, a container query, so enlarged text falls back to the stacked layout):** a two-column grid filling the viewport under a thin masthead: the drawing field on the left (flexible) and the sheet column on the right (20 to 36rem), which scrolls on its own with a stable gutter. The drawing frame fills the field as a grid: the canvas (zone markers 1 to 4 along its top, A to C down its left edge, drawing hint at its lower right) fills the space above, and the parts list sits in its own row across the bottom.
+**Wide (when the main area is at least 56rem wide, a container query, so enlarged text falls back to the stacked layout):** a two-column grid filling the viewport under a thin masthead: the drawing field on the left (flexible) and the sheet column on the right (20 to 36rem, and at most 44 % of the width so mid-size windows keep a two-column parts list), which scrolls on its own with a stable gutter. The drawing frame fills the field as a grid: the canvas (zone markers 1 to 4 along its top, A to C down its left edge, drawing hint at its lower right) fills the space above, and the parts list sits in its own row across the bottom.
 
-**Narrow:** a single scrolling column: masthead, a drawing frame of 40svh (min 15rem), the parts list full width, then the sheet.
+**Narrow:** a single scrolling column: masthead, a drawing frame of 40svh (min 15rem), the parts list full width, then the sheet. One finger scrolls the page over the drawing; two fingers turn it. The hint text switches to touch wording under `(hover: none) and (pointer: coarse)`.
 
-**Parts list columns:** whenever the drawing field (a container query on the field, not the page) is at least 34rem wide, the parts list runs down two columns, items 1 to 3 then 4 to 6, each column with its own headings and a hairline between them. Narrower fields keep one column. One finger scrolls the page over the drawing; two fingers turn it. The hint text switches to touch wording under `(hover: none) and (pointer: coarse)`.
+**Parts list columns:** whenever the drawing field (a container query on the field, not the page) is at least 28rem wide, the parts list runs down two columns, items 1 to 3 then 4 to 6, each column with its own headings and a hairline between them. Narrower fields keep one column.
 
 **Sheet column:** title block, part title with the close button, then the four questions as a 2rem balloon gutter plus body, 2rem apart. The spec table becomes stacked label/value/meaning blocks when the sheet is narrower than 32rem (container query).
 
@@ -236,7 +236,7 @@ Ink text with a muted underline (0.2em offset) that turns ink on hover. Never re
 The drawing's parts list is the part picker.
 
 - **Frame:** sheet fill, rule-strong frame; muted caps heading and ITEM / PART / QTY column header row, each over a hairline.
-- **Rows:** a 2.5rem / 1fr / 3rem grid, 3rem tall, hairline between rows. Two columns when the drawing field is at least 34rem wide (see Layout). Balloon item number, part name in body, quantity right-aligned.
+- **Rows:** a 2.5rem / 1fr / 3rem grid, 3rem tall, hairline between rows. Two columns when the drawing field is at least 28rem wide (see Layout). Balloon item number, part name in body, quantity right-aligned.
 - **Hover:** faint rule-tinted fill (45% rule) and the balloon ring turns ink.
 - **Selected:** rule fill, 3px redline left rule, redline-filled balloon with ground numeral, bold name. Exposed as `aria-pressed`.
 
