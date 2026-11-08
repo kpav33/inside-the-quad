@@ -59,7 +59,7 @@ describe('PartExplorer', () => {
     expect(screen.queryByRole('region')).toBeNull();
     expect(screen.getByText(/select a part/i)).toBeInTheDocument();
     const block = screen.getByRole('group', { name: 'Title block' });
-    expect(block).toHaveTextContent('Reference 5-inch quad');
+    expect(block).toHaveTextContent('Reference 5\u2011inch quad');
     expect(block).toHaveTextContent('225 mm');
     expect(block).toHaveTextContent('5 × 4.3 × 3');
   });

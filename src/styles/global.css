@@ -406,6 +406,10 @@ a {
   letter-spacing: 0.03em;
 }
 
+.title-block-nowrap {
+  white-space: nowrap;
+}
+
 .lesson-panel-header {
   display: flex;
   flex-wrap: wrap;

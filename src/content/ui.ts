@@ -37,7 +37,8 @@ export const UI = {
   },
   titleBlock: {
     label: 'Title block',
-    overviewPart: 'Reference 5-inch quad',
+    // U+2011 non-breaking hyphen keeps "5-inch" on one line.
+    overviewPart: 'Reference 5\u2011inch quad',
     overviewSheet: 'Overview',
     part: 'Part',
     sheet: 'Sheet',

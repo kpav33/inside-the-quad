@@ -118,7 +118,7 @@ export function PartExplorer() {
               part={UI.titleBlock.overviewPart}
               sheet={UI.titleBlock.overviewSheet}
               quantity={1}
-              spec={overviewSpec()}
+              specs={overviewSpec()}
             />
             <p className="part-explorer-hint">{UI.explorer.hint}</p>
           </div>
