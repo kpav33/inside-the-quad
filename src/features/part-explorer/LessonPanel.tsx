@@ -1,4 +1,5 @@
 import type { Lesson } from '@/content/lessons';
+import { UI } from '@/content/ui';
 import type { PartId } from '@/shared/domain/parts';
 
 import { LESSON_PANEL_ID, lessonTitleId } from './ids';
@@ -20,30 +21,31 @@ export function LessonPanel({ lesson, onClose, onSelectPart }: LessonPanelProps)
           {lesson.title}
         </h2>
         <button type="button" onClick={onClose}>
-          Close lesson
+          {UI.lesson.close}
         </button>
       </header>
 
-      <h3>What does it do?</h3>
+      <h3>{UI.lesson.questions[0]}</h3>
       <p>{lesson.whatItDoes}</p>
 
-      <h3>How does it work?</h3>
-      {lesson.howItWorks.map((paragraph) => (
-        <p key={paragraph}>{paragraph}</p>
+      <h3>{UI.lesson.questions[1]}</h3>
+      {lesson.howItWorks.map((paragraph, index) => (
+        // Lesson text is static, so its position is a stable key (translations may repeat text).
+        <p key={index}>{paragraph}</p>
       ))}
 
-      <h3>What do the numbers mean?</h3>
+      <h3>{UI.lesson.questions[2]}</h3>
       <table>
         <thead>
           <tr>
-            <th scope="col">Spec</th>
-            <th scope="col">Value</th>
-            <th scope="col">What it means</th>
+            <th scope="col">{UI.lesson.specColumns.label}</th>
+            <th scope="col">{UI.lesson.specColumns.value}</th>
+            <th scope="col">{UI.lesson.specColumns.meaning}</th>
           </tr>
         </thead>
         <tbody>
-          {lesson.specs.map((row) => (
-            <tr key={row.label}>
+          {lesson.specs.map((row, index) => (
+            <tr key={index}>
               <th scope="row">{row.label}</th>
               <td>{row.value}</td>
               <td>{row.meaning}</td>
@@ -52,10 +54,10 @@ export function LessonPanel({ lesson, onClose, onSelectPart }: LessonPanelProps)
         </tbody>
       </table>
 
-      <h3>What is it connected to?</h3>
+      <h3>{UI.lesson.questions[3]}</h3>
       <ul>
-        {lesson.connections.map(({ text, partId }) => (
-          <li key={text}>
+        {lesson.connections.map(({ text, partId }, index) => (
+          <li key={index}>
             {partId ? (
               <button
                 type="button"

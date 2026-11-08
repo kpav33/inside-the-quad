@@ -2,9 +2,3 @@
 export const PART_IDS = ['frame', 'motors', 'props'] as const;
 
 export type PartId = (typeof PART_IDS)[number];
-
-export const PART_LABELS: Record<PartId, string> = {
-  frame: 'Frame',
-  motors: 'Motors',
-  props: 'Propellers',
-};

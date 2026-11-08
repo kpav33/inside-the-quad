@@ -2,6 +2,7 @@ import type { ThreeEvent } from '@react-three/fiber';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 
 import { LESSONS } from '@/content/lessons';
+import { UI } from '@/content/ui';
 import { DroneViewer } from '@/features/drone-viewer';
 import type { PartId } from '@/shared/domain/parts';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
@@ -11,12 +12,7 @@ import { lessonTitleId, partButtonId } from './ids';
 import { LessonPanel } from './LessonPanel';
 import { PartList } from './PartList';
 
-const viewerFallback = (
-  <p role="alert">
-    The 3D model couldn’t be loaded. Your browser may not support WebGL, or the page needs a reload.
-    You can still explore every part with the list.
-  </p>
-);
+const viewerFallback = <p role="alert">{UI.viewer.fallback}</p>;
 
 /** Element id to focus after the next render, so keyboard focus never falls back to the page. */
 type FocusTarget = string | null;
@@ -73,7 +69,7 @@ export function PartExplorer() {
     <div className="part-explorer">
       <div className="part-explorer-viewer">
         <ErrorBoundary fallback={viewerFallback}>
-          <Suspense fallback={<p role="status">Loading 3D model…</p>}>
+          <Suspense fallback={<p role="status">{UI.viewer.loading}</p>}>
             <DroneViewer
               selectedPart={selectedPart}
               onPartClick={onPartClick}
@@ -91,9 +87,7 @@ export function PartExplorer() {
             onSelectPart={followConnection}
           />
         ) : (
-          <p className="part-explorer-hint">
-            Select a part on the drone or in the list to see what it does and how it works.
-          </p>
+          <p className="part-explorer-hint">{UI.explorer.hint}</p>
         )}
       </div>
     </div>

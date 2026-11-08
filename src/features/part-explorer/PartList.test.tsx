@@ -40,4 +40,14 @@ describe('PartList', () => {
     expect(onToggle).toHaveBeenNthCalledWith(1, 'frame');
     expect(onToggle).toHaveBeenNthCalledWith(2, 'frame');
   });
+
+  it('only points at the lesson panel while a lesson is open', () => {
+    const { rerender } = render(<PartList selectedPart={null} onToggle={vi.fn()} />);
+    expect(screen.getByRole('button', { name: 'Frame' })).not.toHaveAttribute('aria-controls');
+    rerender(<PartList selectedPart="frame" onToggle={vi.fn()} />);
+    expect(screen.getByRole('button', { name: 'Frame' })).toHaveAttribute(
+      'aria-controls',
+      'lesson-panel',
+    );
+  });
 });
