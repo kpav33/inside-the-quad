@@ -247,3 +247,24 @@ unit test.
 - The first viewport matches the contract's FIRST VIEWPORT on desktop and phone.
 - Critique and audit P1 findings in scope (visual system, phone scroll, reflow) are resolved.
 - `pnpm check`, both e2e targets, `pnpm build` and `docker build .` pass.
+
+### Task 8: Fixes from the re-critique and re-audit (added after Task 7)
+
+The re-run critique scored 27/40 (from 24) and the audit 16/20 (from 12). The user chose to fix
+the P1s and the robustness items in this section; the remaining ideas moved to 02b/02c.
+
+- [ ] **Text-size robust wide layout:** the two-column layout switches on available space in `rem`
+      (container query on `.app-main`), and the parts list sits in an in-frame grid row instead of
+      absolute docking with a fixed offset. e2e: at 1280px with 200% root text and at 1440px with a
+      24px browser default, the 3D viewer is at least 200px wide and never overlaps the parts list.
+- [ ] **Phones see the lesson they opened:** after selecting a part, if the lesson starts below the
+      visible area it scrolls into view (instantly under reduced motion), and a polite live region
+      announces "<part> lesson opened". e2e on iPhone 13: after tapping Motors the lesson title is
+      in the viewport; component test for the announcement.
+- [ ] **Labelled title-block numbers:** the spec cell becomes a hairline grid of labelled values
+      (`<dl>`), from lesson spec labels and an overview spec list. Component test.
+- [ ] **Long words:** title-block part/sheet values and parts-list names wrap; e2e asserts every
+      title-block cell and parts-list row fits with +40% text at 320px, and no horizontal scroll at
+      390px with 200% text.
+- [ ] **Small items:** favicon in the palette; forced-colors selected row; `SCENE_LIGHT` documented
+      in DESIGN.md; unused `UI.viewer.label` removed; `theme-color` covered by the token test.
