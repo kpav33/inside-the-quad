@@ -192,7 +192,7 @@
     "breakpoints": [
       {
         "name": "wide",
-        "value": "56.25em"
+        "value": "56rem (container query on the main area)"
       },
       {
         "name": "sheet-stacked (container)",
@@ -302,7 +302,7 @@
       },
       {
         "name": "The Clear Field Rule",
-        "body": "On wide screens the 3D viewer is inset above the docked parts list (its bottom edge clears the list by 14.5rem), so the list never covers the drone.",
+        "body": "The parts list has its own grid row below the canvas, never on top of it, so the list never covers the drone at any text size.",
         "section": "layout"
       },
       {

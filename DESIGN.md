@@ -188,7 +188,7 @@ The ramp is a fixed rem scale at ratio 1.2 (0.833, 1, 1.2, 1.44, 1.728, 2.488rem
 
 Spacing is a 7-step scale (0.25, 0.5, 0.75, 1, 1.5, 2, 3rem); touch targets are at least 2.75rem, parts-list rows 3rem.
 
-**Wide (from 56.25em):** a two-column grid filling the viewport under a thin masthead: the drawing field on the left (flexible) and the sheet column on the right (20 to 36rem), which scrolls on its own with a stable gutter. The drawing frame fills the field; zone markers 1 to 4 run along its top at column centres and A to C down its left edge. The parts list docks at the frame's lower left (min(20rem, 45%) wide); the drawing hint sits at its lower right.
+**Wide (when the main area is at least 56rem wide, a container query, so enlarged text falls back to the stacked layout):** a two-column grid filling the viewport under a thin masthead: the drawing field on the left (flexible) and the sheet column on the right (20 to 36rem), which scrolls on its own with a stable gutter. The drawing frame fills the field as a grid: the canvas (zone markers 1 to 4 along its top, A to C down its left edge, drawing hint at its lower right) fills the space above, and the parts list sits in its own row at the lower left (up to 22rem wide).
 
 **Narrow:** a single scrolling column: masthead, a drawing frame of 40svh (min 15rem), the parts list full width, then the sheet. One finger scrolls the page over the drawing; two fingers turn it. The hint text switches to touch wording under `(hover: none) and (pointer: coarse)`.
 
@@ -196,7 +196,7 @@ Spacing is a 7-step scale (0.25, 0.5, 0.75, 1, 1.5, 2, 3rem); touch targets are 
 
 ### Named Rules
 
-**The Clear Field Rule.** On wide screens the 3D viewer is inset above the docked parts list (its bottom edge clears the list by 14.5rem), so the list never covers the drone.
+**The Clear Field Rule.** The parts list has its own grid row below the canvas, never on top of it, so the list never covers the drone at any text size.
 
 ## Elevation & Depth
 
