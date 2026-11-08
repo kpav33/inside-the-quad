@@ -6,7 +6,7 @@ Status: `planned` · `in progress` · `in review` · `done`.
 | #   | Section                                               | Branch                   | Status  |
 | --- | ----------------------------------------------------- | ------------------------ | ------- |
 | 00  | Project scaffold and engineering setup                | `chore/project-scaffold` | done    |
-| 01  | First slice: 3D viewer + frame, motors, props lessons | `feat/first-slice`       | planned |
+| 01  | First slice: 3D viewer + frame, motors, props lessons | `feat/first-slice`       | done    |
 | 02  | Design pass (visual design review)                    | —                        | planned |
 | 03  | Remaining part lessons (Module 2)                     | —                        | planned |
 | 04  | "What is an FPV drone?" intro (Module 1)              | —                        | planned |

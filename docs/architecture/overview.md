@@ -6,26 +6,36 @@ A static single-page app (SPA). No backend. Built by Vite and served by nginx fr
 
 ```
 src/
-  app/            App shell: layout, top-level composition, (later) routing
-  features/       One folder per feature; owns its components, hooks, logic and tests
-    drone-viewer/ The 3D viewport (react-three-fiber Canvas, camera, controls)
-  shared/         Code used by two or more features
-    ui/           Generic UI building blocks (e.g. ErrorBoundary)
-  styles/         Global CSS
-  test/           Test setup and helpers
-e2e/              Playwright end-to-end tests
-nginx/            Production server config (copied into the Docker image)
+  app/              App shell: layout, top-level composition, (later) routing
+  content/          Teaching content as typed data
+    lessons/        One Lesson per part, answering the four scope questions
+  features/         One folder per feature; owns its components, hooks, logic and tests
+    drone-model/    Procedural 3D parts (one component per part), built from a DroneSpec
+    drone-viewer/   The 3D viewport: Canvas, camera fitting, orbit controls (lazy loaded)
+    part-explorer/  Selection state; composes the viewer, the part list and the lesson panel
+  shared/           Code used by two or more features
+    domain/         Part ids and the drone spec: plain data, no React or three.js
+    ui/             Generic UI building blocks (e.g. ErrorBoundary)
+  styles/           Global CSS
+  test/             Test setup and helpers
+e2e/                Playwright end-to-end tests
+nginx/              Production server config (copied into the Docker image)
 ```
 
-Planned as the app grows (create them when first needed, not before):
+### How the pieces fit
 
-- `src/features/drone-model/`: procedural 3D parts, one component per part, driven by a spec
-  object so other sizes (whoop, 3", 7") are new specs rather than new models.
-- `src/content/`: lesson content as typed TypeScript data, kept out of components so content can
-  be edited and reviewed on its own.
+- `shared/domain/drone-spec.ts` holds the reference drone's numbers. The 3D model is sized from
+  it, and lessons quote it, so the two can't disagree. Other drone sizes (whoop, 3", 7") will be
+  new `DroneSpec` objects.
+- `part-explorer` owns which part is selected. The 3D view and the part list both change it; the
+  lesson panel shows the selected part's lesson from `content/lessons`.
+- The part list is the accessible equivalent of clicking in 3D, so the canvas is hidden from
+  assistive technology and everything still works if WebGL fails.
 
 ## Rules
 
+- **Dependencies point inwards.** `features/` may import `content/` and `shared/`; `content/` may
+  import `shared/`; `content/` and `shared/` never import from `features/`.
 - **Feature folders are self-contained.** Each feature has an `index.ts` that is its public API.
   Code outside a feature imports from that `index.ts` only, never from its internal files
   (tests that mock an internal module are the exception).

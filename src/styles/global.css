@@ -41,7 +41,92 @@ body {
   min-height: 0;
 }
 
+@media (max-width: 899px) {
+  .app,
+  .app-main {
+    height: auto;
+  }
+}
+
+/* Part explorer: structural layout only, the design pass comes later. */
+.part-explorer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* A fixed height: the canvas fills its parent, and a min-height alone gives it nothing to fill. */
+.part-explorer-viewer {
+  height: 50vh;
+}
+
+.part-explorer-sidebar {
+  padding: 1rem 1.5rem;
+  overflow-wrap: break-word;
+}
+
+@media (min-width: 900px) {
+  .part-explorer {
+    flex-direction: row;
+  }
+
+  .part-explorer-viewer {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+  }
+
+  .part-explorer-sidebar {
+    width: 26rem;
+    overflow-y: auto;
+  }
+}
+
 .drone-viewer {
   width: 100%;
   height: 100%;
+}
+
+.part-list ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.part-list button[aria-pressed='true'] {
+  font-weight: bold;
+}
+
+.lesson-panel-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.lesson-panel table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lesson-panel th,
+.lesson-panel td {
+  padding: 0.25rem 0.5rem 0.25rem 0;
+  text-align: left;
+  vertical-align: top;
+}
+
+.lesson-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+  vertical-align: top;
+  cursor: pointer;
 }
