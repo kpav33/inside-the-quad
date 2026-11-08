@@ -2,22 +2,40 @@
 
 ## Branches
 
-- `main` is always releasable and is what Coolify deploys. Nobody commits to it directly.
+- `main` is always releasable and is what Coolify deploys. Nobody commits or pushes to it
+  directly; it only changes by merging a reviewed section's pull request.
 - Each **section** from [../roadmap.md](../roadmap.md) gets one branch, named
   `<type>/<short-kebab-name>`, e.g. `feat/first-slice`, `chore/project-scaffold`.
-- Commit early and often on the section branch. Pushing the section branch is fine (it backs the
-  work up and lets CI run); pushing to `main` is not.
+- Commit early and often on the section branch, and push it whenever useful: every push runs CI.
+- Never rewrite `main`'s history. Rewriting an unmerged section branch (e.g. to fix commits that
+  fail `pnpm check`) is fine; push it with `git push --force-with-lease`.
 
 ## Finishing a section
 
-1. All tasks in the section's plan are done and `pnpm check` and `pnpm test:e2e` pass.
+1. All tasks in the section's plan are done; `pnpm check` and `pnpm test:e2e` pass locally.
 2. Run the independent review ([review.md](review.md)). Fix the findings in new commits.
-3. Merge into `main` with a merge commit so the section stays visible in history:
-   `git switch main && git merge --no-ff <branch>`. The merge commit message is
-   `<type>: <section summary>` and the body lists the section's main changes.
-4. Push: `ALLOW_MAIN_PUSH=1 git push origin main`. The pre-push hook blocks pushes to `main`
-   without that variable, so it can't happen by accident.
-5. Update the section's status in the roadmap.
+3. Push the branch and open a pull request into `main`:
+   `gh pr create --base main --title "<type>: <section summary>"`. The PR body lists the
+   section's main changes and links the plan and review.
+4. When CI is green, merge with a **merge commit** (not squash or rebase) so the section's commits
+   and its boundary both stay visible: `gh pr merge --merge --delete-branch`.
+5. Update local `main` (`git switch main && git pull`) and the section's status in the roadmap.
+
+Coolify deploys `main` after the merge, so only CI-tested code is deployed.
+
+### GitHub settings (one-time)
+
+Protect `main` under Settings → Rules → Rulesets (or Branches):
+
+- Require a pull request before merging.
+- Require status checks to pass: `Typecheck, lint, format, unit tests` and
+  `End-to-end tests (production Docker image)`.
+- Block force pushes and deletions.
+- Allow merge commits only (disable squash and rebase merging) under Settings → General.
+
+The `pre-push` hook is a local backstop for the same rule: it blocks any push to `main` unless
+`ALLOW_MAIN_PUSH=1` is set. That variable is only for emergencies, such as bootstrapping a new
+remote.
 
 ## Commit messages
 
@@ -36,7 +54,7 @@ runs commitlint and rejects anything that doesn't match.
 `refactor` (no behaviour change) · `perf` · `test` · `build` (dependencies, bundler, Docker) ·
 `ci` · `chore` (tooling, config, housekeeping) · `revert`.
 
-**Scopes** (optional, kebab-case) name the area: `drone-viewer`, `drone-model`, `content`,
+**Scopes** (optional, lower case, words joined with hyphens) name the area: `drone-viewer`, `drone-model`, `content`,
 `lesson`, `deps`, `docker`, `ci`, `docs`.
 
 **Subject rules:**
@@ -69,10 +87,10 @@ typescript-eslint does not support TypeScript 7 yet.
 
 ### Hooks
 
-| Hook         | Runs                                                                       |
-| ------------ | -------------------------------------------------------------------------- |
-| `pre-commit` | lint-staged: ESLint and Prettier on staged files                           |
-| `commit-msg` | commitlint                                                                 |
-| `pre-push`   | blocks pushes to `main` unless `ALLOW_MAIN_PUSH=1`, then runs `pnpm check` |
+| Hook         | Runs                                                                                                                          |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| `pre-commit` | lint-staged: ESLint and Prettier on staged files                                                                              |
+| `commit-msg` | commitlint                                                                                                                    |
+| `pre-push`   | blocks pushes to `main` unless `ALLOW_MAIN_PUSH=1`, then runs `pnpm check` on the working tree (CI checks the pushed commits) |
 
 Don't bypass hooks with `--no-verify`. If a hook is wrong, fix the hook in its own commit.

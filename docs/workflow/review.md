@@ -30,7 +30,7 @@ Check:
 5. Accessibility: keyboard use, roles and labels, and parity with the 3D view.
 6. Content accuracy against docs/product/scope.md (FPV facts must be correct).
 7. Commit history: Conventional Commits, one logical change per commit, clear messages.
-8. Run pnpm check, pnpm test:e2e and pnpm build and report the results.
+8. Run pnpm check, pnpm test:e2e, pnpm build and docker build . and report the results.
 
 Write the report to docs/reviews/NN-<name>.md using the template in docs/reviews/README.md.
 Classify each finding as blocking, should-fix or nit. Only report what you verified; mark anything

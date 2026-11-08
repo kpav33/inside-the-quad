@@ -3,16 +3,16 @@
 Each section is one branch, one plan in `plans/`, one review in `reviews/`.
 Status: `planned` · `in progress` · `in review` · `done`.
 
-| #   | Section                                               | Branch                   | Status      |
-| --- | ----------------------------------------------------- | ------------------------ | ----------- |
-| 00  | Project scaffold and engineering setup                | `chore/project-scaffold` | in progress |
-| 01  | First slice: 3D viewer + frame, motors, props lessons | `feat/first-slice`       | planned     |
-| 02  | Design pass (visual design review)                    | —                        | planned     |
-| 03  | Remaining part lessons (Module 2)                     | —                        | planned     |
-| 04  | "What is an FPV drone?" intro (Module 1)              | —                        | planned     |
-| 05  | How it all works together: simulator (Module 3)       | —                        | planned     |
-| 06  | Gear you hold and wear (Module 4)                     | —                        | planned     |
-| 07  | Compatibility checker                                 | —                        | planned     |
+| #   | Section                                               | Branch                   | Status    |
+| --- | ----------------------------------------------------- | ------------------------ | --------- |
+| 00  | Project scaffold and engineering setup                | `chore/project-scaffold` | in review |
+| 01  | First slice: 3D viewer + frame, motors, props lessons | `feat/first-slice`       | planned   |
+| 02  | Design pass (visual design review)                    | —                        | planned   |
+| 03  | Remaining part lessons (Module 2)                     | —                        | planned   |
+| 04  | "What is an FPV drone?" intro (Module 1)              | —                        | planned   |
+| 05  | How it all works together: simulator (Module 3)       | —                        | planned   |
+| 06  | Gear you hold and wear (Module 4)                     | —                        | planned   |
+| 07  | Compatibility checker                                 | —                        | planned   |
 
 ## 01 — First slice (summary)
 

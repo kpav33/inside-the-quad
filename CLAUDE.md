@@ -32,8 +32,8 @@ Use **pnpm only**. Never use npm or yarn, and never commit another lockfile.
 ## Rules
 
 1. **Git:** work on a section branch, never on `main`. Commit small, focused, Conventional Commits
-   (`docs/workflow/git.md`). Do not push to `main`. Main only receives a section after its
-   independent review passes.
+   (`docs/workflow/git.md`). Never push to `main`: a section reaches `main` only through a pull
+   request, after its independent review and a green CI run.
 2. **Done means verified:** a task is done only when `pnpm check` passes and the behaviour has been
    seen working (`docs/workflow/definition-of-done.md`). Report failures honestly.
 3. **Tests:** new logic gets unit tests; new user-visible flows get an e2e test

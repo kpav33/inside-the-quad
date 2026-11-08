@@ -9,10 +9,12 @@ src/
   app/            App shell: layout, top-level composition, (later) routing
   features/       One folder per feature; owns its components, hooks, logic and tests
     drone-viewer/ The 3D viewport (react-three-fiber Canvas, camera, controls)
-  shared/         Code used by two or more features (UI primitives, utilities)
+  shared/         Code used by two or more features
+    ui/           Generic UI building blocks (e.g. ErrorBoundary)
   styles/         Global CSS
   test/           Test setup and helpers
 e2e/              Playwright end-to-end tests
+nginx/            Production server config (copied into the Docker image)
 ```
 
 Planned as the app grows (create them when first needed, not before):
@@ -24,11 +26,14 @@ Planned as the app grows (create them when first needed, not before):
 
 ## Rules
 
-- **Feature folders are self-contained.** A feature imports from `shared/` and from another
-  feature's `index.ts` only, never from its internal files.
+- **Feature folders are self-contained.** Each feature has an `index.ts` that is its public API.
+  Code outside a feature imports from that `index.ts` only, never from its internal files
+  (tests that mock an internal module are the exception).
 - **Import with the `@/` alias** (`@/features/...`), not long relative paths.
 - **Keep three.js lazy.** Anything importing three.js is reached through `React.lazy`, so the
   first page load stays small.
+- **Contain failures.** Anything that can fail at runtime (WebGL, lazily loaded chunks) sits
+  inside an `ErrorBoundary` with a useful fallback, so one failure doesn't blank the page.
 - **Logic out of components.** Calculations (motor speeds, voltage sag, compatibility checks) are
   plain TypeScript functions with unit tests; components only render.
 - **Accessibility.** Everything the 3D view offers is also reachable without it (keyboard, screen

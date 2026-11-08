@@ -16,11 +16,12 @@ Template:
 
 ## Checks
 
-| Command       | Result |
-| ------------- | ------ |
-| pnpm check    |        |
-| pnpm test:e2e |        |
-| pnpm build    |        |
+| Command        | Result |
+| -------------- | ------ |
+| pnpm check     |        |
+| pnpm test:e2e  |        |
+| pnpm build     |        |
+| docker build . |        |
 
 ## Findings
 
