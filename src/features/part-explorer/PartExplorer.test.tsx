@@ -60,8 +60,8 @@ describe('PartExplorer', () => {
     expect(screen.getByText(/select a part/i)).toBeInTheDocument();
     const block = screen.getByRole('group', { name: 'Title block' });
     expect(block).toHaveTextContent('Reference 5\u2011inch quad');
-    expect(block).toHaveTextContent('225 mm');
-    expect(block).toHaveTextContent('5 × 4.3 × 3');
+    expect(block).toHaveTextContent('Wheelbase225 mm');
+    expect(block).toHaveTextContent('Props5 × 4.3 × 3');
   });
 
   it('announces the lesson that opened', async () => {

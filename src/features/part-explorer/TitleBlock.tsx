@@ -1,13 +1,11 @@
-import { Fragment } from 'react';
-
 import { UI } from '@/content/ui';
 
 export interface TitleBlockProps {
   part: string;
   sheet: string;
   quantity: number;
-  /** Spec values; each stays on one line, so a number is never split from its unit. */
-  specs: readonly string[];
+  /** Labelled key numbers; each value stays on one line, so it is never split from its unit. */
+  specs: readonly { label: string; value: string }[];
 }
 
 /** The drawing sheet's title block: which part, which sheet, how many, and its key numbers. */
@@ -29,14 +27,14 @@ export function TitleBlock({ part, sheet, quantity, specs }: TitleBlockProps) {
       </div>
       <div className="title-block-cell title-block-spec">
         <span className="title-block-label">{t.spec}</span>
-        <span className="title-block-value">
-          {specs.map((value, index) => (
-            <Fragment key={index}>
-              {index > 0 && ' · '}
-              <span className="title-block-nowrap">{value}</span>
-            </Fragment>
+        <dl className="title-block-specs">
+          {specs.map(({ label, value }, index) => (
+            <div key={index} className="title-block-spec-item">
+              <dt className="title-block-label">{label}</dt>
+              <dd className="title-block-value title-block-nowrap">{value}</dd>
+            </div>
           ))}
-        </span>
+        </dl>
       </div>
     </div>
   );

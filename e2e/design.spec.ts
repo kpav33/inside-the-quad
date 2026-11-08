@@ -75,6 +75,32 @@ test.describe('layout robustness', () => {
     }
   });
 
+  test('long translated words stay inside the title block and parts list', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 640 });
+    for (const part of [null, 'Frame', 'Motors', 'Propellers']) {
+      await page.goto('/');
+      if (part) await page.getByRole('button', { name: part, exact: true }).click();
+      await stretchText(page);
+      const overflowing = await page.evaluate(() =>
+        [...document.querySelectorAll('.title-block-cell, .part-list-row')]
+          .filter((el) => el.scrollWidth > el.clientWidth + 1)
+          .map((el) => el.textContent),
+      );
+      expect(overflowing, part ?? 'overview').toEqual([]);
+    }
+  });
+
+  test('200% text fits a 390 px phone', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    await page.evaluate(() => (document.documentElement.style.fontSize = '200%'));
+    await page.getByRole('button', { name: 'Motors', exact: true }).click();
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - window.innerWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(0);
+  });
+
   test('200% text size fits a 1280 px screen', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/');

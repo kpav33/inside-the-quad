@@ -280,7 +280,7 @@ a {
 .part-list-columns,
 .part-list-row {
   display: grid;
-  grid-template-columns: 2.5rem 1fr 3rem;
+  grid-template-columns: 2.5rem minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--space-2);
   padding: 0 var(--space-3);
@@ -357,6 +357,10 @@ a {
   color: var(--color-ground);
 }
 
+.part-list-name {
+  overflow-wrap: anywhere;
+}
+
 .part-list-row[data-selected='true'] .part-list-name {
   font-weight: 700;
 }
@@ -386,13 +390,16 @@ a {
 }
 
 .title-block {
+  container-type: inline-size;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* Six tracks so cells can regroup in narrow blocks (see the container query below). */
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   border: 1px solid var(--color-rule-strong);
   background: var(--color-sheet);
 }
 
 .title-block-cell {
+  grid-column: span 2;
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
@@ -423,10 +430,43 @@ a {
 
 .title-block-value {
   text-wrap: balance;
+  overflow-wrap: anywhere;
   font-family: var(--font-label);
   font-size: var(--step-1);
   font-weight: 600;
   letter-spacing: 0.03em;
+}
+
+/* Narrow title blocks: the part gets its own row, sheet and quantity share the next. */
+@container (max-width: 22rem) {
+  .title-block-cell:first-child {
+    grid-column: span 6;
+    border-right: 0;
+  }
+
+  .title-block-cell:nth-child(2),
+  .title-block-cell:nth-child(3) {
+    grid-column: span 3;
+  }
+}
+
+.title-block-specs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(7.5rem, 100%), 1fr));
+  gap: var(--space-2) var(--space-4);
+  margin: var(--space-1) 0 0;
+}
+
+.title-block-spec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.title-block-specs dt,
+.title-block-specs dd {
+  margin: 0;
 }
 
 .title-block-nowrap {

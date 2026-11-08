@@ -41,7 +41,7 @@ export function LessonPanel({ lesson, onClose, onSelectPart }: LessonPanelProps)
         part={lesson.title}
         sheet={UI.titleBlock.sheetOf(PART_IDS.indexOf(lesson.partId) + 1, PART_IDS.length)}
         quantity={partQuantity(lesson.partId, REFERENCE_5_INCH)}
-        specs={lesson.specs.map((row) => row.value)}
+        specs={lesson.specs}
       />
 
       <header className="lesson-panel-header">
