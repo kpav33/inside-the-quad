@@ -23,7 +23,7 @@ export const COLOR = {
 
 /** 3D base colours, read from the same world: carbon frame, anodised motors, light grey props. */
 export const MODEL_COLOR: Record<PartId, string> = {
-  frame: '#2c3034',
+  frame: '#4a5157',
   motors: '#8b949c',
   props: '#c9ced3',
 };

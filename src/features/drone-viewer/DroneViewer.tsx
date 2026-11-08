@@ -30,10 +30,13 @@ export default function DroneViewer({
         aria-hidden="true"
         camera={{ position: [0.22, 0.18, 0.28], fov: 40, near: 0.01, far: 10 }}
         onPointerMissed={onBackgroundClick}
+        // Nothing moves on its own, so draw only when the camera or selection changes.
+        frameloop="demand"
       >
-        <ambientLight intensity={0.7} />
-        <directionalLight position={[1, 2, 1]} intensity={1.4} />
-        <directionalLight position={[-1, 1, -1]} intensity={0.4} />
+        {/* A bench lamp from the upper front, with a cool fill so dark parts keep their shape. */}
+        <ambientLight intensity={0.55} />
+        <directionalLight position={[1, 2, 1.5]} intensity={1.8} />
+        <directionalLight position={[-1.5, 0.8, -1]} intensity={0.6} color="#b8c4d0" />
         {/* Fits the camera to the drone on load and on resize, so no viewport crops it. */}
         <Bounds fit observe margin={1.3}>
           <DroneModel
