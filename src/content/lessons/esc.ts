@@ -61,6 +61,7 @@ export const escLesson: Lesson = {
     },
     {
       text: 'The flight controller sits on top of it, sends it the DShot commands and takes its power from it.',
+      partId: 'fc',
     },
     {
       text: `It mounts on the frame’s ${mount} stack holes, on soft rubber grommets.`,

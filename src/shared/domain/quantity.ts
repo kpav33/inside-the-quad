@@ -6,6 +6,7 @@ export function partQuantity(part: PartId, spec: DroneSpec): number {
   switch (part) {
     case 'frame':
     case 'esc':
+    case 'fc':
     case 'battery':
       return 1;
     case 'motors':

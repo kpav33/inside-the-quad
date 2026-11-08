@@ -28,6 +28,7 @@ export const MODEL_COLOR: Record<PartId, string> = {
   motors: '#202428',
   props: '#24282c',
   esc: '#1e2226',
+  fc: '#202326',
   battery: '#22262a',
 };
 

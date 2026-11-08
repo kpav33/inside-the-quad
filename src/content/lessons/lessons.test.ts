@@ -88,6 +88,10 @@ describe('lessons', () => {
     mAh: /milliamp/i,
     DShot: /digital/i,
     'back-EMF': /voltage/i,
+    UART: /serial port/i,
+    BEC: /regulator/i,
+    gyro: /rotat/i,
+    AIO: /all-in-one/i,
   };
 
   it.each(allLessons.map((l) => [l.partId, l] as const))(
@@ -124,6 +128,16 @@ describe('lessons', () => {
     }
   });
 
+  it('quotes the flight controller numbers from the drone spec', () => {
+    const values = specValues(LESSONS.fc);
+    for (const expected of ['F7', 'Betaflight', '6', '5 V', '10 V', '30.5 × 30.5 mm']) {
+      expect(
+        values.some((v) => v.includes(expected)),
+        expected,
+      ).toBe(true);
+    }
+  });
+
   it('computes the battery voltages from the cell count', () => {
     const cells = REFERENCE_5_INCH.motor.batteryCells;
     const text = lessonText(LESSONS.battery);
@@ -145,6 +159,8 @@ describe('lessons', () => {
     ['esc', 'battery'],
     ['esc', 'motors'],
     ['esc', 'frame'],
+    ['fc', 'esc'],
+    ['fc', 'frame'],
   ];
 
   it.each(PAIRS)('links %s and %s both ways', (a, b) => {

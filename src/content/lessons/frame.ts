@@ -49,7 +49,7 @@ export const frameLesson: Lesson = {
       text: 'The ESC mounts in the middle on the stack holes, on soft rubber grommets.',
       partId: 'esc',
     },
-    { text: 'The flight controller mounts on top of the ESC, on the same holes.' },
+    { text: 'The flight controller mounts on top of the ESC, on the same holes.', partId: 'fc' },
     { text: 'The camera mounts at the front, between two side plates.' },
     { text: 'The battery sits on the top plate, held down by a strap.', partId: 'battery' },
   ],
