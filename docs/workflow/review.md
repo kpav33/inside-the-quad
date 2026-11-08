@@ -34,5 +34,6 @@ Check:
 
 Write the report to docs/reviews/NN-<name>.md using the template in docs/reviews/README.md.
 Classify each finding as blocking, should-fix or nit. Only report what you verified; mark anything
-uncertain as such. Do not fix code yourself.
+uncertain as such. Do not fix code yourself. Put any temporary scripts or files outside the
+repository (e.g. a temp directory); the only file you may write in the repo is the report.
 ```
