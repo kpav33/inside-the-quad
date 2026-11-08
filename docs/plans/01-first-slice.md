@@ -150,7 +150,7 @@ e2e/explorer.spec.ts
     export function motorPlacements(spec: DroneSpec): MotorPlacement[]; // ordered M1..M4
     ```
 
-- [ ] **Step 1: Write the failing tests** in `layout.test.ts` and `drone-spec.test.ts`:
+- [x] **Step 1: Write the failing tests** in `layout.test.ts` and `drone-spec.test.ts`:
   - `motorPlacements(REFERENCE_5_INCH)` returns numbers `[1, 2, 3, 4]` with corners
     `rear-right, front-right, rear-left, front-left` and spins `cw, ccw, ccw, cw`.
   - Diagonal motor-to-motor distance (M2 ↔ M3 and M1 ↔ M4, in the XZ plane) equals
@@ -160,14 +160,14 @@ e2e/explorer.spec.ts
   - Diagonal pairs spin the same way and adjacent motors spin opposite ways.
   - `propSizeCode(REFERENCE_5_INCH) === '5 × 4.3 × 3'`, `motorSizeCode(...) === '2207'`.
   - `mm(1000) === 1`.
-- [ ] **Step 2: Run** `pnpm test src/features/drone-model src/shared` — expected FAIL (modules
+- [x] **Step 2: Run** `pnpm test src/features/drone-model src/shared` — expected FAIL (modules
       missing).
-- [ ] **Step 3: Implement** `parts.ts`, `drone-spec.ts` and `layout.ts`. Each motor sits at
+- [x] **Step 3: Implement** `parts.ts`, `drone-spec.ts` and `layout.ts`. Each motor sits at
       `wheelbase / 2` from the centre along the 45° diagonals, so `|x| = |z| = mm(wheelbase) / (2·√2)`.
       Size codes are built from the spec (motor: two-digit width + two-digit height).
-- [ ] **Step 4: Run** `pnpm test src/features/drone-model src/shared` — expected PASS; then
+- [x] **Step 4: Run** `pnpm test src/features/drone-model src/shared` — expected PASS; then
       `pnpm check`.
-- [ ] **Step 5: Commit** `feat(drone-model): add reference drone spec and motor layout`.
+- [x] **Step 5: Commit** `feat(drone-model): add reference drone spec and motor layout`.
 
 ---
 
@@ -205,7 +205,7 @@ e2e/explorer.spec.ts
   export const LESSONS: Record<PartId, Lesson>;
   ```
 
-- [ ] **Step 1: Write the failing tests** in `lessons.test.ts`:
+- [x] **Step 1: Write the failing tests** in `lessons.test.ts`:
   - Every id in `PART_IDS` has a lesson whose `partId` matches its key.
   - Every lesson has a non-empty `title`, `whatItDoes` (one sentence: ends with `.` and has no
     other `. `), at least one `howItWorks` paragraph, at least two `specs` rows with non-empty
@@ -215,15 +215,15 @@ e2e/explorer.spec.ts
     `value` contains `motorSizeCode(REFERENCE_5_INCH)` and one containing `'1950'`; the props
     lesson has a row containing `propSizeCode(REFERENCE_5_INCH)`; the frame lesson has rows
     containing `'225'` and `'30.5 × 30.5'`.
-- [ ] **Step 2: Run** `pnpm test src/content` — expected FAIL.
-- [ ] **Step 3: Write the three lessons** from scope sections 2.1–2.3, covering every bullet of
+- [x] **Step 2: Run** `pnpm test src/content` — expected FAIL.
+- [x] **Step 3: Write the three lessons** from scope sections 2.1–2.3, covering every bullet of
       each section. Build spec `value` strings from `REFERENCE_5_INCH` and the size-code helpers.
       Connections: frame → motors (screwed to the arms, 16 × 16 mm), frame → stack, camera,
       battery (text only, no `partId` yet); motors → frame, props (on the M5 shaft), ESC via 3 wires
       (text only); props → motors. Mention props-in/out and that the direction must match the flight
       controller setting.
-- [ ] **Step 4: Run** `pnpm test src/content` — expected PASS; then `pnpm check`.
-- [ ] **Step 5: Commit** `feat(content): add frame, motor and propeller lessons`.
+- [x] **Step 4: Run** `pnpm test src/content` — expected PASS; then `pnpm check`.
+- [x] **Step 5: Commit** `feat(content): add frame, motor and propeller lessons`.
 
 ---
 
@@ -273,11 +273,11 @@ e2e/explorer.spec.ts
 
   `drone-viewer/index.ts` keeps exporting the lazy `DroneViewer`, now typed with these props.
 
-- [ ] **Step 1: Write the failing test** `materials.test.ts`: `partEmissive(true)` returns the
+- [x] **Step 1: Write the failing test** `materials.test.ts`: `partEmissive(true)` returns the
       highlight colour with intensity `0.6`; `partEmissive(false)` returns intensity `0`;
       `PART_COLORS` has an entry for every `PART_IDS` value.
-- [ ] **Step 2: Run** `pnpm test src/features/drone-model/materials` — expected FAIL.
-- [ ] **Step 3: Implement `materials.ts`**, then the parts, all sized from the spec:
+- [x] **Step 2: Run** `pnpm test src/features/drone-model/materials` — expected FAIL.
+- [x] **Step 3: Implement `materials.ts`**, then the parts, all sized from the spec:
   - **Frame:** four arms (boxes `armWidthMm × armThicknessMm`, from the centre to each motor
     placement, rotated ±45°), a bottom body plate (`bodyWidthMm × bodyLengthMm`), a top plate
     (`topPlateThicknessMm`) raised by `standoffHeightMm`, and four standoffs (radius 2.5 mm) at
@@ -297,11 +297,11 @@ e2e/explorer.spec.ts
     (resolves review 00, finding 17).
   - Update `App.tsx` temporarily to pass `selectedPart={null}` and no-op handlers (Task 5 replaces
     it).
-- [ ] **Step 4: Run** `pnpm test` and `pnpm test:e2e` — expected PASS.
-- [ ] **Step 5: Visual check:** `pnpm dev`, open the app with Playwright (or the browser), take a
+- [x] **Step 4: Run** `pnpm test` and `pnpm test:e2e` — expected PASS.
+- [x] **Step 5: Visual check:** `pnpm dev`, open the app with Playwright (or the browser), take a
       screenshot, and confirm: an X-shaped quad, four motors at the arm tips, four three-bladed
       props on the motors, front pointing away-left from the default camera, nothing clipping.
-- [ ] **Step 6: Commit** `feat(drone-model): build procedural frame, motors and propellers`.
+- [x] **Step 6: Commit** `feat(drone-model): build procedural frame, motors and propellers`.
 
 ---
 
@@ -335,7 +335,7 @@ e2e/explorer.spec.ts
   // 'What does it do?', 'How does it work?', 'What do the numbers mean?', 'What is it connected to?'
   ```
 
-- [ ] **Step 1: Write the failing tests:**
+- [x] **Step 1: Write the failing tests:**
   - `PartList`: renders one button per part with names `Frame`, `Motors`, `Propellers`;
     `aria-pressed="true"` only on the selected one; clicking a button calls
     `onToggle('motors')`; pressing Enter and Space on a focused button calls `onToggle` too
@@ -344,11 +344,11 @@ e2e/explorer.spec.ts
     order; spec rows rendered as a table (`role="table"`) with the `2207` value present; a
     connection with `partId: 'props'` renders as a button that calls `onSelectPart('props')`;
     a text-only connection renders as plain text; the `Close lesson` button calls `onClose`.
-- [ ] **Step 2: Run** `pnpm test src/features/part-explorer` — expected FAIL.
-- [ ] **Step 3: Implement** both components. Spec rows: a `<table>` with columns Spec, Value,
+- [x] **Step 2: Run** `pnpm test src/features/part-explorer` — expected FAIL.
+- [x] **Step 3: Implement** both components. Spec rows: a `<table>` with columns Spec, Value,
       What it means. No inline styles beyond structure; class names only.
-- [ ] **Step 4: Run** `pnpm test src/features/part-explorer` — expected PASS; `pnpm check`.
-- [ ] **Step 5: Commit** `feat(part-explorer): add part list and lesson panel`.
+- [x] **Step 4: Run** `pnpm test src/features/part-explorer` — expected PASS; `pnpm check`.
+- [x] **Step 5: Commit** `feat(part-explorer): add part list and lesson panel`.
 
 ---
 
@@ -381,7 +381,7 @@ e2e/explorer.spec.ts
   selects (never deselects); background click clears; connection link selects; close button
   and Escape clear. Escape is handled by `onKeyDown` on the explorer root.
 
-- [ ] **Step 1: Write the failing tests:**
+- [x] **Step 1: Write the failing tests:**
   - `clicks.test.ts`: `isDeliberateClick(0)` and `(4)` are true; `(5)` and `(40)` are false.
   - `PartExplorer.test.tsx` (mock `@/features/drone-viewer/DroneViewer` with a stub exposing
     buttons `stub: click motors (delta 0)`, `stub: drag ending on motors (delta 30)` and
@@ -403,18 +403,18 @@ e2e/explorer.spec.ts
     - at viewport 390 × 844: select `Motors` → its lesson heading is in the viewport after
       scrolling into view, `document.documentElement.scrollWidth <= 390`, and the canvas's
       bounding box height is at least 250 px.
-- [ ] **Step 2: Run** `pnpm test` — expected FAIL for the new tests.
-- [ ] **Step 3: Implement** `clicks.ts`, `PartExplorer.tsx` (owns `selectedPart` state; viewer
+- [x] **Step 2: Run** `pnpm test` — expected FAIL for the new tests.
+- [x] **Step 3: Implement** `clicks.ts`, `PartExplorer.tsx` (owns `selectedPart` state; viewer
       inside `ErrorBoundary` + `Suspense` as in today's `App.tsx`; list and panel outside it) and
       `index.ts`. `App.tsx` renders the header and `<PartExplorer />`; move the viewer-failure test
       from `App.test.tsx` into `PartExplorer.test.tsx`. CSS: two columns (viewer | list + lesson)
       above 900 px, stacked below with the canvas at `min-height: 50vh`; structural only.
-- [ ] **Step 4: Run** `pnpm check` and `pnpm test:e2e` — expected PASS. Also run the e2e suite
+- [x] **Step 4: Run** `pnpm check` and `pnpm test:e2e` — expected PASS. Also run the e2e suite
       against the Docker image (`docs/workflow/testing.md`) to confirm no CSP violations.
-- [ ] **Step 5: Update** `docs/architecture/overview.md`: add `drone-model`, `part-explorer`,
+- [x] **Step 5: Update** `docs/architecture/overview.md`: add `drone-model`, `part-explorer`,
       `src/content/` and `src/shared/domain/` to the layout (removing them from "planned"), and
       add the rule that `src/content/` and `src/shared/` never import from `src/features/`.
-- [ ] **Step 6: Commit** `feat(part-explorer): select parts in 3d or by keyboard and show lessons`.
+- [x] **Step 6: Commit** `feat(part-explorer): select parts in 3d or by keyboard and show lessons`.
 
 ---
 
