@@ -17,8 +17,9 @@ Coolify builds from the repository using the Dockerfile build pack, deploying `m
 
 ## Consequences
 
-- Deploys happen when `main` changes. Because `main` only changes through pull requests that
-  need green CI (see `docs/workflow/git.md`), every deployed commit has passed CI.
+- Deploys happen when `main` changes. `main` only changes by merging pull requests after CI is
+  green (see `docs/workflow/git.md`), so every deployed commit has passed CI. This is a process
+  rule; GitHub branch protection is not enabled.
 - The official nginx image starts its master process as root and serves requests from
   unprivileged worker processes. Moving to a fully rootless image (listening on a high port) is
   possible later if the server's security policy requires it.

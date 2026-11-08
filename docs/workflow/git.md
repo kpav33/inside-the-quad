@@ -23,19 +23,18 @@
 
 Coolify deploys `main` after the merge, so only CI-tested code is deployed.
 
-### GitHub settings (one-time)
+### Enforcement
 
-Protect `main` under Settings → Rules → Rulesets (or Branches):
+GitHub branch protection is **not enabled** on this repository, so the rules above are kept by
+following this process, not enforced by GitHub. Agents must never merge a PR whose checks are
+failing or still running: check with `gh pr checks --watch` before `gh pr merge`.
 
-- Require a pull request before merging.
-- Require status checks to pass: `Typecheck, lint, format, unit tests` and
-  `End-to-end tests (production Docker image)`.
-- Block force pushes and deletions.
-- Allow merge commits only (disable squash and rebase merging) under Settings → General.
+The `pre-push` hook is a local backstop: it blocks any push to `main` unless `ALLOW_MAIN_PUSH=1`
+is set. That variable is only for emergencies, such as bootstrapping a new remote.
 
-The `pre-push` hook is a local backstop for the same rule: it blocks any push to `main` unless
-`ALLOW_MAIN_PUSH=1` is set. That variable is only for emergencies, such as bootstrapping a new
-remote.
+If protection is turned on later (Settings → Rules → Rulesets), require a pull request, require
+the `Typecheck, lint, format, unit tests` and `End-to-end tests (production Docker image)` checks,
+block force pushes, and allow merge commits only.
 
 ## Commit messages
 
