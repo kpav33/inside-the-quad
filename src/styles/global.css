@@ -116,7 +116,9 @@ a {
   container: main / inline-size;
 }
 
-@media (max-width: 56.1875em) {
+/* Matches the explorer's 56rem container switch, so the page only gets a fixed height when the
+   two-column layout applies. */
+@media (max-width: 55.9375em) {
   .app,
   .app-main {
     height: auto;
@@ -658,7 +660,8 @@ a {
 
   .drawing-canvas {
     height: auto;
-    min-height: 0;
+    /* Safety net: the drawing never collapses even if the page height is not fixed. */
+    min-height: 16rem;
     border: 0;
   }
 
@@ -682,6 +685,12 @@ a {
   .part-list-row[data-selected='true'] {
     outline: 2px solid Highlight;
     outline-offset: -2px;
+  }
+
+  /* Focus must stay visible on top of the selection marker. */
+  .part-list-row:focus-visible {
+    outline: 3px dashed CanvasText;
+    outline-offset: -3px;
   }
 
   .part-list-row[data-selected='true'] .part-list-item {

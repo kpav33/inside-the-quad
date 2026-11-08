@@ -183,3 +183,33 @@ test.describe('drawing field at large text sizes', () => {
     expect(listFits).toBe(true);
   });
 });
+
+test('the 3D view keeps its height just above the two-column breakpoint', async ({ page }) => {
+  for (const width of [897, 900, 960]) {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/');
+    const height = await page.evaluate(
+      () => document.querySelector('.part-explorer-viewer')?.getBoundingClientRect().height ?? 0,
+    );
+    expect(height, `${width} px`).toBeGreaterThanOrEqual(250);
+  }
+});
+
+test('in forced colours, focus on the selected part row is distinguishable', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active' });
+  await page.goto('/');
+  const motors = page.getByRole('button', { name: 'Motors', exact: true });
+  await motors.click();
+  const outline = () =>
+    motors.evaluate((el) => {
+      const s = getComputedStyle(el);
+      return `${s.outlineStyle} ${s.outlineWidth}`;
+    });
+  await page.getByRole('button', { name: 'Frame', exact: true }).focus();
+  const unfocused = await outline();
+  await motors.focus();
+  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press('Tab');
+  const focused = await outline();
+  expect(focused).not.toBe(unfocused);
+});
