@@ -9,7 +9,7 @@ describe('PartList', () => {
     render(<PartList selectedPart={null} onToggle={vi.fn()} />);
     const nav = screen.getByRole('navigation', { name: 'Drone parts' });
     expect(nav).toBeInTheDocument();
-    for (const name of ['Frame', 'Motors', 'Propellers']) {
+    for (const name of ['Frame', 'Motors', 'Propellers', 'ESC', 'Flight controller', 'Battery']) {
       expect(screen.getByRole('button', { name })).toBeInTheDocument();
     }
   });
