@@ -109,15 +109,15 @@ e2e/design.spec.ts                     reflow, zoom, touch, focus checks
   `tokens.css` declares `--color-<name>` for every `COLOR` key, plus `--font-label`,
   `--font-body`, a rem type scale (`--step--1` … `--step-4`, ratio ≈ 1.2) and a spacing scale.
 
-- [ ] **Step 1: Write failing tests:** `contrastRatio('#000000', '#ffffff')` ≈ 21;
+- [x] **Step 1: Write failing tests:** `contrastRatio('#000000', '#ffffff')` ≈ 21;
       `ink`/`muted` on `ground` and on `sheet` ≥ 4.5; `accent` on `ground` and `sheet` ≥ 3;
       every `COLOR` key appears in `tokens.css` as `--color-<kebab-key>: <same hex>;`
       (read the file with `node:fs` in the test).
-- [ ] **Step 2: Run** `pnpm test src/shared/design` — expected FAIL (module missing).
-- [ ] **Step 3: Implement** both files; pick `muted` as the lightest grey that keeps a clear step
+- [x] **Step 2: Run** `pnpm test src/shared/design` — expected FAIL (module missing).
+- [x] **Step 3: Implement** both files; pick `muted` as the lightest grey that keeps a clear step
       below `ink` and passes on both grounds.
-- [ ] **Step 4: Run** the tests — PASS; `pnpm check`.
-- [ ] **Step 5: Commit** `feat(design): add drawing sheet design tokens`.
+- [x] **Step 4: Run** the tests — PASS; `pnpm check`.
+- [x] **Step 5: Commit** `feat(design): add drawing sheet design tokens`.
 
 ### Task 2: Fonts, base styles and the page shell
 
@@ -125,18 +125,18 @@ e2e/design.spec.ts                     reflow, zoom, touch, focus checks
 `@fontsource/atkinson-hyperlegible`), `src/main.tsx`, `src/styles/global.css`, `src/app/App.tsx`,
 `index.html` (`<meta name="color-scheme" content="dark">`).
 
-- [ ] **Step 1: Write a failing e2e check** in `e2e/design.spec.ts`: body computed
+- [x] **Step 1: Write a failing e2e check** in `e2e/design.spec.ts`: body computed
       `background-color` is `rgb(18, 20, 22)`; buttons inherit the body font family (not Arial);
       a focused part button has an outline at least 2px wide.
-- [ ] **Step 2: Run** `pnpm test:e2e e2e/design.spec.ts` — FAIL.
-- [ ] **Step 3: Implement:** import only the weights used (Barlow Condensed 500/600/700, Atkinson
+- [x] **Step 2: Run** `pnpm test:e2e e2e/design.spec.ts` — FAIL.
+- [x] **Step 3: Implement:** import only the weights used (Barlow Condensed 500/600/700, Atkinson
       Hyperlegible 400/700, latin subset); `color-scheme: dark`; explicit body background;
       `button, input, select, textarea { font: inherit; color: inherit }`; a global
       `:focus-visible` ring (2px redline, 2px offset); heading spacing with more space above than
       below; masthead with the wordmark ("QUAD" in redline). Verify fonts load under the CSP by
       running the e2e suite against the Docker image.
-- [ ] **Step 4: Run** e2e (both targets) — PASS; `pnpm check`.
-- [ ] **Step 5: Commit** `feat(design): self-host fonts and set the base page styles`.
+- [x] **Step 4: Run** e2e (both targets) — PASS; `pnpm check`.
+- [x] **Step 5: Commit** `feat(design): self-host fonts and set the base page styles`.
 
 ### Task 3: Move interface text into content
 
@@ -148,13 +148,13 @@ e2e/design.spec.ts                     reflow, zoom, touch, focus checks
 close label, the four question headings, spec grid labels, parts list heading and column labels,
 drag hint) and `export const PART_LABELS: Record<PartId, string>`.
 
-- [ ] **Step 1: Failing test:** `UI.questions` has exactly the four scope questions in order;
+- [x] **Step 1: Failing test:** `UI.questions` has exactly the four scope questions in order;
       every `PART_IDS` entry has a non-empty `PART_LABELS` value; no `UI` string is empty.
-- [ ] **Step 2: Run** — FAIL. **Step 3:** implement and replace hard-coded strings; replace React
+- [x] **Step 2: Run** — FAIL. **Step 3:** implement and replace hard-coded strings; replace React
       keys built from content text with index-based or id-based keys; render `aria-controls` only
       while the lesson panel exists (existing PartList test extended: no `aria-controls` when
       nothing is selected).
-- [ ] **Step 4: Run** `pnpm check` — PASS. **Step 5: Commit**
+- [x] **Step 4: Run** `pnpm check` — PASS. **Step 5: Commit**
       `refactor(content): move interface text out of components`.
 
 ### Task 4: Drawing field, parts list, title block and lesson sheet
@@ -177,7 +177,7 @@ Quantity per part comes from the spec (`frame` 1, `motors` and `props` = `motorP
 via a pure helper `partQuantity(part: PartId, spec: DroneSpec): number` in `shared/domain`, with a
 unit test.
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   - `TitleBlock`: shows the part title, "2 of 3" for motors, qty 4, and the spec line built from
     the lesson's spec values.
   - `PartList`: each row shows item number, label and quantity; the selected row has
@@ -187,14 +187,14 @@ unit test.
     longer text with `page.evaluate` into lesson text nodes) and at 1280px with
     `document.documentElement.style.fontSize = '200%'`: `scrollWidth ≤ innerWidth`; after following
     a connection link, the focused `h2` has a visible outline.
-- [ ] **Step 2: Run** — FAIL.
-- [ ] **Step 3: Implement** the first viewport from the contract: drawing field with a hairline
+- [x] **Step 2: Run** — FAIL.
+- [x] **Step 3: Implement** the first viewport from the contract: drawing field with a hairline
       frame and edge zone markers around the canvas; parts list docked at its lower left with 48px
       rows; drag hint at its lower right; sheet column with title block, part title (caps),
       lead sentence, numbered questions, and the spec grid as ruled rows that stack (label, value,
       meaning) in a container query below ~32rem. Viewer gets `min-width: 0`; breakpoints in `em`.
       Empty state: the sheet column shows the hint in the sheet's voice.
-- [ ] **Step 4: Run** unit and e2e — PASS; screenshot desktop 1280, phone 390, and 320 and check
+- [x] **Step 4: Run** unit and e2e — PASS; screenshot desktop 1280, phone 390, and 320 and check
       against the contract. **Step 5: Commit**
       `feat(part-explorer): lay out the explorer as a drawing sheet`.
 
@@ -202,44 +202,44 @@ unit test.
 
 **Files:** modify `DroneViewer.tsx`, `global.css`; extend `e2e/design.spec.ts`.
 
-- [ ] **Step 1: Failing e2e** (Chromium, 390×844, `hasTouch`): a one-finger vertical swipe over the
+- [x] **Step 1: Failing e2e** (Chromium, 390×844, `hasTouch`): a one-finger vertical swipe over the
       canvas (CDP `Input.dispatchTouchEvent`) increases `scrollY`; the drawing field height is
       between 35% and 45% of the viewport; part rows are ≥ 44px tall.
-- [ ] **Step 2: Run** — FAIL (swipe currently orbits).
-- [ ] **Step 3: Implement:** `OrbitControls` `touches={{ ONE: undefined, TWO: TOUCH.DOLLY_ROTATE }}`
+- [x] **Step 2: Run** — FAIL (swipe currently orbits).
+- [x] **Step 3: Implement:** `OrbitControls` `touches={{ ONE: undefined, TWO: TOUCH.DOLLY_ROTATE }}`
       and, after the controls attach, set the canvas element's `touch-action` to `pan-y` (three's
       OrbitControls sets `none` on connect); drawing field `height: 40svh` below the breakpoint;
       a phone-only hint "Two fingers to turn". If the override cannot keep two-finger rotation,
       record a ruling and fall back to a "Turn model" toggle.
-- [ ] **Step 4: Run** — PASS. **Step 5: Commit** `fix(drone-viewer): let one finger scroll the page on phones`.
+- [x] **Step 4: Run** — PASS. **Step 5: Commit** `fix(drone-viewer): let one finger scroll the page on phones`.
 
 ### Task 6: 3D materials, selection outline and render loop
 
 **Files:** modify `src/features/drone-model/materials.ts` (+ test), `parts/PartMaterial.tsx`,
 `DroneModel.tsx`, `DroneViewer.tsx`, `src/features/drone-viewer/index.ts`.
 
-- [ ] **Step 1: Failing tests:** `materials.test.ts` — part base colours equal `MODEL_COLOR`;
+- [x] **Step 1: Failing tests:** `materials.test.ts` — part base colours equal `MODEL_COLOR`;
       the selection colour equals `COLOR.accent`; `partEmissive` is removed in favour of
       `selectionOutline(highlighted)` returning `{ visible, color, thickness }`.
-- [ ] **Step 2: Run** — FAIL. **Step 3: Implement:** materials from tokens; drei `<Outlines>` in
+- [x] **Step 2: Run** — FAIL. **Step 3: Implement:** materials from tokens; drei `<Outlines>` in
       redline on the selected part's meshes; scene lit for the dark ground; `frameloop="demand"`;
       start the viewer chunk download at module load of `drone-viewer/index.ts` (keep it out of the
       entry chunk; verify with `pnpm build` output).
-- [ ] **Step 4: Run** unit and e2e (both targets) — PASS; screenshot each selected part on desktop
+- [x] **Step 4: Run** unit and e2e (both targets) — PASS; screenshot each selected part on desktop
       and phone. **Step 5: Commit** `feat(drone-model): draw the selection as a redline outline`.
 
 ### Task 7: Finish (impeccable and project gates)
 
-- [ ] Run `impeccable detect --json index.html src` once; fix mechanical findings.
-- [ ] Capture `.impeccable/review/desktop.png` (1440 wide, full page, a lesson open) and
+- [x] Run `impeccable detect --json index.html src` once; fix mechanical findings.
+- [x] Capture `.impeccable/review/desktop.png` (1440 wide, full page, a lesson open) and
       `mobile.png` (390 wide); spawn `impeccable-finish-reviewer` with the contract, screenshots
       and detector findings; act on its disposition (max two fix rounds).
-- [ ] Spawn `impeccable-documenter` to write `DESIGN.md` and `.impeccable/design.json` from the
+- [x] Spawn `impeccable-documenter` to write `DESIGN.md` and `.impeccable/design.json` from the
       built world.
-- [ ] Update `CLAUDE.md` rule 6 (design now follows `DESIGN.md` and the surface brief),
+- [x] Update `CLAUDE.md` rule 6 (design now follows `DESIGN.md` and the surface brief),
       `docs/architecture/overview.md` (tokens, fonts) and the roadmap (add sections "Model that
       teaches" and "Lookup and navigation"; mark 02 done at merge).
-- [ ] Re-run `/impeccable critique` and `/impeccable audit` for the score change; then the
+- [x] Re-run `/impeccable critique` and `/impeccable audit` for the score change; then the
       independent section review (`docs/workflow/review.md`), fixes, PR.
 
 ## Acceptance
@@ -253,18 +253,18 @@ unit test.
 The re-run critique scored 27/40 (from 24) and the audit 16/20 (from 12). The user chose to fix
 the P1s and the robustness items in this section; the remaining ideas moved to 02b/02c.
 
-- [ ] **Text-size robust wide layout:** the two-column layout switches on available space in `rem`
+- [x] **Text-size robust wide layout:** the two-column layout switches on available space in `rem`
       (container query on `.app-main`), and the parts list sits in an in-frame grid row instead of
       absolute docking with a fixed offset. e2e: at 1280px with 200% root text and at 1440px with a
       24px browser default, the 3D viewer is at least 200px wide and never overlaps the parts list.
-- [ ] **Phones see the lesson they opened:** after selecting a part, if the lesson starts below the
+- [x] **Phones see the lesson they opened:** after selecting a part, if the lesson starts below the
       visible area it scrolls into view (instantly under reduced motion), and a polite live region
       announces "<part> lesson opened". e2e on iPhone 13: after tapping Motors the lesson title is
       in the viewport; component test for the announcement.
-- [ ] **Labelled title-block numbers:** the spec cell becomes a hairline grid of labelled values
+- [x] **Labelled title-block numbers:** the spec cell becomes a hairline grid of labelled values
       (`<dl>`), from lesson spec labels and an overview spec list. Component test.
-- [ ] **Long words:** title-block part/sheet values and parts-list names wrap; e2e asserts every
+- [x] **Long words:** title-block part/sheet values and parts-list names wrap; e2e asserts every
       title-block cell and parts-list row fits with +40% text at 320px, and no horizontal scroll at
       390px with 200% text.
-- [ ] **Small items:** favicon in the palette; forced-colors selected row; `SCENE_LIGHT` documented
+- [x] **Small items:** favicon in the palette; forced-colors selected row; `SCENE_LIGHT` documented
       in DESIGN.md; unused `UI.viewer.label` removed; `theme-color` covered by the token test.
