@@ -26,3 +26,6 @@ blob-report/
 
 # Local Claude Code settings
 .claude/settings.local.json
+
+# Agent plan-execution workspaces
+.superpowers/
