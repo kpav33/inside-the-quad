@@ -36,6 +36,39 @@ export interface DroneSpec {
     pitchIn: number;
     blades: number;
   };
+  esc: {
+    /** Four ESCs on one board, under the flight controller. */
+    layout: '4-in-1';
+    /** Continuous current each motor output can handle. */
+    currentPerMotorA: number;
+    /** Digital signal from the flight controller. */
+    protocol: string;
+    /** Board width (square). */
+    boardSizeMm: number;
+    /** Capacitor on the battery pads: capacitance and voltage rating. */
+    capacitorUf: number;
+    capacitorV: number;
+  };
+  fc: {
+    /** Processor generation, e.g. "F7". */
+    processor: string;
+    firmware: string;
+    /** Serial ports for the receiver, VTX, GPS and so on. */
+    uarts: number;
+    /** Output voltages of the onboard regulators (BECs). */
+    becVolts: number[];
+    /** Board width (square). */
+    boardSizeMm: number;
+  };
+  battery: {
+    capacityMah: number;
+    /** Discharge rating printed on the label. */
+    cRating: number;
+    connector: string;
+    packLengthMm: number;
+    packWidthMm: number;
+    packHeightMm: number;
+  };
 }
 
 /** The reference 5" freestyle quad from docs/product/scope.md. */
@@ -67,6 +100,29 @@ export const REFERENCE_5_INCH: DroneSpec = {
     diameterIn: 5,
     pitchIn: 4.3,
     blades: 3,
+  },
+  esc: {
+    layout: '4-in-1',
+    currentPerMotorA: 55,
+    protocol: 'DShot600',
+    boardSizeMm: 41,
+    capacitorUf: 1000,
+    capacitorV: 35,
+  },
+  fc: {
+    processor: 'F7',
+    firmware: 'Betaflight',
+    uarts: 6,
+    becVolts: [5, 10],
+    boardSizeMm: 36,
+  },
+  battery: {
+    capacityMah: 1100,
+    cRating: 100,
+    connector: 'XT60',
+    packLengthMm: 75,
+    packWidthMm: 35,
+    packHeightMm: 38,
   },
 };
 
