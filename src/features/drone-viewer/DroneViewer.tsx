@@ -1,9 +1,12 @@
 import { Bounds, OrbitControls } from '@react-three/drei';
 import { Canvas, type ThreeEvent } from '@react-three/fiber';
+import { TOUCH } from 'three';
 
 import { DroneModel } from '@/features/drone-model';
 import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
 import type { PartId } from '@/shared/domain/parts';
+
+import { TouchScrollPassThrough } from './TouchScrollPassThrough';
 
 export interface DroneViewerProps {
   selectedPart: PartId | null;
@@ -39,7 +42,15 @@ export default function DroneViewer({
             onPartClick={onPartClick}
           />
         </Bounds>
-        <OrbitControls makeDefault enablePan={false} minDistance={0.15} maxDistance={0.8} />
+        <OrbitControls
+          makeDefault
+          enablePan={false}
+          minDistance={0.15}
+          maxDistance={0.8}
+          // One finger scrolls the page (see TouchScrollPassThrough); two fingers turn and zoom.
+          touches={{ TWO: TOUCH.DOLLY_ROTATE }}
+        />
+        <TouchScrollPassThrough />
       </Canvas>
     </div>
   );
