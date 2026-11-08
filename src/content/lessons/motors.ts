@@ -53,6 +53,9 @@ export const motorsLesson: Lesson = {
       text: `A propeller slides onto the ${motor.shaftThread} shaft and is held by a nut.`,
       partId: 'props',
     },
-    { text: `Its ${motor.wires} wires are soldered to the ESC, which powers the coils.` },
+    {
+      text: `Its ${motor.wires} wires are soldered to the ESC, which powers the coils.`,
+      partId: 'esc',
+    },
   ],
 };

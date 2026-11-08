@@ -86,6 +86,8 @@ describe('lessons', () => {
     Betaflight: /software/i,
     LiPo: /lithium polymer/i,
     mAh: /milliamp/i,
+    DShot: /digital/i,
+    'back-EMF': /voltage/i,
   };
 
   it.each(allLessons.map((l) => [l.partId, l] as const))(
@@ -112,6 +114,16 @@ describe('lessons', () => {
     }
   });
 
+  it('quotes the ESC numbers from the drone spec', () => {
+    const values = specValues(LESSONS.esc);
+    for (const expected of ['4-in-1', '55 A', 'DShot600', '30.5 × 30.5 mm', '1000 µF']) {
+      expect(
+        values.some((v) => v.includes(expected)),
+        expected,
+      ).toBe(true);
+    }
+  });
+
   it('computes the battery voltages from the cell count', () => {
     const cells = REFERENCE_5_INCH.motor.batteryCells;
     const text = lessonText(LESSONS.battery);
@@ -128,7 +140,12 @@ describe('lessons', () => {
   });
 
   // Parts that are physically connected link to each other from both lessons.
-  const PAIRS: [PartId, PartId][] = [['battery', 'frame']];
+  const PAIRS: [PartId, PartId][] = [
+    ['battery', 'frame'],
+    ['esc', 'battery'],
+    ['esc', 'motors'],
+    ['esc', 'frame'],
+  ];
 
   it.each(PAIRS)('links %s and %s both ways', (a, b) => {
     const linksTo = (from: PartId, to: PartId) =>

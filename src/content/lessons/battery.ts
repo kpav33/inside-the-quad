@@ -52,6 +52,7 @@ export const batteryLesson: Lesson = {
   connections: [
     {
       text: `Its ${battery.connector} plug connects to the lead of the ESC (electronic speed controller), which passes power on to the motors and the rest of the drone.`,
+      partId: 'esc',
     },
     {
       text: 'It sits on the frame’s top plate, held down by a strap on a grippy pad.',

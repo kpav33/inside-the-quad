@@ -10,7 +10,8 @@ describe('partQuantity', () => {
     expect(partQuantity('props', REFERENCE_5_INCH)).toBe(4);
   });
 
-  it('counts one battery', () => {
+  it('counts one battery and one 4-in-1 ESC', () => {
+    expect(partQuantity('esc', REFERENCE_5_INCH)).toBe(1);
     expect(partQuantity('battery', REFERENCE_5_INCH)).toBe(1);
   });
 });
