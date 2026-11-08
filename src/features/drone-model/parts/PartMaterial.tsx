@@ -14,11 +14,7 @@ export function PartMaterial({ part, highlighted }: PartMaterialProps) {
   const { color, edgeColor } = partAppearance(part, highlighted);
   return (
     <>
-      <meshStandardMaterial
-        color={color}
-        roughness={part === 'frame' ? 0.75 : 0.5}
-        metalness={part === 'motors' && !highlighted ? 0.5 : 0.05}
-      />
+      <meshStandardMaterial color={color} roughness={1} metalness={0} />
       <Edges threshold={20} color={edgeColor} />
     </>
   );

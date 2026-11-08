@@ -21,11 +21,12 @@ export const COLOR = {
   accent: '#ff5b3a',
 } as const;
 
-/** 3D base colours, read from the same world: carbon frame, anodised motors, light grey props. */
+/** 3D fills: dark ground and sheet tones, so the drawing reads as ink lines and redline is the
+ * only filled colour. */
 export const MODEL_COLOR: Record<PartId, string> = {
-  frame: '#4a5157',
-  motors: '#8b949c',
-  props: '#c9ced3',
+  frame: '#1c1f22',
+  motors: '#202428',
+  props: '#24282c',
 };
 
 function channel(value: number): number {

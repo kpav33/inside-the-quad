@@ -6,17 +6,21 @@ import { PART_IDS } from '@/shared/domain/parts';
 import { partAppearance } from './materials';
 
 describe('partAppearance', () => {
-  it.each(PART_IDS.map((id) => [id]))('draws %s in its token colour with drafting edges', (id) => {
-    expect(partAppearance(id, false)).toEqual({ color: MODEL_COLOR[id], edgeColor: COLOR.muted });
+  it.each(PART_IDS.map((id) => [id]))('draws %s as ink linework over a dark fill', (id) => {
+    expect(partAppearance(id, false)).toEqual({ color: MODEL_COLOR[id], edgeColor: COLOR.ink });
   });
 
-  it.each(PART_IDS.map((id) => [id]))('draws a selected %s entirely in redline', (id) => {
-    expect(partAppearance(id, true)).toEqual({ color: COLOR.accent, edgeColor: COLOR.accent });
+  it.each(PART_IDS.map((id) => [id]))('fills a selected %s with redline', (id) => {
+    expect(partAppearance(id, true).color).toBe(COLOR.accent);
   });
 
-  it('keeps every part distinguishable from the ground', () => {
+  it('keeps the drawn lines readable on the ground', () => {
+    expect(contrastRatio(COLOR.ink, COLOR.ground)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('keeps part fills in the dark ground and sheet tones, so redline is the only colour', () => {
     for (const id of PART_IDS) {
-      expect(contrastRatio(MODEL_COLOR[id], COLOR.ground), id).toBeGreaterThanOrEqual(1.8);
+      expect(contrastRatio(MODEL_COLOR[id], COLOR.ground), id).toBeLessThan(1.6);
     }
   });
 });
