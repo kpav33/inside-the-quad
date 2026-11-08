@@ -32,7 +32,7 @@ export default function DroneViewer({
         <directionalLight position={[1, 2, 1]} intensity={1.4} />
         <directionalLight position={[-1, 1, -1]} intensity={0.4} />
         {/* Fits the camera to the drone on load and on resize, so no viewport crops it. */}
-        <Bounds fit clip observe margin={1.3}>
+        <Bounds fit observe margin={1.3}>
           <DroneModel
             spec={REFERENCE_5_INCH}
             selectedPart={selectedPart}
