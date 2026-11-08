@@ -1,0 +1,10 @@
+# Pushing to main is reserved for completed, reviewed sections (see docs/workflow/git.md).
+# Opt in explicitly with: ALLOW_MAIN_PUSH=1 git push
+while read -r _local_ref _local_sha remote_ref _remote_sha; do
+  if [ "$remote_ref" = "refs/heads/main" ] && [ "${ALLOW_MAIN_PUSH:-0}" != "1" ]; then
+    echo "Push to main blocked. Main only receives reviewed sections; rerun with ALLOW_MAIN_PUSH=1." >&2
+    exit 1
+  fi
+done
+
+pnpm check
