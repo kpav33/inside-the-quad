@@ -11,7 +11,7 @@ export const motorsLesson: Lesson = {
   partId: 'motors',
   title: 'Motors',
   whatItDoes:
-    'Each of the four motors spins a propeller, turning electricity from the battery into the thrust that lifts the drone.',
+    'Each of the four motors turns electricity from the battery into fast spinning motion, which its propeller uses to lift the drone.',
   howItWorks: [
     'FPV drones use brushless motors. In the middle is the stator, a fixed ring of copper wire coils. Around it is the bell, a cup lined with magnets. The bell is fixed to the shaft and spins on bearings. Nothing rubs inside (no brushes), so the motor wears very little.',
     'The ESC (electronic speed controller) switches the coils on and off in sequence, so their magnetic pull moves around the ring. The magnets in the bell chase it, and the bell spins. Switching faster spins the motor faster.',

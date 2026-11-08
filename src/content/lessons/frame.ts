@@ -13,7 +13,7 @@ export const frameLesson: Lesson = {
     'A frame is a few flat pieces bolted together. The bottom plate and the four arms carry the motors and take most of the force in a crash. A thinner top plate sits above them on standoffs (small metal posts), and the electronics sit protected in the gap between the plates.',
     'Frames are cut from carbon fibre, a material that is very stiff, light and strong. Carbon fibre also conducts electricity, so wires must never rub against its edges: if the insulation wears through, the wire can short against the frame.',
     'Frames come in a few shapes. In a true X the four motors sit at the corners of a square. A stretched X is longer front to back, and a squashed X is wider than it is long. A "deadcat" frame moves the front arms out to the sides so the propellers stay out of the camera’s view.',
-    'Every part has its usual place: the stack (the flight controller and ESC boards) in the middle, the camera at the front, the video transmitter and radio receiver at the back, and the battery strapped on top.',
+    'Every part has its usual place. In the middle sits the stack: the flight controller (the drone’s brain) on top of the ESC (electronic speed controller, which powers the motors). The camera goes at the front, the video transmitter and radio receiver at the back, and the battery is strapped on top.',
   ],
   specs: [
     {

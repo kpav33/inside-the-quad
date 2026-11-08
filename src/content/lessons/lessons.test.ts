@@ -8,6 +8,15 @@ import type { Lesson } from './types';
 
 const allLessons: Lesson[] = PART_IDS.map((id) => LESSONS[id]);
 
+function lessonText(lesson: Lesson): string {
+  return [
+    lesson.whatItDoes,
+    ...lesson.howItWorks,
+    ...lesson.specs.flatMap((row) => [row.label, row.value, row.meaning]),
+    ...lesson.connections.map((c) => c.text),
+  ].join(' ');
+}
+
 function specValues(lesson: Lesson): string[] {
   return lesson.specs.map((row) => row.value);
 }
@@ -67,5 +76,26 @@ describe('lessons', () => {
     const values = specValues(LESSONS.frame);
     expect(values.some((v) => v.includes('225'))).toBe(true);
     expect(values.some((v) => v.includes('30.5 × 30.5'))).toBe(true);
+  });
+
+  // Beginners can't be expected to know these; any lesson that uses one must explain it.
+  const JARGON: Record<string, RegExp> = {
+    ESC: /electronic speed controller/i,
+    'flight controller': /drone’s brain/i,
+    Betaflight: /software/i,
+  };
+
+  it.each(allLessons.map((l) => [l.partId, l] as const))(
+    '%s explains the jargon it uses',
+    (_id, lesson) => {
+      const text = lessonText(lesson);
+      for (const [term, explanation] of Object.entries(JARGON)) {
+        if (text.includes(term)) expect(text, `${term} is unexplained`).toMatch(explanation);
+      }
+    },
+  );
+
+  it('credits the propellers, not the motors, with making thrust', () => {
+    expect(LESSONS.motors.whatItDoes).not.toMatch(/into the thrust/);
   });
 });
