@@ -27,6 +27,7 @@ export const MODEL_COLOR: Record<PartId, string> = {
   frame: '#1c1f22',
   motors: '#202428',
   props: '#24282c',
+  battery: '#22262a',
 };
 
 /** Scene lighting for the 3D drawing: a cool fill light so dark parts keep their shape. */

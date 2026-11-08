@@ -9,4 +9,8 @@ describe('partQuantity', () => {
     expect(partQuantity('motors', REFERENCE_5_INCH)).toBe(4);
     expect(partQuantity('props', REFERENCE_5_INCH)).toBe(4);
   });
+
+  it('counts one battery', () => {
+    expect(partQuantity('battery', REFERENCE_5_INCH)).toBe(1);
+  });
 });

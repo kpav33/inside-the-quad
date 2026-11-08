@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { motorSizeCode, propSizeCode, REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
-import { PART_IDS } from '@/shared/domain/parts';
+import { LIPO_CELL_VOLTS, packVolts } from '@/shared/domain/lipo';
+import { PART_IDS, type PartId } from '@/shared/domain/parts';
 
 import { LESSONS } from './index';
 import type { Lesson } from './types';
@@ -83,6 +84,8 @@ describe('lessons', () => {
     ESC: /electronic speed controller/i,
     'flight controller': /drone’s brain/i,
     Betaflight: /software/i,
+    LiPo: /lithium polymer/i,
+    mAh: /milliamp/i,
   };
 
   it.each(allLessons.map((l) => [l.partId, l] as const))(
@@ -97,5 +100,40 @@ describe('lessons', () => {
 
   it('credits the propellers, not the motors, with making thrust', () => {
     expect(LESSONS.motors.whatItDoes).not.toMatch(/into the thrust/);
+  });
+
+  it('quotes the battery numbers from the drone spec', () => {
+    const values = specValues(LESSONS.battery);
+    for (const expected of ['6S', '1100 mAh', '100C', 'XT60']) {
+      expect(
+        values.some((v) => v.includes(expected)),
+        expected,
+      ).toBe(true);
+    }
+  });
+
+  it('computes the battery voltages from the cell count', () => {
+    const cells = REFERENCE_5_INCH.motor.batteryCells;
+    const text = lessonText(LESSONS.battery);
+    expect(text).toContain(`${packVolts(cells, LIPO_CELL_VOLTS.nominal).toFixed(1)} V`);
+    expect(text).toContain(`${packVolts(cells, LIPO_CELL_VOLTS.full).toFixed(1)} V`);
+    expect(text).toContain(`${LIPO_CELL_VOLTS.storage.toFixed(1)} V`);
+  });
+
+  it('teaches battery safety', () => {
+    const text = lessonText(LESSONS.battery);
+    expect(text).toMatch(/puff/i);
+    expect(text).toMatch(/unattended/i);
+    expect(text).toMatch(/storage/i);
+  });
+
+  // Parts that are physically connected link to each other from both lessons.
+  const PAIRS: [PartId, PartId][] = [['battery', 'frame']];
+
+  it.each(PAIRS)('links %s and %s both ways', (a, b) => {
+    const linksTo = (from: PartId, to: PartId) =>
+      LESSONS[from].connections.some((c) => c.partId === to);
+    expect(linksTo(a, b), `${a} → ${b}`).toBe(true);
+    expect(linksTo(b, a), `${b} → ${a}`).toBe(true);
   });
 });

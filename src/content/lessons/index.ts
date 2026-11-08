@@ -1,5 +1,6 @@
 import type { PartId } from '@/shared/domain/parts';
 
+import { batteryLesson } from './battery';
 import { frameLesson } from './frame';
 import { motorsLesson } from './motors';
 import { propsLesson } from './props';
@@ -11,4 +12,5 @@ export const LESSONS: Record<PartId, Lesson> = {
   frame: frameLesson,
   motors: motorsLesson,
   props: propsLesson,
+  battery: batteryLesson,
 };

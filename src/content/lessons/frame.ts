@@ -49,6 +49,6 @@ export const frameLesson: Lesson = {
       text: 'The stack (flight controller on top of the ESC) mounts in the middle, on soft rubber grommets.',
     },
     { text: 'The camera mounts at the front, between two side plates.' },
-    { text: 'The battery sits on the top plate, held down by a strap.' },
+    { text: 'The battery sits on the top plate, held down by a strap.', partId: 'battery' },
   ],
 };
