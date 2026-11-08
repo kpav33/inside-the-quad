@@ -70,16 +70,16 @@ packHeightMm }`, values per Global Constraints.
 minResting: 3.3 } as const`; `packVolts(cells: number, perCell: number): number` (rounded to 1
   decimal).
 
-- [ ] **Step 1: Failing tests.** `lipo.test.ts`: `packVolts(6, LIPO_CELL_VOLTS.nominal)` is `22.2`,
+- [x] **Step 1: Failing tests.** `lipo.test.ts`: `packVolts(6, LIPO_CELL_VOLTS.nominal)` is `22.2`,
       `packVolts(6, LIPO_CELL_VOLTS.full)` is `25.2`, `packVolts(4, 4.2)` is `16.8`. Spec test: the
       capacitor voltage exceeds the full pack voltage
       (`esc.capacitorV > packVolts(motor.batteryCells, full)`); the ESC and FC boards are at least
       `frame.stackMountMm + 4` wide (room around the holes); the battery pack fits the top plate
       (`packLengthMm <= bodyLengthMm`, `packWidthMm <= bodyWidthMm`).
-- [ ] **Step 2:** `pnpm test src/shared/domain` fails.
-- [ ] **Step 3:** Add the fields, `lipo.ts`, and switch `motors.ts` and `overview.ts`.
-- [ ] **Step 4:** `pnpm check` passes.
-- [ ] **Step 5:** `feat(domain): add ESC, flight controller and battery specs`
+- [x] **Step 2:** `pnpm test src/shared/domain` fails.
+- [x] **Step 3:** Add the fields, `lipo.ts`, and switch `motors.ts` and `overview.ts`.
+- [x] **Step 4:** `pnpm check` passes.
+- [x] **Step 5:** `feat(domain): add ESC, flight controller and battery specs`
 
 ### Task 2: Battery part and lesson
 
@@ -96,7 +96,7 @@ minResting: 3.3 } as const`; `packVolts(cells: number, perCell: number): number`
   `PART_LABELS.battery = 'Battery'`, `MODEL_COLOR.battery`, `partQuantity('battery') === 1`,
   `LESSONS.battery`.
 
-- [ ] **Step 1: Failing tests** in `lessons.test.ts`:
+- [x] **Step 1: Failing tests** in `lessons.test.ts`:
   - `quotes the battery numbers from the drone spec`: spec values include `6S`, `1100 mAh`, `100C`,
     `XT60`.
   - battery lesson text contains `22.2 V` and `25.2 V` (computed via `packVolts`) and `3.8 V`.
@@ -104,14 +104,14 @@ minResting: 3.3 } as const`; `packVolts(cells: number, perCell: number): number`
   - add to `JARGON`: `LiPo: /lithium polymer/i`, `mAh: /milliamp/i`.
   - new test `links connected parts both ways`, with `PAIRS` holding `['battery', 'frame']` for
     now: for each pair present in `PART_IDS`, each lesson has a connection with the other's id.
-- [ ] **Step 2:** `pnpm test src/content` fails.
-- [ ] **Step 3:** Write `battery.ts` from scope 2.5 (spec rows: Cells, Capacity, C rating,
+- [x] **Step 2:** `pnpm test src/content` fails.
+- [x] **Step 3:** Write `battery.ts` from scope 2.5 (spec rows: Cells, Capacity, C rating,
       Connector, Cell voltages). The C-rating row computes the label's current
       (`cRating × capacityMah / 1000` = 110 A) and says labels are often exaggerated. The ESC
       connection is plain text until Task 3. Give the frame lesson's battery line `partId: 'battery'`.
       Add the id, label, colour and quantity.
-- [ ] **Step 4:** `pnpm check` passes.
-- [ ] **Step 5:** `feat(content): add the battery lesson`
+- [x] **Step 4:** `pnpm check` passes.
+- [x] **Step 5:** `feat(content): add the battery lesson`
 
 ### Task 3: ESC part and lesson
 
@@ -123,16 +123,16 @@ minResting: 3.3 } as const`; `packVolts(cells: number, perCell: number): number`
 - Produces: `'esc'` in `PART_IDS`, `PART_LABELS.esc = 'ESC'`, `MODEL_COLOR.esc`,
   `partQuantity('esc') === 1` (one 4-in-1 board), `LESSONS.esc`.
 
-- [ ] **Step 1: Failing tests:** ESC spec values include `4-in-1`, `55 A`, `DShot600`,
+- [x] **Step 1: Failing tests:** ESC spec values include `4-in-1`, `55 A`, `DShot600`,
       `30.5 × 30.5 mm`, `1000 µF`; `JARGON` gains `DShot: /digital/i`, `'back-EMF': /voltage/i`;
       `PAIRS` gains `['esc', 'battery']`, `['esc', 'motors']`, `['esc', 'frame']`.
-- [ ] **Step 2:** tests fail.
-- [ ] **Step 3:** Write `esc.ts` from scope 2.4 (spec rows: Type, Current, Protocol, Mount,
+- [x] **Step 2:** tests fail.
+- [x] **Step 3:** Write `esc.ts` from scope 2.4 (spec rows: Type, Current, Protocol, Mount,
       Capacitor). Link the motors lesson's "soldered to the ESC" line and the battery's ESC line to
       `'esc'`. Split the frame lesson's stack line into an ESC line (`partId: 'esc'`) and an FC line
       (plain text until Task 4). FC mentions stay plain text until Task 4.
-- [ ] **Step 4:** `pnpm check` passes.
-- [ ] **Step 5:** `feat(content): add the ESC lesson`
+- [x] **Step 4:** `pnpm check` passes.
+- [x] **Step 5:** `feat(content): add the ESC lesson`
 
 ### Task 4: Flight controller part and lesson
 
@@ -145,17 +145,17 @@ minResting: 3.3 } as const`; `packVolts(cells: number, perCell: number): number`
   `PART_LABELS.fc = 'Flight controller'`, `MODEL_COLOR.fc`, `partQuantity('fc') === 1`,
   `LESSONS.fc`.
 
-- [ ] **Step 1: Failing tests:** `PART_IDS` equals the final order; FC spec values include `F7`,
+- [x] **Step 1: Failing tests:** `PART_IDS` equals the final order; FC spec values include `F7`,
       `Betaflight`, `6`, `5 V`, `10 V`, `30.5 × 30.5 mm`; `JARGON` gains `UART: /serial port/i`,
       `BEC: /regulator/i`, `gyro: /rotat/i`, `AIO: /all-in-one/i`; `PAIRS` gains `['fc', 'esc']`,
       `['fc', 'frame']`.
-- [ ] **Step 2:** tests fail.
-- [ ] **Step 3:** Write `fc.ts` from scope 2.6 (spec rows: Processor, Firmware, UARTs, BEC,
+- [x] **Step 2:** tests fail.
+- [x] **Step 3:** Write `fc.ts` from scope 2.6 (spec rows: Processor, Firmware, UARTs, BEC,
       Mount). The receiver, VTX and camera connections are plain text (03b). Link the ESC and frame
       lessons' FC lines to `'fc'`. Reorder `PART_IDS`.
-- [ ] **Step 4:** `pnpm check` passes. `pnpm dev`: the list shows six parts and each lesson opens
+- [x] **Step 4:** `pnpm check` passes. `pnpm dev`: the list shows six parts and each lesson opens
       (the new parts have no 3D yet).
-- [ ] **Step 5:** `feat(content): add the flight controller lesson`
+- [x] **Step 5:** `feat(content): add the flight controller lesson`
 
 ### Task 5: Stack geometry, exploded offsets and easing
 
@@ -176,16 +176,16 @@ minResting: 3.3 } as const`; `packVolts(cells: number, perCell: number): number`
 { value: number; settled: boolean }`, using `THREE.MathUtils.damp` with lambda 10, snapping to
   the target within 0.01 mm.
 
-- [ ] **Step 1: Failing tests:** closed offsets are all 0; in `stackLayers` closed, ESC top <
+- [x] **Step 1: Failing tests:** closed offsets are all 0; in `stackLayers` closed, ESC top <
       FC bottom < FC top < top-plate bottom; open, every lifted layer's bottom is at least 8 mm above
       the lifted layer below's top; `isStackPart('esc')`, `isStackPart('fc')` true, `'battery'` and
       `null` false; `stepLift(0, 50, 1/60, true)` returns `{ value: 50, settled: true }`; from
       starts `-20, 0, 37, 80` to target `50`, repeated 1/60 s steps settle within 120 steps and
       never overshoot.
-- [ ] **Step 2:** tests fail.
-- [ ] **Step 3:** Implement.
-- [ ] **Step 4:** `pnpm check` passes.
-- [ ] **Step 5:** `feat(drone-model): add stack layers and exploded offsets`
+- [x] **Step 2:** tests fail.
+- [x] **Step 3:** Implement.
+- [x] **Step 4:** `pnpm check` passes.
+- [x] **Step 5:** `feat(drone-model): add stack layers and exploded offsets`
 
 ### Task 6: 3D parts and the exploded stack
 
@@ -205,20 +205,20 @@ Load impeccable and read `craft-floor.md` before this task.
   `useFrame` via `stepLift`; calls `invalidate()` while not settled and in an effect when `liftMm`
   changes; reads `prefers-reduced-motion` once on mount.
 
-- [ ] **Step 1:** Components, sized from the spec and `stackLayers`: ESC board with a few blocky
+- [x] **Step 1:** Components, sized from the spec and `stackLayers`: ESC board with a few blocky
       components and the capacitor on two leads at the rear (+z); FC board with grommet rings at the
       four `stackMountMm` holes; battery as a rounded box (drei `RoundedBox`) lying lengthwise on the
       top plate with an XT60 block at the rear. Each uses `PartMaterial` with its own part id.
-- [ ] **Step 2:** `DroneModel`: `const open = isStackPart(selectedPart)`; wrap ESC, FC, top plate
+- [x] **Step 2:** `DroneModel`: `const open = isStackPart(selectedPart)`; wrap ESC, FC, top plate
       and battery in `Lift` with `explodedOffsets(spec, open)` (battery uses the top-plate offset);
       add `partGroup('esc' | 'fc' | 'battery', …)`.
-- [ ] **Step 3:** `pnpm check` passes.
-- [ ] **Step 4: Seen working.** `pnpm build && pnpm preview`; screenshots at 1280 × 800 and
+- [x] **Step 3:** `pnpm check` passes.
+- [x] **Step 4: Seen working.** `pnpm build && pnpm preview`; screenshots at 1280 × 800 and
       390 × 844 with nothing selected, ESC selected and FC selected. Confirm: the closed stack sits
       between the plates; open, every layer is separated and the whole drone stays inside the
       canvas (if not, reduce the offsets in `stack.ts` and its test); the selected board is redline;
       clicking a lifted board selects it. With `prefers-reduced-motion` emulated the stack jumps.
-- [ ] **Step 5:** `feat(drone-model): add ESC, flight controller and battery with an exploded stack`
+- [x] **Step 5:** `feat(drone-model): add ESC, flight controller and battery with an exploded stack`
 
 ### Task 7: End-to-end coverage for six parts
 
@@ -228,17 +228,17 @@ Load impeccable and read `craft-floor.md` before this task.
 controller', 'Battery']`)
 - Modify: `e2e/explorer.spec.ts`, `e2e/design.spec.ts`, `e2e/touch.spec.ts`
 
-- [ ] **Step 1:** Replace the hard-coded three-part arrays with `PART_NAMES`.
-- [ ] **Step 2:** The centre click now lands on the battery: change that test to expect
+- [x] **Step 1:** Replace the hard-coded three-part arrays with `PART_NAMES`.
+- [x] **Step 2:** The centre click now lands on the battery: change that test to expect
       `Battery`, and add a frame click at an arm point (choose the canvas fraction from the Task 6
       screenshots).
-- [ ] **Step 3:** New tests: selecting ESC, Flight controller and Battery from the list opens each
+- [x] **Step 3:** New tests: selecting ESC, Flight controller and Battery from the list opens each
       lesson; with ESC selected, clicking the lifted FC (fraction from screenshots) opens the FC
       lesson; with ESC selected, clicking the lifted battery opens the battery lesson, then clicking
       the background closes it (Review Focus 3); keyboard: focus the ESC row, press Enter, the ESC
       lesson opens; Escape closes it (Review Focus 5).
-- [ ] **Step 4:** `pnpm test:e2e` passes.
-- [ ] **Step 5:** `test(e2e): cover the ESC, flight controller and battery`
+- [x] **Step 4:** `pnpm test:e2e` passes.
+- [x] **Step 5:** `test(e2e): cover the ESC, flight controller and battery`
 
 ### Task 8: Docs
 
@@ -246,12 +246,12 @@ controller', 'Battery']`)
 `.impeccable/surfaces/src-features-part-explorer-partexplorer-tsx.md`, `docs/README.md` (if it
 lists plans).
 
-- [ ] **Step 1:** Roadmap: replace 03 with 03a (this section, in progress) and 03b (receiver,
+- [x] **Step 1:** Roadmap: replace 03 with 03a (this section, in progress) and 03b (receiver,
       camera, VTX and antennas, extras). PRODUCT.md "Built so far": six parts and the exploded stack.
       Architecture overview: `stack.ts` and `Lift`. DESIGN.md and the brief: the exploded stack reads
       as an exploded-view drawing; redline marks only the selected board.
-- [ ] **Step 2:** `pnpm check` passes.
-- [ ] **Step 3:** `docs: describe the power and control parts and the exploded stack`
+- [x] **Step 2:** `pnpm check` passes.
+- [x] **Step 3:** `docs: describe the power and control parts and the exploded stack`
 
 ## Acceptance
 
