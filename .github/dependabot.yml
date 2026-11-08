@@ -29,3 +29,8 @@ updates:
     commit-message:
       prefix: build
       include: scope
+    ignore:
+      # The Node major version is kept in sync with .nvmrc and CI and moved deliberately to an
+      # LTS release (Node 25+ also drops corepack, which the Dockerfile uses).
+      - dependency-name: node
+        update-types: [version-update:semver-major]
