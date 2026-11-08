@@ -1,0 +1,127 @@
+# Review: section 03a — Power and control parts
+
+- Branch: feat/power-and-control · Reviewed commit: 37987d8 · Date: 2026-11-08
+
+## Summary
+
+The section delivers what the spec and plan promised: ESC, flight controller and battery specs,
+LiPo constants, three four-question lessons whose numbers come from the spec, one procedural
+component per part, and an exploded stack driven by plain, unit-tested functions (`stack.ts`) with
+a small easing group (`Lift`). All gates are green, including e2e against the Docker image. The
+architecture rules hold, and the FPV facts are correct apart from one misleading line about the
+VTX and a few wordings that are too absolute. Nothing is blocking. There are three should-fix
+items. First, in the wide layout's narrow band (about 900 to 1150 px wide, ~700 px tall) the
+six-row list pushes the drawing frame off the screen. Second, resizing the window while the stack
+is open re-fits the camera to the exploded drone and the camera stays that way. Third, the VTX
+connection line in the FC lesson. Ready to merge once these are fixed or given a written reason.
+
+## Checks
+
+| Command                                       | Result                                                      |
+| --------------------------------------------- | ----------------------------------------------------------- |
+| pnpm check                                    | pass (typecheck, lint, format; 18 files, 121 unit tests)    |
+| pnpm test:e2e                                 | pass (43 passed, 4 nginx-only tests skipped)                |
+| pnpm build                                    | pass (entry 247.8 kB / 78.7 kB gzip; viewer chunk separate) |
+| docker build .                                | pass                                                        |
+| e2e against the Docker image (`E2E_BASE_URL`) | pass (47 passed)                                            |
+
+I also checked things by hand with Playwright scripts (kept outside the repo) against the Docker
+image: the five Review Focus items, screenshots of the open stack at 1280×800, 900×700 and 390×844,
+canvas sizes at seven viewports, a window resize while the stack is open, and the two-column list
+with 40 % longer text. I stopped the container and removed the image afterwards.
+
+## Review Focus results
+
+1. **Switching parts mid-animation:** verified. I clicked ESC, waited 60 ms, clicked Motors,
+   waited 60 ms, then clicked Flight controller. The settled canvas was pixel-identical to
+   selecting FC directly. Going ESC → Motors and then clearing the selection settled
+   pixel-identical to the closed drone. `stepLift` convergence tests cover starts below, at,
+   between and above the target.
+2. **Reduce motion:** verified with `reducedMotion: 'reduce'`. Two animation frames after the
+   ESC click (and after Escape), the canvas already matches the settled picture, so the stack
+   opens and closes at once. As the Task 7 ruling says, `Lift` reading the media query is only
+   checked by hand (finding 11).
+3. **Clicking while the stack is open:** verified by the e2e (lifted FC, then lifted battery,
+   then background). Selecting the battery closes the stack, because `isStackPart('battery')` is
+   false (unit-tested). The e2e does not assert that the stack closed, but the logic is trivial.
+4. **Six parts at 320 px with 40 % longer text:** verified. No horizontal overflow with the e2e's
+   stretch method for the overview and all six parts. All six rows are 48 px.
+5. **Keyboard only:** verified. Tab order is Frame, Motors, Propellers, ESC. Enter on ESC opens
+   its lesson, and the stack opens (the canvas changes). Escape closes both: the canvas returns
+   pixel-identical to the closed state and focus goes back to the ESC row. In the two-column
+   layout, DOM order and tab order run down column 1 and then column 2, which matches the item
+   numbers.
+
+## Rulings in progress.md
+
+- **Task 3, LessonPanel plain-text test moved to the balance-lead line:** sound. The ESC line
+  has to link now, and the balance lead is still plain text.
+- **Task 4, list check folded into Task 6's screenshot pass:** acceptable. The six-part list
+  renders correctly in my screenshots.
+- **Task 6, easing lambda 10 → 15:** sound. 1 − e^(−15 × 0.2) ≈ 0.95, which matches the brief's
+  150–200 ms. The convergence test still settles within 120 steps.
+- **Task 6, plain box instead of drei `RoundedBox`:** sound. The ink edges are what make the pack
+  read as a drawing. The plan still says `RoundedBox`, but the design doc was updated.
+- **Task 6, lifted-board clicks checked in the e2e instead of by hand:** sound. They are
+  repeatable there.
+- **Task 7, two-column parts list (the user's decision):** a good fix at 1280×720 (canvas 336 px,
+  two columns) and on tablets. It doesn't help in the wide layout's narrow band, where the field
+  is under 34rem and the list is still one column of six rows (finding 1).
+- **Task 7, shortened ESC/FC values:** sound. "55 A" sits under the label "Current per motor".
+- **Task 7, click helper waits for a still picture:** sound. It made the hit-point tests stable
+  in both runs. The points are tied to the 1280×720 camera fit, which finding 2 can change, but
+  the tests always start from a fresh page.
+- **Task 7, no e2e for reduced motion:** acceptable. I verified it by hand (focus item 2).
+
+## Findings
+
+| #   | Severity   | Area                                                               | Finding                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Resolution |
+| --- | ---------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| 1   | should-fix | src/styles/global.css:644, 688                                     | **In the wide layout's narrow band, six list rows push the drawing frame off the screen.** The two-column split needs the field's content box to be at least 34rem. The wide layout starts at a 56rem main area, so from about 896 to 1150 px wide the list stays one column of six 48 px rows (357 px). Measured at 1100×700 and 900×700: `.drawing-canvas` sits at its 16rem minimum (208 px of drawing), the field is 687 px tall in a 648 px main area, and the page scrolls 39 px. That cuts off the drawing frame's bottom border, although the wide layout is meant to fill the viewport (confirmed by screenshot). At 1024×768 the canvas is 237 px and nothing scrolls. Before this section the band had three rows. Options: let the split also apply when the wide layout is active (e.g. a lower field threshold, since two columns of English names fit in ~30rem), cap the sheet column lower in this band, or let the list scroll. Add an e2e test at 1100×700. |            |
+| 2   | should-fix | src/features/drone-viewer/DroneViewer.tsx:42; drone-model/Lift.tsx | **Resizing while the stack is open re-fits the camera to the exploded drone, and it stays that way.** `<Bounds fit observe>` re-fits whenever the canvas size changes, using the current, lifted geometry. Verified: at 1280×720, select ESC, resize to 1300 and back, then deselect. The closed drone is drawn smaller and lower than on a fresh page (screenshot), and it stays like that until reload. A control run with Motors selected comes back pixel-identical. The spec says the camera does not re-fit when the stack opens. Rotating a phone or tablet, or resizing a window, triggers this. Fix: fit to the closed drone's box (e.g. an invisible box mesh of the closed bounds inside `Bounds`, with the lifted groups outside it), or re-fit only while the stack is closed.                                                                                                                                                                                    |            |
+| 3   | should-fix | src/content/lessons/fc.ts:64                                       | **The VTX connection line is only true for digital video.** "The video transmitter plugs into another UART, so the flight controller can add on-screen text … to your video." On digital systems (DJI, Walksnail, HDZero) the OSD does travel over that UART. On analog, which the scope's reference drone also allows, the FC adds the OSD to the camera's video signal as it passes through the board. There the UART only lets the FC change the VTX's channel and power (SmartAudio/Tramp). A beginner with an analog quad would form the wrong picture. Suggested wording: "…so the flight controller can set its channel and power, and on digital systems send the on-screen text (battery voltage, timer) to your goggles." The OSD details can wait for 03b.                                                                                                                                                                                                          |            |
+| 4   | nit        | src/content/lessons/esc.ts:17, 19                                  | **"Three coils" contradicts the motors lesson.** The motors lesson describes the stator as "a fixed ring of copper wire coils" (a 2207 has 12), but the ESC lesson says the ESC "switches each motor's three coils" and reads back-EMF from "the coil that is switched off". The three things are phases (groups of coils, one per wire). Suggest "three sets of coils (one per wire)" and "the set of coils that is switched off at that moment".                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |            |
+| 5   | nit        | src/content/lessons/esc.ts:20                                      | **"Electrical noise can't change the motor speed" is too absolute.** Noise can corrupt a DShot frame. A built-in checksum lets the ESC spot the bad frame and ignore it, and that is the real advantage over analog PWM. Suggest: "…each command is sent as a number with a check, so a command garbled by electrical noise is ignored instead of changing the motor speed." The 600 → 600 kbit/s maths is correct.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |            |
+| 6   | nit        | src/content/lessons/battery.ts:19                                  | **"Or it is damaged" overstates the 3.3 V limit.** About 3.3 V resting is the scope's safe floor. Lasting damage becomes likely nearer 3.0 V. Suggest "or it can be damaged". The other voltages are correct (3.7/4.2 V per cell, 22.2/25.2 V for 6S, 3.8 V storage, ~3.5 V under load), and so are the C-rating maths (100C × 1.1 Ah = 110 A) and the capacitor rule (35 V > 25.2 V).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |            |
+| 7   | nit        | src/content/lessons/fc.ts:15                                       | **"The gyro … also called the IMU."** An IMU is the gyro plus the accelerometer, so the gyro is part of the IMU, not another name for it. This follows the scope's shorthand "Gyro (IMU)", so it isn't a content defect against the scope. "(part of the IMU)" would be accurate at no cost.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |            |
+| 8   | nit        | src/content/lessons/esc.ts:8; src/shared/domain/drone-spec.ts      | **The signal speed is parsed out of a free-form string.** `Number(esc.protocol.replace(/\D/g, ''))` gives 600 for "DShot600", but `protocol` is typed `string`. A future spec with "DShot" or "PWM" would print "sends 0 thousand bits per second" without any error. Type it as `` `DShot${number}` `` or store the rate as its own field.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |            |
+| 9   | nit        | e2e/touch.spec.ts:47                                               | **The touch tap test no longer checks which part it selected.** It now only asserts that `#lesson-panel` is visible, so a tap that hit the wrong part would still pass. `explorer.spec.ts` asserts the Battery heading at the same spot. Do the same here, or assert any heading from `PART_NAMES` and note that the hit point is not calibrated for the Pixel 7.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |            |
+| 10  | nit        | DESIGN.md:200                                                      | **Touch sentences ended up in the wrong paragraph.** "One finger scrolls the page over the drawing; two fingers turn it. The hint text switches to touch wording…" used to close the Narrow paragraph. They now sit at the end of the new "Parts list columns" paragraph, which is about something else. Move them back under Narrow.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |            |
+| 11  | nit        | src/features/drone-model/Lift.tsx:25-28                            | **Reduced motion is read once and not covered by tests.** `matchMedia` is read once on mount, as planned, so a setting changed during the session is ignored until reload. Per the Task 7 ruling, nothing automated checks that `Lift` passes the media query result to `stepLift`. I verified it by hand. A `change` listener (or drei/R3F's media hooks) would fix both, if wanted.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |            |
+| 12  | nit        | src/styles/global.css:293-300                                      | **With 40 % longer text, the ITEM column heading overflows its 2.5rem cell.** Measured at 1120 to 1280 px and at 600 to 768 px: "ItemIt" spills into the next cell. Each header row has one. The two-column layout doubles it. The e2e robustness test only checks `.part-list-row` and title-block cells, so it doesn't see this. The heading is `aria-hidden` and muted, so the effect is small. Probably pre-existing in the one-column header (it also happens at 1120 px with one column); I did not check this on `main`.                                                                                                                                                                                                                                                                                                                                                                                                                                                |            |
+
+## Strengths
+
+- **One truth for the numbers:** every value in the three lessons comes from `DroneSpec` or
+  `LIPO_CELL_VOLTS`. `packVolts` replaced the motors lesson's own constant. Spec tests pin the
+  physical rules: the capacitor is rated above a full pack, the boards are wider than their
+  mounting holes, and the pack fits the top plate.
+- **Animation logic as plain functions:** `stackLayers`, `explodedOffsets` and `stepLift` are pure
+  and tested for order, gaps, reduced motion and convergence without overshoot. `Lift` only calls
+  `invalidate()` while it moves and caps the frame delta, so a long pause between on-demand frames
+  can't cause a jump.
+- **Selection model:** both stack parts give the same offsets, so ESC ↔ FC moves nothing. The
+  top plate and the battery share one offset. Every new part is one clickable group, and lifted
+  boards really can be clicked (e2e).
+- **Lessons:** plain voice, every term explained on first use (the jargon test now covers LiPo,
+  mAh, DShot, back-EMF, UART, BEC, gyro, AIO), safety covered, and BLHeli_S / Bluejay / AM32 /
+  INAV / ArduPilot named only as examples. Connections link both ways, and a test enforces it.
+- **Parts list:** the two-column split keeps one `<ul>` in item order, so screen readers and Tab
+  see one list. The duplicate headings are `aria-hidden`. Rows stay 48 px everywhere I measured.
+- **Docs:** roadmap, PRODUCT.md, the architecture overview, DESIGN.md, design.json and the
+  surface brief were all updated in the branch.
+- **Commits:** clean Conventional Commits, one logical change each. The unplanned two-column
+  commit explains why in its body.
+
+## Declined to judge
+
+- Visual quality of the procedural ESC/FC/battery shapes: I only looked at screenshots. They read
+  as an exploded drawing, with the selected board in redline.
+- The 34rem threshold itself and the column-first fill: the user's decision. I only judged the
+  band it leaves uncovered (finding 1).
+- Whether each intermediate commit passes `pnpm test:e2e`: git.md only requires `pnpm check` per
+  commit. The centre-click e2e test was probably broken between e8c0048 and f536143 (not verified).
+- Real-device touch and real GPU performance with four `Lift` frame callbacks: only checked with
+  Chromium headless.
+- Real ESC board and capacitor sizes (41 mm board, 10 × 16 mm capacitor) are plausible model
+  values. I did not compare them with specific products, because recommendations are out of scope.
