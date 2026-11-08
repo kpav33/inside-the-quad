@@ -3,13 +3,13 @@ import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 
 import { LESSONS } from '@/content/lessons';
 import { overviewSpec } from '@/content/overview';
-import { UI } from '@/content/ui';
+import { PART_LABELS, UI } from '@/content/ui';
 import { DroneViewer } from '@/features/drone-viewer';
 import type { PartId } from '@/shared/domain/parts';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
 
 import { isDeliberateClick } from './clicks';
-import { lessonTitleId, partButtonId } from './ids';
+import { LESSON_PANEL_ID, lessonTitleId, partButtonId } from './ids';
 import { LessonPanel } from './LessonPanel';
 import { PartList } from './PartList';
 import { TitleBlock } from './TitleBlock';
@@ -38,6 +38,21 @@ export function PartExplorer() {
     }
   }, [selectedPart]);
 
+  // After choosing a part, bring the start of its lesson into view if it is off screen: below the
+  // fold on phones, or scrolled away in the desktop sheet column.
+  const revealLesson = useRef(false);
+  useEffect(() => {
+    if (!revealLesson.current || !selectedPart) return;
+    revealLesson.current = false;
+    const panel = document.getElementById(LESSON_PANEL_ID);
+    if (!panel) return;
+    const { top } = panel.getBoundingClientRect();
+    if (top < 0 || top > window.innerHeight * 0.75) {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      panel.scrollIntoView({ block: 'start', behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+  }, [selectedPart]);
+
   const closeLesson = useCallback(() => {
     if (!selectedPart) return;
     focusTarget.current = partButtonId(selectedPart);
@@ -55,6 +70,7 @@ export function PartExplorer() {
   }, [closeLesson]);
 
   const togglePart = (part: PartId) => {
+    revealLesson.current = selectedPart !== part;
     setSelectedPart((current) => (current === part ? null : part));
   };
 
@@ -64,7 +80,9 @@ export function PartExplorer() {
   };
 
   const onPartClick = (part: PartId, event: ThreeEvent<MouseEvent>) => {
-    if (isDeliberateClick(event.delta)) setSelectedPart(part);
+    if (!isDeliberateClick(event.delta)) return;
+    revealLesson.current = true;
+    setSelectedPart(part);
   };
 
   const clearSelection = () => {
@@ -73,6 +91,9 @@ export function PartExplorer() {
 
   return (
     <div className="part-explorer">
+      <p className="visually-hidden" aria-live="polite" data-testid="explorer-announcer">
+        {selectedPart ? UI.explorer.opened(PART_LABELS[selectedPart]) : ''}
+      </p>
       <div className="part-explorer-field">
         <div className="drawing-frame">
           <div className="drawing-canvas">

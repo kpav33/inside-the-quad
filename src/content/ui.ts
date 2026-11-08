@@ -33,6 +33,7 @@ export const UI = {
     columns: { item: 'Item', part: 'Part', quantity: 'Qty' },
   },
   explorer: {
+    opened: (part: string) => `${part} lesson opened`,
     hint: 'Select a part on the drone or in the parts list to see what it does and how it works.',
   },
   titleBlock: {

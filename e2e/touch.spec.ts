@@ -67,6 +67,12 @@ test.describe('phone touch', () => {
     expect(after.equals(before)).toBe(false);
   });
 
+  test('choosing a part brings its lesson onto the screen', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Motors', exact: true }).tap();
+    await expect(page.getByRole('heading', { level: 2, name: 'Motors' })).toBeInViewport();
+  });
+
   test('the drawing field takes about 40% of the screen', async ({ page }) => {
     await page.goto('/');
     const ratio = await page.evaluate(() => {

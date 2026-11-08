@@ -64,6 +64,12 @@ describe('PartExplorer', () => {
     expect(block).toHaveTextContent('5 × 4.3 × 3');
   });
 
+  it('announces the lesson that opened', async () => {
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Motors' }));
+    expect(screen.getByTestId('explorer-announcer')).toHaveTextContent('Motors lesson opened');
+  });
+
   it('toggles a lesson from the part list', async () => {
     await renderExplorer();
     const motors = screen.getByRole('button', { name: 'Motors' });
