@@ -30,6 +30,10 @@ nginx/              Production server config (copied into the Docker image)
   new `DroneSpec` objects.
 - `part-explorer` owns which part is selected. The 3D view and the part list both change it; the
   lesson panel shows the selected part's lesson from `content/lessons`.
+- Parts inside the frame (ESC, flight controller) are shown by opening the stack as an exploded
+  view. `drone-model/stack.ts` holds the stack heights, the lift offsets and the easing step as
+  plain functions; `drone-model/Lift.tsx` eases a group to its offset and only asks for new frames
+  while it moves (the canvas draws on demand).
 - The part list is the accessible equivalent of clicking in 3D, so the canvas is hidden from
   assistive technology and everything still works if WebGL fails.
 

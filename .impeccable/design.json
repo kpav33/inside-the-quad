@@ -138,6 +138,51 @@
           "oklch(83.6% 0.002 248.2)",
           "oklch(95.0% 0.002 248.2)"
         ]
+      },
+      "model-esc": {
+        "role": "neutral",
+        "displayName": "ESC Fill",
+        "canonical": "oklch(25.0% 0.010 248.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.010 248.2)",
+          "oklch(26.4% 0.009 248.2)",
+          "oklch(37.9% 0.007 248.2)",
+          "oklch(49.3% 0.006 248.2)",
+          "oklch(60.7% 0.005 248.2)",
+          "oklch(72.1% 0.004 248.2)",
+          "oklch(83.6% 0.003 248.2)",
+          "oklch(95.0% 0.002 248.2)"
+        ]
+      },
+      "model-fc": {
+        "role": "neutral",
+        "displayName": "FC Fill",
+        "canonical": "oklch(25.4% 0.007 248.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.007 248.1)",
+          "oklch(26.4% 0.006 248.1)",
+          "oklch(37.9% 0.006 248.1)",
+          "oklch(49.3% 0.005 248.1)",
+          "oklch(60.7% 0.004 248.1)",
+          "oklch(72.1% 0.003 248.1)",
+          "oklch(83.6% 0.002 248.1)",
+          "oklch(95.0% 0.002 248.1)"
+        ]
+      },
+      "model-battery": {
+        "role": "neutral",
+        "displayName": "Battery Fill",
+        "canonical": "oklch(26.6% 0.009 248.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.009 248.2)",
+          "oklch(26.4% 0.008 248.2)",
+          "oklch(37.9% 0.007 248.2)",
+          "oklch(49.3% 0.006 248.2)",
+          "oklch(60.7% 0.005 248.2)",
+          "oklch(72.1% 0.004 248.2)",
+          "oklch(83.6% 0.003 248.2)",
+          "oklch(95.0% 0.002 248.2)"
+        ]
       }
     },
     "typographyMeta": {
@@ -208,7 +253,7 @@
       "purpose": "Global focus ring; offset -2px inside parts-list rows."
     },
     "model3d": {
-      "unselected": "fill MODEL_COLOR[part] (sheet / model-motors / model-props), Edges color ink, threshold 20",
+      "unselected": "fill MODEL_COLOR[part] (sheet / model-motors / model-props / model-esc / model-fc / model-battery), Edges color ink, threshold 20",
       "selected": "fill accent, Edges color ground",
       "material": "meshStandardMaterial roughness 1 metalness 0"
     }

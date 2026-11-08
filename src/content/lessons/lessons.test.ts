@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { motorSizeCode, propSizeCode, REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
-import { PART_IDS } from '@/shared/domain/parts';
+import { LIPO_CELL_VOLTS, packVolts } from '@/shared/domain/lipo';
+import { PART_IDS, type PartId } from '@/shared/domain/parts';
 
 import { LESSONS } from './index';
 import type { Lesson } from './types';
@@ -83,6 +84,14 @@ describe('lessons', () => {
     ESC: /electronic speed controller/i,
     'flight controller': /drone’s brain/i,
     Betaflight: /software/i,
+    LiPo: /lithium polymer/i,
+    mAh: /milliamp/i,
+    DShot: /digital/i,
+    'back-EMF': /voltage/i,
+    UART: /serial port/i,
+    BEC: /regulator/i,
+    gyro: /rotat/i,
+    AIO: /all-in-one/i,
   };
 
   it.each(allLessons.map((l) => [l.partId, l] as const))(
@@ -97,5 +106,96 @@ describe('lessons', () => {
 
   it('credits the propellers, not the motors, with making thrust', () => {
     expect(LESSONS.motors.whatItDoes).not.toMatch(/into the thrust/);
+  });
+
+  it('quotes the battery numbers from the drone spec', () => {
+    const values = specValues(LESSONS.battery);
+    for (const expected of ['6S', '1100 mAh', '100C', 'XT60']) {
+      expect(
+        values.some((v) => v.includes(expected)),
+        expected,
+      ).toBe(true);
+    }
+  });
+
+  it('quotes the ESC numbers from the drone spec', () => {
+    const values = specValues(LESSONS.esc);
+    for (const expected of ['4-in-1', '55 A', 'DShot600', '30.5 × 30.5 mm', '1000 µF']) {
+      expect(
+        values.some((v) => v.includes(expected)),
+        expected,
+      ).toBe(true);
+    }
+  });
+
+  it('quotes the flight controller numbers from the drone spec', () => {
+    const values = specValues(LESSONS.fc);
+    for (const expected of ['F7', 'Betaflight', '6', '5 V', '10 V', '30.5 × 30.5 mm']) {
+      expect(
+        values.some((v) => v.includes(expected)),
+        expected,
+      ).toBe(true);
+    }
+  });
+
+  it('computes the battery voltages from the cell count', () => {
+    const cells = REFERENCE_5_INCH.motor.batteryCells;
+    const text = lessonText(LESSONS.battery);
+    expect(text).toContain(`${packVolts(cells, LIPO_CELL_VOLTS.nominal).toFixed(1)} V`);
+    expect(text).toContain(`${packVolts(cells, LIPO_CELL_VOLTS.full).toFixed(1)} V`);
+    expect(text).toContain(`${LIPO_CELL_VOLTS.storage.toFixed(1)} V`);
+  });
+
+  it('teaches battery safety', () => {
+    const text = lessonText(LESSONS.battery);
+    expect(text).toMatch(/puff/i);
+    expect(text).toMatch(/unattended/i);
+    expect(text).toMatch(/storage/i);
+  });
+
+  // Parts that are physically connected link to each other from both lessons.
+  const PAIRS: [PartId, PartId][] = [
+    ['battery', 'frame'],
+    ['esc', 'battery'],
+    ['esc', 'motors'],
+    ['esc', 'frame'],
+    ['fc', 'esc'],
+    ['fc', 'frame'],
+  ];
+
+  it.each(PAIRS)('links %s and %s both ways', (a, b) => {
+    const linksTo = (from: PartId, to: PartId) =>
+      LESSONS[from].connections.some((c) => c.partId === to);
+    expect(linksTo(a, b), `${a} → ${b}`).toBe(true);
+    expect(linksTo(b, a), `${b} → ${a}`).toBe(true);
+  });
+
+  it('explains how on-screen text reaches both analog and digital video', () => {
+    const text = lessonText(LESSONS.fc);
+    expect(text).toMatch(/analog/i);
+    expect(text).toMatch(/digital video/i);
+    expect(text).toMatch(/channel and power/i);
+  });
+
+  it('calls the gyro part of the IMU, not another name for it', () => {
+    const text = lessonText(LESSONS.fc);
+    expect(text).not.toMatch(/also called the IMU/);
+    expect(text).toMatch(/IMU/);
+  });
+
+  it('describes a motor’s three wires as three phases, not three coils', () => {
+    const text = lessonText(LESSONS.esc);
+    expect(text).not.toMatch(/three coils/);
+    expect(text).toMatch(/three phases/);
+  });
+
+  it('says DShot rejects garbled commands rather than being immune to noise', () => {
+    const text = lessonText(LESSONS.esc);
+    expect(text).not.toMatch(/can’t change/);
+    expect(text).toMatch(/check/i);
+  });
+
+  it('says a deeply drained cell can be damaged, not that it always is', () => {
+    expect(lessonText(LESSONS.battery)).not.toMatch(/or it is damaged/);
   });
 });

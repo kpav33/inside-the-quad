@@ -48,8 +48,8 @@ describe('LessonPanel', () => {
   });
 
   it('shows connections without a lesson as plain text', () => {
-    renderMotors();
-    const text = screen.getByText(/soldered to the ESC/);
+    render(<LessonPanel lesson={LESSONS.battery} onClose={vi.fn()} onSelectPart={vi.fn()} />);
+    const text = screen.getByText(/balance lead plugs into the charger/);
     expect(text.closest('button')).toBeNull();
   });
 

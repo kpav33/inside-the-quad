@@ -2,7 +2,7 @@ import { Bounds, OrbitControls } from '@react-three/drei';
 import { Canvas, type ThreeEvent } from '@react-three/fiber';
 import { TOUCH } from 'three';
 
-import { DroneModel } from '@/features/drone-model';
+import { DroneModel, FitBox } from '@/features/drone-model';
 import { SCENE_LIGHT } from '@/shared/design/tokens';
 import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
 import type { PartId } from '@/shared/domain/parts';
@@ -38,14 +38,12 @@ export default function DroneViewer({
         <ambientLight intensity={0.55} />
         <directionalLight position={[1, 2, 1.5]} intensity={1.8} />
         <directionalLight position={[-1.5, 0.8, -1]} intensity={0.6} color={SCENE_LIGHT.fill} />
-        {/* Fits the camera to the drone on load and on resize, so no viewport crops it. */}
+        {/* Fits the camera to the closed drone on load and on resize, so no viewport crops it and
+            an open stack never changes the framing. */}
         <Bounds fit observe margin={1.08}>
-          <DroneModel
-            spec={REFERENCE_5_INCH}
-            selectedPart={selectedPart}
-            onPartClick={onPartClick}
-          />
+          <FitBox spec={REFERENCE_5_INCH} />
         </Bounds>
+        <DroneModel spec={REFERENCE_5_INCH} selectedPart={selectedPart} onPartClick={onPartClick} />
         <OrbitControls
           makeDefault
           enablePan={false}

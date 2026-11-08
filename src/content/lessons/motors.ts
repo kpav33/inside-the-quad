@@ -1,10 +1,10 @@
 import { motorSizeCode, REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
+import { LIPO_CELL_VOLTS, packVolts } from '@/shared/domain/lipo';
 
 import type { Lesson } from './types';
 
 const { motor } = REFERENCE_5_INCH;
-const FULL_CELL_VOLTS = 4.2;
-const fullBatteryVolts = motor.batteryCells * FULL_CELL_VOLTS;
+const fullBatteryVolts = packVolts(motor.batteryCells, LIPO_CELL_VOLTS.full);
 const noLoadRpm = Math.round((motor.kv * fullBatteryVolts) / 1000) * 1000;
 
 export const motorsLesson: Lesson = {
@@ -53,6 +53,9 @@ export const motorsLesson: Lesson = {
       text: `A propeller slides onto the ${motor.shaftThread} shaft and is held by a nut.`,
       partId: 'props',
     },
-    { text: `Its ${motor.wires} wires are soldered to the ESC, which powers the coils.` },
+    {
+      text: `Its ${motor.wires} wires are soldered to the ESC, which powers the coils.`,
+      partId: 'esc',
+    },
   ],
 };

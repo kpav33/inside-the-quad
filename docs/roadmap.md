@@ -10,7 +10,8 @@ Status: `planned` · `in progress` · `in review` · `done`.
 | 02  | Design pass (visual design review)                                                                                                                                  | `feat/design-pass`       | done    |
 | 02b | Model that teaches: dimensions, callouts, front marker, spin arcs in 3D; drone fills the drawing field; zone markers used or removed; 3D hover mirrored in the list | —                        | planned |
 | 02c | Lookup and navigation: part URLs, next/previous, progress, onboarding; connection links name their target; no duplicated part name                                  | —                        | planned |
-| 03  | Remaining part lessons (Module 2)                                                                                                                                   | —                        | planned |
+| 03a | Power and control parts: ESC, flight controller, battery; exploded stack                                                                                            | `feat/power-and-control` | done    |
+| 03b | Radio and video parts: receiver, camera, VTX and antennas, extras                                                                                                   | —                        | planned |
 | 04  | "What is an FPV drone?" intro (Module 1)                                                                                                                            | —                        | planned |
 | 05  | How it all works together: simulator (Module 3)                                                                                                                     | —                        | planned |
 | 06  | Gear you hold and wear (Module 4)                                                                                                                                   | —                        | planned |

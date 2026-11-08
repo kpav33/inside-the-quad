@@ -1,19 +1,22 @@
 import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
 
 import { motorPlacements } from '../layout';
+import { Lift } from '../Lift';
 
 import { PartMaterial } from './PartMaterial';
 
 interface FrameProps {
   spec: DroneSpec;
   highlighted: boolean;
+  /** How far the top plate is lifted for the exploded stack, in millimetres. */
+  topPlateLiftMm: number;
 }
 
 const STANDOFF_RADIUS_MM = 2.5;
 const STANDOFF_INSET_MM = 4;
 
 /** Bottom plate with four arms, standoffs and a top plate. */
-export function Frame({ spec, highlighted }: FrameProps) {
+export function Frame({ spec, highlighted, topPlateLiftMm }: FrameProps) {
   const { frame, motor } = spec;
   const armThickness = mm(frame.armThicknessMm);
   // Arms run from the centre to just past the motor, so the whole motor base sits on carbon.
@@ -62,12 +65,14 @@ export function Frame({ spec, highlighted }: FrameProps) {
         )),
       )}
 
-      <mesh position={[0, armThickness + standoffHeight + mm(frame.topPlateThicknessMm) / 2, 0]}>
-        <boxGeometry
-          args={[mm(frame.bodyWidthMm), mm(frame.topPlateThicknessMm), mm(frame.bodyLengthMm)]}
-        />
-        {material}
-      </mesh>
+      <Lift liftMm={topPlateLiftMm}>
+        <mesh position={[0, armThickness + standoffHeight + mm(frame.topPlateThicknessMm) / 2, 0]}>
+          <boxGeometry
+            args={[mm(frame.bodyWidthMm), mm(frame.topPlateThicknessMm), mm(frame.bodyLengthMm)]}
+          />
+          {material}
+        </mesh>
+      </Lift>
     </group>
   );
 }

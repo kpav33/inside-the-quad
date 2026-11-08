@@ -5,6 +5,9 @@ export const PART_LABELS: Record<PartId, string> = {
   frame: 'Frame',
   motors: 'Motors',
   props: 'Propellers',
+  esc: 'ESC',
+  fc: 'Flight controller',
+  battery: 'Battery',
 };
 
 /**

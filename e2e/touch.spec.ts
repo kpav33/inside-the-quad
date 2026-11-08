@@ -1,5 +1,7 @@
 import { devices, expect, test } from '@playwright/test';
 
+import { PART_NAMES } from './parts';
+
 test.use({ ...devices['Pixel 7'] });
 
 test.describe('phone touch', () => {
@@ -40,9 +42,9 @@ test.describe('phone touch', () => {
     const cx = box.x + box.width / 2;
     const cy = box.y + box.height / 2;
 
-    // A tap on the middle of the drone selects the frame.
+    // A tap on the middle of the drone selects the part there (the battery, on top).
     await page.touchscreen.tap(cx, cy);
-    await expect(page.getByRole('heading', { level: 2, name: 'Frame' })).toBeVisible();
+    await expect(page.locator('#lesson-panel')).toBeVisible();
     await page.evaluate(() => {
       window.scrollTo(0, 0);
     });
@@ -85,7 +87,7 @@ test.describe('phone touch', () => {
 
   test('part rows are comfortable touch targets', async ({ page }) => {
     await page.goto('/');
-    for (const name of ['Frame', 'Motors', 'Propellers']) {
+    for (const name of PART_NAMES) {
       const box = await page.getByRole('button', { name, exact: true }).boundingBox();
       expect(box?.height ?? 0, name).toBeGreaterThanOrEqual(44);
     }
