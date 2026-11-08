@@ -1,4 +1,4 @@
-import { OrbitControls } from '@react-three/drei';
+import { Bounds, OrbitControls } from '@react-three/drei';
 import { Canvas, type ThreeEvent } from '@react-three/fiber';
 
 import { DroneModel } from '@/features/drone-model';
@@ -31,7 +31,14 @@ export default function DroneViewer({
         <ambientLight intensity={0.7} />
         <directionalLight position={[1, 2, 1]} intensity={1.4} />
         <directionalLight position={[-1, 1, -1]} intensity={0.4} />
-        <DroneModel spec={REFERENCE_5_INCH} selectedPart={selectedPart} onPartClick={onPartClick} />
+        {/* Fits the camera to the drone on load and on resize, so no viewport crops it. */}
+        <Bounds fit clip observe margin={1.3}>
+          <DroneModel
+            spec={REFERENCE_5_INCH}
+            selectedPart={selectedPart}
+            onPartClick={onPartClick}
+          />
+        </Bounds>
         <OrbitControls makeDefault enablePan={false} minDistance={0.15} maxDistance={0.8} />
       </Canvas>
     </div>

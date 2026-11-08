@@ -1,6 +1,8 @@
 import type { Lesson } from '@/content/lessons';
 import type { PartId } from '@/shared/domain/parts';
 
+import { LESSON_PANEL_ID, lessonTitleId } from './ids';
+
 export interface LessonPanelProps {
   lesson: Lesson;
   onClose: () => void;
@@ -9,12 +11,14 @@ export interface LessonPanelProps {
 }
 
 export function LessonPanel({ lesson, onClose, onSelectPart }: LessonPanelProps) {
-  const titleId = `lesson-title-${lesson.partId}`;
+  const titleId = lessonTitleId(lesson.partId);
 
   return (
-    <section id="lesson-panel" className="lesson-panel" aria-labelledby={titleId}>
+    <section id={LESSON_PANEL_ID} className="lesson-panel" aria-labelledby={titleId}>
       <header className="lesson-panel-header">
-        <h2 id={titleId}>{lesson.title}</h2>
+        <h2 id={titleId} tabIndex={-1}>
+          {lesson.title}
+        </h2>
         <button type="button" onClick={onClose}>
           Close lesson
         </button>
