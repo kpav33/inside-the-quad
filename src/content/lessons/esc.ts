@@ -28,8 +28,8 @@ export const escLesson: Lesson = {
         'Four ESCs on one board, one per motor. Separate ESCs on each arm also exist but are rare on 5-inch drones today.',
     },
     {
-      label: 'Current',
-      value: `${esc.currentPerMotorA} A per motor`,
+      label: 'Current per motor',
+      value: `${esc.currentPerMotorA} A`,
       meaning:
         'The current each motor output can handle continuously. If it is too low for the motors and props, the ESC overheats and can burn out.',
     },

@@ -33,7 +33,7 @@ export const fcLesson: Lesson = {
     },
     {
       label: 'UARTs',
-      value: `${fc.uarts} UARTs`,
+      value: String(fc.uarts),
       meaning:
         'Serial ports for connecting other parts. The receiver, the video transmitter and a GPS each need one.',
     },
