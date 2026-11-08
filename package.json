@@ -32,6 +32,8 @@
     "*.{json,md,css,html,yml,yaml}": "prettier --write"
   },
   "dependencies": {
+    "@fontsource/atkinson-hyperlegible": "^5.3.0",
+    "@fontsource/barlow-condensed": "^5.3.0",
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.2",
     "react": "^19.3.1",

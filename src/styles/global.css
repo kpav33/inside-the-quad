@@ -1,8 +1,14 @@
-/* Base styles only. Visual design is intentionally deferred (see docs/roadmap.md). */
+/* Base styles for the drawing sheet world. Tokens live in tokens.css. */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+  background: var(--color-ground);
+  -webkit-text-size-adjust: 100%;
 }
 
 html,
@@ -13,10 +19,64 @@ body,
 }
 
 body {
-  font-family: system-ui, sans-serif;
-  line-height: 1.5;
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
 }
 
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-label);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-ground);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.2em;
+}
+
+/* Hidden from view, still read by screen readers. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Masthead */
 .app {
   display: flex;
   flex-direction: column;
@@ -24,62 +84,105 @@ body {
 }
 
 .app-header {
-  padding: 1rem 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-5);
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--color-rule);
 }
 
 .app-header h1 {
-  margin: 0;
-  font-size: 1.5rem;
+  font-size: var(--step-2);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.app-header h1 .accent {
+  color: var(--color-accent);
 }
 
 .app-header p {
-  margin: 0;
+  color: var(--color-muted);
+  font-size: var(--step--1);
 }
 
 .app-main {
   flex: 1;
   min-height: 0;
+  /* The explorer switches to two columns on the space it has, measured in rem, so it also
+     responds when the user enlarges text. */
+  container: main / inline-size;
 }
 
-@media (max-width: 899px) {
+/* Matches the explorer's 56rem container switch, so the page only gets a fixed height when the
+   two-column layout applies. */
+@media (max-width: 55.9375em) {
   .app,
   .app-main {
     height: auto;
   }
 }
 
-/* Part explorer: structural layout only, the design pass comes later. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Shared controls */
+.button-outline {
+  min-height: var(--target-min);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-rule-strong);
+  background: transparent;
+  font-family: var(--font-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color var(--duration) var(--ease-out),
+    background-color var(--duration) var(--ease-out);
+}
+
+.button-outline:hover {
+  border-color: var(--color-ink);
+}
+
+/* Part explorer: drawing field + sheet column */
 .part-explorer {
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
-/* A fixed height: the canvas fills its parent, and a min-height alone gives it nothing to fill. */
+.part-explorer-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  min-width: 0;
+}
+
+.drawing-frame {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.drawing-canvas {
+  position: relative;
+  height: 40svh;
+  min-height: 15rem;
+  border: 1px solid var(--color-rule-strong);
+}
+
 .part-explorer-viewer {
-  height: 50vh;
-}
-
-.part-explorer-sidebar {
-  padding: 1rem 1.5rem;
-  overflow-wrap: break-word;
-}
-
-@media (min-width: 900px) {
-  .part-explorer {
-    flex-direction: row;
-  }
-
-  .part-explorer-viewer {
-    flex: 1;
-    height: auto;
-    min-height: 0;
-  }
-
-  .part-explorer-sidebar {
-    width: 26rem;
-    overflow-y: auto;
-  }
+  position: absolute;
+  inset: var(--space-5);
 }
 
 .drone-viewer {
@@ -87,46 +190,513 @@ body {
   height: 100%;
 }
 
+.drawing-zones {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  color: var(--color-muted);
+  font-weight: 500;
+}
+
+.drawing-zone {
+  position: absolute;
+  line-height: 1;
+}
+
+.drawing-zone-column {
+  top: var(--space-1);
+}
+
+.drawing-zone-column:nth-child(1) {
+  left: 12.5%;
+}
+.drawing-zone-column:nth-child(2) {
+  left: 37.5%;
+}
+.drawing-zone-column:nth-child(3) {
+  left: 62.5%;
+}
+.drawing-zone-column:nth-child(4) {
+  left: 87.5%;
+}
+
+.drawing-zone-row {
+  left: var(--space-2);
+}
+
+.drawing-zone-row:nth-child(5) {
+  top: 16.7%;
+}
+.drawing-zone-row:nth-child(6) {
+  top: 50%;
+}
+.drawing-zone-row:nth-child(7) {
+  top: 83.3%;
+}
+
+.drawing-hint {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-2);
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  pointer-events: none;
+  font-weight: 500;
+}
+
+.drawing-hint-touch {
+  display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .drawing-hint-pointer {
+    display: none;
+  }
+
+  .drawing-hint-touch {
+    display: inline;
+  }
+}
+
+/* Parts list: the picker */
+.part-list {
+  background: var(--color-sheet);
+  border: 1px solid var(--color-rule-strong);
+}
+
+.part-list-heading {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-rule);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.part-list-columns,
+.part-list-row {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+}
+
+.part-list-columns {
+  padding-block: var(--space-1);
+  border-bottom: 1px solid var(--color-rule);
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  font-weight: 500;
+}
+
+.part-list-columns span:last-child,
+.part-list-qty {
+  text-align: right;
+}
+
 .part-list ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.part-list button[aria-pressed='true'] {
-  font-weight: bold;
+.part-list li + li {
+  border-top: 1px solid var(--color-rule);
+}
+
+.part-list-row {
+  width: 100%;
+  min-height: 3rem;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--duration) var(--ease-out);
+}
+
+.part-list-row:hover {
+  background: color-mix(in srgb, var(--color-rule) 45%, transparent);
+}
+
+.part-list-row:hover .part-list-item {
+  border-color: var(--color-ink);
+}
+
+.part-list-row:focus-visible {
+  outline-offset: -2px;
+}
+
+.part-list-item {
+  display: inline-grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--color-rule-strong);
+  border-radius: 50%;
+  font-family: var(--font-label);
+  font-weight: 700;
+}
+
+.part-list-row[data-selected='true'] {
+  background: var(--color-rule);
+  /* The contract's redline rule on the selected row, drawn inside the row's box. */
+  box-shadow: inset 3px 0 0 var(--color-accent);
+}
+
+.part-list-row[data-selected='true'] .part-list-item {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-ground);
+}
+
+.part-list-name {
+  overflow-wrap: anywhere;
+}
+
+.part-list-row[data-selected='true'] .part-list-name {
+  font-weight: 700;
+}
+
+/* Sheet column */
+.part-explorer-sheet {
+  padding: var(--space-4) var(--space-4) var(--space-7);
+  min-width: 0;
+}
+
+.part-explorer-overview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.part-explorer-hint {
+  max-width: 40ch;
+  color: var(--color-muted);
+}
+
+.lesson-panel {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.title-block {
+  container-type: inline-size;
+  display: grid;
+  /* Six tracks so cells can regroup in narrow blocks (see the container query below). */
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  border: 1px solid var(--color-rule-strong);
+  background: var(--color-sheet);
+}
+
+.title-block-cell {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border-right: 1px solid var(--color-rule);
+  border-bottom: 1px solid var(--color-rule);
+  min-width: 0;
+}
+
+.title-block-cell:nth-child(3) {
+  border-right: 0;
+}
+
+.title-block-spec {
+  grid-column: 1 / -1;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.title-block-label {
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  font-weight: 500;
+}
+
+.title-block-value {
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  font-family: var(--font-label);
+  font-size: var(--step-1);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+/* Narrow title blocks: the part gets its own row, sheet and quantity share the next. */
+@container (max-width: 22rem) {
+  .title-block-cell:first-child {
+    grid-column: span 6;
+    border-right: 0;
+  }
+
+  .title-block-cell:nth-child(2),
+  .title-block-cell:nth-child(3) {
+    grid-column: span 3;
+  }
+}
+
+.title-block-specs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(7.5rem, 100%), 1fr));
+  gap: var(--space-2) var(--space-4);
+  margin: var(--space-1) 0 0;
+}
+
+.title-block-spec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.title-block-specs dt,
+.title-block-specs dd {
+  margin: 0;
+}
+
+.title-block-nowrap {
+  white-space: nowrap;
 }
 
 .lesson-panel-header {
   display: flex;
-  align-items: baseline;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: var(--space-3);
 }
 
-.lesson-panel table {
+.lesson-panel-header h2 {
+  font-size: var(--step-4);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.lesson-question {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+.lesson-question-number {
+  display: inline-grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-top: 0.05rem;
+  border: 1px solid var(--color-rule-strong);
+  border-radius: 50%;
+  font-family: var(--font-label);
+  font-weight: 700;
+  color: var(--color-muted);
+}
+
+.lesson-question-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 68ch;
+}
+
+.lesson-question-body h3 {
+  font-size: var(--step-1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.75rem;
+}
+
+.lesson-lead {
+  font-size: var(--step-1);
+  line-height: 1.5;
+}
+
+.spec-grid {
+  /* Anchors the visually hidden header in the stacked layout, so it cannot extend the page. */
+  position: relative;
   width: 100%;
   border-collapse: collapse;
+  border-top: 1px solid var(--color-rule-strong);
 }
 
-.lesson-panel th,
-.lesson-panel td {
-  padding: 0.25rem 0.5rem 0.25rem 0;
+.spec-grid th,
+.spec-grid td {
+  padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  border-bottom: 1px solid var(--color-rule);
   text-align: left;
   vertical-align: top;
+}
+
+.spec-grid thead th {
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.spec-grid tbody th {
+  font-family: var(--font-label);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.spec-grid-value {
+  /* A number is never split from its unit (Unbroken Value Rule). */
+  white-space: nowrap;
+  font-family: var(--font-label);
+  font-size: var(--step-1);
+  font-weight: 600;
+}
+
+.spec-grid th,
+.spec-grid td {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+/* Narrow sheets: each spec becomes a stacked block (label + value, then meaning). */
+@container (max-width: 32rem) {
+  .spec-grid thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .spec-grid tr {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0 var(--space-3);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--color-rule);
+  }
+
+  .spec-grid th,
+  .spec-grid td {
+    padding: 0;
+    border: 0;
+  }
+
+  .spec-grid td:last-child {
+    grid-column: 1 / -1;
+    margin-top: var(--space-1);
+    color: var(--color-ink);
+  }
+}
+
+.lesson-connections li::marker {
+  color: var(--color-muted);
+}
+
+.lesson-connections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding-left: 1.1rem;
 }
 
 .lesson-link {
   padding: 0;
   border: 0;
   background: none;
-  color: inherit;
-  font: inherit;
   text-align: left;
   text-decoration: underline;
+  text-decoration-color: var(--color-muted);
+  text-underline-offset: 0.2em;
   vertical-align: top;
   cursor: pointer;
+}
+
+.lesson-link:hover {
+  text-decoration-color: var(--color-ink);
+}
+
+/* Wide: drawing field left, sheet column right, both filling the viewport. A container query in
+   rem (not a viewport media query) so larger text falls back to the stacked layout. */
+@container main (min-width: 56rem) {
+  .part-explorer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 36rem);
+    height: 100%;
+  }
+
+  .part-explorer-field {
+    height: 100%;
+    padding: var(--space-5);
+  }
+
+  /* One framed drawing: the canvas fills the space above the parts list, so the list never
+     covers the drone whatever its height. */
+  .drawing-frame {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 0;
+    height: 100%;
+    padding-bottom: var(--space-5);
+    border: 1px solid var(--color-rule-strong);
+  }
+
+  .drawing-canvas {
+    height: auto;
+    /* Safety net: the drawing never collapses even if the page height is not fixed. */
+    min-height: 16rem;
+    border: 0;
+  }
+
+  .part-list {
+    justify-self: start;
+    width: min(22rem, calc(100% - 2 * var(--space-5)));
+    margin-inline: var(--space-5);
+  }
+
+  .part-explorer-sheet {
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    scrollbar-color: var(--color-rule-strong) transparent;
+    padding: var(--space-5) var(--space-6) var(--space-7) var(--space-5);
+  }
+}
+
+/* Windows High Contrast and other forced-colour modes drop fills and shadows, so the selected
+   row and balloon use system colours explicitly. */
+@media (forced-colors: active) {
+  .part-list-row[data-selected='true'] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+
+  /* Focus must stay visible on top of the selection marker. */
+  .part-list-row:focus-visible {
+    outline: 3px dashed CanvasText;
+    outline-offset: -3px;
+  }
+
+  .part-list-row[data-selected='true'] .part-list-item {
+    forced-color-adjust: none;
+    background: Highlight;
+    border-color: Highlight;
+    color: HighlightText;
+  }
 }

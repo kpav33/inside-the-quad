@@ -19,7 +19,8 @@ export default defineConfig({
     restoreMocks: true,
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.test.{ts,tsx}'],
-    css: false,
+    // Only tokens.css is processed, so its test can read the raw file.
+    css: { include: [/tokens\.css/] },
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],

@@ -52,4 +52,8 @@ describe('motorPlacements', () => {
     expect(byNumber(1).spin).not.toBe(byNumber(2).spin);
     expect(byNumber(1).spin).not.toBe(byNumber(3).spin);
   });
+
+  it('places one motor per motor in the spec', () => {
+    expect(placements).toHaveLength(REFERENCE_5_INCH.motor.count);
+  });
 });

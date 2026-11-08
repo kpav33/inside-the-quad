@@ -1,0 +1,333 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-08T14:39:59.378Z",
+  "title": "Design System: Inside the Quad",
+  "extensions": {
+    "colorMeta": {
+      "ground": {
+        "role": "neutral",
+        "displayName": "Carbon Ground",
+        "canonical": "oklch(19.0% 0.005 248.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.005 248.1)",
+          "oklch(26.4% 0.005 248.1)",
+          "oklch(37.9% 0.004 248.1)",
+          "oklch(49.3% 0.003 248.1)",
+          "oklch(60.7% 0.002 248.1)",
+          "oklch(72.1% 0.001 248.1)",
+          "oklch(83.6% 0.001 248.1)",
+          "oklch(95.0% 0.001 248.1)"
+        ]
+      },
+      "sheet": {
+        "role": "neutral",
+        "displayName": "Lifted Sheet",
+        "canonical": "oklch(23.7% 0.007 248.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.006 248.1)",
+          "oklch(26.4% 0.007 248.1)",
+          "oklch(37.9% 0.006 248.1)",
+          "oklch(49.3% 0.005 248.1)",
+          "oklch(60.7% 0.004 248.1)",
+          "oklch(72.1% 0.002 248.1)",
+          "oklch(83.6% 0.002 248.1)",
+          "oklch(95.0% 0.002 248.1)"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(29.9% 0.009 248.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.007 248.1)",
+          "oklch(26.4% 0.009 248.1)",
+          "oklch(37.9% 0.008 248.1)",
+          "oklch(49.3% 0.007 248.1)",
+          "oklch(60.7% 0.005 248.1)",
+          "oklch(72.1% 0.004 248.1)",
+          "oklch(83.6% 0.002 248.1)",
+          "oklch(95.0% 0.002 248.1)"
+        ]
+      },
+      "rule-strong": {
+        "role": "neutral",
+        "displayName": "Frame Line",
+        "canonical": "oklch(36.5% 0.011 248.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.008 248.1)",
+          "oklch(26.4% 0.009 248.1)",
+          "oklch(37.9% 0.011 248.1)",
+          "oklch(49.3% 0.009 248.1)",
+          "oklch(60.7% 0.007 248.1)",
+          "oklch(72.1% 0.005 248.1)",
+          "oklch(83.6% 0.004 248.1)",
+          "oklch(95.0% 0.003 248.1)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Drafting Ink",
+        "canonical": "oklch(91.4% 0.006 239.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.001 239.8)",
+          "oklch(26.4% 0.001 239.8)",
+          "oklch(37.9% 0.001 239.8)",
+          "oklch(49.3% 0.002 239.8)",
+          "oklch(60.7% 0.003 239.8)",
+          "oklch(72.1% 0.004 239.8)",
+          "oklch(83.6% 0.005 239.8)",
+          "oklch(95.0% 0.006 239.8)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Graphite",
+        "canonical": "oklch(71.1% 0.016 244.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.004 244.8)",
+          "oklch(26.4% 0.006 244.8)",
+          "oklch(37.9% 0.008 244.8)",
+          "oklch(49.3% 0.011 244.8)",
+          "oklch(60.7% 0.013 244.8)",
+          "oklch(72.1% 0.015 244.8)",
+          "oklch(83.6% 0.013 244.8)",
+          "oklch(95.0% 0.010 244.8)"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Redline",
+        "canonical": "oklch(68.5% 0.205 33.3)",
+        "tonalRamp": [
+          "oklch(15.0% 0.051 33.3)",
+          "oklch(26.4% 0.084 33.3)",
+          "oklch(37.9% 0.117 33.3)",
+          "oklch(49.3% 0.150 33.3)",
+          "oklch(60.7% 0.183 33.3)",
+          "oklch(72.1% 0.195 33.3)",
+          "oklch(83.6% 0.162 33.3)",
+          "oklch(95.0% 0.129 33.3)"
+        ]
+      },
+      "model-motors": {
+        "role": "neutral",
+        "displayName": "Motor Fill",
+        "canonical": "oklch(25.8% 0.010 248.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.008 248.2)",
+          "oklch(26.4% 0.009 248.2)",
+          "oklch(37.9% 0.008 248.2)",
+          "oklch(49.3% 0.006 248.2)",
+          "oklch(60.7% 0.005 248.2)",
+          "oklch(72.1% 0.003 248.2)",
+          "oklch(83.6% 0.002 248.2)",
+          "oklch(95.0% 0.002 248.2)"
+        ]
+      },
+      "model-props": {
+        "role": "neutral",
+        "displayName": "Prop Fill",
+        "canonical": "oklch(27.4% 0.009 248.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.008 248.2)",
+          "oklch(26.4% 0.009 248.2)",
+          "oklch(37.9% 0.008 248.2)",
+          "oklch(49.3% 0.007 248.2)",
+          "oklch(60.7% 0.005 248.2)",
+          "oklch(72.1% 0.004 248.2)",
+          "oklch(83.6% 0.002 248.2)",
+          "oklch(95.0% 0.002 248.2)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Part Title",
+        "purpose": "The part's title on its sheet."
+      },
+      "headline": {
+        "displayName": "Wordmark",
+        "purpose": "Masthead wordmark; 'QUAD' in redline."
+      },
+      "title": {
+        "displayName": "Question Heading",
+        "purpose": "The four lesson questions beside their balloons."
+      },
+      "value": {
+        "displayName": "Drawing Value",
+        "purpose": "Title-block and spec-table values; tabular."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "The one-sentence answer to 'What does it do?'."
+      },
+      "body": {
+        "displayName": "Reading Text",
+        "purpose": "Lesson paragraphs and part names, max 68ch."
+      },
+      "label": {
+        "displayName": "Drawing Label",
+        "purpose": "Muted caps cell labels, column headers, zone markers, drawing hint."
+      }
+    },
+    "shadows": [
+      {
+        "name": "selection-rule",
+        "value": "inset 3px 0 0 var(--color-accent)",
+        "purpose": "Not elevation: the redline left rule on the selected parts-list row, drawn inside the row box. The system has no drop shadows."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "All state transitions (borders, fills)."
+      },
+      {
+        "name": "duration",
+        "value": "180ms",
+        "purpose": "State transitions only; collapsed to 0.01ms under prefers-reduced-motion. Nothing animates on load; the 3D canvas renders on demand."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide",
+        "value": "56rem (container query on the main area)"
+      },
+      {
+        "name": "sheet-stacked (container)",
+        "value": "32rem"
+      },
+      {
+        "name": "touch",
+        "value": "(hover: none) and (pointer: coarse)"
+      }
+    ],
+    "focus": {
+      "value": "outline: 2px solid var(--color-accent); outline-offset: 2px",
+      "purpose": "Global focus ring; offset -2px inside parts-list rows."
+    },
+    "model3d": {
+      "unselected": "fill MODEL_COLOR[part] (sheet / model-motors / model-props), Edges color ink, threshold 20",
+      "selected": "fill accent, Edges color ground",
+      "material": "meshStandardMaterial roughness 1 metalness 0"
+    }
+  },
+  "components": [
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "The only button style: drafted square outline, caps label. Used for Close lesson.",
+      "html": "<button class=\"ds-btn-outline\">Close lesson</button>",
+      "css": ".ds-btn-outline{min-height:2.75rem;padding:0 1rem;border:1px solid var(--color-rule-strong,#3a3f44);background:transparent;color:var(--color-ink,#dfe3e6);font-family:var(--font-label,'Barlow Condensed','Arial Narrow',sans-serif);font-size:1rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;border-radius:0;cursor:pointer;transition:border-color 180ms cubic-bezier(.16,1,.3,1)}.ds-btn-outline:hover{border-color:var(--color-ink,#dfe3e6)}.ds-btn-outline:focus-visible{outline:2px solid var(--color-accent,#ff5b3a);outline-offset:2px}"
+    },
+    {
+      "name": "Parts List",
+      "kind": "nav",
+      "refersTo": "part-list",
+      "description": "The drawing's parts list used as the picker; selected row shows redline rule and filled balloon.",
+      "html": "<nav class=\"ds-parts\"><h2 class=\"ds-parts-h\">Parts list</h2><div class=\"ds-parts-cols\"><span>Item</span><span>Part</span><span>Qty</span></div><button class=\"ds-parts-row\"><span class=\"ds-balloon\">1</span><span>Frame</span><span class=\"ds-qty\">1</span></button><button class=\"ds-parts-row\" data-selected=\"true\"><span class=\"ds-balloon\">2</span><span class=\"ds-name\">Motors</span><span class=\"ds-qty\">4</span></button><button class=\"ds-parts-row\"><span class=\"ds-balloon\">3</span><span>Propellers</span><span class=\"ds-qty\">4</span></button></nav>",
+      "css": ".ds-parts{background:var(--color-sheet,#1c1f22);border:1px solid var(--color-rule-strong,#3a3f44);color:var(--color-ink,#dfe3e6);font-family:'Atkinson Hyperlegible',system-ui,sans-serif;width:20rem;font-variant-numeric:tabular-nums}.ds-parts-h{margin:0;padding:.5rem .75rem;border-bottom:1px solid var(--color-rule,#2a2e32);font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:.833rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--color-muted,#9aa3ab)}.ds-parts-cols,.ds-parts-row{display:grid;grid-template-columns:2.5rem 1fr 3rem;align-items:center;gap:.5rem;padding:0 .75rem}.ds-parts-cols{padding-block:.25rem;border-bottom:1px solid var(--color-rule,#2a2e32);font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:.833rem;letter-spacing:.08em;text-transform:uppercase;color:var(--color-muted,#9aa3ab)}.ds-parts-cols span:last-child,.ds-qty{text-align:right}.ds-parts-row{width:100%;min-height:3rem;border:0;border-top:1px solid var(--color-rule,#2a2e32);background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer;transition:background-color 180ms cubic-bezier(.16,1,.3,1)}.ds-parts-row:hover{background:color-mix(in srgb,var(--color-rule,#2a2e32) 45%,transparent)}.ds-parts-row:hover .ds-balloon{border-color:var(--color-ink,#dfe3e6)}.ds-parts-row:focus-visible{outline:2px solid var(--color-accent,#ff5b3a);outline-offset:-2px}.ds-balloon{display:inline-grid;place-items:center;width:1.75rem;height:1.75rem;border:1px solid var(--color-rule-strong,#3a3f44);border-radius:50%;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:700}.ds-parts-row[data-selected=true]{background:var(--color-rule,#2a2e32);box-shadow:inset 3px 0 0 var(--color-accent,#ff5b3a)}.ds-parts-row[data-selected=true] .ds-balloon{border-color:var(--color-accent,#ff5b3a);background:var(--color-accent,#ff5b3a);color:var(--color-ground,#121416)}.ds-parts-row[data-selected=true] .ds-name{font-weight:700}"
+    },
+    {
+      "name": "Title Block",
+      "kind": "card",
+      "refersTo": "title-block",
+      "description": "The sheet's identity: Part, Sheet, Qty, then Spec values as unbreakable groups.",
+      "html": "<div class=\"ds-tb\"><div class=\"ds-tb-c\"><span class=\"ds-tb-l\">Part</span><span class=\"ds-tb-v\">Motors</span></div><div class=\"ds-tb-c\"><span class=\"ds-tb-l\">Sheet</span><span class=\"ds-tb-v\">2 of 3</span></div><div class=\"ds-tb-c\"><span class=\"ds-tb-l\">Qty</span><span class=\"ds-tb-v\">4</span></div><div class=\"ds-tb-c ds-tb-spec\"><span class=\"ds-tb-l\">Spec</span><span class=\"ds-tb-v\"><span class=\"ds-nw\">2207</span> · <span class=\"ds-nw\">1950 KV</span> · <span class=\"ds-nw\">6S</span> · <span class=\"ds-nw\">16 × 16 mm</span> · <span class=\"ds-nw\">M5</span></span></div></div>",
+      "css": ".ds-tb{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--color-rule-strong,#3a3f44);background:var(--color-sheet,#1c1f22);color:var(--color-ink,#dfe3e6);font-variant-numeric:tabular-nums}.ds-tb-c{display:flex;flex-direction:column;gap:.25rem;padding:.5rem .75rem;border-right:1px solid var(--color-rule,#2a2e32);border-bottom:1px solid var(--color-rule,#2a2e32);min-width:0}.ds-tb-c:nth-child(3){border-right:0}.ds-tb-spec{grid-column:1/-1;border:0}.ds-tb-l{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:.833rem;letter-spacing:.1em;text-transform:uppercase;color:var(--color-muted,#9aa3ab)}.ds-tb-v{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:1.2rem;font-weight:600;letter-spacing:.03em;text-wrap:balance}.ds-nw{white-space:nowrap}"
+    },
+    {
+      "name": "Question Balloon",
+      "kind": "custom",
+      "refersTo": "balloon",
+      "description": "Numbered balloon and caps heading for each of the four lesson questions.",
+      "html": "<section class=\"ds-q\"><span class=\"ds-q-n\">1</span><div class=\"ds-q-b\"><h3>What does it do?</h3><p>Each of the four motors turns electricity from the battery into fast spinning motion.</p></div></section>",
+      "css": ".ds-q{display:grid;grid-template-columns:2rem minmax(0,1fr);gap:.75rem;color:var(--color-ink,#dfe3e6)}.ds-q-n{display:inline-grid;place-items:center;width:1.75rem;height:1.75rem;border:1px solid var(--color-rule-strong,#3a3f44);border-radius:50%;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:700;color:var(--color-muted,#9aa3ab)}.ds-q-b{display:flex;flex-direction:column;gap:.75rem;max-width:68ch}.ds-q-b h3{margin:0;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:1.2rem;font-weight:600;line-height:1.75rem;letter-spacing:.06em;text-transform:uppercase}.ds-q-b p{margin:0;font-family:'Atkinson Hyperlegible',system-ui,sans-serif;font-size:1.2rem;line-height:1.5}"
+    },
+    {
+      "name": "Lesson Link",
+      "kind": "custom",
+      "refersTo": "lesson-link",
+      "description": "In-lesson connection to another part; ink with a muted underline, never redline.",
+      "html": "<button class=\"ds-link\">The motors are bolted to the frame arms.</button>",
+      "css": ".ds-link{padding:0;border:0;background:none;color:var(--color-ink,#dfe3e6);font-family:'Atkinson Hyperlegible',system-ui,sans-serif;font-size:1rem;text-align:left;text-decoration:underline;text-decoration-color:var(--color-muted,#9aa3ab);text-underline-offset:.2em;cursor:pointer}.ds-link:hover{text-decoration-color:var(--color-ink,#dfe3e6)}.ds-link:focus-visible{outline:2px solid var(--color-accent,#ff5b3a);outline-offset:2px}"
+    },
+    {
+      "name": "Masthead",
+      "kind": "nav",
+      "refersTo": "app-header",
+      "description": "Thin masthead: caps wordmark with 'QUAD' in redline, muted tagline, hairline underline.",
+      "html": "<header class=\"ds-mast\"><h1>Inside the <span class=\"ds-acc\">Quad</span></h1><p>How an FPV drone works, part by part.</p></header>",
+      "css": ".ds-mast{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem 1.5rem;padding:.75rem 1.5rem;border-bottom:1px solid var(--color-rule,#2a2e32);background:var(--color-ground,#121416);color:var(--color-ink,#dfe3e6)}.ds-mast h1{margin:0;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:1.44rem;font-weight:700;line-height:1.1;letter-spacing:.12em;text-transform:uppercase}.ds-acc{color:var(--color-accent,#ff5b3a)}.ds-mast p{margin:0;font-family:'Atkinson Hyperlegible',system-ui,sans-serif;font-size:.833rem;color:var(--color-muted,#9aa3ab)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Reference Drawing Sheet",
+    "overview": "Every screen is a sheet from the reference quad's drawing set: a hairline-framed drawing field with zone markers, a parts list that doubles as the picker, and a title block that puts the part's key numbers first. The page is a carbon-black bench under a lamp (the product is read in the evening beside loose parts), so the ground is dark and the drawing is ink on it. The drone itself is drawn the same way: dark fills with drafting-white edges, so the 3D model reads as linework rather than a rendered product shot.\n\nDensity is that of a technical drawing: compact labelled cells, hairline rules, tabular numbers, and generous reading measure only where a beginner actually reads (the lesson text). Structure is the only ornament: frames, rules, zone markers and numbered balloons. There is one ink and one redline, and the redline means \"this one\".\n\nConfirmed rejections (from the direction contract): the dark docs site with a sidebar and a 3D model boxed in a card, and the neon-on-black tech HUD.",
+    "keyCharacteristics": [
+      "Carbon ground, one lifted sheet tone, two hairline weights, drafting-white ink.",
+      "One redline accent, reserved for selection, the current sheet and focus.",
+      "Condensed caps lettering for everything the drawing labels; a legibility face for everything the beginner reads.",
+      "Square corners everywhere except the circular balloons.",
+      "Flat: depth is tonal steps and hairlines, never shadow.",
+      "State transitions only (180ms); nothing animates on load."
+    ],
+    "rules": [
+      {
+        "name": "The Redline Rule",
+        "body": "Redline marks selection, the current sheet and focus (plus the wordmark's \"QUAD\"). It never marks hover, links, headings, warnings or decoration. If it is red, it is chosen or focused.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Source Rule",
+        "body": "Colours come only from `src/shared/design/tokens.ts` (`COLOR`, `MODEL_COLOR`). `src/styles/tokens.css` mirrors them as custom properties and `tokens.test.ts` keeps the two identical. The three.js materials import the same constants. No hex literals in components, materials or lights.",
+        "section": "colors"
+      },
+      {
+        "name": "The State Without Colour Rule",
+        "body": "Selection also reads without red: the selected row gets the rule fill and a bold name, its balloon is filled; hover lifts a faint fill and turns the balloon ring ink. Hover never uses redline.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Voices Rule",
+        "body": "The drawing speaks in condensed caps; the teacher speaks in Atkinson. Never set a reading paragraph in condensed caps, and never set a label or value in the body face.",
+        "section": "typography"
+      },
+      {
+        "name": "The Unbroken Value Rule",
+        "body": "A number is never split from its unit. Title-block spec values are each a no-wrap group joined by \" · \", and copy uses U+2011 (non-breaking hyphen) for \"5-inch\".",
+        "section": "typography"
+      },
+      {
+        "name": "The Clear Field Rule",
+        "body": "The parts list has its own grid row below the canvas, never on top of it, so the list never covers the drone at any text size.",
+        "section": "layout"
+      },
+      {
+        "name": "The Hairline Rule",
+        "body": "Panels separate from the ground by a lifted tone and a 1px frame, never by shadow, glow or blur.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** take every colour from `tokens.ts` / `tokens.css`, including three.js materials and lights.",
+      "**Do** keep redline to selection, the current sheet, focus and the wordmark's \"QUAD\".",
+      "**Do** show selection the same way in the list and the model at once, and make it legible without colour (fill, bold, filled balloon).",
+      "**Do** set labels, titles, values and numerals in Barlow Condensed caps, and reading text in Atkinson Hyperlegible at up to 68ch.",
+      "**Do** use structure as ornament: hairline frames, zone markers, numbered balloons, title-block cells.",
+      "**Do** keep a number with its unit (no-wrap groups, U+2011 non-breaking hyphen).",
+      "**Do** keep motion to 180ms ease-out state transitions, collapsed under reduced motion."
+    ],
+    "donts": [
+      "**Don't** use redline for hover, links, headings, warnings or decoration.",
+      "**Don't** select 3D parts with an outline; use the redline fill with ground edges.",
+      "**Don't** let the parts list or any overlay cover the drone on wide screens.",
+      "**Don't** round corners on frames, panels, rows or buttons; the balloon is the only circle.",
+      "**Don't** add shadows, glows, gradients or blur.",
+      "**Don't** box the 3D model in a card beside a docs sidebar, or style it as a neon-on-black HUD.",
+      "**Don't** animate anything on load."
+    ]
+  }
+}

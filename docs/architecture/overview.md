@@ -14,9 +14,10 @@ src/
     drone-viewer/   The 3D viewport: Canvas, camera fitting, orbit controls (lazy loaded)
     part-explorer/  Selection state; composes the viewer, the part list and the lesson panel
   shared/           Code used by two or more features
-    domain/         Part ids and the drone spec: plain data, no React or three.js
+    design/         Design tokens: the single source of colour for CSS and the 3D materials
+    domain/         Part ids, the drone spec and part quantities: plain data, no React or three.js
     ui/             Generic UI building blocks (e.g. ErrorBoundary)
-  styles/           Global CSS
+  styles/           tokens.css (mirrors design/tokens.ts) and global.css
   test/             Test setup and helpers
 e2e/                Playwright end-to-end tests
 nginx/              Production server config (copied into the Docker image)
@@ -53,3 +54,14 @@ nginx/              Production server config (copied into the Docker image)
 ## Testing layers
 
 See [../workflow/testing.md](../workflow/testing.md).
+
+## Design system
+
+- `DESIGN.md` (repo root) documents the visual world; `.impeccable/surfaces/` holds the direction
+  contract for the part explorer.
+- Colours live in `src/shared/design/tokens.ts`. `src/styles/tokens.css` mirrors them as custom
+  properties, and a unit test keeps the two identical and checks WCAG AA contrast.
+- Fonts (Barlow Condensed for labels, Atkinson Hyperlegible for reading) are bundled from
+  `@fontsource`, because the Content-Security-Policy only allows same-origin fonts.
+- The 3D canvas renders on demand (`frameloop="demand"`); anything that animates must request
+  frames itself.

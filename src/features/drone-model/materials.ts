@@ -1,19 +1,16 @@
+import { COLOR, MODEL_COLOR } from '@/shared/design/tokens';
 import type { PartId } from '@/shared/domain/parts';
 
-/** Base colours: placeholders until the design pass (roadmap section 02). */
-export const PART_COLORS: Record<PartId, string> = {
-  frame: '#2b2b2b',
-  motors: '#8a8f98',
-  props: '#3a7bd5',
-};
-
-export const HIGHLIGHT_EMISSIVE = '#ff8a00';
-
-export function partEmissive(highlighted: boolean): {
-  emissive: string;
-  emissiveIntensity: number;
-} {
+/**
+ * How a part is drawn: drafting-white ink lines over a dark fill, like a drawing on carbon black.
+ * The selected part is filled with redline, the same accent the parts list uses for the selected
+ * row, with dark edges so its shape still reads.
+ */
+export function partAppearance(
+  part: PartId,
+  highlighted: boolean,
+): { color: string; edgeColor: string } {
   return highlighted
-    ? { emissive: HIGHLIGHT_EMISSIVE, emissiveIntensity: 0.6 }
-    : { emissive: '#000000', emissiveIntensity: 0 };
+    ? { color: COLOR.accent, edgeColor: COLOR.ground }
+    : { color: MODEL_COLOR[part], edgeColor: COLOR.ink };
 }

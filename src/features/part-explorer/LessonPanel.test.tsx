@@ -58,4 +58,12 @@ describe('LessonPanel', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Close lesson' }));
     expect(onClose).toHaveBeenCalledOnce();
   });
+
+  it('numbers the four questions 1 to 4', () => {
+    renderMotors();
+    const numbers = screen
+      .getAllByRole('heading', { level: 3 })
+      .map((h) => h.closest('section')?.querySelector('[data-question-number]')?.textContent);
+    expect(numbers).toEqual(['1', '2', '3', '4']);
+  });
 });

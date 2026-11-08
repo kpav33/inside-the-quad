@@ -1,4 +1,7 @@
 import { lazy } from 'react';
 
-// The viewer pulls in three.js, so it is split into its own chunk and loaded on demand.
-export const DroneViewer = lazy(() => import('./DroneViewer'));
+// The viewer pulls in three.js, so it lives in its own chunk. The download starts as soon as this
+// module loads, in parallel with React rendering the page, instead of after the first render.
+const viewerModule = import('./DroneViewer');
+
+export const DroneViewer = lazy(() => viewerModule);

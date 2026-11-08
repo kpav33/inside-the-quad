@@ -54,10 +54,20 @@ describe('PartExplorer', () => {
     viewer.shouldThrow = false;
   });
 
-  it('starts without a lesson and invites the user to pick a part', async () => {
+  it('starts on the overview sheet and invites the user to pick a part', async () => {
     await renderExplorer();
     expect(screen.queryByRole('region')).toBeNull();
     expect(screen.getByText(/select a part/i)).toBeInTheDocument();
+    const block = screen.getByRole('group', { name: 'Title block' });
+    expect(block).toHaveTextContent('Reference 5\u2011inch quad');
+    expect(block).toHaveTextContent('Wheelbase225 mm');
+    expect(block).toHaveTextContent('Props5 × 4.3 × 3');
+  });
+
+  it('announces the lesson that opened', async () => {
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Motors' }));
+    expect(screen.getByTestId('explorer-announcer')).toHaveTextContent('Motors lesson opened');
   });
 
   it('toggles a lesson from the part list', async () => {
