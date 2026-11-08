@@ -75,35 +75,37 @@ export function PartExplorer() {
     <div className="part-explorer">
       <div className="part-explorer-field">
         <div className="drawing-frame">
-          <div className="drawing-zones" aria-hidden="true">
-            {ZONE_COLUMNS.map((zone) => (
-              <span key={zone} className="drawing-zone drawing-zone-column">
-                {zone}
-              </span>
-            ))}
-            {ZONE_ROWS.map((zone) => (
-              <span key={zone} className="drawing-zone drawing-zone-row">
-                {zone}
-              </span>
-            ))}
+          <div className="drawing-canvas">
+            <div className="drawing-zones" aria-hidden="true">
+              {ZONE_COLUMNS.map((zone) => (
+                <span key={zone} className="drawing-zone drawing-zone-column">
+                  {zone}
+                </span>
+              ))}
+              {ZONE_ROWS.map((zone) => (
+                <span key={zone} className="drawing-zone drawing-zone-row">
+                  {zone}
+                </span>
+              ))}
+            </div>
+            <div className="part-explorer-viewer">
+              <ErrorBoundary fallback={viewerFallback}>
+                <Suspense fallback={<p role="status">{UI.viewer.loading}</p>}>
+                  <DroneViewer
+                    selectedPart={selectedPart}
+                    onPartClick={onPartClick}
+                    onBackgroundClick={clearSelection}
+                  />
+                </Suspense>
+              </ErrorBoundary>
+            </div>
+            <p className="drawing-hint" aria-hidden="true">
+              <span className="drawing-hint-pointer">{UI.viewer.dragHint}</span>
+              <span className="drawing-hint-touch">{UI.viewer.touchHint}</span>
+            </p>
           </div>
-          <div className="part-explorer-viewer">
-            <ErrorBoundary fallback={viewerFallback}>
-              <Suspense fallback={<p role="status">{UI.viewer.loading}</p>}>
-                <DroneViewer
-                  selectedPart={selectedPart}
-                  onPartClick={onPartClick}
-                  onBackgroundClick={clearSelection}
-                />
-              </Suspense>
-            </ErrorBoundary>
-          </div>
-          <p className="drawing-hint" aria-hidden="true">
-            <span className="drawing-hint-pointer">{UI.viewer.dragHint}</span>
-            <span className="drawing-hint-touch">{UI.viewer.touchHint}</span>
-          </p>
+          <PartList selectedPart={selectedPart} onToggle={togglePart} />
         </div>
-        <PartList selectedPart={selectedPart} onToggle={togglePart} />
       </div>
       <div className="part-explorer-sheet">
         {selectedPart ? (

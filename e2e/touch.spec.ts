@@ -70,7 +70,7 @@ test.describe('phone touch', () => {
   test('the drawing field takes about 40% of the screen', async ({ page }) => {
     await page.goto('/');
     const ratio = await page.evaluate(() => {
-      const frame = document.querySelector('.drawing-frame');
+      const frame = document.querySelector('.drawing-canvas');
       return frame ? frame.getBoundingClientRect().height / window.innerHeight : 0;
     });
     expect(ratio).toBeGreaterThan(0.35);

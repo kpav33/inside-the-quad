@@ -111,3 +111,49 @@ test('a desktop lesson never makes the whole page scroll', async ({ page }) => {
   );
   expect(extra).toBeLessThanOrEqual(0);
 });
+
+test.describe('drawing field at large text sizes', () => {
+  async function fieldGeometry(page: Page) {
+    return page.evaluate(() => {
+      const box = (selector: string) => {
+        const el = document.querySelector(selector);
+        if (!el) throw new Error(`missing ${selector}`);
+        return el.getBoundingClientRect();
+      };
+      const viewer = box('.part-explorer-viewer');
+      const list = box('.part-list');
+      const overlap =
+        viewer.left < list.right &&
+        list.left < viewer.right &&
+        viewer.top < list.bottom &&
+        list.top < viewer.bottom;
+      return { viewerWidth: viewer.width, viewerHeight: viewer.height, overlap };
+    });
+  }
+
+  test('200% text keeps the 3D view usable and clear of the parts list', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/');
+    await page.evaluate(() => (document.documentElement.style.fontSize = '200%'));
+    await page.getByRole('button', { name: 'Motors', exact: true }).click();
+    const geometry = await fieldGeometry(page);
+    expect(geometry.viewerWidth).toBeGreaterThanOrEqual(200);
+    expect(geometry.viewerHeight).toBeGreaterThanOrEqual(150);
+    expect(geometry.overlap).toBe(false);
+  });
+
+  test('a 24 px browser default keeps the parts list inside the drawing', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Page.enable');
+    await cdp.send('Page.setFontSizes', { fontSizes: { standard: 24 } });
+    await page.goto('/');
+    const geometry = await fieldGeometry(page);
+    expect(geometry.overlap).toBe(false);
+    const listFits = await page.evaluate(() => {
+      const list = document.querySelector('.part-list');
+      return list ? list.scrollWidth <= list.clientWidth : false;
+    });
+    expect(listFits).toBe(true);
+  });
+});

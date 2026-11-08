@@ -101,6 +101,9 @@ a {
 .app-main {
   flex: 1;
   min-height: 0;
+  /* The explorer switches to two columns on the space it has, measured in rem, so it also
+     responds when the user enlarges text. */
+  container: main / inline-size;
 }
 
 @media (max-width: 56.1875em) {
@@ -153,6 +156,12 @@ a {
 }
 
 .drawing-frame {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.drawing-canvas {
   position: relative;
   height: 40svh;
   min-height: 15rem;
@@ -572,8 +581,9 @@ a {
   text-decoration-color: var(--color-ink);
 }
 
-/* Wide screens: drawing field left, sheet column right, both filling the viewport. */
-@media (min-width: 56.25em) {
+/* Wide: drawing field left, sheet column right, both filling the viewport. A container query in
+   rem (not a viewport media query) so larger text falls back to the stacked layout. */
+@container main (min-width: 56rem) {
   .part-explorer {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(20rem, 36rem);
@@ -581,25 +591,31 @@ a {
   }
 
   .part-explorer-field {
-    position: relative;
     height: 100%;
     padding: var(--space-5);
   }
 
+  /* One framed drawing: the canvas fills the space above the parts list, so the list never
+     covers the drone whatever its height. */
   .drawing-frame {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 0;
     height: 100%;
+    padding-bottom: var(--space-5);
+    border: 1px solid var(--color-rule-strong);
   }
 
-  /* Fit the drone above the docked parts list instead of behind it. */
-  .part-explorer-viewer {
-    bottom: 14.5rem;
+  .drawing-canvas {
+    height: auto;
+    min-height: 0;
+    border: 0;
   }
 
   .part-list {
-    position: absolute;
-    left: calc(var(--space-5) + var(--space-5));
-    bottom: calc(var(--space-5) + var(--space-5));
-    width: min(20rem, 45%);
+    justify-self: start;
+    width: min(22rem, calc(100% - 2 * var(--space-5)));
+    margin-inline: var(--space-5);
   }
 
   .part-explorer-sheet {
