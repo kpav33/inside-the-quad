@@ -42,7 +42,10 @@ Use **pnpm only**. Never use npm or yarn, and never commit another lockfile.
    tuning and flight training are out of scope.
 5. **3D model:** the drone is built procedurally in code, one component per part
    (ADR 0002). No external model files without a new ADR.
-6. **Design:** visual design is deferred; keep styling minimal and structural until the design
-   pass (see roadmap).
+6. **Design:** the visual world is the engineering "drawing sheet". Follow `DESIGN.md` and the
+   direction contract in `.impeccable/surfaces/`; use the impeccable skill for UI work. Colours
+   come only from `src/shared/design/tokens.ts` (mirrored in `src/styles/tokens.css`); redline is
+   reserved for selection, the current sheet and focus. Interface text lives in
+   `src/content/ui.ts`.
 7. **Keep docs current:** if you change a convention, structure or decision, update the matching
    doc in the same branch.
