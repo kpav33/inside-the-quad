@@ -17,6 +17,8 @@ export interface DroneSpec {
     standoffHeightMm: number;
   };
   motor: {
+    /** Number of motors (one per arm); a Quad X has four. */
+    count: number;
     statorWidthMm: number;
     statorHeightMm: number;
     kv: number;
@@ -50,6 +52,7 @@ export const REFERENCE_5_INCH: DroneSpec = {
     standoffHeightMm: 25,
   },
   motor: {
+    count: 4,
     statorWidthMm: 22,
     statorHeightMm: 7,
     kv: 1950,

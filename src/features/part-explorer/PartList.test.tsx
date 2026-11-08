@@ -50,4 +50,12 @@ describe('PartList', () => {
       'lesson-panel',
     );
   });
+
+  it('lists item number and quantity beside each part, keeping the part as the name', () => {
+    render(<PartList selectedPart="motors" onToggle={vi.fn()} />);
+    const motors = screen.getByRole('button', { name: 'Motors' });
+    expect(motors).toHaveTextContent(/^2\s*Motors\s*4$/);
+    expect(motors).toHaveAttribute('data-selected', 'true');
+    expect(screen.getByRole('button', { name: 'Frame' })).toHaveAttribute('data-selected', 'false');
+  });
 });

@@ -36,6 +36,7 @@ export const UI = {
     hint: 'Select a part on the drone or in the parts list to see what it does and how it works.',
   },
   titleBlock: {
+    label: 'Title block',
     part: 'Part',
     sheet: 'Sheet',
     sheetOf: (sheet: number, sheets: number) => `${sheet} of ${sheets}`,

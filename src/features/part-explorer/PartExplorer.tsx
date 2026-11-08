@@ -12,6 +12,10 @@ import { lessonTitleId, partButtonId } from './ids';
 import { LessonPanel } from './LessonPanel';
 import { PartList } from './PartList';
 
+/** Drawing-frame zone markers, as on a technical drawing's border. */
+const ZONE_COLUMNS = ['1', '2', '3', '4'];
+const ZONE_ROWS = ['A', 'B', 'C'];
+
 const viewerFallback = <p role="alert">{UI.viewer.fallback}</p>;
 
 /** Element id to focus after the next render, so keyboard focus never falls back to the page. */
@@ -67,19 +71,39 @@ export function PartExplorer() {
 
   return (
     <div className="part-explorer">
-      <div className="part-explorer-viewer">
-        <ErrorBoundary fallback={viewerFallback}>
-          <Suspense fallback={<p role="status">{UI.viewer.loading}</p>}>
-            <DroneViewer
-              selectedPart={selectedPart}
-              onPartClick={onPartClick}
-              onBackgroundClick={clearSelection}
-            />
-          </Suspense>
-        </ErrorBoundary>
-      </div>
-      <div className="part-explorer-sidebar">
+      <div className="part-explorer-field">
+        <div className="drawing-frame">
+          <div className="drawing-zones" aria-hidden="true">
+            {ZONE_COLUMNS.map((zone) => (
+              <span key={zone} className="drawing-zone drawing-zone-column">
+                {zone}
+              </span>
+            ))}
+            {ZONE_ROWS.map((zone) => (
+              <span key={zone} className="drawing-zone drawing-zone-row">
+                {zone}
+              </span>
+            ))}
+          </div>
+          <div className="part-explorer-viewer">
+            <ErrorBoundary fallback={viewerFallback}>
+              <Suspense fallback={<p role="status">{UI.viewer.loading}</p>}>
+                <DroneViewer
+                  selectedPart={selectedPart}
+                  onPartClick={onPartClick}
+                  onBackgroundClick={clearSelection}
+                />
+              </Suspense>
+            </ErrorBoundary>
+          </div>
+          <p className="drawing-hint" aria-hidden="true">
+            <span className="drawing-hint-pointer">{UI.viewer.dragHint}</span>
+            <span className="drawing-hint-touch">{UI.viewer.touchHint}</span>
+          </p>
+        </div>
         <PartList selectedPart={selectedPart} onToggle={togglePart} />
+      </div>
+      <div className="part-explorer-sheet">
         {selectedPart ? (
           <LessonPanel
             lesson={LESSONS[selectedPart]}
