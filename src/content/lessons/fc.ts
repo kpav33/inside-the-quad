@@ -12,7 +12,7 @@ export const fcLesson: Lesson = {
   whatItDoes:
     'The flight controller is the drone’s brain: it reads your stick commands and its own sensors thousands of times a second and decides how fast each motor should spin.',
   howItWorks: [
-    'Your radio sends stick commands to the receiver, which passes them to the flight controller. At the same time the gyro (a tiny sensor, also called the IMU) measures how fast the drone is rotating in each direction: roll, pitch and yaw.',
+    'Your radio sends stick commands to the receiver, which passes them to the flight controller. At the same time the gyro, a tiny sensor that is part of the IMU (inertial measurement unit), measures how fast the drone is rotating in each direction: roll, pitch and yaw.',
     'Thousands of times a second, the flight controller compares what you asked for with what the gyro measures, and works out how fast each motor must spin to close the gap. It sends those speeds to the ESC (electronic speed controller). This loop is what keeps the drone stable, which makes the gyro the most important sensor on board.',
     `The processor is named by its chip generation: F4, F7 or H7, where newer chips have more processing headroom. It runs firmware, the software on the board. ${fc.firmware} is the standard for freestyle and racing; INAV and ArduPilot are used for GPS and autonomous flying.`,
     `Other parts plug into its UARTs (serial ports): the receiver, the video transmitter and a GPS. It also has BECs, small voltage regulators that turn the battery voltage into the ${becVolts} the receiver, camera and video transmitter need.`,
@@ -61,7 +61,10 @@ export const fcLesson: Lesson = {
     },
     { text: 'The receiver plugs into one of its UARTs and passes on your stick commands.' },
     {
-      text: 'The video transmitter plugs into another UART, so the flight controller can add on-screen text (battery voltage, timer) to your video.',
+      text: 'The video transmitter plugs into another UART, so the flight controller can set its channel and power.',
+    },
+    {
+      text: 'It adds on-screen text (battery voltage, timer) to your video. With analog video, the camera’s signal passes through the flight controller on its way to the video transmitter; digital video systems get the text over that UART instead.',
     },
   ],
 };

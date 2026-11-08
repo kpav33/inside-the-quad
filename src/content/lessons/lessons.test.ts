@@ -169,4 +169,33 @@ describe('lessons', () => {
     expect(linksTo(a, b), `${a} → ${b}`).toBe(true);
     expect(linksTo(b, a), `${b} → ${a}`).toBe(true);
   });
+
+  it('explains how on-screen text reaches both analog and digital video', () => {
+    const text = lessonText(LESSONS.fc);
+    expect(text).toMatch(/analog/i);
+    expect(text).toMatch(/digital video/i);
+    expect(text).toMatch(/channel and power/i);
+  });
+
+  it('calls the gyro part of the IMU, not another name for it', () => {
+    const text = lessonText(LESSONS.fc);
+    expect(text).not.toMatch(/also called the IMU/);
+    expect(text).toMatch(/IMU/);
+  });
+
+  it('describes a motor’s three wires as three phases, not three coils', () => {
+    const text = lessonText(LESSONS.esc);
+    expect(text).not.toMatch(/three coils/);
+    expect(text).toMatch(/three phases/);
+  });
+
+  it('says DShot rejects garbled commands rather than being immune to noise', () => {
+    const text = lessonText(LESSONS.esc);
+    expect(text).not.toMatch(/can’t change/);
+    expect(text).toMatch(/check/i);
+  });
+
+  it('says a deeply drained cell can be damaged, not that it always is', () => {
+    expect(lessonText(LESSONS.battery)).not.toMatch(/or it is damaged/);
+  });
 });
