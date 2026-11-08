@@ -65,24 +65,31 @@ test('mouse: rotating the camera never changes the selection', async ({ page }) 
   await expect(lessonHeading(page, 'Motors')).toBeVisible();
 });
 
-test.describe('phone width', () => {
-  test.use({ viewport: { width: 390, height: 844 } });
+for (const width of [390, 320]) {
+  test.describe(`phone width ${width} px`, () => {
+    test.use({ viewport: { width, height: 844 } });
 
-  test('lesson is reachable without horizontal scrolling', async ({ page }) => {
-    await page.goto('/');
-    await page.getByRole('button', { name: 'Motors', exact: true }).click();
+    for (const part of ['Frame', 'Motors', 'Propellers']) {
+      test(`${part} lesson fits without horizontal scrolling`, async ({ page }) => {
+        await page.goto('/');
+        await page.getByRole('button', { name: part, exact: true }).click();
 
-    const heading = lessonHeading(page, 'Motors');
-    await heading.scrollIntoViewIfNeeded();
-    await expect(heading).toBeInViewport();
+        const heading = lessonHeading(page, part);
+        await heading.scrollIntoViewIfNeeded();
+        await expect(heading).toBeInViewport();
 
-    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
-    expect(scrollWidth).toBeLessThanOrEqual(390);
+        const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+        expect(scrollWidth).toBeLessThanOrEqual(width);
+      });
+    }
 
-    // A new canvas starts at the default 300 × 150 until three.js sizes it to its container.
-    const canvas = page.locator('canvas');
-    await expect
-      .poll(async () => (await canvas.boundingBox())?.height ?? 0)
-      .toBeGreaterThanOrEqual(250);
+    test('canvas keeps a usable height', async ({ page }) => {
+      await page.goto('/');
+      // A new canvas starts at the default 300 × 150 until three.js sizes it to its container.
+      const canvas = page.locator('canvas');
+      await expect
+        .poll(async () => (await canvas.boundingBox())?.height ?? 0)
+        .toBeGreaterThanOrEqual(250);
+    });
   });
-});
+}

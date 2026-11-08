@@ -113,11 +113,6 @@ body {
 }
 
 .lesson-panel th,
-.lesson-panel td:first-of-type {
-  white-space: nowrap;
-}
-
-.lesson-panel th,
 .lesson-panel td {
   padding: 0.25rem 0.5rem 0.25rem 0;
   text-align: left;
