@@ -46,8 +46,8 @@ const POINTS = {
   battery: { x: 0.475, y: 0.44 },
   frameArm: { x: 0.4, y: 0.6 },
   // With the stack open:
-  liftedFc: { x: 0.48, y: 0.52 },
-  liftedBattery: { x: 0.5, y: 0.3 },
+  liftedFc: { x: 0.48, y: 0.44 },
+  liftedBattery: { x: 0.5, y: 0.32 },
 };
 
 async function clickAt(page: Page, point: { x: number; y: number }) {
@@ -177,3 +177,24 @@ for (const width of [390, 320]) {
     });
   });
 }
+
+test('resizing the window while the stack is open keeps the closed drone framed', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const canvas = page.locator('canvas');
+  await canvasBox(page);
+  const before = await canvas.screenshot();
+
+  await page.getByRole('button', { name: 'ESC', exact: true }).click();
+  await canvasBox(page);
+  const size = page.viewportSize() ?? { width: 1280, height: 720 };
+  await page.setViewportSize({ width: size.width - 200, height: size.height });
+  await canvasBox(page);
+  await page.setViewportSize(size);
+  await canvasBox(page);
+  await page.keyboard.press('Escape');
+
+  await canvasBox(page);
+  expect((await canvas.screenshot()).equals(before)).toBe(true);
+});
