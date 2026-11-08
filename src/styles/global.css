@@ -1,0 +1,47 @@
+/* Base styles only. Visual design is intentionally deferred (see docs/roadmap.md). */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.app-header {
+  padding: 1rem 1.5rem;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.app-header p {
+  margin: 0;
+}
+
+.app-main {
+  flex: 1;
+  min-height: 0;
+}
+
+.drone-viewer {
+  width: 100%;
+  height: 100%;
+}
