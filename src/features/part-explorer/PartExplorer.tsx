@@ -81,7 +81,8 @@ export function PartExplorer() {
 
   const onPartClick = (part: PartId, event: ThreeEvent<MouseEvent>) => {
     if (!isDeliberateClick(event.delta)) return;
-    revealLesson.current = true;
+    // Clicking the part that is already open changes nothing, so there is nothing to reveal.
+    revealLesson.current = part !== selectedPart;
     setSelectedPart(part);
   };
 
