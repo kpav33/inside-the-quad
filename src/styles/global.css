@@ -176,6 +176,7 @@ a {
   font-family: var(--font-label);
   font-size: var(--step--1);
   color: var(--color-muted);
+  font-weight: 500;
 }
 
 .drawing-zone {
@@ -224,6 +225,7 @@ a {
   text-transform: uppercase;
   color: var(--color-muted);
   pointer-events: none;
+  font-weight: 500;
 }
 
 .drawing-hint-touch {
@@ -273,6 +275,7 @@ a {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-muted);
+  font-weight: 500;
 }
 
 .part-list-columns span:last-child,
@@ -396,6 +399,7 @@ a {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-muted);
+  font-weight: 500;
 }
 
 .title-block-value {
@@ -496,6 +500,8 @@ a {
 }
 
 .spec-grid-value {
+  /* A number is never split from its unit (Unbroken Value Rule). */
+  white-space: nowrap;
   font-family: var(--font-label);
   font-size: var(--step-1);
   font-weight: 600;

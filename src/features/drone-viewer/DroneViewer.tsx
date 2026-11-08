@@ -3,6 +3,7 @@ import { Canvas, type ThreeEvent } from '@react-three/fiber';
 import { TOUCH } from 'three';
 
 import { DroneModel } from '@/features/drone-model';
+import { SCENE_LIGHT } from '@/shared/design/tokens';
 import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
 import type { PartId } from '@/shared/domain/parts';
 
@@ -36,7 +37,7 @@ export default function DroneViewer({
         {/* A bench lamp from the upper front, with a cool fill so dark parts keep their shape. */}
         <ambientLight intensity={0.55} />
         <directionalLight position={[1, 2, 1.5]} intensity={1.8} />
-        <directionalLight position={[-1.5, 0.8, -1]} intensity={0.6} color="#b8c4d0" />
+        <directionalLight position={[-1.5, 0.8, -1]} intensity={0.6} color={SCENE_LIGHT.fill} />
         {/* Fits the camera to the drone on load and on resize, so no viewport crops it. */}
         <Bounds fit observe margin={1.08}>
           <DroneModel

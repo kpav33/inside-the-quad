@@ -29,6 +29,11 @@ export const MODEL_COLOR: Record<PartId, string> = {
   props: '#24282c',
 };
 
+/** Scene lighting for the 3D drawing: a cool fill light so dark parts keep their shape. */
+export const SCENE_LIGHT = {
+  fill: '#b8c4d0',
+} as const;
+
 function channel(value: number): number {
   const c = value / 255;
   return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
