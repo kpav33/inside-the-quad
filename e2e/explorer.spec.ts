@@ -65,6 +65,26 @@ test('mouse: rotating the camera never changes the selection', async ({ page }) 
   await expect(lessonHeading(page, 'Motors')).toBeVisible();
 });
 
+test('mouse: a drag that starts and ends on the drone keeps the selection', async ({ page }) => {
+  await page.goto('/');
+  const box = await canvasBox(page);
+  const centre = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+
+  await page.getByRole('button', { name: 'Motors', exact: true }).click();
+  await expect(lessonHeading(page, 'Motors')).toBeVisible();
+
+  // Rotate the camera, then release 8 px from the start, still over the frame. three.js reports
+  // this as a click on the frame; the explorer must treat it as a drag.
+  await page.mouse.move(centre.x, centre.y);
+  await page.mouse.down();
+  await page.mouse.move(centre.x + 80, centre.y, { steps: 10 });
+  await page.mouse.move(centre.x + 8, centre.y, { steps: 10 });
+  await page.mouse.up();
+
+  await expect(lessonHeading(page, 'Motors')).toBeVisible();
+  await expect(lessonHeading(page, 'Frame')).toBeHidden();
+});
+
 for (const width of [390, 320]) {
   test.describe(`phone width ${width} px`, () => {
     test.use({ viewport: { width, height: 844 } });
