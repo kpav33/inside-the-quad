@@ -90,7 +90,7 @@ One component per part (ADR 0002), sized from the spec, in `src/features/drone-m
   top; a capacitor (cylinder) on two short leads at the back. All one part.
 - **Fc:** smaller square board above the ESC on the same four mount points, with grommet rings at
   the holes.
-- **Battery:** rounded block lying lengthwise on the top plate, with an XT60 plug at the back.
+- **Battery:** block lying lengthwise on the top plate, with an XT60 plug at the back.
 
 Each new part gets a fill in `MODEL_COLOR` (`tokens.ts`): dark tones from the existing family, ink
 linework, redline only when selected. `tokens.css` mirrors any new CSS-facing tokens.

@@ -15,7 +15,8 @@ export const FC_HEIGHT_MM = 4;
 /** How far each layer lifts when the stack opens, in millimetres. */
 const OPEN_LIFT_MM: Record<StackLayer, number> = { esc: 15, fc: 32, topPlate: 50 };
 
-const EASE_LAMBDA = 10;
+// About 95 % of the way in 200 ms, matching the brief's 150–200 ms state transitions.
+const EASE_LAMBDA = 15;
 const SETTLE_MM = 0.01;
 
 /** Where each layer sits when the stack is closed, measured up from the bottom of the frame. */
