@@ -301,7 +301,11 @@ a {
 }
 
 .part-list-row:hover {
-  background: var(--color-rule);
+  background: color-mix(in srgb, var(--color-rule) 45%, transparent);
+}
+
+.part-list-row:hover .part-list-item {
+  border-color: var(--color-ink);
 }
 
 .part-list-row:focus-visible {
@@ -321,6 +325,8 @@ a {
 
 .part-list-row[data-selected='true'] {
   background: var(--color-rule);
+  /* The contract's redline rule on the selected row, drawn inside the row's box. */
+  box-shadow: inset 3px 0 0 var(--color-accent);
 }
 
 .part-list-row[data-selected='true'] .part-list-item {
@@ -337,6 +343,12 @@ a {
 .part-explorer-sheet {
   padding: var(--space-4) var(--space-4) var(--space-7);
   min-width: 0;
+}
+
+.part-explorer-overview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
 }
 
 .part-explorer-hint {
@@ -447,6 +459,8 @@ a {
 }
 
 .spec-grid {
+  /* Anchors the visually hidden header in the stacked layout, so it cannot extend the page. */
+  position: relative;
   width: 100%;
   border-collapse: collapse;
   border-top: 1px solid var(--color-rule-strong);
@@ -519,6 +533,10 @@ a {
   }
 }
 
+.lesson-connections li::marker {
+  color: var(--color-muted);
+}
+
 .lesson-connections {
   display: flex;
   flex-direction: column;
@@ -575,6 +593,8 @@ a {
 
   .part-explorer-sheet {
     overflow-y: auto;
+    scrollbar-gutter: stable;
+    scrollbar-color: var(--color-rule-strong) transparent;
     padding: var(--space-5) var(--space-6) var(--space-7) var(--space-5);
   }
 }

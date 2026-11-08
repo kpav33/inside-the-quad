@@ -1,25 +1,24 @@
-import type { Lesson } from '@/content/lessons';
 import { UI } from '@/content/ui';
 
 export interface TitleBlockProps {
-  lesson: Lesson;
-  sheet: number;
-  sheets: number;
+  part: string;
+  sheet: string;
   quantity: number;
+  spec: string;
 }
 
 /** The drawing sheet's title block: which part, which sheet, how many, and its key numbers. */
-export function TitleBlock({ lesson, sheet, sheets, quantity }: TitleBlockProps) {
+export function TitleBlock({ part, sheet, quantity, spec }: TitleBlockProps) {
   const t = UI.titleBlock;
   return (
     <div className="title-block" role="group" aria-label={t.label}>
       <div className="title-block-cell">
         <span className="title-block-label">{t.part}</span>
-        <span className="title-block-value">{lesson.title}</span>
+        <span className="title-block-value">{part}</span>
       </div>
       <div className="title-block-cell">
         <span className="title-block-label">{t.sheet}</span>
-        <span className="title-block-value">{t.sheetOf(sheet, sheets)}</span>
+        <span className="title-block-value">{sheet}</span>
       </div>
       <div className="title-block-cell">
         <span className="title-block-label">{t.quantity}</span>
@@ -27,9 +26,7 @@ export function TitleBlock({ lesson, sheet, sheets, quantity }: TitleBlockProps)
       </div>
       <div className="title-block-cell title-block-spec">
         <span className="title-block-label">{t.spec}</span>
-        <span className="title-block-value">
-          {lesson.specs.map((row) => row.value).join(' · ')}
-        </span>
+        <span className="title-block-value">{spec}</span>
       </div>
     </div>
   );

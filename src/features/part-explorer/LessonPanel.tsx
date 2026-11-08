@@ -38,10 +38,10 @@ export function LessonPanel({ lesson, onClose, onSelectPart }: LessonPanelProps)
   return (
     <section id={LESSON_PANEL_ID} className="lesson-panel" aria-labelledby={titleId}>
       <TitleBlock
-        lesson={lesson}
-        sheet={PART_IDS.indexOf(lesson.partId) + 1}
-        sheets={PART_IDS.length}
+        part={lesson.title}
+        sheet={UI.titleBlock.sheetOf(PART_IDS.indexOf(lesson.partId) + 1, PART_IDS.length)}
         quantity={partQuantity(lesson.partId, REFERENCE_5_INCH)}
+        spec={lesson.specs.map((row) => row.value).join(' · ')}
       />
 
       <header className="lesson-panel-header">

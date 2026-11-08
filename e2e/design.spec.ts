@@ -101,3 +101,13 @@ test.describe('layout robustness', () => {
     expect(outline).not.toBe('none');
   });
 });
+
+test('a desktop lesson never makes the whole page scroll', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Motors', exact: true }).click();
+  const extra = await page.evaluate(
+    () => document.documentElement.scrollHeight - window.innerHeight,
+  );
+  expect(extra).toBeLessThanOrEqual(0);
+});

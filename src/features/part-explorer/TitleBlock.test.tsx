@@ -1,17 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { LESSONS } from '@/content/lessons';
-
 import { TitleBlock } from './TitleBlock';
 
 describe('TitleBlock', () => {
-  it('shows the part, its sheet number, quantity and key specs', () => {
-    render(<TitleBlock lesson={LESSONS.motors} sheet={2} sheets={3} quantity={4} />);
+  it('shows the part, its sheet, quantity and spec line', () => {
+    render(<TitleBlock part="Motors" sheet="2 of 3" quantity={4} spec="2207 · 1950 KV" />);
     const block = screen.getByRole('group', { name: 'Title block' });
     expect(block).toHaveTextContent('Motors');
     expect(block).toHaveTextContent('2 of 3');
     expect(block).toHaveTextContent('4');
-    for (const row of LESSONS.motors.specs) expect(block).toHaveTextContent(row.value);
+    expect(block).toHaveTextContent('2207 · 1950 KV');
   });
 });

@@ -54,10 +54,14 @@ describe('PartExplorer', () => {
     viewer.shouldThrow = false;
   });
 
-  it('starts without a lesson and invites the user to pick a part', async () => {
+  it('starts on the overview sheet and invites the user to pick a part', async () => {
     await renderExplorer();
     expect(screen.queryByRole('region')).toBeNull();
     expect(screen.getByText(/select a part/i)).toBeInTheDocument();
+    const block = screen.getByRole('group', { name: 'Title block' });
+    expect(block).toHaveTextContent('Reference 5-inch quad');
+    expect(block).toHaveTextContent('225 mm');
+    expect(block).toHaveTextContent('5 × 4.3 × 3');
   });
 
   it('toggles a lesson from the part list', async () => {

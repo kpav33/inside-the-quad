@@ -2,6 +2,7 @@ import type { ThreeEvent } from '@react-three/fiber';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 
 import { LESSONS } from '@/content/lessons';
+import { overviewSpec } from '@/content/overview';
 import { UI } from '@/content/ui';
 import { DroneViewer } from '@/features/drone-viewer';
 import type { PartId } from '@/shared/domain/parts';
@@ -11,6 +12,7 @@ import { isDeliberateClick } from './clicks';
 import { lessonTitleId, partButtonId } from './ids';
 import { LessonPanel } from './LessonPanel';
 import { PartList } from './PartList';
+import { TitleBlock } from './TitleBlock';
 
 /** Drawing-frame zone markers, as on a technical drawing's border. */
 const ZONE_COLUMNS = ['1', '2', '3', '4'];
@@ -111,7 +113,15 @@ export function PartExplorer() {
             onSelectPart={followConnection}
           />
         ) : (
-          <p className="part-explorer-hint">{UI.explorer.hint}</p>
+          <div className="part-explorer-overview">
+            <TitleBlock
+              part={UI.titleBlock.overviewPart}
+              sheet={UI.titleBlock.overviewSheet}
+              quantity={1}
+              spec={overviewSpec()}
+            />
+            <p className="part-explorer-hint">{UI.explorer.hint}</p>
+          </div>
         )}
       </div>
     </div>

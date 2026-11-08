@@ -24,7 +24,7 @@ export const UI = {
     loading: 'Loading the 3D drawing…',
     fallback:
       'The 3D model couldn’t be loaded. Your browser may not support WebGL, or the page needs a reload. You can still explore every part with the list.',
-    dragHint: 'Drag to turn · tap a part',
+    dragHint: 'Drag to turn · click a part',
     touchHint: 'Two fingers to turn · tap a part',
   },
   parts: {
@@ -37,6 +37,8 @@ export const UI = {
   },
   titleBlock: {
     label: 'Title block',
+    overviewPart: 'Reference 5-inch quad',
+    overviewSheet: 'Overview',
     part: 'Part',
     sheet: 'Sheet',
     sheetOf: (sheet: number, sheets: number) => `${sheet} of ${sheets}`,
