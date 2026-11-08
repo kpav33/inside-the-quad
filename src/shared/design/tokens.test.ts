@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { PART_IDS } from '@/shared/domain/parts';
 
+import indexHtml from '../../../index.html?raw';
 import tokensCss from '../../styles/tokens.css?raw';
 
 import { COLOR, contrastRatio, MODEL_COLOR } from './tokens';
@@ -45,5 +46,9 @@ describe('colour tokens', () => {
 
   it('gives every part a 3D base colour', () => {
     for (const id of PART_IDS) expect(MODEL_COLOR[id]).toMatch(/^#[0-9a-f]{6}$/);
+  });
+
+  it('uses the ground colour for the browser theme colour', () => {
+    expect(indexHtml).toContain(`<meta name="theme-color" content="${COLOR.ground}" />`);
   });
 });

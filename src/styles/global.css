@@ -675,3 +675,19 @@ a {
     padding: var(--space-5) var(--space-6) var(--space-7) var(--space-5);
   }
 }
+
+/* Windows High Contrast and other forced-colour modes drop fills and shadows, so the selected
+   row and balloon use system colours explicitly. */
+@media (forced-colors: active) {
+  .part-list-row[data-selected='true'] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+
+  .part-list-row[data-selected='true'] .part-list-item {
+    forced-color-adjust: none;
+    background: Highlight;
+    border-color: Highlight;
+    color: HighlightText;
+  }
+}

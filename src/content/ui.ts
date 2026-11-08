@@ -20,7 +20,6 @@ export const UI = {
     tagline: 'How an FPV drone works, part by part.',
   },
   viewer: {
-    label: 'Drawing of the reference 5-inch quad',
     loading: 'Loading the 3D drawing…',
     fallback:
       'The 3D model couldn’t be loaded. Your browser may not support WebGL, or the page needs a reload. You can still explore every part with the list.',

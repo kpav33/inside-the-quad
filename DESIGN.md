@@ -11,6 +11,7 @@ colors:
   accent: '#ff5b3a'
   model-motors: '#202428'
   model-props: '#24282c'
+  scene-fill-light: '#b8c4d0'
 typography:
   display:
     fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif"
@@ -146,6 +147,7 @@ A near-monochrome carbon palette with a single warm redline; every colour is a t
 - **Drafting Ink** (ink): reading text, values, and the 3D model's edge lines; also the hover border colour.
 - **Graphite** (muted): secondary text: column headers, cell labels, hints, zone markers, tagline, question balloon numerals, link underlines at rest.
 - **Motor Fill / Prop Fill** (model-motors, model-props): 3D-only fills, one small tonal step above the sheet so parts separate without colour.
+- **Scene Fill Light** (`SCENE_LIGHT.fill`, #b8c4d0): 3D-only, the cool fill light that keeps dark parts' shapes readable. Never used as a surface or text colour.
 
 Contrast (WCAG 2.x): ink 14.3:1 on ground, 12.8:1 on sheet; muted 7.2:1 on ground, 6.5:1 on sheet, 5.3:1 on the rule fill; redline 6.0:1 on ground; ground text on redline 6.0:1.
 
