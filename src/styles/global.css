@@ -1,8 +1,14 @@
-/* Base styles only. Visual design is intentionally deferred (see docs/roadmap.md). */
+/* Base styles for the drawing sheet world. Tokens live in tokens.css. */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+  background: var(--color-ground);
+  -webkit-text-size-adjust: 100%;
 }
 
 html,
@@ -13,10 +19,54 @@ body,
 }
 
 body {
-  font-family: system-ui, sans-serif;
-  line-height: 1.5;
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
 }
 
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-label);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-ground);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.2em;
+}
+
+/* Masthead */
 .app {
   display: flex;
   flex-direction: column;
@@ -24,16 +74,28 @@ body {
 }
 
 .app-header {
-  padding: 1rem 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-5);
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--color-rule);
 }
 
 .app-header h1 {
-  margin: 0;
-  font-size: 1.5rem;
+  font-size: var(--step-2);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.app-header h1 .accent {
+  color: var(--color-accent);
 }
 
 .app-header p {
-  margin: 0;
+  color: var(--color-muted);
+  font-size: var(--step--1);
 }
 
 .app-main {
@@ -41,10 +103,18 @@ body {
   min-height: 0;
 }
 
-@media (max-width: 899px) {
+@media (max-width: 56.1875em) {
   .app,
   .app-main {
     height: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
   }
 }
 
