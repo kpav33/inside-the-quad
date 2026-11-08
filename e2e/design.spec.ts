@@ -1,5 +1,7 @@
 import { expect, type Page, test } from '@playwright/test';
 
+import { PART_NAMES } from './parts';
+
 test.describe('base styles', () => {
   test('the page sits on the carbon ground', async ({ page }) => {
     await page.goto('/');
@@ -63,7 +65,7 @@ test.describe('layout robustness', () => {
 
   test('a 40% longer translation fits a 320 px screen', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 640 });
-    for (const part of ['Frame', 'Motors', 'Propellers']) {
+    for (const part of PART_NAMES) {
       // Stretching renames the buttons too, so start each part from a fresh page.
       await page.goto('/');
       await page.getByRole('button', { name: part, exact: true }).click();
@@ -77,7 +79,7 @@ test.describe('layout robustness', () => {
 
   test('long translated words stay inside the title block and parts list', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 640 });
-    for (const part of [null, 'Frame', 'Motors', 'Propellers']) {
+    for (const part of [null, ...PART_NAMES]) {
       await page.goto('/');
       if (part) await page.getByRole('button', { name: part, exact: true }).click();
       await stretchText(page);
@@ -212,4 +214,28 @@ test('in forced colours, focus on the selected part row is distinguishable', asy
   await page.keyboard.press('Tab');
   const focused = await outline();
   expect(focused).not.toBe(unfocused);
+});
+
+test.describe('laptop screen', () => {
+  test.use({ viewport: { width: 1280, height: 720 } });
+
+  test('the parts list splits into two columns so the 3D view keeps its height', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    const first = await page
+      .getByRole('button', { name: PART_NAMES[0], exact: true })
+      .boundingBox();
+    const fourth = await page
+      .getByRole('button', { name: PART_NAMES[3], exact: true })
+      .boundingBox();
+    expect(fourth?.y).toBeCloseTo(first?.y ?? -1, 0);
+    expect(fourth?.x ?? 0).toBeGreaterThan((first?.x ?? 0) + (first?.width ?? 0) - 1);
+
+    // A new canvas starts at the default 300 × 150 until three.js sizes it to its container.
+    const canvas = page.locator('canvas');
+    await expect
+      .poll(async () => (await canvas.boundingBox())?.height ?? 0)
+      .toBeGreaterThanOrEqual(300);
+  });
 });
