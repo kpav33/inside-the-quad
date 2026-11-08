@@ -11,18 +11,18 @@ An interactive web app that teaches beginners **how an FPV drone works, part by 
 
 ### Reference drone spec (used for the 3D model and all examples)
 
-| Part | Typical 5" spec |
-|---|---|
-| Frame | Carbon fibre, ~220–230 mm wheelbase, 30.5 × 30.5 mm stack mount |
-| Motors | 4 × 2207 or 2306 size, ~1750–1950 KV (6S) or ~2400–2700 KV (4S) |
-| Props | 5" tri-blade, e.g. 5 × 4.3 × 3 |
-| ESC | 4-in-1, ~45–60 A per motor |
-| Flight controller | F4/F7/H7 processor, gyro, running Betaflight |
-| Battery | 6S 1100 mAh or 4S 1500 mAh LiPo, XT60 connector |
-| Receiver | ExpressLRS (ELRS) 2.4 GHz |
-| Video | Analog (camera + VTX) or digital (e.g. DJI, Walksnail, HDZero) |
-| Weight | ~600–800 g with battery |
-| Flight time | ~4–7 minutes |
+| Part              | Typical 5" spec                                                 |
+| ----------------- | --------------------------------------------------------------- |
+| Frame             | Carbon fibre, ~220–230 mm wheelbase, 30.5 × 30.5 mm stack mount |
+| Motors            | 4 × 2207 or 2306 size, ~1750–1950 KV (6S) or ~2400–2700 KV (4S) |
+| Props             | 5" tri-blade, e.g. 5 × 4.3 × 3                                  |
+| ESC               | 4-in-1, ~45–60 A per motor                                      |
+| Flight controller | F4/F7/H7 processor, gyro, running Betaflight                    |
+| Battery           | 6S 1100 mAh or 4S 1500 mAh LiPo, XT60 connector                 |
+| Receiver          | ExpressLRS (ELRS) 2.4 GHz                                       |
+| Video             | Analog (camera + VTX) or digital (e.g. DJI, Walksnail, HDZero)  |
+| Weight            | ~600–800 g with battery                                         |
+| Flight time       | ~4–7 minutes                                                    |
 
 ---
 
@@ -42,12 +42,14 @@ Short intro before the hardware.
 ## Module 2 — The parts (the core of the app)
 
 Each part gets its own lesson. Every lesson answers the same four questions:
+
 1. **What does it do?** (one sentence, plain language)
 2. **How does it work?**
 3. **What do the numbers on it mean?** (specs)
 4. **What is it connected to?** (highlight the wires/links in 3D)
 
 ### 2.1 Frame
+
 - The skeleton: top plate, bottom plate, arms, standoffs
 - Carbon fibre: stiff, light, strong (and conductive, so wires must not short against it)
 - Frame shapes: true X, stretched X, squashed X, "deadcat" (arms moved so props stay out of the camera view)
@@ -55,6 +57,7 @@ Each part gets its own lesson. Every lesson answers the same four questions:
 - Where everything sits: stack in the middle, camera at the front, VTX/receiver at the back, battery on top
 
 ### 2.2 Motors
+
 - **Brushless motors:** no brushes. The ESC switches the coils on and off in sequence, the magnets in the bell chase them, and the bell spins.
 - Parts: stator (coils, fixed), bell (magnets, spins), shaft, bearings
 - **Size naming:** 2207 = stator 22 mm wide, 7 mm tall. Bigger stator = more torque.
@@ -63,6 +66,7 @@ Each part gets its own lesson. Every lesson answers the same four questions:
 - Mounting: 16 × 16 mm screw pattern, M5 threaded shaft on 5" motors
 
 ### 2.3 Propellers
+
 - **Size code:** 5 × 4.3 × 3 = 5" diameter, 4.3" pitch (how far it would "screw" forward per turn), 3 blades
 - More pitch / more blades = more grip and thrust, but more current draw
 - **Two directions:** 2 props spin clockwise, 2 counter-clockwise. This cancels out the twisting force, so the drone doesn't spin.
@@ -70,6 +74,7 @@ Each part gets its own lesson. Every lesson answers the same four questions:
 - Prop on the wrong motor or backwards = the drone flips on takeoff
 
 ### 2.4 ESC (Electronic Speed Controller)
+
 - Turns the flight controller's "spin at X%" command into the high-current, 3-phase power that drives each motor
 - **4-in-1 ESC:** four ESCs on one board, sitting under the flight controller in the "stack"
 - **Current rating:** e.g. 50 A per motor. Too low and it burns out.
@@ -79,6 +84,7 @@ Each part gets its own lesson. Every lesson answers the same four questions:
 - The battery connects here first, through the **capacitor** (protects electronics from voltage spikes)
 
 ### 2.5 Battery (LiPo)
+
 - **Cells and "S":** each LiPo cell is 3.7 V nominal, 4.2 V full. 6S = 6 cells in series = 22.2 V nominal, 25.2 V full.
 - **Key voltages per cell:** 4.2 V full · 3.8 V storage · ~3.5 V basically empty · don't go below ~3.3 V resting
 - **Capacity (mAh):** how much energy. More = longer flights but heavier.
@@ -90,6 +96,7 @@ Each part gets its own lesson. Every lesson answers the same four questions:
 **Interactive idea:** a battery with a throttle slider showing voltage sag and remaining charge.
 
 ### 2.6 Flight controller (FC)
+
 - **The brain.** Reads your stick commands and the gyro thousands of times per second, then decides how fast each motor should spin.
 - **Gyro (IMU):** measures how fast the drone is rotating on each axis. It's the most important sensor on the drone.
 - **Processor:** F4 / F7 / H7 (generations of chip; newer = more processing headroom)
@@ -100,6 +107,7 @@ Each part gets its own lesson. Every lesson answers the same four questions:
 - **AIO boards:** FC + ESC (sometimes receiver/VTX too) on one board, common on small drones
 
 ### 2.7 Radio receiver (RX)
+
 - Tiny board that receives your stick commands from the radio and passes them to the FC
 - **ExpressLRS (ELRS):** the current standard. Open source, 2.4 GHz (or 900 MHz for long range), very low latency.
 - **Binding:** pairing the receiver to your radio
@@ -109,12 +117,14 @@ Each part gets its own lesson. Every lesson answers the same four questions:
 - Antenna placement matters: away from carbon and motors
 
 ### 2.8 FPV camera
+
 - Captures the live video you see in the goggles (low latency matters more than image quality)
 - **Sizes:** full (28 mm), mini (21 mm), micro (19 mm), nano (14 mm). Must fit the frame.
 - **Camera angle:** tilted up (~25–45°) so you can see ahead when the drone tilts forward at speed. More angle = more comfortable flying fast.
 - Separate from an HD action camera (GoPro) people mount on top for nice footage
 
 ### 2.9 Video transmitter (VTX) and antennas
+
 - Sends the camera image wirelessly to your goggles
 - **Analog:** cheap, lowest latency, fuzzy picture. 5.8 GHz, many channels.
 - **Digital:** DJI, Walksnail, HDZero, OpenIPC. Sharp HD picture, more expensive; the camera and VTX come as a matched set.
@@ -125,6 +135,7 @@ Each part gets its own lesson. Every lesson answers the same four questions:
 - **Never power a VTX without its antenna attached** (it can burn out)
 
 ### 2.10 Extras
+
 - **GPS:** shows speed/distance, enables GPS Rescue (flies home if signal is lost)
 - **Buzzer:** helps find a crashed drone
 - **LEDs:** visibility and fun
@@ -141,12 +152,14 @@ The centerpiece. Three animated "paths" through the 3D drone:
 3. **Video path:** camera → VTX → antenna → goggles (FC adds the OSD on the way)
 
 ### How a quad actually moves
+
 - **Up/down (throttle):** all four motors faster/slower
 - **Roll and pitch:** motors on one side spin faster than the other side, so the drone tilts, and the thrust pushes it that way
 - **Yaw (rotation):** the CW pair speeds up and the CCW pair slows down (or vice versa); the twisting forces no longer cancel and the drone rotates
 - **The gyro loop:** the FC constantly compares "what the pilot asked for" with "what the gyro measures" and corrects, thousands of times per second. That's why the drone is stable at all.
 
 **Interactive ideas:**
+
 - Virtual sticks: move them and watch each motor's speed change
 - "What if" mode: unplug the receiver (failsafe), prop on backwards (flip on takeoff), swap 4S ↔ 6S (speed/heat), VTX without antenna (warning)
 
@@ -163,6 +176,7 @@ The centerpiece. Three animated "paths" through the 3D drone:
 ## Later: compatibility checker
 
 Built from the specs already covered in Module 2:
+
 - Stack mounting size: FC/ESC vs frame (30.5 / 25.5 / 20 mm)
 - Camera width vs frame (28 / 21 / 19 / 14 mm)
 - Motor mount vs frame arms (16 mm on 5")
