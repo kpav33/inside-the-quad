@@ -10,6 +10,7 @@ export const PART_IDS = [
   'receiver',
   'camera',
   'vtx',
+  'extras',
 ] as const;
 
 export type PartId = (typeof PART_IDS)[number];

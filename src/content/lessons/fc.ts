@@ -69,6 +69,11 @@ export const fcLesson: Lesson = {
     },
     {
       text: 'It adds on-screen text (battery voltage, timer) to your video. With analog video, the camera’s signal passes through the flight controller on its way to the video transmitter; digital video systems get the text over that UART instead.',
+      partId: 'camera',
+    },
+    {
+      text: 'The GPS, buzzer and LEDs (the extras) plug into a spare UART and their own pads.',
+      partId: 'extras',
     },
   ],
 };

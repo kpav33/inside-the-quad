@@ -15,6 +15,7 @@ describe('parts', () => {
       'receiver',
       'camera',
       'vtx',
+      'extras',
     ]);
   });
 });

@@ -4,6 +4,8 @@ import { motorSizeCode, propSizeCode, REFERENCE_5_INCH } from '@/shared/domain/d
 import { LIPO_CELL_VOLTS, packVolts } from '@/shared/domain/lipo';
 import { PART_IDS, type PartId } from '@/shared/domain/parts';
 
+import { PART_LABELS } from '../ui';
+
 import { LESSONS } from './index';
 import type { Lesson } from './types';
 
@@ -100,6 +102,7 @@ describe('lessons', () => {
     mW: /milliwatt/i,
     RHCP: /right-hand/i,
     OSD: /on-screen/i,
+    'GPS Rescue': /fl(y|ies) (back|home)/i,
   };
 
   it.each(allLessons.map((l) => [l.partId, l] as const))(
@@ -208,6 +211,34 @@ describe('lessons', () => {
     expect(lessonText(LESSONS.strap)).toMatch(/crash/i);
   });
 
+  it('quotes the extras from the drone spec', () => {
+    const values = specValues(LESSONS.extras);
+    for (const expected of ['GPS, Galileo, GLONASS, BeiDou', '5 V', '8 × 5 V']) {
+      expect(
+        values.some((v) => v.includes(expected)),
+        expected,
+      ).toBe(true);
+    }
+  });
+
+  // Mentions that are not connections: the FC reads the battery's voltage, and the battery's power
+  // reaches the motors through the ESC.
+  const INCIDENTAL: Partial<Record<PartId, PartId[]>> = { fc: ['battery'], battery: ['motors'] };
+
+  it.each(allLessons.map((l) => [l.partId, l] as const))(
+    '%s links every part its connections name',
+    (_id, lesson) => {
+      const text = lesson.connections.map((c) => c.text).join(' ');
+      for (const part of PART_IDS) {
+        if (part === lesson.partId || INCIDENTAL[lesson.partId]?.includes(part)) continue;
+        const named = new RegExp(`\\b${PART_LABELS[part]}\\b`, 'i').test(text);
+        if (!named) continue;
+        const linked = lesson.connections.some((c) => c.partId === part);
+        expect(linked, `${lesson.partId} names ${part} without linking it`).toBe(true);
+      }
+    },
+  );
+
   it('computes the battery voltages from the cell count', () => {
     const cells = REFERENCE_5_INCH.motor.batteryCells;
     const text = lessonText(LESSONS.battery);
@@ -239,6 +270,7 @@ describe('lessons', () => {
     ['vtx', 'frame'],
     ['strap', 'battery'],
     ['strap', 'frame'],
+    ['extras', 'fc'],
   ];
 
   it.each(PAIRS)('links %s and %s both ways', (a, b) => {

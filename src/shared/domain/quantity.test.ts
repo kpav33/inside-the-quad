@@ -17,6 +17,10 @@ describe('partQuantity', () => {
     expect(partQuantity('camera', REFERENCE_5_INCH)).toBe(1);
     expect(partQuantity('vtx', REFERENCE_5_INCH)).toBe(1);
     expect(partQuantity('strap', REFERENCE_5_INCH)).toBe(1);
+  });
+
+  it('counts the extras: GPS, buzzer and two LED strips', () => {
+    expect(partQuantity('extras', REFERENCE_5_INCH)).toBe(4);
     expect(partQuantity('battery', REFERENCE_5_INCH)).toBe(1);
   });
 });

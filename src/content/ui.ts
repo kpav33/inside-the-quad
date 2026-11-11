@@ -12,6 +12,7 @@ export const PART_LABELS: Record<PartId, string> = {
   receiver: 'Receiver',
   camera: 'Camera',
   vtx: 'VTX',
+  extras: 'Extras',
 };
 
 /**
