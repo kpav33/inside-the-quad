@@ -33,7 +33,8 @@ connects to (the success test in `PRODUCT.md`).
 ### Part list
 
 `PART_IDS` becomes, in this order: `frame, motors, props, esc, fc, battery, strap, receiver,
-camera, vtx, extras` (11 parts, 6 rows per column in the two-column list). Labels: Frame, Motors,
+camera, vtx, extras` (11 parts; the list runs in two columns from a 28rem drawing field and three from 40rem, a
+change made during the build). Labels: Frame, Motors,
 Propellers, ESC, Flight controller, Battery, Battery strap, Receiver, Camera, VTX, Extras.
 
 ### Spec
@@ -97,10 +98,12 @@ One component per part (ADR 0002), sized from the spec:
   camera side plates (drawn as part of the frame).
 - **VTX:** a 20 × 20 mm board on the bottom plate behind the stack; its antenna leaves the rear and
   angles up and back.
-- **Receiver:** a small board at the rear beside the VTX, with a T dipole antenna on a rear standoff.
+- **Receiver:** a small board at the rear on top of the VTX, with a T dipole antenna zip-tied to
+  the rear-right arm, off the carbon and clear of the prop.
 - **Strap:** a band around the battery and top plate, plus a thin pad under the battery. It lifts
   with the top plate.
-- **Extras:** GPS puck on a small rear mount, buzzer on the bottom plate, LED strip on the rear arms.
+- **Extras:** GPS puck on a tall mast at the rear of the top plate (above the battery), buzzer on
+  the rear-left arm, an LED strip on each rear arm.
   Selected together.
 
 Fills come from new `MODEL_COLOR` entries in the existing dark family; redline only for selection.
@@ -109,10 +112,21 @@ Fills come from new `MODEL_COLOR` entries in the existing dark family; redline o
 
 - `STACK_PARTS` becomes `INSIDE_PARTS = ['esc', 'fc', 'receiver', 'vtx']`, and `isStackPart`
   becomes `isInsidePart`. Selecting any inside part opens the frame; anything else closes it.
-- The open state is unchanged from 03a (ESC, FC and top plate lifts); the receiver and VTX stay on
-  the bottom plate and are uncovered when the top plate lifts.
+- The open state adds a rear-bay lift to 03a's ESC, FC and top plate lifts: the VTX and receiver
+  board rise 30 mm into the gap behind the stack (changed from "stay on the bottom plate" after
+  the review showed them hidden).
 - `closedExtentsMm` grows to include the antennas and the GPS mount, so the camera fit still
   contains the whole closed drone. Screenshots at 390, 900 and 1280 px confirm it.
+- The rear and front layouts are pure functions (`rear.ts`, `front.ts`) with tests that nothing
+  overlaps.
+
+### Turning to the part (added after the review)
+
+No single view shows all eleven parts. The default view is the drone's front three-quarter, and
+selecting the camera, VTX, receiver or extras eases the view (about 400 ms, instant with reduced
+motion) to an angle chosen for that part (`drone-viewer/part-views.ts`); other parts leave the view
+where it is. Dragging stops a turn. An e2e test checks every part shows at least 150 px of redline
+when selected.
 
 ## Testing
 

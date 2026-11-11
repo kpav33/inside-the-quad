@@ -135,9 +135,9 @@ Confirmed rejections (from the direction contract): the dark docs site with a si
 
 - 3D selection is a redline _fill_ with ground-coloured drafting edges, not a redline outline. drei `Outlines` rendered artifacts and was invisible on box geometry. Unselected parts are dark fills with ink edges, so redline is the only filled colour in the drawing.
 - On wide screens the 3D viewer is inset above the docked parts list, so the list never covers the drone.
-- The 3D view opens on the drone's front three-quarter, so the FPV camera faces the viewer; the frame has two camera side plates at the front.
+- The 3D view opens on the drone's front three-quarter, so the FPV camera faces the viewer; the frame has two camera side plates at the front. Selecting a part the starting view hides (camera, VTX, receiver, extras) eases the view to an angle that shows it, in the same restrained motion, and instantly under reduced motion.
 - The parts list splits into two columns (each with its own ITEM / PART / QTY headings, filled top to bottom) when the drawing field is at least 28rem wide and three from 40rem, so the 3D view keeps its height with all eleven parts. With a mouse, rows are 2.5rem.
-- Selecting a board under the top plate (ESC, flight controller, receiver, VTX) opens the frame as an exploded-view drawing: the ESC, the FC and the top plate with the battery, strap and GPS lift apart in order; the standoffs, the rear bay and the camera plates stay put. It eases to about 95 % in 200 ms and jumps under reduced motion.
+- Selecting a board under the top plate (ESC, flight controller, receiver, VTX) opens the frame as an exploded-view drawing: the ESC, the FC, the rear bay (VTX and receiver) and the top plate with the battery, strap and GPS lift apart in order; the standoffs and the camera plates stay put. It eases to about 95 % in 200 ms and jumps under reduced motion.
 - Spec values in the title block are unbreakable groups, so a number is never split from its unit.
 - The "current sheet" is marked by the selected parts-list row (redline rule and filled balloon); the title block's Sheet field itself stays ink.
 

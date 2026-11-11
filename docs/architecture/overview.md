@@ -34,8 +34,11 @@ nginx/              Production server config (copied into the Docker image)
   opening the frame as an exploded view. `drone-model/stack.ts` holds the stack heights, the lift
   offsets and the easing step; `drone-model/rear.ts` and `front.ts` lay out the rear bay (VTX,
   receiver, capacitor, antennas, GPS) and the camera with its plates, with tests that nothing
-  overlaps. All are plain functions of the spec; `drone-model/Lift.tsx` eases a group to its offset and only asks for new frames
-  while it moves (the canvas draws on demand).
+  overlaps. All are plain functions of the spec. `drone-model/Lift.tsx` eases a group to its
+  offset and only asks for new frames while it moves (the canvas draws on demand).
+- Parts the starting view hides are shown by turning the view: `drone-viewer/part-views.ts` picks
+  an angle per part, and `TurnToPart.tsx` eases the camera there, keeping the zoom, until the user
+  drags.
 - The part list is the accessible equivalent of clicking in 3D, so the canvas is hidden from
   assistive technology and everything still works if WebGL fails.
 
