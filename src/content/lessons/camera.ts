@@ -21,12 +21,7 @@ export const cameraLesson: Lesson = {
     {
       label: 'Size',
       value: `${camera.sizeClass}, ${camera.widthMm} mm`,
-      meaning: 'The size class and its width. It must fit between the frame’s camera plates.',
-    },
-    {
-      label: 'Sizes',
-      value: `${full} · ${mini} · ${micro} · ${nano} mm`,
-      meaning: 'The four standard widths: full, mini, micro and nano.',
+      meaning: `The size class and its width; it must fit between the frame’s camera plates. The standard widths are full ${full} mm, mini ${mini} mm, micro ${micro} mm and nano ${nano} mm.`,
     },
     {
       label: 'Tilt',

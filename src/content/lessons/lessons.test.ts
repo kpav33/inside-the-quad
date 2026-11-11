@@ -166,12 +166,18 @@ describe('lessons', () => {
 
   it('quotes the camera numbers from the drone spec', () => {
     const values = specValues(LESSONS.camera);
-    for (const expected of ['micro, 19 mm', '30°', 'Analog', '28 · 21 · 19 · 14 mm']) {
+    for (const expected of ['micro, 19 mm', '30°', 'Analog']) {
       expect(
         values.some((v) => v.includes(expected)),
         expected,
       ).toBe(true);
     }
+  });
+
+  it('lists every camera width in the size row', () => {
+    const size = LESSONS.camera.specs.find((row) => row.label === 'Size');
+    for (const width of ['28 mm', '21 mm', '19 mm', '14 mm'])
+      expect(size?.meaning).toContain(width);
   });
 
   it('explains the camera tilt and how it differs from an action camera', () => {
@@ -213,7 +219,7 @@ describe('lessons', () => {
 
   it('quotes the extras from the drone spec', () => {
     const values = specValues(LESSONS.extras);
-    for (const expected of ['GPS, Galileo, GLONASS, BeiDou', '5 V', '8 × 5 V']) {
+    for (const expected of ['4 systems', '5 V', '8 × 5 V']) {
       expect(
         values.some((v) => v.includes(expected)),
         expected,
@@ -224,6 +230,11 @@ describe('lessons', () => {
   // Mentions that are not connections: the FC reads the battery's voltage, and the battery's power
   // reaches the motors through the ESC.
   const INCIDENTAL: Partial<Record<PartId, PartId[]>> = { fc: ['battery'], battery: ['motors'] };
+
+  it('names the GPS satellite systems', () => {
+    const gps = LESSONS.extras.specs.find((row) => row.label === 'GPS');
+    expect(gps?.meaning).toContain('GPS, Galileo, GLONASS and BeiDou');
+  });
 
   it.each(allLessons.map((l) => [l.partId, l] as const))(
     '%s links every part its connections name',

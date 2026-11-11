@@ -4,6 +4,7 @@ import type { Lesson } from './types';
 
 const { extras } = REFERENCE_5_INCH;
 const systems = extras.gpsSystems.join(', ');
+const systemsInWords = `${extras.gpsSystems.slice(0, -1).join(', ')} and ${extras.gpsSystems.at(-1) ?? ''}`;
 
 export const extrasLesson: Lesson = {
   partId: 'extras',
@@ -19,8 +20,8 @@ export const extrasLesson: Lesson = {
   specs: [
     {
       label: 'GPS',
-      value: systems,
-      meaning: 'The satellite systems it uses. Using more systems finds a position faster.',
+      value: `${extras.gpsSystems.length} systems`,
+      meaning: `It listens to ${systemsInWords} satellites. Using more systems finds a position faster.`,
     },
     {
       label: 'Buzzer',
