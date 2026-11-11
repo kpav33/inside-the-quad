@@ -4,4 +4,6 @@ import { afterEach } from 'vitest';
 
 afterEach(() => {
   cleanup();
+  // Routing reads the address, so each test starts on the overview.
+  window.history.replaceState(null, '', '/');
 });
