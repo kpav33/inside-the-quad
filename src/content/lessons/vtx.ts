@@ -22,7 +22,7 @@ export const vtxLesson: Lesson = {
   ],
   specs: [
     {
-      label: 'Band',
+      label: 'Frequency',
       value: `${vtx.frequencyGhz} GHz`,
       meaning: 'The radio band analog FPV video uses.',
     },
@@ -49,7 +49,7 @@ export const vtxLesson: Lesson = {
   ],
   connections: [
     {
-      text: 'It plugs into a UART (serial port) on the flight controller, which sets its channel and power and passes on the camera’s video with the on-screen text added.',
+      text: 'A control wire goes to a UART (serial port) on the flight controller, which sets its channel and power; a separate video wire brings the camera’s picture with the on-screen text added.',
       partId: 'fc',
     },
     {

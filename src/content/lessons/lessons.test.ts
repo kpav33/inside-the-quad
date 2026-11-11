@@ -319,4 +319,25 @@ describe('lessons', () => {
   it('says a deeply drained cell can be damaged, not that it always is', () => {
     expect(lessonText(LESSONS.battery)).not.toMatch(/or it is damaged/);
   });
+
+  it('says the buzzer starts when the signal is lost, not when power is lost', () => {
+    const text = lessonText(LESSONS.extras);
+    expect(text).not.toMatch(/loses power/);
+    expect(text).toMatch(/loses (the radio )?signal/);
+  });
+
+  it('labels radio frequencies as Frequency, not Band', () => {
+    for (const lesson of [LESSONS.vtx, LESSONS.receiver]) {
+      const labels = lesson.specs.map((row) => row.label);
+      expect(labels, lesson.partId).toContain('Frequency');
+      expect(labels, lesson.partId).not.toContain('Band');
+    }
+  });
+
+  it('keeps signal, power and video wires apart in the connections', () => {
+    const receiver = LESSONS.receiver.connections.map((c) => c.text).join(' ');
+    expect(receiver).not.toMatch(/UARTs?, which also powers/);
+    const vtx = LESSONS.vtx.connections.map((c) => c.text).join(' ');
+    expect(vtx).toMatch(/video wire/);
+  });
 });

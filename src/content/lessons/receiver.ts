@@ -24,7 +24,7 @@ export const receiverLesson: Lesson = {
       meaning: 'The radio control system. Your radio and the receiver must use the same one.',
     },
     {
-      label: 'Band',
+      label: 'Frequency',
       value: `${receiver.frequencyGhz} GHz`,
       meaning:
         'The radio frequency. 2.4 GHz is the common choice; 900 MHz versions reach further but need bigger antennas.',
@@ -48,7 +48,7 @@ export const receiverLesson: Lesson = {
   ],
   connections: [
     {
-      text: 'It plugs into one of the flight controller’s UARTs, which also powers it.',
+      text: 'Its signal wires go to one of the flight controller’s UARTs, and it takes 5 V power from the flight controller.',
       partId: 'fc',
     },
     {
