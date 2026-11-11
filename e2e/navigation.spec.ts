@@ -123,3 +123,13 @@ test('a lesson link opened on a phone shows the lesson, without moving focus', a
   await expect(lessonHeading(page, 'VTX')).toBeInViewport();
   await expect(lessonHeading(page, 'VTX')).not.toBeFocused();
 });
+
+test('a long unknown address stays inside a 320 px screen', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await page.goto(`/parts/${'x'.repeat(80)}`);
+  await expect(page.getByRole('status').filter({ hasText: 'no part called' })).toBeVisible();
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - window.innerWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
+});
