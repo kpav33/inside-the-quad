@@ -354,7 +354,7 @@
       "name": "Title Block",
       "kind": "card",
       "refersTo": "title-block",
-      "description": "The sheet's identity: Part, Sheet, Qty, then Spec values as unbreakable groups.",
+      "description": "The sheet's identity: Part, Sheet, Qty, then Spec values as unbreakable groups. On a lesson the Part cell is left out; the heading above names the part.",
       "html": "<div class=\"ds-tb\"><div class=\"ds-tb-c\"><span class=\"ds-tb-l\">Part</span><span class=\"ds-tb-v\">Motors</span></div><div class=\"ds-tb-c\"><span class=\"ds-tb-l\">Sheet</span><span class=\"ds-tb-v\">2 of 3</span></div><div class=\"ds-tb-c\"><span class=\"ds-tb-l\">Qty</span><span class=\"ds-tb-v\">4</span></div><div class=\"ds-tb-c ds-tb-spec\"><span class=\"ds-tb-l\">Spec</span><span class=\"ds-tb-v\"><span class=\"ds-nw\">2207</span> · <span class=\"ds-nw\">1950 KV</span> · <span class=\"ds-nw\">6S</span> · <span class=\"ds-nw\">16 × 16 mm</span> · <span class=\"ds-nw\">M5</span></span></div></div>",
       "css": ".ds-tb{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--color-rule-strong,#3a3f44);background:var(--color-sheet,#1c1f22);color:var(--color-ink,#dfe3e6);font-variant-numeric:tabular-nums}.ds-tb-c{display:flex;flex-direction:column;gap:.25rem;padding:.5rem .75rem;border-right:1px solid var(--color-rule,#2a2e32);border-bottom:1px solid var(--color-rule,#2a2e32);min-width:0}.ds-tb-c:nth-child(3){border-right:0}.ds-tb-spec{grid-column:1/-1;border:0}.ds-tb-l{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:.833rem;letter-spacing:.1em;text-transform:uppercase;color:var(--color-muted,#9aa3ab)}.ds-tb-v{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:1.2rem;font-weight:600;letter-spacing:.03em;text-wrap:balance}.ds-nw{white-space:nowrap}"
     },
@@ -367,12 +367,12 @@
       "css": ".ds-q{display:grid;grid-template-columns:2rem minmax(0,1fr);gap:.75rem;color:var(--color-ink,#dfe3e6)}.ds-q-n{display:inline-grid;place-items:center;width:1.75rem;height:1.75rem;border:1px solid var(--color-rule-strong,#3a3f44);border-radius:50%;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:700;color:var(--color-muted,#9aa3ab)}.ds-q-b{display:flex;flex-direction:column;gap:.75rem;max-width:68ch}.ds-q-b h3{margin:0;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:1.2rem;font-weight:600;line-height:1.75rem;letter-spacing:.06em;text-transform:uppercase}.ds-q-b p{margin:0;font-family:'Atkinson Hyperlegible',system-ui,sans-serif;font-size:1.2rem;line-height:1.5}"
     },
     {
-      "name": "Lesson Link",
+      "name": "Sheet Reference",
       "kind": "custom",
       "refersTo": "lesson-link",
-      "description": "In-lesson connection to another part; ink with a muted underline, never redline.",
-      "html": "<button class=\"ds-link\">The motors are bolted to the frame arms.</button>",
-      "css": ".ds-link{padding:0;border:0;background:none;color:var(--color-ink,#dfe3e6);font-family:'Atkinson Hyperlegible',system-ui,sans-serif;font-size:1rem;text-align:left;text-decoration:underline;text-decoration-color:var(--color-muted,#9aa3ab);text-underline-offset:.2em;cursor:pointer}.ds-link:hover{text-decoration-color:var(--color-ink,#dfe3e6)}.ds-link:focus-visible{outline:2px solid var(--color-accent,#ff5b3a);outline-offset:2px}"
+      "description": "In-lesson connection: the sentence, then a link naming the part and its sheet in caps with a muted leader arrow; ink with a muted underline, never redline.",
+      "html": "<a class=\"ds-link\" href=\"#\"><svg viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"square\" aria-hidden=\"true\"><path d=\"M2 8h11M9 4l4 4-4 4\"/></svg><span>Battery <span class=\"ds-nw\">· sheet 6</span></span></a>",
+      "css": ".ds-link{display:inline-flex;align-items:center;gap:.5rem;min-height:2.75rem;color:var(--color-ink,#dfe3e6);font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:600;letter-spacing:.08em;text-transform:uppercase;text-decoration:underline;text-decoration-color:var(--color-muted,#9aa3ab);text-underline-offset:.2em}.ds-link svg{width:1em;height:1em;color:var(--color-muted,#9aa3ab)}.ds-link:hover{text-decoration-color:var(--color-ink,#dfe3e6)}.ds-link:focus-visible{outline:2px solid var(--color-accent,#ff5b3a);outline-offset:2px}.ds-nw{white-space:nowrap}"
     },
     {
       "name": "Masthead",
@@ -381,6 +381,14 @@
       "description": "Thin masthead: caps wordmark with 'QUAD' in redline, muted tagline, hairline underline.",
       "html": "<header class=\"ds-mast\"><h1>Inside the <span class=\"ds-acc\">Quad</span></h1><p>How an FPV drone works, part by part.</p></header>",
       "css": ".ds-mast{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem 1.5rem;padding:.75rem 1.5rem;border-bottom:1px solid var(--color-rule,#2a2e32);background:var(--color-ground,#121416);color:var(--color-ink,#dfe3e6)}.ds-mast h1{margin:0;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:1.44rem;font-weight:700;line-height:1.1;letter-spacing:.12em;text-transform:uppercase}.ds-acc{color:var(--color-accent,#ff5b3a)}.ds-mast p{margin:0;font-family:'Atkinson Hyperlegible',system-ui,sans-serif;font-size:.833rem;color:var(--color-muted,#9aa3ab)}"
+    },
+    {
+      "name": "Lesson Footer",
+      "kind": "nav",
+      "refersTo": "lesson-footer",
+      "description": "Mark as read toggle (pressed: rule fill, ink border, check), then previous and next sheet cells in a hairline grid.",
+      "html": "<nav class=\"ds-foot\"><button class=\"ds-read\" aria-pressed=\"true\">Read</button><div class=\"ds-sheets\"><a href=\"#\"><span class=\"ds-l\">Previous</span><span class=\"ds-v\">Motors · sheet 2</span></a><a href=\"#\" class=\"ds-next\"><span class=\"ds-l\">Next</span><span class=\"ds-v\">ESC · sheet 4</span></a></div></nav>",
+      "css": ".ds-foot{display:flex;flex-direction:column;align-items:flex-start;gap:1rem;padding-top:1.5rem;border-top:1px solid var(--color-rule,#2a2e32);color:var(--color-ink,#dfe3e6)}.ds-read{min-height:2.75rem;padding:0 1rem;border:1px solid var(--color-ink,#dfe3e6);background:var(--color-rule,#2a2e32);color:inherit;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:600;letter-spacing:.08em;text-transform:uppercase}.ds-sheets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-self:stretch;border:1px solid var(--color-rule-strong,#3a3f44);background:var(--color-sheet,#1c1f22)}.ds-sheets a{display:flex;flex-direction:column;gap:.25rem;padding:.5rem .75rem;color:inherit;text-decoration:none}.ds-sheets a+a{border-left:1px solid var(--color-rule,#2a2e32)}.ds-next{align-items:flex-end;text-align:end}.ds-l{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:.833rem;letter-spacing:.1em;text-transform:uppercase;color:var(--color-muted,#9aa3ab)}.ds-v{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:1.2rem;font-weight:600;letter-spacing:.03em}"
     }
   ],
   "narrative": {

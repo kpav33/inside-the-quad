@@ -12,8 +12,10 @@ related_targets: ['src/app/App.tsx', 'src/styles/global.css']
 The single screen of the app: 3D reference quad, part picker, lesson panel. Mode: **Read** (the
 visitor understands something), with an interactive 3D figure. Users and constraints live in
 PRODUCT.md. Section 02 (design pass) builds the world's foundation; the model-as-teacher layer
-(dimension lines and callouts drawn in 3D, spin arcs) and lookup/navigation (per-part URLs,
-next/previous, progress) are later roadmap sections.
+(dimension lines and callouts drawn in 3D, spin arcs) is a later roadmap section. Section 02c
+added lookup and navigation: each lesson has its own URL, a lesson footer with Mark as read and
+previous/next sheet cells, connection links set as "see sheet" references, read checks in the
+parts list, and a start/continue link on the overview.
 
 Physical scene: a beginner at a desk or workbench, often in the evening under a bench lamp, laptop
 or phone beside loose parts and a soldering iron. That forces a dark ground.

@@ -6,16 +6,18 @@ A static single-page app (SPA). No backend. Built by Vite and served by nginx fr
 
 ```
 src/
-  app/              App shell: layout, top-level composition, (later) routing
+  app/              App shell: layout, top-level composition
   content/          Teaching content as typed data
     lessons/        One Lesson per part, answering the four scope questions
   features/         One folder per feature; owns its components, hooks, logic and tests
     drone-model/    Procedural 3D parts (one component per part), built from a DroneSpec
     drone-viewer/   The 3D viewport: Canvas, camera fitting, orbit controls (lazy loaded)
-    part-explorer/  Selection state; composes the viewer, the part list and the lesson panel
+    part-explorer/  Selection (from the URL); composes the viewer, part list, lesson and overview
+    progress/       Parts marked as read, kept in localStorage
   shared/           Code used by two or more features
     design/         Design tokens: the single source of colour for CSS and the 3D materials
     domain/         Part ids, the drone spec and part quantities: plain data, no React or three.js
+    routing/        Part URLs over the History API (ADR 0004): routes, usePartRoute, PartLink
     ui/             Generic UI building blocks (e.g. ErrorBoundary)
   styles/           tokens.css (mirrors design/tokens.ts) and global.css
   test/             Test setup and helpers
@@ -28,8 +30,13 @@ nginx/              Production server config (copied into the Docker image)
 - `shared/domain/drone-spec.ts` holds the reference drone's numbers. The 3D model is sized from
   it, and lessons quote it, so the two can't disagree. Other drone sizes (whoop, 3", 7") will be
   new `DroneSpec` objects.
-- `part-explorer` owns which part is selected. The 3D view and the part list both change it; the
-  lesson panel shows the selected part's lesson from `content/lessons`.
+- The URL is the selection: `shared/routing` reads `/` or `/parts/<id>` (ADR 0004), and
+  `part-explorer` shows that part's lesson from `content/lessons`. The 3D view, the part list and
+  the links in a lesson all navigate, so Back and Forward retrace the learner's steps. Links are
+  real `<a href>` elements (`PartLink`), so they also open in a new tab.
+- `features/progress` keeps the parts marked as read in `localStorage` (a versioned key; blocked
+  storage just means nothing is saved). The parts list ticks them, and the overview offers sheet 1,
+  the first unread sheet, or a fresh start.
 - Parts under the top plate (`INSIDE_PARTS`: ESC, flight controller, receiver, VTX) are shown by
   opening the frame as an exploded view. `drone-model/stack.ts` holds the stack heights, the lift
   offsets and the easing step; `drone-model/rear.ts` and `front.ts` lay out the rear bay (VTX,
