@@ -306,8 +306,9 @@ a {
   text-align: right;
 }
 
-/* The second column's headings only appear when the wide layout splits the list. */
-.part-list-columns-second {
+/* The extra columns' headings only appear when the list is split. */
+.part-list-columns-second,
+.part-list-columns-third {
   display: none;
 }
 
@@ -662,7 +663,7 @@ a {
     display: grid;
     grid-column: 1 / -1;
     grid-template-columns: subgrid;
-    grid-template-rows: repeat(var(--part-list-rows), auto);
+    grid-template-rows: repeat(var(--part-list-rows-2), auto);
     grid-auto-flow: column;
     margin-bottom: -1px;
   }
@@ -675,7 +676,39 @@ a {
     border-bottom: 1px solid var(--color-rule);
   }
 
-  .part-list li[data-column='2'] {
+  .part-list li[data-column-2='2'] {
+    border-left: 1px solid var(--color-rule);
+  }
+
+  /* With a mouse, shorter rows keep the drawing and the whole list on a laptop screen. Touch
+     screens keep the 3rem rows. */
+  @media (pointer: fine) {
+    .part-list-row {
+      min-height: 2.5rem;
+    }
+  }
+}
+
+/* A field wide enough for three columns (a laptop-width drawing field). */
+@container field (min-width: 40rem) {
+  .part-list-table {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .part-list-columns-third {
+    display: grid;
+    border-left: 1px solid var(--color-rule);
+  }
+
+  .part-list ul {
+    grid-template-rows: repeat(var(--part-list-rows-3), auto);
+  }
+
+  .part-list li[data-column-2='2'] {
+    border-left: 0;
+  }
+
+  .part-list li:not([data-column-3='1']) {
     border-left: 1px solid var(--color-rule);
   }
 }
@@ -710,7 +743,7 @@ a {
   .drawing-canvas {
     height: auto;
     /* Safety net: the drawing never collapses even if the page height is not fixed. */
-    min-height: 16rem;
+    min-height: 15rem;
     border: 0;
   }
 

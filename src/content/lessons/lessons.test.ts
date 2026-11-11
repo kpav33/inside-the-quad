@@ -4,6 +4,8 @@ import { motorSizeCode, propSizeCode, REFERENCE_5_INCH } from '@/shared/domain/d
 import { LIPO_CELL_VOLTS, packVolts } from '@/shared/domain/lipo';
 import { PART_IDS, type PartId } from '@/shared/domain/parts';
 
+import { PART_LABELS } from '../ui';
+
 import { LESSONS } from './index';
 import type { Lesson } from './types';
 
@@ -92,6 +94,15 @@ describe('lessons', () => {
     BEC: /regulator/i,
     gyro: /rotat/i,
     AIO: /all-in-one/i,
+    ELRS: /ExpressLRS/,
+    CRSF: /serial/i,
+    telemetry: /back to (your|the) radio/i,
+    failsafe: /signal is lost|loses (the )?signal/i,
+    latency: /delay/i,
+    mW: /milliwatt/i,
+    RHCP: /right-hand/i,
+    OSD: /on-screen/i,
+    'GPS Rescue': /fl(y|ies) (back|home)/i,
   };
 
   it.each(allLessons.map((l) => [l.partId, l] as const))(
@@ -138,6 +149,107 @@ describe('lessons', () => {
     }
   });
 
+  it('quotes the receiver numbers from the drone spec', () => {
+    const values = specValues(LESSONS.receiver);
+    for (const expected of ['ExpressLRS', '2.4 GHz', 'CRSF', '500 Hz', 'T dipole']) {
+      expect(
+        values.some((v) => v.includes(expected)),
+        expected,
+      ).toBe(true);
+    }
+  });
+
+  it('teaches binding, telemetry, failsafe and the long-range band', () => {
+    const text = lessonText(LESSONS.receiver);
+    for (const term of [/bind/i, /telemetry/i, /failsafe/i, /900 MHz/]) expect(text).toMatch(term);
+  });
+
+  it('quotes the camera numbers from the drone spec', () => {
+    const values = specValues(LESSONS.camera);
+    for (const expected of ['micro, 19 mm', '30°', 'Analog']) {
+      expect(
+        values.some((v) => v.includes(expected)),
+        expected,
+      ).toBe(true);
+    }
+  });
+
+  it('lists every camera width in the size row', () => {
+    const size = LESSONS.camera.specs.find((row) => row.label === 'Size');
+    for (const width of ['28 mm', '21 mm', '19 mm', '14 mm'])
+      expect(size?.meaning).toContain(width);
+  });
+
+  it('explains the camera tilt and how it differs from an action camera', () => {
+    const text = lessonText(LESSONS.camera);
+    expect(text).toMatch(/tilt/i);
+    expect(text).toMatch(/action camera/);
+  });
+
+  it('quotes the VTX numbers from the drone spec', () => {
+    const values = specValues(LESSONS.vtx);
+    for (const expected of ['5.8 GHz', '48', '25 mW', '20 × 20 mm', 'RHCP']) {
+      expect(
+        values.some((v) => v.includes(expected)),
+        expected,
+      ).toBe(true);
+    }
+  });
+
+  it('teaches channels, analog and digital, and never running without an antenna', () => {
+    const text = lessonText(LESSONS.vtx);
+    for (const term of [/never .*without its antenna/i, /analog/i, /digital/i, /channel/i]) {
+      expect(text).toMatch(term);
+    }
+  });
+
+  it('says power limits vary by country, with the EU as the example', () => {
+    const power = LESSONS.vtx.specs.find((row) => row.value.includes('mW'));
+    expect(power?.meaning).toMatch(/vary by country/);
+    expect(power?.meaning).toMatch(/EU/);
+  });
+
+  it('quotes the strap size from the drone spec', () => {
+    expect(specValues(LESSONS.strap).some((v) => v.includes('20 × 250 mm'))).toBe(true);
+  });
+
+  it('explains that a lost battery means a crash', () => {
+    expect(lessonText(LESSONS.strap)).toMatch(/crash/i);
+  });
+
+  it('quotes the extras from the drone spec', () => {
+    const values = specValues(LESSONS.extras);
+    for (const expected of ['4 systems', '5 V', '8 × 5 V']) {
+      expect(
+        values.some((v) => v.includes(expected)),
+        expected,
+      ).toBe(true);
+    }
+  });
+
+  // Mentions that are not connections: the FC reads the battery's voltage, and the battery's power
+  // reaches the motors through the ESC.
+  const INCIDENTAL: Partial<Record<PartId, PartId[]>> = { fc: ['battery'], battery: ['motors'] };
+
+  it('names the GPS satellite systems', () => {
+    const gps = LESSONS.extras.specs.find((row) => row.label === 'GPS');
+    expect(gps?.meaning).toContain('GPS, Galileo, GLONASS and BeiDou');
+  });
+
+  it.each(allLessons.map((l) => [l.partId, l] as const))(
+    '%s links every part its connections name',
+    (_id, lesson) => {
+      const text = lesson.connections.map((c) => c.text).join(' ');
+      for (const part of PART_IDS) {
+        if (part === lesson.partId || INCIDENTAL[lesson.partId]?.includes(part)) continue;
+        const named = new RegExp(`\\b${PART_LABELS[part]}\\b`, 'i').test(text);
+        if (!named) continue;
+        const linked = lesson.connections.some((c) => c.partId === part);
+        expect(linked, `${lesson.partId} names ${part} without linking it`).toBe(true);
+      }
+    },
+  );
+
   it('computes the battery voltages from the cell count', () => {
     const cells = REFERENCE_5_INCH.motor.batteryCells;
     const text = lessonText(LESSONS.battery);
@@ -161,6 +273,15 @@ describe('lessons', () => {
     ['esc', 'frame'],
     ['fc', 'esc'],
     ['fc', 'frame'],
+    ['receiver', 'fc'],
+    ['receiver', 'frame'],
+    ['camera', 'frame'],
+    ['vtx', 'fc'],
+    ['vtx', 'camera'],
+    ['vtx', 'frame'],
+    ['strap', 'battery'],
+    ['strap', 'frame'],
+    ['extras', 'fc'],
   ];
 
   it.each(PAIRS)('links %s and %s both ways', (a, b) => {
@@ -197,5 +318,26 @@ describe('lessons', () => {
 
   it('says a deeply drained cell can be damaged, not that it always is', () => {
     expect(lessonText(LESSONS.battery)).not.toMatch(/or it is damaged/);
+  });
+
+  it('says the buzzer starts when the signal is lost, not when power is lost', () => {
+    const text = lessonText(LESSONS.extras);
+    expect(text).not.toMatch(/loses power/);
+    expect(text).toMatch(/loses (the radio )?signal/);
+  });
+
+  it('labels radio frequencies as Frequency, not Band', () => {
+    for (const lesson of [LESSONS.vtx, LESSONS.receiver]) {
+      const labels = lesson.specs.map((row) => row.label);
+      expect(labels, lesson.partId).toContain('Frequency');
+      expect(labels, lesson.partId).not.toContain('Band');
+    }
+  });
+
+  it('keeps signal, power and video wires apart in the connections', () => {
+    const receiver = LESSONS.receiver.connections.map((c) => c.text).join(' ');
+    expect(receiver).not.toMatch(/UARTs?, which also powers/);
+    const vtx = LESSONS.vtx.connections.map((c) => c.text).join(' ');
+    expect(vtx).toMatch(/video wire/);
   });
 });

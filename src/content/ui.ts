@@ -8,6 +8,11 @@ export const PART_LABELS: Record<PartId, string> = {
   esc: 'ESC',
   fc: 'Flight controller',
   battery: 'Battery',
+  strap: 'Battery strap',
+  receiver: 'Receiver',
+  camera: 'Camera',
+  vtx: 'VTX',
+  extras: 'Extras',
 };
 
 /**

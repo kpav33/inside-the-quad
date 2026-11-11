@@ -14,6 +14,11 @@ colors:
   model-esc: '#1e2226'
   model-fc: '#202326'
   model-battery: '#22262a'
+  model-strap: '#1d2125'
+  model-receiver: '#1f2327'
+  model-camera: '#212529'
+  model-vtx: '#23272b'
+  model-extras: '#25292d'
   scene-fill-light: '#b8c4d0'
 typography:
   display:
@@ -130,8 +135,9 @@ Confirmed rejections (from the direction contract): the dark docs site with a si
 
 - 3D selection is a redline _fill_ with ground-coloured drafting edges, not a redline outline. drei `Outlines` rendered artifacts and was invisible on box geometry. Unselected parts are dark fills with ink edges, so redline is the only filled colour in the drawing.
 - On wide screens the 3D viewer is inset above the docked parts list, so the list never covers the drone.
-- The parts list splits into two columns (each with its own ITEM / PART / QTY headings, filled top to bottom) whenever the drawing field is at least 28rem wide, so the 3D view keeps its height as parts are added.
-- Selecting a board inside the frame (ESC, flight controller) opens the stack as an exploded-view drawing: the ESC, the FC and the top plate with the battery lift apart in order, the standoffs stay put. It eases to about 95 % in 200 ms and jumps under reduced motion.
+- The 3D view opens on the drone's front three-quarter, so the FPV camera faces the viewer; the frame has two camera side plates at the front. Selecting a part the starting view hides (camera, VTX, receiver, extras) eases the view to an angle that shows it, in the same restrained motion, and instantly under reduced motion.
+- The parts list splits into two columns (each with its own ITEM / PART / QTY headings, filled top to bottom) when the drawing field is at least 28rem wide and three from 40rem, so the 3D view keeps its height with all eleven parts. With a mouse, rows are 2.5rem.
+- Selecting a board under the top plate (ESC, flight controller, receiver, VTX) opens the frame as an exploded-view drawing: the ESC, the FC, the rear bay (VTX and receiver) and the top plate with the battery, strap and GPS lift apart in order; the standoffs and the camera plates stay put. It eases to about 95 % in 200 ms and jumps under reduced motion.
 - Spec values in the title block are unbreakable groups, so a number is never split from its unit.
 - The "current sheet" is marked by the selected parts-list row (redline rule and filled balloon); the title block's Sheet field itself stays ink.
 
@@ -151,7 +157,7 @@ A near-monochrome carbon palette with a single warm redline; every colour is a t
 - **Frame Line** (rule-strong): outer frames (drawing frame, parts list, title block, spec table top), outline-button border, unselected balloon ring, scrollbar thumb.
 - **Drafting Ink** (ink): reading text, values, and the 3D model's edge lines; also the hover border colour.
 - **Graphite** (muted): secondary text: column headers, cell labels, hints, zone markers, tagline, question balloon numerals, link underlines at rest.
-- **Motor, Prop, ESC, FC and Battery Fills** (model-motors, model-props, model-esc, model-fc, model-battery): 3D-only fills, small tonal steps around the sheet so parts separate without colour.
+- **Part Fills** (model-motors, model-props, model-esc, model-fc, model-battery, model-strap, model-receiver, model-camera, model-vtx, model-extras): 3D-only fills, small tonal steps around the sheet so parts separate without colour.
 - **Scene Fill Light** (`SCENE_LIGHT.fill`, #b8c4d0): 3D-only, the cool fill light that keeps dark parts' shapes readable. Never used as a surface or text colour.
 
 Contrast (WCAG 2.x): ink 14.3:1 on ground, 12.8:1 on sheet; muted 7.2:1 on ground, 6.5:1 on sheet, 5.3:1 on the rule fill; redline 6.0:1 on ground; ground text on redline 6.0:1.
@@ -197,7 +203,7 @@ Spacing is a 7-step scale (0.25, 0.5, 0.75, 1, 1.5, 2, 3rem); touch targets are 
 
 **Narrow:** a single scrolling column: masthead, a drawing frame of 40svh (min 15rem), the parts list full width, then the sheet. One finger scrolls the page over the drawing; two fingers turn it. The hint text switches to touch wording under `(hover: none) and (pointer: coarse)`.
 
-**Parts list columns:** whenever the drawing field (a container query on the field, not the page) is at least 28rem wide, the parts list runs down two columns, items 1 to 3 then 4 to 6, each column with its own headings and a hairline between them. Narrower fields keep one column.
+**Parts list columns:** the parts list runs down two columns when the drawing field (a container query on the field, not the page) is at least 28rem wide, and three from 40rem, filled top to bottom, each column with its own headings and a hairline between them. Narrower fields keep one column. With a fine pointer the rows are 2.5rem; touch keeps 3rem.
 
 **Sheet column:** title block, part title with the close button, then the four questions as a 2rem balloon gutter plus body, 2rem apart. The spec table becomes stacked label/value/meaning blocks when the sheet is narrower than 32rem (container query).
 
@@ -236,7 +242,7 @@ Ink text with a muted underline (0.2em offset) that turns ink on hover. Never re
 The drawing's parts list is the part picker.
 
 - **Frame:** sheet fill, rule-strong frame; muted caps heading and ITEM / PART / QTY column header row, each over a hairline.
-- **Rows:** a 2.5rem / 1fr / 3rem grid, 3rem tall, hairline between rows. Two columns when the drawing field is at least 28rem wide (see Layout). Balloon item number, part name in body, quantity right-aligned.
+- **Rows:** a 2.5rem / 1fr / 3rem grid, 3rem tall, hairline between rows. Two or three columns on wider drawing fields, 2.5rem tall with a mouse (see Layout). Balloon item number, part name in body, quantity right-aligned.
 - **Hover:** faint rule-tinted fill (45% rule) and the balloon ring turns ink.
 - **Selected:** rule fill, 3px redline left rule, redline-filled balloon with ground numeral, bold name. Exposed as `aria-pressed`.
 

@@ -6,4 +6,9 @@ export const PART_NAMES = [
   'ESC',
   'Flight controller',
   'Battery',
+  'Battery strap',
+  'Receiver',
+  'Camera',
+  'VTX',
+  'Extras',
 ] as const;

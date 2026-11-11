@@ -58,8 +58,8 @@ verdict, DESIGN.md, and every shipping raster carrying its provenance
 Selecting a part (list row or model) lights the same redline in both places at once: the list row
 gets a redline left rule and filled row, the 3D part gets a redline outline, and the title block
 updates. Motion: 150-200 ms state transitions only; nothing orchestrated on load. Selecting a
-board inside the frame (ESC, flight controller) opens the stack as an exploded-view drawing, the
-layers lifting apart in order within the same 200 ms (section 03a).
+board under the top plate (ESC, flight controller, receiver, VTX) opens the frame as an
+exploded-view drawing, the layers lifting apart in order within the same 200 ms (sections 03a, 03b).
 
 ## Unresolved
 

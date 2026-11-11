@@ -50,7 +50,19 @@ export const frameLesson: Lesson = {
       partId: 'esc',
     },
     { text: 'The flight controller mounts on top of the ESC, on the same holes.', partId: 'fc' },
-    { text: 'The camera mounts at the front, between two side plates.' },
-    { text: 'The battery sits on the top plate, held down by a strap.', partId: 'battery' },
+    { text: 'The camera mounts at the front, between two side plates.', partId: 'camera' },
+    {
+      text: 'The receiver sits at the back, with its antenna out past the carbon.',
+      partId: 'receiver',
+    },
+    {
+      text: 'The video transmitter (VTX) sits at the back too, with its antenna out the rear.',
+      partId: 'vtx',
+    },
+    { text: 'The battery sits on the top plate.', partId: 'battery' },
+    {
+      text: 'The battery strap wraps around the top plate to hold the battery down.',
+      partId: 'strap',
+    },
   ],
 };

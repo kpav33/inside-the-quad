@@ -1,6 +1,7 @@
 import { expect, type Page, test } from '@playwright/test';
 
 import { PART_NAMES } from './parts';
+import { redlinePixels } from './redline';
 
 const lessonHeading = (page: Page, name: string) =>
   page.getByRole('heading', { level: 2, name, exact: true });
@@ -43,11 +44,12 @@ test('keyboard: open and close a lesson from the part list', async ({ page }) =>
  * the 1280 × 720 test viewport. Found by clicking a grid over the canvas, one fresh page per point.
  */
 const POINTS = {
-  battery: { x: 0.475, y: 0.44 },
-  frameArm: { x: 0.4, y: 0.6 },
-  // With the stack open:
-  liftedFc: { x: 0.48, y: 0.44 },
-  liftedBattery: { x: 0.5, y: 0.32 },
+  battery: { x: 0.525, y: 0.49 },
+  frameArm: { x: 0.42, y: 0.58 },
+  camera: { x: 0.545, y: 0.59 },
+  // With the frame open:
+  liftedFc: { x: 0.495, y: 0.46 },
+  liftedBattery: { x: 0.525, y: 0.31 },
 };
 
 async function clickAt(page: Page, point: { x: number; y: number }) {
@@ -84,6 +86,12 @@ test('mouse: the open stack keeps every layer clickable', async ({ page }) => {
   // Selecting the battery closes the stack; the background clears the selection.
   await clickAt(page, { x: 0.01, y: 0.01 });
   await expect(lessonHeading(page, 'Battery')).toBeHidden();
+});
+
+test('mouse: the camera is clickable at the front', async ({ page }) => {
+  await page.goto('/');
+  await clickAt(page, POINTS.camera);
+  await expect(lessonHeading(page, 'Camera')).toBeVisible();
 });
 
 test('list: every part opens its own lesson', async ({ page }) => {
@@ -197,4 +205,14 @@ test('resizing the window while the stack is open keeps the closed drone framed'
 
   await canvasBox(page);
   expect((await canvas.screenshot()).equals(before)).toBe(true);
+});
+
+test('every selected part shows clearly, turning the drone when it has to', async ({ page }) => {
+  test.setTimeout(120_000);
+  for (const part of PART_NAMES) {
+    await page.goto('/');
+    await page.getByRole('button', { name: part, exact: true }).click();
+    await canvasBox(page);
+    expect(await redlinePixels(page), part).toBeGreaterThanOrEqual(150);
+  }
 });

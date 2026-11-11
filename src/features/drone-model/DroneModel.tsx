@@ -3,17 +3,22 @@ import type { ThreeEvent } from '@react-three/fiber';
 import { type ReactNode, useState } from 'react';
 
 import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
-import { isStackPart, type PartId } from '@/shared/domain/parts';
+import { isInsidePart, type PartId } from '@/shared/domain/parts';
 
 import { motorTopMm, PROP_HUB_HEIGHT_MM } from './dimensions';
 import { motorPlacements } from './layout';
 import { Lift } from './Lift';
 import { Battery } from './parts/Battery';
+import { Camera } from './parts/Camera';
 import { Esc } from './parts/Esc';
+import { Extras } from './parts/Extras';
 import { Fc } from './parts/Fc';
 import { Frame } from './parts/Frame';
 import { Motor } from './parts/Motor';
 import { Propeller } from './parts/Propeller';
+import { Receiver } from './parts/Receiver';
+import { Strap } from './parts/Strap';
+import { Vtx } from './parts/Vtx';
 import { explodedOffsets } from './stack';
 
 export interface DroneModelProps {
@@ -24,14 +29,14 @@ export interface DroneModelProps {
 
 /**
  * The whole drone, built from a spec. Each kind of part is one clickable group. Selecting a board
- * in the stack opens the stack like an exploded-view drawing.
+ * under the top plate opens the frame like an exploded-view drawing.
  */
 export function DroneModel({ spec, selectedPart, onPartClick }: DroneModelProps) {
   const [hovered, setHovered] = useState<PartId | null>(null);
   useCursor(hovered !== null);
 
   const placements = motorPlacements(spec);
-  const lift = explodedOffsets(spec, isStackPart(selectedPart));
+  const lift = explodedOffsets(spec, isInsidePart(selectedPart));
   const propCentreAboveArm = mm(motorTopMm(spec) + PROP_HUB_HEIGHT_MM / 2);
 
   const partGroup = (part: PartId, children: ReactNode) => (
@@ -93,6 +98,35 @@ export function DroneModel({ spec, selectedPart, onPartClick }: DroneModelProps)
         <Lift liftMm={lift.fc}>
           <Fc spec={spec} highlighted={selectedPart === 'fc'} />
         </Lift>,
+      )}
+      {partGroup(
+        'receiver',
+        <Receiver
+          spec={spec}
+          highlighted={selectedPart === 'receiver'}
+          rearBayLiftMm={lift.rearBay}
+        />,
+      )}
+      {partGroup(
+        'vtx',
+        <Lift liftMm={lift.rearBay}>
+          <Vtx spec={spec} highlighted={selectedPart === 'vtx'} />
+        </Lift>,
+      )}
+      {partGroup('camera', <Camera spec={spec} highlighted={selectedPart === 'camera'} />)}
+      {partGroup(
+        'strap',
+        <Lift liftMm={lift.topPlate}>
+          <Strap spec={spec} highlighted={selectedPart === 'strap'} />
+        </Lift>,
+      )}
+      {partGroup(
+        'extras',
+        <Extras
+          spec={spec}
+          highlighted={selectedPart === 'extras'}
+          topPlateLiftMm={lift.topPlate}
+        />,
       )}
       {partGroup(
         'battery',

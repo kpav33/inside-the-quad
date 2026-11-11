@@ -7,8 +7,9 @@ import type { CSSProperties } from 'react';
 
 import { LESSON_PANEL_ID, partButtonId } from './ids';
 
-/** On wide layouts the list runs down the first column, then the second. */
-const ROWS_PER_COLUMN = Math.ceil(PART_IDS.length / 2);
+/** Wider drawing fields split the list into two or three columns, each filled top to bottom. */
+const ROWS_IN_TWO = Math.ceil(PART_IDS.length / 2);
+const ROWS_IN_THREE = Math.ceil(PART_IDS.length / 3);
 
 export interface PartListProps {
   selectedPart: PartId | null;
@@ -17,8 +18,9 @@ export interface PartListProps {
 }
 
 /**
- * The drawing's parts list, used as the part picker: item number, part, quantity. Wide layouts
- * split it into two columns (each with its own column headings) so the 3D view keeps its height.
+ * The drawing's parts list, used as the part picker: item number, part, quantity. Wider drawing
+ * fields split it into two or three columns (each with its own column headings) so the 3D view
+ * keeps its height.
  */
 export function PartList({ selectedPart, onToggle }: PartListProps) {
   const { columns } = UI.parts;
@@ -34,7 +36,12 @@ export function PartList({ selectedPart, onToggle }: PartListProps) {
       <h2 className="part-list-heading">{UI.parts.heading}</h2>
       <div
         className="part-list-table"
-        style={{ '--part-list-rows': ROWS_PER_COLUMN } as CSSProperties}
+        style={
+          {
+            '--part-list-rows-2': ROWS_IN_TWO,
+            '--part-list-rows-3': ROWS_IN_THREE,
+          } as CSSProperties
+        }
       >
         <div className="part-list-columns" aria-hidden="true">
           {columnHeadings}
@@ -42,11 +49,18 @@ export function PartList({ selectedPart, onToggle }: PartListProps) {
         <div className="part-list-columns part-list-columns-second" aria-hidden="true">
           {columnHeadings}
         </div>
+        <div className="part-list-columns part-list-columns-third" aria-hidden="true">
+          {columnHeadings}
+        </div>
         <ul>
           {PART_IDS.map((part, index) => {
             const selected = selectedPart === part;
             return (
-              <li key={part} data-column={index < ROWS_PER_COLUMN ? 1 : 2}>
+              <li
+                key={part}
+                data-column-2={Math.floor(index / ROWS_IN_TWO) + 1}
+                data-column-3={Math.floor(index / ROWS_IN_THREE) + 1}
+              >
                 <button
                   type="button"
                   id={partButtonId(part)}

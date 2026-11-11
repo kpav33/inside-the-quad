@@ -30,6 +30,11 @@ export const MODEL_COLOR: Record<PartId, string> = {
   esc: '#1e2226',
   fc: '#202326',
   battery: '#22262a',
+  strap: '#1d2125',
+  receiver: '#1f2327',
+  camera: '#212529',
+  vtx: '#23272b',
+  extras: '#25292d',
 };
 
 /** Scene lighting for the 3D drawing: a cool fill light so dark parts keep their shape. */

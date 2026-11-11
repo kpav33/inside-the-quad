@@ -1,3 +1,7 @@
+/** FPV camera widths by size class, in millimetres. The camera must fit the frame. */
+export const CAMERA_SIZE_CLASS_MM = { full: 28, mini: 21, micro: 19, nano: 14 } as const;
+export type CameraSizeClass = keyof typeof CAMERA_SIZE_CLASS_MM;
+
 /**
  * Physical description of a drone. The 3D model and the lesson numbers both read from it, so the
  * two can't drift apart. Lengths are in millimetres, like the specs printed on real parts.
@@ -69,6 +73,47 @@ export interface DroneSpec {
     packWidthMm: number;
     packHeightMm: number;
   };
+  receiver: {
+    /** Radio control system, e.g. "ExpressLRS". */
+    system: string;
+    frequencyGhz: number;
+    /** Serial protocol to the flight controller. */
+    protocol: string;
+    /** Stick updates per second. */
+    packetRateHz: number;
+    antenna: string;
+  };
+  camera: {
+    sizeClass: CameraSizeClass;
+    /** Body width; equals the size class's width. */
+    widthMm: number;
+    /** How far the camera is tilted up from level. */
+    tiltDeg: number;
+    signal: 'analog' | 'digital';
+  };
+  vtx: {
+    frequencyGhz: number;
+    bands: number;
+    channelsPerBand: number;
+    /** Output power settings it offers. */
+    powerLevelsMw: number[];
+    /** The setting in use; one of `powerLevelsMw`. */
+    powerSettingMw: number;
+    /** Mounting hole spacing (square). */
+    mountMm: number;
+    antennaPolarization: 'RHCP' | 'LHCP';
+  };
+  strap: {
+    widthMm: number;
+    lengthMm: number;
+  };
+  extras: {
+    /** Satellite systems the GPS module uses. */
+    gpsSystems: string[];
+    buzzerVolts: number;
+    ledVolts: number;
+    ledCount: number;
+  };
 }
 
 /** The reference 5" freestyle quad from docs/product/scope.md. */
@@ -124,6 +169,38 @@ export const REFERENCE_5_INCH: DroneSpec = {
     packWidthMm: 35,
     packHeightMm: 38,
   },
+  receiver: {
+    system: 'ExpressLRS',
+    frequencyGhz: 2.4,
+    protocol: 'CRSF',
+    packetRateHz: 500,
+    antenna: 'T dipole',
+  },
+  camera: {
+    sizeClass: 'micro',
+    widthMm: 19,
+    tiltDeg: 30,
+    signal: 'analog',
+  },
+  vtx: {
+    frequencyGhz: 5.8,
+    bands: 6,
+    channelsPerBand: 8,
+    powerLevelsMw: [25, 200, 400, 800],
+    powerSettingMw: 25,
+    mountMm: 20,
+    antennaPolarization: 'RHCP',
+  },
+  strap: {
+    widthMm: 20,
+    lengthMm: 250,
+  },
+  extras: {
+    gpsSystems: ['GPS', 'Galileo', 'GLONASS', 'BeiDou'],
+    buzzerVolts: 5,
+    ledVolts: 5,
+    ledCount: 8,
+  },
 };
 
 export const INCH_MM = 25.4;
@@ -143,4 +220,9 @@ export function propSizeCode(spec: DroneSpec): string {
 export function motorSizeCode(spec: DroneSpec): string {
   const twoDigits = (value: number) => String(Math.round(value)).padStart(2, '0');
   return twoDigits(spec.motor.statorWidthMm) + twoDigits(spec.motor.statorHeightMm);
+}
+
+/** Number of VTX channels: bands × channels per band. */
+export function vtxChannelCount(spec: DroneSpec): number {
+  return spec.vtx.bands * spec.vtx.channelsPerBand;
 }

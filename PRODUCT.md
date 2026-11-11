@@ -43,13 +43,13 @@ it work, what do the numbers mean, what is it connected to.
 
 - Static single-page web app (Vite, React, TypeScript, react-three-fiber), self-hosted on Coolify.
   No backend, accounts or tracking.
-- Built so far: 3D reference drone with frame, motors, props, ESC, flight controller and battery;
-  select a part by clicking it in 3D or with keyboard-accessible part buttons; four-question
-  lesson panel per part. Selecting the ESC or flight controller opens the stack as an exploded
-  view.
-- Planned (see `docs/roadmap.md`): remaining parts (receiver, camera, VTX, extras), an intro
-  module, a "how it all works together" simulator, the gear you hold and wear, and a
-  compatibility checker; later other drone sizes and types.
+- Built so far: every Module 2 part of the 3D reference drone (frame, motors, props, ESC, flight
+  controller, battery, battery strap, receiver, camera, VTX and extras), with analog video; select
+  a part by clicking it in 3D or with keyboard-accessible part buttons; four-question lesson panel
+  per part. Selecting a board under the top plate (ESC, flight controller, receiver, VTX) opens the
+  frame as an exploded view.
+- Planned (see `docs/roadmap.md`): an intro module, a "how it all works together" simulator, the
+  gear you hold and wear, and a compatibility checker; later other drone sizes and types.
 - Content source of truth: `docs/product/scope.md`. Product recommendations, Betaflight tuning and
   flight training are out of scope.
 - Terminology: "5-inch", "quad", "FC", "ESC", "VTX", "props in/out", "KV", "S" (battery cells).

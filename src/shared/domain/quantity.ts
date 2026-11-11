@@ -8,9 +8,16 @@ export function partQuantity(part: PartId, spec: DroneSpec): number {
     case 'esc':
     case 'fc':
     case 'battery':
+    case 'receiver':
+    case 'camera':
+    case 'vtx':
+    case 'strap':
       return 1;
     case 'motors':
     case 'props':
       return spec.motor.count;
+    case 'extras':
+      // GPS, buzzer and one LED strip on each rear arm.
+      return 4;
   }
 }

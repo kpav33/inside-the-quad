@@ -59,12 +59,21 @@ export const fcLesson: Lesson = {
       text: `It mounts on the frame’s ${mount} stack holes, on rubber grommets.`,
       partId: 'frame',
     },
-    { text: 'The receiver plugs into one of its UARTs and passes on your stick commands.' },
+    {
+      text: 'The receiver plugs into one of its UARTs and passes on your stick commands.',
+      partId: 'receiver',
+    },
     {
       text: 'The video transmitter plugs into another UART, so the flight controller can set its channel and power.',
+      partId: 'vtx',
     },
     {
       text: 'It adds on-screen text (battery voltage, timer) to your video. With analog video, the camera’s signal passes through the flight controller on its way to the video transmitter; digital video systems get the text over that UART instead.',
+      partId: 'camera',
+    },
+    {
+      text: 'The GPS, buzzer and LEDs (the extras) plug into a spare UART and their own pads.',
+      partId: 'extras',
     },
   ],
 };
