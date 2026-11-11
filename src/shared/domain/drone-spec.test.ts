@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { mm, motorSizeCode, propSizeCode, REFERENCE_5_INCH } from './drone-spec';
+import {
+  CAMERA_SIZE_CLASS_MM,
+  mm,
+  motorSizeCode,
+  propSizeCode,
+  REFERENCE_5_INCH,
+  vtxChannelCount,
+} from './drone-spec';
 import { LIPO_CELL_VOLTS, packVolts } from './lipo';
 
 describe('drone spec', () => {
@@ -54,5 +61,53 @@ describe('drone spec', () => {
     const { battery, frame } = REFERENCE_5_INCH;
     expect(battery.packLengthMm).toBeLessThanOrEqual(frame.bodyLengthMm);
     expect(battery.packWidthMm).toBeLessThanOrEqual(frame.bodyWidthMm);
+  });
+
+  it('matches the reference receiver, camera, VTX, strap and extras', () => {
+    const { receiver, camera, vtx, strap, extras } = REFERENCE_5_INCH;
+    expect(receiver).toMatchObject({
+      system: 'ExpressLRS',
+      frequencyGhz: 2.4,
+      protocol: 'CRSF',
+      packetRateHz: 500,
+      antenna: 'T dipole',
+    });
+    expect(camera).toMatchObject({
+      sizeClass: 'micro',
+      widthMm: 19,
+      tiltDeg: 30,
+      signal: 'analog',
+    });
+    expect(vtx).toMatchObject({
+      frequencyGhz: 5.8,
+      bands: 6,
+      channelsPerBand: 8,
+      powerLevelsMw: [25, 200, 400, 800],
+      powerSettingMw: 25,
+      mountMm: 20,
+      antennaPolarization: 'RHCP',
+    });
+    expect(strap).toEqual({ widthMm: 20, lengthMm: 250 });
+    expect(extras).toEqual({
+      gpsSystems: ['GPS', 'Galileo', 'GLONASS', 'BeiDou'],
+      buzzerVolts: 5,
+      ledVolts: 5,
+      ledCount: 8,
+    });
+  });
+
+  it('sets the VTX to one of its power levels', () => {
+    const { vtx } = REFERENCE_5_INCH;
+    expect(vtx.powerLevelsMw).toContain(vtx.powerSettingMw);
+  });
+
+  it('gives the camera the width of its size class', () => {
+    const { camera } = REFERENCE_5_INCH;
+    expect(camera.widthMm).toBe(CAMERA_SIZE_CLASS_MM[camera.sizeClass]);
+    expect(CAMERA_SIZE_CLASS_MM).toEqual({ full: 28, mini: 21, micro: 19, nano: 14 });
+  });
+
+  it('counts the VTX channels as bands × channels per band', () => {
+    expect(vtxChannelCount(REFERENCE_5_INCH)).toBe(48);
   });
 });
