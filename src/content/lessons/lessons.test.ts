@@ -92,6 +92,10 @@ describe('lessons', () => {
     BEC: /regulator/i,
     gyro: /rotat/i,
     AIO: /all-in-one/i,
+    ELRS: /ExpressLRS/,
+    CRSF: /serial/i,
+    telemetry: /back to (your|the) radio/i,
+    failsafe: /signal is lost|loses (the )?signal/i,
   };
 
   it.each(allLessons.map((l) => [l.partId, l] as const))(
@@ -138,6 +142,21 @@ describe('lessons', () => {
     }
   });
 
+  it('quotes the receiver numbers from the drone spec', () => {
+    const values = specValues(LESSONS.receiver);
+    for (const expected of ['ExpressLRS', '2.4 GHz', 'CRSF', '500 Hz', 'T dipole']) {
+      expect(
+        values.some((v) => v.includes(expected)),
+        expected,
+      ).toBe(true);
+    }
+  });
+
+  it('teaches binding, telemetry, failsafe and the long-range band', () => {
+    const text = lessonText(LESSONS.receiver);
+    for (const term of [/bind/i, /telemetry/i, /failsafe/i, /900 MHz/]) expect(text).toMatch(term);
+  });
+
   it('computes the battery voltages from the cell count', () => {
     const cells = REFERENCE_5_INCH.motor.batteryCells;
     const text = lessonText(LESSONS.battery);
@@ -161,6 +180,8 @@ describe('lessons', () => {
     ['esc', 'frame'],
     ['fc', 'esc'],
     ['fc', 'frame'],
+    ['receiver', 'fc'],
+    ['receiver', 'frame'],
   ];
 
   it.each(PAIRS)('links %s and %s both ways', (a, b) => {

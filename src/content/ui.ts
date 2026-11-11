@@ -8,6 +8,7 @@ export const PART_LABELS: Record<PartId, string> = {
   esc: 'ESC',
   fc: 'Flight controller',
   battery: 'Battery',
+  receiver: 'Receiver',
 };
 
 /**

@@ -8,6 +8,7 @@ export function partQuantity(part: PartId, spec: DroneSpec): number {
     case 'esc':
     case 'fc':
     case 'battery':
+    case 'receiver':
       return 1;
     case 'motors':
     case 'props':

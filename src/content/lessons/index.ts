@@ -6,6 +6,7 @@ import { fcLesson } from './fc';
 import { frameLesson } from './frame';
 import { motorsLesson } from './motors';
 import { propsLesson } from './props';
+import { receiverLesson } from './receiver';
 import type { Lesson } from './types';
 
 export type { Lesson, LessonConnection, LessonSpecRow } from './types';
@@ -17,4 +18,5 @@ export const LESSONS: Record<PartId, Lesson> = {
   esc: escLesson,
   fc: fcLesson,
   battery: batteryLesson,
+  receiver: receiverLesson,
 };

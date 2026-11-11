@@ -59,7 +59,10 @@ export const fcLesson: Lesson = {
       text: `It mounts on the frame’s ${mount} stack holes, on rubber grommets.`,
       partId: 'frame',
     },
-    { text: 'The receiver plugs into one of its UARTs and passes on your stick commands.' },
+    {
+      text: 'The receiver plugs into one of its UARTs and passes on your stick commands.',
+      partId: 'receiver',
+    },
     {
       text: 'The video transmitter plugs into another UART, so the flight controller can set its channel and power.',
     },
