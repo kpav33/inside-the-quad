@@ -3,7 +3,7 @@ import type { ThreeEvent } from '@react-three/fiber';
 import { type ReactNode, useState } from 'react';
 
 import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
-import { isStackPart, type PartId } from '@/shared/domain/parts';
+import { isInsidePart, type PartId } from '@/shared/domain/parts';
 
 import { motorTopMm, PROP_HUB_HEIGHT_MM } from './dimensions';
 import { motorPlacements } from './layout';
@@ -31,7 +31,7 @@ export function DroneModel({ spec, selectedPart, onPartClick }: DroneModelProps)
   useCursor(hovered !== null);
 
   const placements = motorPlacements(spec);
-  const lift = explodedOffsets(spec, isStackPart(selectedPart));
+  const lift = explodedOffsets(spec, isInsidePart(selectedPart));
   const propCentreAboveArm = mm(motorTopMm(spec) + PROP_HUB_HEIGHT_MM / 2);
 
   const partGroup = (part: PartId, children: ReactNode) => (

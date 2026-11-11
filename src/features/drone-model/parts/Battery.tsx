@@ -1,5 +1,6 @@
 import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
 
+import { BATTERY_LEAD_LENGTH_MM, BATTERY_PAD_MM, XT60_MM } from '../dimensions';
 import { stackLayers } from '../stack';
 
 import { PartMaterial } from './PartMaterial';
@@ -9,13 +10,13 @@ interface BatteryProps {
   highlighted: boolean;
 }
 
-const LEAD_LENGTH_MM = 12;
-const XT60 = { width: 16, height: 8, length: 15 } as const;
+const LEAD_LENGTH_MM = BATTERY_LEAD_LENGTH_MM;
+const XT60 = XT60_MM;
 
-/** LiPo pack lying lengthwise on the top plate, with its XT60 plug at the rear. */
+/** LiPo pack lying lengthwise on its pad on the top plate, with its XT60 plug at the rear. */
 export function Battery({ spec, highlighted }: BatteryProps) {
   const { packLengthMm, packWidthMm, packHeightMm } = spec.battery;
-  const bottom = stackLayers(spec).topPlate.topMm;
+  const bottom = stackLayers(spec).topPlate.topMm + BATTERY_PAD_MM;
   const centreY = bottom + packHeightMm / 2;
   const rear = packLengthMm / 2;
   const plugY = bottom + XT60.height / 2;

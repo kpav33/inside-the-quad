@@ -1,5 +1,6 @@
 import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
 
+import { rearBay } from '../rear';
 import { ESC_HEIGHT_MM, stackLayers } from '../stack';
 
 import { PartMaterial } from './PartMaterial';
@@ -11,8 +12,6 @@ interface EscProps {
 
 const PCB_MM = 1.6;
 const PART_HEIGHT_MM = ESC_HEIGHT_MM - PCB_MM;
-const CAP_RADIUS_MM = 5;
-const CAP_LENGTH_MM = 16;
 const LEAD_RADIUS_MM = 0.8;
 
 /** 4-in-1 ESC: a square board with one block of power switches per motor, plus the capacitor
@@ -23,8 +22,9 @@ export function Esc({ spec, highlighted }: EscProps) {
   const material = <PartMaterial part="esc" highlighted={highlighted} />;
   // One block of power switches near each corner, one for each motor.
   const corner = board / 2 - 7;
-  const capZ = board / 2 + 4 + CAP_LENGTH_MM / 2;
-  const capY = bottom + CAP_RADIUS_MM;
+  // The capacitor sits at the rear, beside the VTX (see rear.ts).
+  const { centre: cap, size: capSize } = rearBay(spec).capacitor;
+  const capRadius = capSize[0] / 2;
 
   return (
     <group>
@@ -50,15 +50,15 @@ export function Esc({ spec, highlighted }: EscProps) {
       {[-1, 1].map((side) => (
         <mesh
           key={side}
-          position={[mm(side * 2.5), mm(capY), mm(board / 2 + 2)]}
+          position={[mm(cap[0] + side * 2.5), mm(cap[1]), mm(board / 2 + 2)]}
           rotation={[Math.PI / 2, 0, 0]}
         >
           <cylinderGeometry args={[mm(LEAD_RADIUS_MM), mm(LEAD_RADIUS_MM), mm(4), 8]} />
           {material}
         </mesh>
       ))}
-      <mesh position={[0, mm(capY), mm(capZ)]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[mm(CAP_RADIUS_MM), mm(CAP_RADIUS_MM), mm(CAP_LENGTH_MM), 20]} />
+      <mesh position={[mm(cap[0]), mm(cap[1]), mm(cap[2])]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[mm(capRadius), mm(capRadius), mm(capSize[2]), 20]} />
         {material}
       </mesh>
     </group>

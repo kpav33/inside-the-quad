@@ -1,5 +1,6 @@
 import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
 
+import { STANDOFF_INSET_MM, STANDOFF_RADIUS_MM } from '../dimensions';
 import { motorPlacements } from '../layout';
 import { Lift } from '../Lift';
 
@@ -11,9 +12,6 @@ interface FrameProps {
   /** How far the top plate is lifted for the exploded stack, in millimetres. */
   topPlateLiftMm: number;
 }
-
-const STANDOFF_RADIUS_MM = 2.5;
-const STANDOFF_INSET_MM = 4;
 
 /** Bottom plate with four arms, standoffs and a top plate. */
 export function Frame({ spec, highlighted, topPlateLiftMm }: FrameProps) {
