@@ -5,6 +5,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { DroneViewerProps } from '@/features/drone-viewer/DroneViewer';
 
+import { PART_IDS } from '@/shared/domain/parts';
+
 import { OVERVIEW_FOCUS_ID } from './ids';
 import { PartExplorer } from './PartExplorer';
 
@@ -42,6 +44,8 @@ vi.mock('@/features/drone-viewer/DroneViewer', () => ({
     );
   },
 }));
+
+const READ_KEY = 'inside-the-quad.read-parts.v1';
 
 const lessonHeading = (name: string) => screen.queryByRole('heading', { level: 2, name });
 
@@ -195,6 +199,48 @@ describe('PartExplorer', () => {
     await renderExplorer();
     expect(screen.getByRole('status')).toHaveTextContent('There’s no part called “foo”');
     expect(window.location.pathname).toBe('/');
+  });
+
+  it('offers sheet 1 to a new visitor', async () => {
+    await renderExplorer();
+    const start = screen.getByRole('link', { name: 'Start with sheet 1: Frame' });
+    expect(start).toHaveAttribute('href', '/parts/frame');
+    expect(screen.queryByText(/of 11 read/)).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Clear progress' })).toBeNull();
+    await userEvent.click(start);
+    expect(lessonHeading('Frame')).toHaveFocus();
+  });
+
+  it('offers the first unread sheet once something is read', async () => {
+    window.localStorage.setItem(READ_KEY, '["frame"]');
+    await renderExplorer();
+    expect(screen.getByRole('link', { name: 'Continue with sheet 2: Motors' })).toBeInTheDocument();
+    expect(screen.getByText('1 of 11 read')).toBeInTheDocument();
+  });
+
+  it('says when every part is read and offers to start again', async () => {
+    window.localStorage.setItem(READ_KEY, JSON.stringify(PART_IDS));
+    await renderExplorer();
+    expect(screen.getByText(/all 11 parts read/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Start again from sheet 1' })).toHaveAttribute(
+      'href',
+      '/parts/frame',
+    );
+  });
+
+  it('clears progress and returns focus to the start link', async () => {
+    window.localStorage.setItem(READ_KEY, '["frame","motors"]');
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Clear progress' }));
+    expect(screen.queryByText(/of 11 read/)).toBeNull();
+    expect(screen.getByRole('link', { name: 'Start with sheet 1: Frame' })).toHaveFocus();
+  });
+
+  it('ticks a part in the list once its lesson is marked read', async () => {
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Motors' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Mark as read' }));
+    expect(screen.getByRole('button', { name: 'Motors, read' })).toBeInTheDocument();
   });
 
   it('keeps the part list and lessons working when the 3D viewer fails', async () => {

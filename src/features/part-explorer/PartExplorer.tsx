@@ -13,6 +13,7 @@ import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
 import { isDeliberateClick } from './clicks';
 import { LESSON_PANEL_ID, lessonTitleId, OVERVIEW_FOCUS_ID, partButtonId } from './ids';
 import { LessonPanel } from './LessonPanel';
+import { OverviewStart } from './OverviewStart';
 import { PartList } from './PartList';
 import { TitleBlock } from './TitleBlock';
 
@@ -33,7 +34,7 @@ export function PartExplorer() {
   const { route, unknownSlug, cause, navigate } = usePartRoute();
   const selectedPart = route.kind === 'part' ? route.part : null;
   const focusTarget = useRef<FocusTarget>(null);
-  const { read, toggle: toggleRead } = useReadParts();
+  const { read, toggle: toggleRead, clear: clearRead } = useReadParts();
 
   useEffect(() => {
     document.title = selectedPart ? UI.app.pageTitle(PART_LABELS[selectedPart]) : UI.app.title;
@@ -143,7 +144,7 @@ export function PartExplorer() {
               <span className="drawing-hint-touch">{UI.viewer.touchHint}</span>
             </p>
           </div>
-          <PartList selectedPart={selectedPart} onToggle={togglePart} />
+          <PartList selectedPart={selectedPart} read={read} onToggle={togglePart} />
         </div>
       </div>
       <div className="part-explorer-sheet">
@@ -158,7 +159,7 @@ export function PartExplorer() {
             onFollowLink={followLink}
           />
         ) : (
-          <div id={OVERVIEW_FOCUS_ID} className="part-explorer-overview" tabIndex={-1}>
+          <div className="part-explorer-overview">
             {unknownSlug !== null && (
               <p role="status" className="part-explorer-notice">
                 {UI.explorer.unknownPart(unknownSlug)}
@@ -170,7 +171,7 @@ export function PartExplorer() {
               quantity={1}
               specs={overviewSpecs()}
             />
-            <p className="part-explorer-hint">{UI.explorer.hint}</p>
+            <OverviewStart read={read} onFollowLink={followLink} onClear={clearRead} />
           </div>
         )}
       </div>

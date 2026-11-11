@@ -8,6 +8,7 @@ import { OVERVIEW_PATH, partPath } from './routes';
 export interface PartLinkProps {
   /** The part whose lesson to open, or null for the overview. */
   to: PartId | null;
+  id?: string | undefined;
   className?: string | undefined;
   /** Called on a click the app handles, just before it navigates. */
   onFollow?: ((to: PartId | null) => void) | undefined;
@@ -15,10 +16,11 @@ export interface PartLinkProps {
 }
 
 /** A real link to a part's lesson: handled in the app on a plain click, by the browser otherwise. */
-export function PartLink({ to, className, onFollow, children }: PartLinkProps) {
+export function PartLink({ to, id, className, onFollow, children }: PartLinkProps) {
   const href = to ? partPath(to) : OVERVIEW_PATH;
   return (
     <a
+      id={id}
       href={href}
       className={className}
       onClick={(event) => {

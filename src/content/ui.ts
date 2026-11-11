@@ -37,6 +37,8 @@ export const UI = {
     touchHint: 'Two fingers to turn · tap a part',
   },
   parts: {
+    /** A part-list row's name once its lesson is marked as read. */
+    readName: (part: string) => `${part}, read`,
     navLabel: 'Drone parts',
     heading: 'Parts list',
     columns: { item: 'Item', part: 'Part', quantity: 'Qty' },
@@ -45,6 +47,14 @@ export const UI = {
     opened: (part: string) => `${part} lesson opened`,
     hint: 'Select a part on the drone or in the parts list to see what it does and how it works.',
     unknownPart: (slug: string) => `There’s no part called “${slug}”. Pick one from the list.`,
+  },
+  overview: {
+    start: (part: string) => `Start with sheet 1: ${part}`,
+    continue: (sheet: number, part: string) => `Continue with sheet ${sheet}: ${part}`,
+    allRead: (total: number) => `All ${total} parts read. Open any sheet to look something up.`,
+    startAgain: 'Start again from sheet 1',
+    count: (read: number, total: number) => `${read} of ${total} read`,
+    clear: 'Clear progress',
   },
   titleBlock: {
     label: 'Title block',
