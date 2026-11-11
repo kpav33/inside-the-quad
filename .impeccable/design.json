@@ -183,6 +183,81 @@
           "oklch(83.6% 0.003 248.2)",
           "oklch(95.0% 0.002 248.2)"
         ]
+      },
+      "model-strap": {
+        "role": "neutral",
+        "displayName": "Strap Fill",
+        "canonical": "oklch(24.5% 0.010 248.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.010 248.2)",
+          "oklch(26.4% 0.009 248.2)",
+          "oklch(37.9% 0.007 248.2)",
+          "oklch(49.3% 0.006 248.2)",
+          "oklch(60.7% 0.005 248.2)",
+          "oklch(72.1% 0.004 248.2)",
+          "oklch(83.6% 0.003 248.2)",
+          "oklch(95.0% 0.002 248.2)"
+        ]
+      },
+      "model-receiver": {
+        "role": "neutral",
+        "displayName": "Receiver Fill",
+        "canonical": "oklch(25.4% 0.010 248.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.010 248.2)",
+          "oklch(26.4% 0.008 248.2)",
+          "oklch(37.9% 0.007 248.2)",
+          "oklch(49.3% 0.006 248.2)",
+          "oklch(60.7% 0.005 248.2)",
+          "oklch(72.1% 0.004 248.2)",
+          "oklch(83.6% 0.003 248.2)",
+          "oklch(95.0% 0.002 248.2)"
+        ]
+      },
+      "model-camera": {
+        "role": "neutral",
+        "displayName": "Camera Fill",
+        "canonical": "oklch(26.2% 0.009 248.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.009 248.2)",
+          "oklch(26.4% 0.008 248.2)",
+          "oklch(37.9% 0.007 248.2)",
+          "oklch(49.3% 0.006 248.2)",
+          "oklch(60.7% 0.005 248.2)",
+          "oklch(72.1% 0.004 248.2)",
+          "oklch(83.6% 0.003 248.2)",
+          "oklch(95.0% 0.002 248.2)"
+        ]
+      },
+      "model-vtx": {
+        "role": "neutral",
+        "displayName": "VTX Fill",
+        "canonical": "oklch(27.0% 0.009 248.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.009 248.2)",
+          "oklch(26.4% 0.008 248.2)",
+          "oklch(37.9% 0.007 248.2)",
+          "oklch(49.3% 0.006 248.2)",
+          "oklch(60.7% 0.005 248.2)",
+          "oklch(72.1% 0.004 248.2)",
+          "oklch(83.6% 0.003 248.2)",
+          "oklch(95.0% 0.002 248.2)"
+        ]
+      },
+      "model-extras": {
+        "role": "neutral",
+        "displayName": "Extras Fill",
+        "canonical": "oklch(27.9% 0.009 248.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.009 248.2)",
+          "oklch(26.4% 0.008 248.2)",
+          "oklch(37.9% 0.007 248.2)",
+          "oklch(49.3% 0.006 248.2)",
+          "oklch(60.7% 0.005 248.2)",
+          "oklch(72.1% 0.004 248.2)",
+          "oklch(83.6% 0.003 248.2)",
+          "oklch(95.0% 0.002 248.2)"
+        ]
       }
     },
     "typographyMeta": {
@@ -253,7 +328,7 @@
       "purpose": "Global focus ring; offset -2px inside parts-list rows."
     },
     "model3d": {
-      "unselected": "fill MODEL_COLOR[part] (sheet / model-motors / model-props / model-esc / model-fc / model-battery), Edges color ink, threshold 20",
+      "unselected": "fill MODEL_COLOR[part] (sheet / model-* for each part), Edges color ink, threshold 20",
       "selected": "fill accent, Edges color ground",
       "material": "meshStandardMaterial roughness 1 metalness 0"
     }
