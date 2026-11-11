@@ -383,6 +383,9 @@ a {
 
 /* Sheet column */
 .part-explorer-sheet {
+  /* Contains visually hidden text, which is absolutely positioned, inside the column's own
+     scroll box; otherwise it lengthens the page. */
+  position: relative;
   padding: var(--space-4) var(--space-4) var(--space-7);
   min-width: 0;
 }
