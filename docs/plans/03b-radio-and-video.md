@@ -64,13 +64,13 @@ lengthMm }`, `DroneSpec.extras { gpsSystems: string[]; buzzerVolts; ledVolts; le
 - Produces: `CAMERA_SIZE_CLASS_MM = { full: 28, mini: 21, micro: 19, nano: 14 } as const`,
   `type CameraSizeClass = keyof typeof CAMERA_SIZE_CLASS_MM`, `vtxChannelCount(spec): number`.
 
-- [ ] **Step 1: Failing tests:** the reference values above (`toMatchObject`); the VTX setting is
+- [x] **Step 1: Failing tests:** the reference values above (`toMatchObject`); the VTX setting is
       one of its levels; `camera.widthMm === CAMERA_SIZE_CLASS_MM[camera.sizeClass]`;
       `vtxChannelCount(REFERENCE_5_INCH) === 48`.
-- [ ] **Step 2:** `pnpm test src/shared/domain` fails.
-- [ ] **Step 3:** Implement.
-- [ ] **Step 4:** `pnpm check` passes.
-- [ ] **Step 5:** `feat(domain): add receiver, camera, VTX, strap and extras specs`
+- [x] **Step 2:** `pnpm test src/shared/domain` fails.
+- [x] **Step 3:** Implement.
+- [x] **Step 4:** `pnpm check` passes.
+- [x] **Step 5:** `feat(domain): add receiver, camera, VTX, strap and extras specs`
 
 ### Tasks 2–6: One lesson per part
 
@@ -126,18 +126,18 @@ Task-specific test cases:
 - `closedExtentsMm` takes the max of the battery top (with pad), prop top, both antenna tips and
   the GPS top.
 
-- [ ] **Step 1: Failing tests:** `isInsidePart` true for `esc`, `fc`, `receiver`, `vtx`, false for
+- [x] **Step 1: Failing tests:** `isInsidePart` true for `esc`, `fc`, `receiver`, `vtx`, false for
       `camera`, `battery`, `null`; no two of {VTX, receiver, capacitor, ESC board box, each rear
       standoff box} overlap; VTX, receiver and capacitor lie inside the body outline
       (`|x| ≤ bodyWidthMm/2`, `|z| ≤ bodyLengthMm/2`) and below the top plate; the GPS box does not
       overlap the battery or the XT60 box; `closedExtentsMm` top ≥ both antenna tips and the GPS top,
       and half-width ≥ the antenna tips' `|x|` and `|z|`.
-- [ ] **Step 2:** tests fail.
-- [ ] **Step 3:** Implement; switch `DroneModel` to `isInsidePart`; Esc reads the capacitor
+- [x] **Step 2:** tests fail.
+- [x] **Step 3:** Implement; switch `DroneModel` to `isInsidePart`; Esc reads the capacitor
       position from `rearBay`; Battery adds `BATTERY_PAD_MM`.
-- [ ] **Step 4:** `pnpm check` passes; e2e still green (`pnpm test:e2e`), since nothing new is
+- [x] **Step 4:** `pnpm check` passes; e2e still green (`pnpm test:e2e`), since nothing new is
       drawn yet.
-- [ ] **Step 5:** `feat(drone-model): lay out the rear bay and open the frame for it`
+- [x] **Step 5:** `feat(drone-model): lay out the rear bay and open the frame for it`
 
 ### Task 8: 3D parts
 
@@ -151,45 +151,45 @@ x = ±(widthMm/2 + 2), from the bottom plate to the top plate, front 18 mm of th
 **Interfaces:** Consumes `rearBay`, `stackLayers`, `explodedOffsets`, `isInsidePart`,
 `BATTERY_PAD_MM`.
 
-- [ ] **Step 1:** Components from `rearBay` and the spec: Camera (body cube of `widthMm`, lens
+- [x] **Step 1:** Components from `rearBay` and the spec: Camera (body cube of `widthMm`, lens
       cylinder, tilted `tiltDeg` about x, at the front between the side plates); Vtx (board, a few
       components, antenna stalk to `vtxAntennaTip` with a small disc at the tip); Receiver (board,
       stem and cross bar to `receiverAntennaTip`); Strap (pad under the battery plus a band of
       `widthMm` around the battery and top plate); Extras (GPS post and puck, buzzer on the rear-left
       arm about 35 mm from the centre, an LED strip with `ledCount / 2` LEDs on each rear arm 55–80 mm
       out).
-- [ ] **Step 2:** `DroneModel`: add `partGroup` for each; Strap and the GPS ride in the top-plate
+- [x] **Step 2:** `DroneModel`: add `partGroup` for each; Strap and the GPS ride in the top-plate
       `Lift`; open state from `isInsidePart`.
-- [ ] **Step 3:** `pnpm check` passes.
-- [ ] **Step 4: Seen working.** Build, preview, screenshots at 1280 × 720, 900 × 700 and
+- [x] **Step 3:** `pnpm check` passes.
+- [x] **Step 4: Seen working.** Build, preview, screenshots at 1280 × 720, 900 × 700 and
       390 × 844: nothing selected, VTX selected, receiver selected, camera selected, extras selected.
       Confirm nothing intersects visibly, the whole drone stays in view, rear parts are visible and
       redline when the frame is open, the camera sits between its plates.
-- [ ] **Step 5:** `feat(drone-model): add receiver, camera, VTX, strap and extras`
+- [x] **Step 5:** `feat(drone-model): add receiver, camera, VTX, strap and extras`
 
 ### Task 9: End-to-end coverage for eleven parts
 
 **Files:** `e2e/parts.ts`, `e2e/explorer.spec.ts`.
 
-- [ ] **Step 1:** `PART_NAMES` gains `Battery strap`, `Receiver`, `Camera`, `VTX`, `Extras` in
+- [x] **Step 1:** `PART_NAMES` gains `Battery strap`, `Receiver`, `Camera`, `VTX`, `Extras` in
       list order.
-- [ ] **Step 2:** Re-probe every `POINTS` entry (the framing may move) with one fresh page per
+- [x] **Step 2:** Re-probe every `POINTS` entry (the framing may move) with one fresh page per
       point; add `camera` (closed) and `openVtx` (with Receiver selected).
-- [ ] **Step 3:** New test `mouse: the rear bay opens and stays clickable`: select Receiver from
+- [x] **Step 3:** New test `mouse: the rear bay opens and stays clickable`: select Receiver from
       the list, click `openVtx`, expect the VTX lesson; click `camera`, expect the Camera lesson.
-- [ ] **Step 4:** `pnpm test:e2e` passes (run the explorer spec three times).
-- [ ] **Step 5:** `test(e2e): cover the radio and video parts`
+- [x] **Step 4:** `pnpm test:e2e` passes (run the explorer spec three times).
+- [x] **Step 5:** `test(e2e): cover the radio and video parts`
 
 ### Task 10: Docs
 
 **Files:** `docs/roadmap.md`, `PRODUCT.md`, `docs/architecture/overview.md`, `DESIGN.md`,
 `.impeccable/design.json`, `.impeccable/surfaces/src-features-part-explorer-partexplorer-tsx.md`.
 
-- [ ] **Step 1:** Roadmap 03b in progress; PRODUCT.md "Built so far" lists all Module 2 parts and
+- [x] **Step 1:** Roadmap 03b in progress; PRODUCT.md "Built so far" lists all Module 2 parts and
       "Planned" drops the remaining parts; architecture: `rear.ts`, inside parts; DESIGN.md and the
       sidecar: new model fills, camera side plates, rear parts opening the frame; brief: one line.
-- [ ] **Step 2:** `pnpm check` passes.
-- [ ] **Step 3:** `docs: describe the radio and video parts`
+- [x] **Step 2:** `pnpm check` passes.
+- [x] **Step 3:** `docs: describe the radio and video parts`
 
 ## Acceptance
 
