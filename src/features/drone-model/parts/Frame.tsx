@@ -1,6 +1,7 @@
 import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
 
 import { STANDOFF_INSET_MM, STANDOFF_RADIUS_MM } from '../dimensions';
+import { cameraPlates } from '../front';
 import { motorPlacements } from '../layout';
 import { Lift } from '../Lift';
 
@@ -62,6 +63,14 @@ export function Frame({ spec, highlighted, topPlateLiftMm }: FrameProps) {
           </mesh>
         )),
       )}
+
+      {/* The camera side plates at the front. */}
+      {cameraPlates(spec).map(({ centre: [x, y, z], size: [w, h, d] }) => (
+        <mesh key={x} position={[mm(x), mm(y), mm(z)]}>
+          <boxGeometry args={[mm(w), mm(h), mm(d)]} />
+          {material}
+        </mesh>
+      ))}
 
       <Lift liftMm={topPlateLiftMm}>
         <mesh position={[0, armThickness + standoffHeight + mm(frame.topPlateThicknessMm) / 2, 0]}>

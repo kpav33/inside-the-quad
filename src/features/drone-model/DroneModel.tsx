@@ -9,11 +9,16 @@ import { motorTopMm, PROP_HUB_HEIGHT_MM } from './dimensions';
 import { motorPlacements } from './layout';
 import { Lift } from './Lift';
 import { Battery } from './parts/Battery';
+import { Camera } from './parts/Camera';
 import { Esc } from './parts/Esc';
+import { Extras } from './parts/Extras';
 import { Fc } from './parts/Fc';
 import { Frame } from './parts/Frame';
 import { Motor } from './parts/Motor';
 import { Propeller } from './parts/Propeller';
+import { Receiver } from './parts/Receiver';
+import { Strap } from './parts/Strap';
+import { Vtx } from './parts/Vtx';
 import { explodedOffsets } from './stack';
 
 export interface DroneModelProps {
@@ -24,7 +29,7 @@ export interface DroneModelProps {
 
 /**
  * The whole drone, built from a spec. Each kind of part is one clickable group. Selecting a board
- * in the stack opens the stack like an exploded-view drawing.
+ * under the top plate opens the frame like an exploded-view drawing.
  */
 export function DroneModel({ spec, selectedPart, onPartClick }: DroneModelProps) {
   const [hovered, setHovered] = useState<PartId | null>(null);
@@ -93,6 +98,23 @@ export function DroneModel({ spec, selectedPart, onPartClick }: DroneModelProps)
         <Lift liftMm={lift.fc}>
           <Fc spec={spec} highlighted={selectedPart === 'fc'} />
         </Lift>,
+      )}
+      {partGroup('receiver', <Receiver spec={spec} highlighted={selectedPart === 'receiver'} />)}
+      {partGroup('vtx', <Vtx spec={spec} highlighted={selectedPart === 'vtx'} />)}
+      {partGroup('camera', <Camera spec={spec} highlighted={selectedPart === 'camera'} />)}
+      {partGroup(
+        'strap',
+        <Lift liftMm={lift.topPlate}>
+          <Strap spec={spec} highlighted={selectedPart === 'strap'} />
+        </Lift>,
+      )}
+      {partGroup(
+        'extras',
+        <Extras
+          spec={spec}
+          highlighted={selectedPart === 'extras'}
+          topPlateLiftMm={lift.topPlate}
+        />,
       )}
       {partGroup(
         'battery',

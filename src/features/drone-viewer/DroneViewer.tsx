@@ -29,7 +29,7 @@ export default function DroneViewer({
     <div className="drone-viewer">
       <Canvas
         aria-hidden="true"
-        camera={{ position: [0.22, 0.18, 0.28], fov: 40, near: 0.01, far: 10 }}
+        camera={{ position: [0.22, 0.18, -0.28], fov: 40, near: 0.01, far: 10 }}
         onPointerMissed={onBackgroundClick}
         // Nothing moves on its own, so draw only when the camera or selection changes.
         frameloop="demand"
