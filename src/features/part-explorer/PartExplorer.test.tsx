@@ -1,10 +1,11 @@
 import type { ThreeEvent } from '@react-three/fiber';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { DroneViewerProps } from '@/features/drone-viewer/DroneViewer';
 
+import { OVERVIEW_FOCUS_ID } from './ids';
 import { PartExplorer } from './PartExplorer';
 
 // WebGL is unavailable in jsdom: the viewer is replaced by buttons that call its props.
@@ -123,6 +124,49 @@ describe('PartExplorer', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Close lesson' }));
     expect(lessonHeading('Propellers')).toBeNull();
     expect(screen.getByRole('button', { name: 'Propellers' })).toHaveFocus();
+  });
+
+  it('opens the lesson the address names and titles the page after it', async () => {
+    window.history.replaceState(null, '', '/parts/vtx');
+    await renderExplorer();
+    expect(lessonHeading('VTX')).toBeInTheDocument();
+    expect(document.title).toBe('VTX · Inside the Quad');
+  });
+
+  it('puts the chosen part in the address, and the overview after closing', async () => {
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Frame' }));
+    expect(window.location.pathname).toBe('/parts/frame');
+    await userEvent.click(screen.getByRole('button', { name: 'Close lesson' }));
+    expect(window.location.pathname).toBe('/');
+    expect(document.title).toBe('Inside the Quad');
+  });
+
+  it('closes the lesson on Back and keeps focus on the sheet', async () => {
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Frame' }));
+    act(() => {
+      window.history.replaceState(null, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+    expect(lessonHeading('Frame')).toBeNull();
+    expect(document.getElementById(OVERVIEW_FOCUS_ID)).toHaveFocus();
+  });
+
+  it('focuses the lesson title when Forward reopens it', async () => {
+    await renderExplorer();
+    act(() => {
+      window.history.pushState(null, '', '/parts/esc');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+    expect(lessonHeading('ESC')).toHaveFocus();
+  });
+
+  it('tells the user when the address names no part', async () => {
+    window.history.replaceState(null, '', '/parts/foo');
+    await renderExplorer();
+    expect(screen.getByRole('status')).toHaveTextContent('There’s no part called “foo”');
+    expect(window.location.pathname).toBe('/');
   });
 
   it('keeps the part list and lessons working when the 3D viewer fails', async () => {

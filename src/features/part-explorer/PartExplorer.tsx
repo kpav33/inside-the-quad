@@ -1,15 +1,16 @@
 import type { ThreeEvent } from '@react-three/fiber';
-import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef } from 'react';
 
 import { LESSONS } from '@/content/lessons';
 import { overviewSpecs } from '@/content/overview';
 import { PART_LABELS, UI } from '@/content/ui';
 import { DroneViewer } from '@/features/drone-viewer';
 import type { PartId } from '@/shared/domain/parts';
+import { usePartRoute } from '@/shared/routing';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
 
 import { isDeliberateClick } from './clicks';
-import { LESSON_PANEL_ID, lessonTitleId, partButtonId } from './ids';
+import { LESSON_PANEL_ID, lessonTitleId, OVERVIEW_FOCUS_ID, partButtonId } from './ids';
 import { LessonPanel } from './LessonPanel';
 import { PartList } from './PartList';
 import { TitleBlock } from './TitleBlock';
@@ -28,8 +29,21 @@ type FocusTarget = string | null;
  * The list and lessons work on their own when the 3D view can't load.
  */
 export function PartExplorer() {
-  const [selectedPart, setSelectedPart] = useState<PartId | null>(null);
+  const { route, unknownSlug, cause, navigate } = usePartRoute();
+  const selectedPart = route.kind === 'part' ? route.part : null;
   const focusTarget = useRef<FocusTarget>(null);
+
+  useEffect(() => {
+    document.title = selectedPart ? UI.app.pageTitle(PART_LABELS[selectedPart]) : UI.app.title;
+  }, [selectedPart]);
+
+  // Back and Forward move focus to the sheet they open, so it never falls back to the page.
+  useEffect(() => {
+    if (cause !== 'pop') return;
+    document
+      .getElementById(selectedPart ? lessonTitleId(selectedPart) : OVERVIEW_FOCUS_ID)
+      ?.focus();
+  }, [cause, selectedPart]);
 
   useEffect(() => {
     if (focusTarget.current) {
@@ -56,8 +70,8 @@ export function PartExplorer() {
   const closeLesson = useCallback(() => {
     if (!selectedPart) return;
     focusTarget.current = partButtonId(selectedPart);
-    setSelectedPart(null);
-  }, [selectedPart]);
+    navigate(null);
+  }, [selectedPart, navigate]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -71,23 +85,23 @@ export function PartExplorer() {
 
   const togglePart = (part: PartId) => {
     revealLesson.current = selectedPart !== part;
-    setSelectedPart((current) => (current === part ? null : part));
+    navigate(selectedPart === part ? null : part);
   };
 
   const followConnection = (part: PartId) => {
     focusTarget.current = lessonTitleId(part);
-    setSelectedPart(part);
+    navigate(part);
   };
 
   const onPartClick = (part: PartId, event: ThreeEvent<MouseEvent>) => {
     if (!isDeliberateClick(event.delta)) return;
     // Clicking the part that is already open changes nothing, so there is nothing to reveal.
     revealLesson.current = part !== selectedPart;
-    setSelectedPart(part);
+    navigate(part);
   };
 
   const clearSelection = () => {
-    setSelectedPart(null);
+    navigate(null);
   };
 
   return (
@@ -137,7 +151,12 @@ export function PartExplorer() {
             onSelectPart={followConnection}
           />
         ) : (
-          <div className="part-explorer-overview">
+          <div id={OVERVIEW_FOCUS_ID} className="part-explorer-overview" tabIndex={-1}>
+            {unknownSlug !== null && (
+              <p role="status" className="part-explorer-notice">
+                {UI.explorer.unknownPart(unknownSlug)}
+              </p>
+            )}
             <TitleBlock
               part={UI.titleBlock.overviewPart}
               sheet={UI.titleBlock.overviewSheet}

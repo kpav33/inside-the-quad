@@ -26,6 +26,8 @@ export const UI = {
     titleLead: 'Inside the',
     titleAccent: 'Quad',
     tagline: 'How an FPV drone works, part by part.',
+    /** The browser tab's title while a part's lesson is open. */
+    pageTitle: (part: string) => `${part} · Inside the Quad`,
   },
   viewer: {
     loading: 'Loading the 3D drawing…',
@@ -42,6 +44,7 @@ export const UI = {
   explorer: {
     opened: (part: string) => `${part} lesson opened`,
     hint: 'Select a part on the drone or in the parts list to see what it does and how it works.',
+    unknownPart: (slug: string) => `There’s no part called “${slug}”. Pick one from the list.`,
   },
   titleBlock: {
     label: 'Title block',
