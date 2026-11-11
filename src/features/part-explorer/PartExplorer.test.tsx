@@ -53,6 +53,7 @@ async function renderExplorer() {
 describe('PartExplorer', () => {
   afterEach(() => {
     viewer.shouldThrow = false;
+    window.localStorage.clear();
   });
 
   it('starts on the overview sheet and invites the user to pick a part', async () => {
@@ -104,8 +105,35 @@ describe('PartExplorer', () => {
   it('follows connection links to another lesson and focuses its title', async () => {
     await renderExplorer();
     await userEvent.click(screen.getByRole('button', { name: 'Motors' }));
-    await userEvent.click(screen.getByRole('button', { name: /propeller slides onto/ }));
+    await userEvent.click(screen.getByRole('link', { name: 'Propellers · sheet 3' }));
     expect(lessonHeading('Propellers')).toHaveFocus();
+    expect(window.location.pathname).toBe('/parts/props');
+  });
+
+  it('walks to the next sheet and focuses its title', async () => {
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Frame' }));
+    await userEvent.click(screen.getByRole('link', { name: 'Next: Motors · sheet 2' }));
+    expect(lessonHeading('Motors')).toHaveFocus();
+  });
+
+  it('returns from the last sheet to the overview', async () => {
+    window.history.replaceState(null, '', '/parts/extras');
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('link', { name: 'Next: Back to overview' }));
+    expect(lessonHeading('Extras')).toBeNull();
+    expect(document.getElementById(OVERVIEW_FOCUS_ID)).toHaveFocus();
+  });
+
+  it('remembers a lesson marked as read', async () => {
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Frame' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Mark as read' }));
+    expect(screen.getByRole('button', { name: 'Mark as read' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(window.localStorage.getItem('inside-the-quad.read-parts.v1')).toBe('["frame"]');
   });
 
   it('closes with Escape and keeps focus on the part button', async () => {

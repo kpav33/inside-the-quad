@@ -5,6 +5,7 @@ import { LESSONS } from '@/content/lessons';
 import { overviewSpecs } from '@/content/overview';
 import { PART_LABELS, UI } from '@/content/ui';
 import { DroneViewer } from '@/features/drone-viewer';
+import { useReadParts } from '@/features/progress';
 import type { PartId } from '@/shared/domain/parts';
 import { usePartRoute } from '@/shared/routing';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
@@ -32,6 +33,7 @@ export function PartExplorer() {
   const { route, unknownSlug, cause, navigate } = usePartRoute();
   const selectedPart = route.kind === 'part' ? route.part : null;
   const focusTarget = useRef<FocusTarget>(null);
+  const { read, toggle: toggleRead } = useReadParts();
 
   useEffect(() => {
     document.title = selectedPart ? UI.app.pageTitle(PART_LABELS[selectedPart]) : UI.app.title;
@@ -88,9 +90,10 @@ export function PartExplorer() {
     navigate(selectedPart === part ? null : part);
   };
 
-  const followConnection = (part: PartId) => {
-    focusTarget.current = lessonTitleId(part);
-    navigate(part);
+  // A link in the sheet (a connection, previous or next) moves focus to what it opens.
+  const followLink = (part: PartId | null) => {
+    focusTarget.current = part ? lessonTitleId(part) : OVERVIEW_FOCUS_ID;
+    revealLesson.current = part !== null;
   };
 
   const onPartClick = (part: PartId, event: ThreeEvent<MouseEvent>) => {
@@ -147,8 +150,12 @@ export function PartExplorer() {
         {selectedPart ? (
           <LessonPanel
             lesson={LESSONS[selectedPart]}
+            read={read.has(selectedPart)}
             onClose={closeLesson}
-            onSelectPart={followConnection}
+            onToggleRead={() => {
+              toggleRead(selectedPart);
+            }}
+            onFollowLink={followLink}
           />
         ) : (
           <div id={OVERVIEW_FOCUS_ID} className="part-explorer-overview" tabIndex={-1}>

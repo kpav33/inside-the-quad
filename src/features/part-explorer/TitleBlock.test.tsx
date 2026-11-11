@@ -32,4 +32,11 @@ describe('TitleBlock', () => {
     }
     expect(within(screen.getByRole('group')).getAllByRole('definition')).toHaveLength(2);
   });
+
+  it('leaves out the part cell when the sheet has its own heading', () => {
+    render(<TitleBlock sheet="2 of 3" quantity={4} specs={specs} />);
+    const block = screen.getByRole('group', { name: 'Title block' });
+    expect(within(block).queryByText('Part')).toBeNull();
+    expect(block).toHaveTextContent('2 of 3');
+  });
 });

@@ -1,19 +1,35 @@
 import type { ReactNode } from 'react';
 
 import type { Lesson } from '@/content/lessons';
-import { UI } from '@/content/ui';
+import { PART_LABELS, UI } from '@/content/ui';
 import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
-import { PART_IDS, type PartId } from '@/shared/domain/parts';
+import { PART_IDS, type PartId, partNeighbours } from '@/shared/domain/parts';
 import { partQuantity } from '@/shared/domain/quantity';
+import { PartLink } from '@/shared/routing';
+import { ArrowIcon, CheckIcon } from '@/shared/ui/icons';
 
 import { LESSON_PANEL_ID, lessonTitleId } from './ids';
 import { TitleBlock } from './TitleBlock';
 
 export interface LessonPanelProps {
   lesson: Lesson;
+  /** Whether the learner has marked this lesson as read. */
+  read: boolean;
   onClose: () => void;
-  /** Follows a connection to another part's lesson. */
-  onSelectPart: (part: PartId) => void;
+  onToggleRead: () => void;
+  /** Called before a link in the sheet opens another lesson (null: the overview). */
+  onFollowLink?: (part: PartId | null) => void;
+}
+
+const sheetNumber = (part: PartId) => PART_IDS.indexOf(part) + 1;
+
+/** "Battery · sheet 6": a reference to another sheet; the sheet number never wraps apart. */
+function SheetRef({ part }: { part: PartId }) {
+  return (
+    <>
+      {PART_LABELS[part]} <span className="nowrap">{UI.lesson.sheetNumber(sheetNumber(part))}</span>
+    </>
+  );
 }
 
 function Question({ number, children }: { number: number; children: ReactNode }) {
@@ -30,20 +46,20 @@ function Question({ number, children }: { number: number; children: ReactNode })
   );
 }
 
-/** One part's drawing sheet: title block, then the four questions. */
-export function LessonPanel({ lesson, onClose, onSelectPart }: LessonPanelProps) {
+/** One part's drawing sheet: its name, the title block, the four questions, then the way on. */
+export function LessonPanel({
+  lesson,
+  read,
+  onClose,
+  onToggleRead,
+  onFollowLink,
+}: LessonPanelProps) {
   const titleId = lessonTitleId(lesson.partId);
   const columns = UI.lesson.specColumns;
+  const { previous, next } = partNeighbours(lesson.partId);
 
   return (
     <section id={LESSON_PANEL_ID} className="lesson-panel" aria-labelledby={titleId}>
-      <TitleBlock
-        part={lesson.title}
-        sheet={UI.titleBlock.sheetOf(PART_IDS.indexOf(lesson.partId) + 1, PART_IDS.length)}
-        quantity={partQuantity(lesson.partId, REFERENCE_5_INCH)}
-        specs={lesson.specs}
-      />
-
       <header className="lesson-panel-header">
         <h2 id={titleId} tabIndex={-1}>
           {lesson.title}
@@ -52,6 +68,12 @@ export function LessonPanel({ lesson, onClose, onSelectPart }: LessonPanelProps)
           {UI.lesson.close}
         </button>
       </header>
+
+      <TitleBlock
+        sheet={UI.titleBlock.sheetOf(sheetNumber(lesson.partId), PART_IDS.length)}
+        quantity={partQuantity(lesson.partId, REFERENCE_5_INCH)}
+        specs={lesson.specs}
+      />
 
       <Question number={1}>
         <p className="lesson-lead">{lesson.whatItDoes}</p>
@@ -88,23 +110,72 @@ export function LessonPanel({ lesson, onClose, onSelectPart }: LessonPanelProps)
         <ul className="lesson-connections">
           {lesson.connections.map(({ text, partId }, index) => (
             <li key={index}>
-              {partId ? (
-                <button
-                  type="button"
-                  className="lesson-link"
-                  onClick={() => {
-                    onSelectPart(partId);
-                  }}
+              <span>{text}</span>
+              {partId && (
+                <PartLink
+                  to={partId}
+                  className="lesson-link lesson-connection-link"
+                  onFollow={onFollowLink}
                 >
-                  {text}
-                </button>
-              ) : (
-                text
+                  <ArrowIcon />
+                  <span>
+                    <SheetRef part={partId} />
+                  </span>
+                </PartLink>
               )}
             </li>
           ))}
         </ul>
       </Question>
+
+      <nav className="lesson-footer" aria-label={UI.lesson.footerLabel}>
+        <button
+          type="button"
+          className="button-outline lesson-read"
+          aria-pressed={read}
+          aria-label={UI.lesson.markRead}
+          onClick={onToggleRead}
+        >
+          {read ? (
+            <>
+              <CheckIcon />
+              {UI.lesson.isRead}
+            </>
+          ) : (
+            UI.lesson.markRead
+          )}
+        </button>
+        <div className="lesson-sheets">
+          {previous ? (
+            <PartLink to={previous} className="lesson-sheet-link" onFollow={onFollowLink}>
+              <span className="lesson-sheet-label">
+                <ArrowIcon back />
+                {UI.lesson.previous}
+                <span className="visually-hidden">:</span>
+              </span>{' '}
+              <span className="lesson-sheet-target">
+                <SheetRef part={previous} />
+              </span>
+            </PartLink>
+          ) : (
+            <span className="lesson-sheet-link lesson-sheet-empty" aria-hidden="true" />
+          )}
+          <PartLink
+            to={next}
+            className="lesson-sheet-link lesson-sheet-next"
+            onFollow={onFollowLink}
+          >
+            <span className="lesson-sheet-label">
+              {UI.lesson.next}
+              <span className="visually-hidden">:</span>
+              <ArrowIcon />
+            </span>{' '}
+            <span className="lesson-sheet-target">
+              {next ? <SheetRef part={next} /> : UI.lesson.backToOverview}
+            </span>
+          </PartLink>
+        </div>
+      </nav>
     </section>
   );
 }

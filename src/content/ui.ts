@@ -59,6 +59,14 @@ export const UI = {
   },
   lesson: {
     close: 'Close lesson',
+    /** The sheet half of a reference to another sheet ("Battery · sheet 6"), kept on one line. */
+    sheetNumber: (sheet: number) => `· sheet ${sheet}`,
+    footerLabel: 'Sheets',
+    previous: 'Previous',
+    next: 'Next',
+    backToOverview: 'Back to overview',
+    markRead: 'Mark as read',
+    isRead: 'Read',
     questions: [
       'What does it do?',
       'How does it work?',

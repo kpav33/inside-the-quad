@@ -1,7 +1,8 @@
 import { UI } from '@/content/ui';
 
 export interface TitleBlockProps {
-  part: string;
+  /** Left out on a lesson, whose heading already names the part. */
+  part?: string;
   sheet: string;
   quantity: number;
   /** Labelled key numbers; each value stays on one line, so it is never split from its unit. */
@@ -12,16 +13,22 @@ export interface TitleBlockProps {
 export function TitleBlock({ part, sheet, quantity, specs }: TitleBlockProps) {
   const t = UI.titleBlock;
   return (
-    <div className="title-block" role="group" aria-label={t.label}>
-      <div className="title-block-cell">
-        <span className="title-block-label">{t.part}</span>
-        <span className="title-block-value">{part}</span>
-      </div>
+    <div
+      className={part === undefined ? 'title-block title-block-without-part' : 'title-block'}
+      role="group"
+      aria-label={t.label}
+    >
+      {part !== undefined && (
+        <div className="title-block-cell title-block-part">
+          <span className="title-block-label">{t.part}</span>
+          <span className="title-block-value">{part}</span>
+        </div>
+      )}
       <div className="title-block-cell">
         <span className="title-block-label">{t.sheet}</span>
         <span className="title-block-value">{sheet}</span>
       </div>
-      <div className="title-block-cell">
+      <div className="title-block-cell title-block-qty">
         <span className="title-block-label">{t.quantity}</span>
         <span className="title-block-value">{quantity}</span>
       </div>

@@ -3,15 +3,25 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import { LESSONS } from '@/content/lessons';
+import type { PartId } from '@/shared/domain/parts';
 
 import { LessonPanel } from './LessonPanel';
 
-function renderMotors() {
+function renderLesson(part: PartId, read = false) {
   const onClose = vi.fn();
-  const onSelectPart = vi.fn();
-  render(<LessonPanel lesson={LESSONS.motors} onClose={onClose} onSelectPart={onSelectPart} />);
-  return { onClose, onSelectPart };
+  const onToggleRead = vi.fn();
+  render(
+    <LessonPanel
+      lesson={LESSONS[part]}
+      read={read}
+      onClose={onClose}
+      onToggleRead={onToggleRead}
+    />,
+  );
+  return { onClose, onToggleRead };
 }
+
+const renderMotors = () => renderLesson('motors');
 
 describe('LessonPanel', () => {
   it('titles the lesson and asks the four questions in order', () => {
@@ -41,16 +51,67 @@ describe('LessonPanel', () => {
     ).toEqual(['Spec', 'Value', 'What it means']);
   });
 
-  it('links connections to other lessons', async () => {
-    const { onSelectPart } = renderMotors();
-    await userEvent.click(screen.getByRole('button', { name: /propeller slides onto/ }));
-    expect(onSelectPart).toHaveBeenCalledWith('props');
+  it('names the part once, as the heading above the title block', () => {
+    renderLesson('vtx');
+    const panel = screen.getByRole('region', { name: 'VTX' });
+    expect(within(panel).getAllByText('VTX', { exact: true })).toHaveLength(1);
+    const heading = screen.getByRole('heading', { level: 2, name: 'VTX' });
+    const block = screen.getByRole('group', { name: 'Title block' });
+    expect(heading.compareDocumentPosition(block) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(block).not.toHaveTextContent(/^Part/);
+  });
+
+  it('follows each connection with a link that names the part it opens', () => {
+    renderLesson('esc');
+    const link = screen.getByRole('link', { name: 'Battery · sheet 6' });
+    expect(link).toHaveAttribute('href', '/parts/battery');
+    expect(screen.getByText(/XT60 plug connects to the ESC/).closest('a')).toBeNull();
   });
 
   it('shows connections without a lesson as plain text', () => {
-    render(<LessonPanel lesson={LESSONS.battery} onClose={vi.fn()} onSelectPart={vi.fn()} />);
+    renderLesson('battery');
     const text = screen.getByText(/balance lead plugs into the charger/);
-    expect(text.closest('button')).toBeNull();
+    expect(text.closest('a')).toBeNull();
+  });
+
+  it('marks the lesson as read with a toggle', async () => {
+    const { onToggleRead } = renderMotors();
+    const toggle = screen.getByRole('button', { name: 'Mark as read' });
+    expect(toggle).toHaveAttribute('aria-pressed', 'false');
+    await userEvent.click(toggle);
+    expect(onToggleRead).toHaveBeenCalledOnce();
+  });
+
+  it('shows a read lesson as read', () => {
+    renderLesson('motors', true);
+    const toggle = screen.getByRole('button', { name: 'Mark as read' });
+    expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    expect(toggle).toHaveTextContent('Read');
+  });
+
+  it('leads to the previous and next sheets', () => {
+    renderMotors();
+    expect(screen.getByRole('link', { name: 'Previous: Frame · sheet 1' })).toHaveAttribute(
+      'href',
+      '/parts/frame',
+    );
+    expect(screen.getByRole('link', { name: 'Next: Propellers · sheet 3' })).toHaveAttribute(
+      'href',
+      '/parts/props',
+    );
+  });
+
+  it('has no previous sheet on sheet 1', () => {
+    renderLesson('frame');
+    expect(screen.queryByRole('link', { name: /^Previous/ })).toBeNull();
+  });
+
+  it('leads back to the overview from the last sheet', () => {
+    renderLesson('extras');
+    expect(screen.getByRole('link', { name: 'Next: Back to overview' })).toHaveAttribute(
+      'href',
+      '/',
+    );
   });
 
   it('can be closed', async () => {
