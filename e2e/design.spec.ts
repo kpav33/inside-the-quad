@@ -219,18 +219,24 @@ test('in forced colours, focus on the selected part row is distinguishable', asy
 test.describe('laptop screen', () => {
   test.use({ viewport: { width: 1280, height: 720 } });
 
-  test('the parts list splits into two columns so the 3D view keeps its height', async ({
+  test('the parts list splits into three columns so the 3D view keeps its height', async ({
     page,
   }) => {
     await page.goto('/');
     const first = await page
       .getByRole('button', { name: PART_NAMES[0], exact: true })
       .boundingBox();
-    const fourth = await page
-      .getByRole('button', { name: PART_NAMES[3], exact: true })
-      .boundingBox();
-    expect(fourth?.y).toBeCloseTo(first?.y ?? -1, 0);
-    expect(fourth?.x ?? 0).toBeGreaterThan((first?.x ?? 0) + (first?.width ?? 0) - 1);
+    // The list runs down the first column, then the second, then the third.
+    const rows = Math.ceil(PART_NAMES.length / 3);
+    let previous = first;
+    for (const index of [rows, rows * 2]) {
+      const top = await page
+        .getByRole('button', { name: PART_NAMES[index] ?? '', exact: true })
+        .boundingBox();
+      expect(top?.y, PART_NAMES[index]).toBeCloseTo(first?.y ?? -1, 0);
+      expect(top?.x ?? 0).toBeGreaterThan((previous?.x ?? 0) + (previous?.width ?? 0) - 1);
+      previous = top;
+    }
 
     // A new canvas starts at the default 300 × 150 until three.js sizes it to its container.
     const canvas = page.locator('canvas');
