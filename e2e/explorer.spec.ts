@@ -43,11 +43,11 @@ test('keyboard: open and close a lesson from the part list', async ({ page }) =>
  * the 1280 × 720 test viewport. Found by clicking a grid over the canvas, one fresh page per point.
  */
 const POINTS = {
-  battery: { x: 0.475, y: 0.44 },
-  frameArm: { x: 0.4, y: 0.6 },
+  battery: { x: 0.5, y: 0.44 },
+  frameArm: { x: 0.47, y: 0.62 },
   // With the stack open:
-  liftedFc: { x: 0.48, y: 0.44 },
-  liftedBattery: { x: 0.5, y: 0.32 },
+  liftedFc: { x: 0.515, y: 0.44 },
+  liftedBattery: { x: 0.47, y: 0.32 },
 };
 
 async function clickAt(page: Page, point: { x: number; y: number }) {
