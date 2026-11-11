@@ -43,11 +43,12 @@ test('keyboard: open and close a lesson from the part list', async ({ page }) =>
  * the 1280 × 720 test viewport. Found by clicking a grid over the canvas, one fresh page per point.
  */
 const POINTS = {
-  battery: { x: 0.5, y: 0.44 },
-  frameArm: { x: 0.47, y: 0.62 },
-  // With the stack open:
-  liftedFc: { x: 0.515, y: 0.44 },
-  liftedBattery: { x: 0.47, y: 0.32 },
+  battery: { x: 0.525, y: 0.49 },
+  frameArm: { x: 0.42, y: 0.58 },
+  camera: { x: 0.545, y: 0.59 },
+  // With the frame open:
+  liftedFc: { x: 0.495, y: 0.46 },
+  liftedBattery: { x: 0.525, y: 0.31 },
 };
 
 async function clickAt(page: Page, point: { x: number; y: number }) {
@@ -84,6 +85,21 @@ test('mouse: the open stack keeps every layer clickable', async ({ page }) => {
   // Selecting the battery closes the stack; the background clears the selection.
   await clickAt(page, { x: 0.01, y: 0.01 });
   await expect(lessonHeading(page, 'Battery')).toBeHidden();
+});
+
+test('mouse: the receiver opens the frame, and the camera is clickable at the front', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Receiver', exact: true }).click();
+  await expect(lessonHeading(page, 'Receiver')).toBeVisible();
+
+  // The flight controller is only at this point when the frame is open.
+  await clickAt(page, POINTS.liftedFc);
+  await expect(lessonHeading(page, 'Flight controller')).toBeVisible();
+
+  await clickAt(page, POINTS.camera);
+  await expect(lessonHeading(page, 'Camera')).toBeVisible();
 });
 
 test('list: every part opens its own lesson', async ({ page }) => {
