@@ -37,7 +37,8 @@ connection links hide where they go, and each lesson shows the part name twice.
 
 ### Paths
 
-`src/app/routes.ts`, pure and unit tested:
+`src/shared/routing/routes.ts`, pure and unit tested (in `shared/` because the part explorer uses it,
+and features may not import `app/`):
 
 - `partPath(part: PartId): string` returns `/parts/<id>`.
 - `OVERVIEW_PATH = '/'`.
@@ -51,7 +52,8 @@ connection links hide where they go, and each lesson shows the part name twice.
 
 ### Hook
 
-`usePartRoute()` in `src/app/` returns `{ route, navigate }`:
+`usePartRoute()` in `src/shared/routing/` returns `{ route, unknownSlug, cause, navigate }`, where `route` is
+an overview or part route and `cause` (`load`, `push` or `pop`) says how the URL last changed:
 
 - It reads `window.location.pathname` through `useSyncExternalStore`, subscribed to `popstate` and
   to the hook's own navigations.
@@ -59,8 +61,9 @@ connection links hide where they go, and each lesson shows the part name twice.
   URL is already that path.
 - On an `unknown` route it replaces the URL with `/` (no new history entry) and keeps the slug, so
   the overview can show the notice once. The notice clears on the next navigation.
-- It sets `document.title`: `"<Part label> · Inside the Quad"` on a part, `"Inside the Quad"`
-  otherwise. Strings come from `src/content/ui.ts`.
+- The part explorer (not the hook, since `shared/` may not import `content/`) sets
+  `document.title`: `"<Part label> · Inside the Quad"` on a part, `"Inside the Quad"` otherwise.
+  Strings come from `src/content/ui.ts`.
 
 ### Behaviour
 
