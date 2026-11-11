@@ -1,16 +1,19 @@
 import type { ThreeEvent } from '@react-three/fiber';
-import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef } from 'react';
 
 import { LESSONS } from '@/content/lessons';
 import { overviewSpecs } from '@/content/overview';
 import { PART_LABELS, UI } from '@/content/ui';
 import { DroneViewer } from '@/features/drone-viewer';
+import { useReadParts } from '@/features/progress';
 import type { PartId } from '@/shared/domain/parts';
+import { usePartRoute } from '@/shared/routing';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
 
 import { isDeliberateClick } from './clicks';
-import { LESSON_PANEL_ID, lessonTitleId, partButtonId } from './ids';
+import { LESSON_PANEL_ID, lessonTitleId, OVERVIEW_FOCUS_ID, partButtonId } from './ids';
 import { LessonPanel } from './LessonPanel';
+import { OverviewStart } from './OverviewStart';
 import { PartList } from './PartList';
 import { TitleBlock } from './TitleBlock';
 
@@ -28,8 +31,22 @@ type FocusTarget = string | null;
  * The list and lessons work on their own when the 3D view can't load.
  */
 export function PartExplorer() {
-  const [selectedPart, setSelectedPart] = useState<PartId | null>(null);
+  const { route, unknownSlug, cause, navigate } = usePartRoute();
+  const selectedPart = route.kind === 'part' ? route.part : null;
   const focusTarget = useRef<FocusTarget>(null);
+  const { read, toggle: toggleRead, clear: clearRead } = useReadParts();
+
+  useEffect(() => {
+    document.title = selectedPart ? UI.app.pageTitle(PART_LABELS[selectedPart]) : UI.app.title;
+  }, [selectedPart]);
+
+  // Back and Forward move focus to the sheet they open, so it never falls back to the page.
+  useEffect(() => {
+    if (cause !== 'pop') return;
+    document
+      .getElementById(selectedPart ? lessonTitleId(selectedPart) : OVERVIEW_FOCUS_ID)
+      ?.focus();
+  }, [cause, selectedPart]);
 
   useEffect(() => {
     if (focusTarget.current) {
@@ -39,25 +56,30 @@ export function PartExplorer() {
   }, [selectedPart]);
 
   // After choosing a part, bring the start of its lesson into view if it is off screen: below the
-  // fold on phones, or scrolled away in the desktop sheet column.
-  const revealLesson = useRef(false);
+  // fold on phones, or scrolled away in the desktop sheet column. A lesson address opened directly
+  // (a bookmark or shared link) is revealed too, at once and without moving focus.
+  const revealLesson = useRef<'load' | 'choose' | null>(
+    cause === 'load' && selectedPart ? 'load' : null,
+  );
   useEffect(() => {
-    if (!revealLesson.current || !selectedPart) return;
-    revealLesson.current = false;
+    const reveal = revealLesson.current;
+    if (!reveal || !selectedPart) return;
+    revealLesson.current = null;
     const panel = document.getElementById(LESSON_PANEL_ID);
     if (!panel) return;
     const { top } = panel.getBoundingClientRect();
     if (top < 0 || top > window.innerHeight * 0.75) {
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      panel.scrollIntoView({ block: 'start', behavior: reduceMotion ? 'auto' : 'smooth' });
+      const instant = reduceMotion || reveal === 'load';
+      panel.scrollIntoView({ block: 'start', behavior: instant ? 'auto' : 'smooth' });
     }
   }, [selectedPart]);
 
   const closeLesson = useCallback(() => {
     if (!selectedPart) return;
     focusTarget.current = partButtonId(selectedPart);
-    setSelectedPart(null);
-  }, [selectedPart]);
+    navigate(null);
+  }, [selectedPart, navigate]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -70,24 +92,25 @@ export function PartExplorer() {
   }, [closeLesson]);
 
   const togglePart = (part: PartId) => {
-    revealLesson.current = selectedPart !== part;
-    setSelectedPart((current) => (current === part ? null : part));
+    revealLesson.current = selectedPart !== part ? 'choose' : null;
+    navigate(selectedPart === part ? null : part);
   };
 
-  const followConnection = (part: PartId) => {
-    focusTarget.current = lessonTitleId(part);
-    setSelectedPart(part);
+  // A link in the sheet (a connection, previous or next) moves focus to what it opens.
+  const followLink = (part: PartId | null) => {
+    focusTarget.current = part ? lessonTitleId(part) : OVERVIEW_FOCUS_ID;
+    revealLesson.current = part !== null ? 'choose' : null;
   };
 
   const onPartClick = (part: PartId, event: ThreeEvent<MouseEvent>) => {
     if (!isDeliberateClick(event.delta)) return;
     // Clicking the part that is already open changes nothing, so there is nothing to reveal.
-    revealLesson.current = part !== selectedPart;
-    setSelectedPart(part);
+    revealLesson.current = part !== selectedPart ? 'choose' : null;
+    navigate(part);
   };
 
   const clearSelection = () => {
-    setSelectedPart(null);
+    navigate(null);
   };
 
   return (
@@ -126,25 +149,34 @@ export function PartExplorer() {
               <span className="drawing-hint-touch">{UI.viewer.touchHint}</span>
             </p>
           </div>
-          <PartList selectedPart={selectedPart} onToggle={togglePart} />
+          <PartList selectedPart={selectedPart} read={read} onToggle={togglePart} />
         </div>
       </div>
       <div className="part-explorer-sheet">
         {selectedPart ? (
           <LessonPanel
             lesson={LESSONS[selectedPart]}
+            read={read.has(selectedPart)}
             onClose={closeLesson}
-            onSelectPart={followConnection}
+            onToggleRead={() => {
+              toggleRead(selectedPart);
+            }}
+            onFollowLink={followLink}
           />
         ) : (
           <div className="part-explorer-overview">
+            {unknownSlug !== null && (
+              <p role="status" className="part-explorer-notice">
+                {UI.explorer.unknownPart(unknownSlug)}
+              </p>
+            )}
             <TitleBlock
               part={UI.titleBlock.overviewPart}
               sheet={UI.titleBlock.overviewSheet}
               quantity={1}
               specs={overviewSpecs()}
             />
-            <p className="part-explorer-hint">{UI.explorer.hint}</p>
+            <OverviewStart read={read} onFollowLink={followLink} onClear={clearRead} />
           </div>
         )}
       </div>

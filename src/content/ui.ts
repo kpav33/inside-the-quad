@@ -26,6 +26,8 @@ export const UI = {
     titleLead: 'Inside the',
     titleAccent: 'Quad',
     tagline: 'How an FPV drone works, part by part.',
+    /** The browser tab's title while a part's lesson is open. */
+    pageTitle: (part: string) => `${part} · Inside the Quad`,
   },
   viewer: {
     loading: 'Loading the 3D drawing…',
@@ -35,6 +37,8 @@ export const UI = {
     touchHint: 'Two fingers to turn · tap a part',
   },
   parts: {
+    /** A part-list row's name once its lesson is marked as read. */
+    readName: (part: string) => `${part}, read`,
     navLabel: 'Drone parts',
     heading: 'Parts list',
     columns: { item: 'Item', part: 'Part', quantity: 'Qty' },
@@ -42,6 +46,15 @@ export const UI = {
   explorer: {
     opened: (part: string) => `${part} lesson opened`,
     hint: 'Select a part on the drone or in the parts list to see what it does and how it works.',
+    unknownPart: (slug: string) => `There’s no part called “${slug}”. Pick one from the list.`,
+  },
+  overview: {
+    start: (part: string) => `Start with sheet 1: ${part}`,
+    continue: (sheet: number, part: string) => `Continue with sheet ${sheet}: ${part}`,
+    allRead: (total: number) => `All ${total} parts read. Open any sheet to look something up.`,
+    startAgain: 'Start again from sheet 1',
+    count: (read: number, total: number) => `${read} of ${total} read`,
+    clear: 'Clear progress',
   },
   titleBlock: {
     label: 'Title block',
@@ -56,6 +69,14 @@ export const UI = {
   },
   lesson: {
     close: 'Close lesson',
+    /** The sheet half of a reference to another sheet ("Battery · sheet 6"), kept on one line. */
+    sheetNumber: (sheet: number) => `· sheet ${sheet}`,
+    footerLabel: 'Sheets',
+    previous: 'Previous',
+    next: 'Next',
+    backToOverview: 'Back to overview',
+    markRead: 'Mark as read',
+    isRead: 'Read',
     questions: [
       'What does it do?',
       'How does it work?',

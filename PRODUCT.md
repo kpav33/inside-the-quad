@@ -47,8 +47,12 @@ it work, what do the numbers mean, what is it connected to.
   controller, battery, battery strap, receiver, camera, VTX and extras), with analog video; select
   a part by clicking it in 3D or with keyboard-accessible part buttons; four-question lesson panel
   per part. Selecting a board under the top plate (ESC, flight controller, receiver, VTX) opens the
-  frame as an exploded view.
-- Planned (see `docs/roadmap.md`): an intro module, a "how it all works together" simulator, the
+  frame as an exploded view. Every lesson has its own address (`/parts/<id>`) for bookmarks and
+  sharing, Back and Forward move between lessons, lessons run in sheet order with previous/next,
+  and learners can mark lessons as read (kept in this browser only); the overview offers where to
+  start or continue.
+- Planned (see `docs/roadmap.md`): photos of the real parts (CC-licensed, with attribution), an
+  intro module, a "how it all works together" simulator, the
   gear you hold and wear, and a compatibility checker; later other drone sizes and types.
 - Content source of truth: `docs/product/scope.md`. Product recommendations, Betaflight tuning and
   flight training are out of scope.

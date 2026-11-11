@@ -140,6 +140,8 @@ Confirmed rejections (from the direction contract): the dark docs site with a si
 - Selecting a board under the top plate (ESC, flight controller, receiver, VTX) opens the frame as an exploded-view drawing: the ESC, the FC, the rear bay (VTX and receiver) and the top plate with the battery, strap and GPS lift apart in order; the standoffs and the camera plates stay put. It eases to about 95 % in 200 ms and jumps under reduced motion.
 - Spec values in the title block are unbreakable groups, so a number is never split from its unit.
 - The "current sheet" is marked by the selected parts-list row (redline rule and filled balloon); the title block's Sheet field itself stays ink.
+- On a lesson the part name is the sheet's heading, above the title block; the title block drops its Part cell there (the overview keeps it), so the name appears once.
+- Two drawn icons exist, both inline SVG at 1em with a 1.5 stroke and square caps: the leader arrow (references to other sheets) and the check (read). No other icons, and no Unicode glyphs standing in for them.
 
 ## Colors
 
@@ -205,7 +207,7 @@ Spacing is a 7-step scale (0.25, 0.5, 0.75, 1, 1.5, 2, 3rem); touch targets are 
 
 **Parts list columns:** the parts list runs down two columns when the drawing field (a container query on the field, not the page) is at least 28rem wide, and three from 40rem, filled top to bottom, each column with its own headings and a hairline between them. Narrower fields keep one column. With a fine pointer the rows are 2.5rem; touch keeps 3rem.
 
-**Sheet column:** title block, part title with the close button, then the four questions as a 2rem balloon gutter plus body, 2rem apart. The spec table becomes stacked label/value/meaning blocks when the sheet is narrower than 32rem (container query).
+**Sheet column:** part title with the close button, the title block, then the four questions as a 2rem balloon gutter plus body, 2rem apart, then the lesson footer. The spec table becomes stacked label/value/meaning blocks when the sheet is narrower than 32rem (container query).
 
 ### Named Rules
 
@@ -233,9 +235,17 @@ Drafted, not pressed.
 - **Type:** Barlow 600 caps, 0.08em tracking.
 - **Hover / Focus:** border turns ink (180ms ease-out); focus is the 2px redline ring.
 
-### Text links (in-lesson connections)
+### Sheet references (in-lesson connections)
 
-Ink text with a muted underline (0.2em offset) that turns ink on hover. Never redline.
+Each connection is its sentence in the body face, then a link to the part it names, set like a drawing's "see sheet" note: a muted leader arrow and "BATTERY · SHEET 6" in Barlow 600 caps, ink with a muted underline (0.2em offset) that turns ink on hover, 2.75rem tall. "· sheet 6" never wraps apart. Never redline.
+
+### Lesson footer
+
+Below the questions, over a hairline: the **Mark as read** outline button (a toggle; pressed, it shows the check and "READ" on the rule fill with an ink border, never redline), then a two-cell hairline grid like the title block: PREVIOUS on the left and NEXT on the right, each a muted caps label with an arrow over the target sheet in Barlow 600 ("Motors · sheet 2"). Sheet 1 leaves the previous cell empty; on the last sheet Next reads "Back to overview". Cells take the row hover fill; focus is the inset ring.
+
+### Overview start
+
+Under the overview's title block: the hint (or, once every part is read, the all-read line), one outline-button link ("START WITH SHEET 1: FRAME", then "CONTINUE WITH SHEET N: …", then "START AGAIN FROM SHEET 1") with a leader arrow, and once anything is read a muted caps count ("3 OF 11 READ") with a quiet underlined "Clear progress". An unknown part address shows a framed one-line notice above the title block.
 
 ### Navigation: Parts List
 
@@ -245,10 +255,11 @@ The drawing's parts list is the part picker.
 - **Rows:** a 2.5rem / 1fr / 3rem grid, 3rem tall, hairline between rows. Two or three columns on wider drawing fields, 2.5rem tall with a mouse (see Layout). Balloon item number, part name in body, quantity right-aligned.
 - **Hover:** faint rule-tinted fill (45% rule) and the balloon ring turns ink.
 - **Selected:** rule fill, 3px redline left rule, redline-filled balloon with ground numeral, bold name. Exposed as `aria-pressed`.
+- **Read:** an ink check after the name; the row's accessible name becomes "VTX, read".
 
 ### Title Block
 
-The sheet's identity in a strict hairline module grid: three cells (Part, Sheet "n of N", Qty) over a full-width Spec cell. Sheet fill, rule-strong frame, rule dividers, 0.5rem 0.75rem cell padding; muted caps label over a Barlow value. Spec values are no-wrap groups separated by " · ". On the overview it shows the reference quad and "Overview".
+The sheet's identity in a strict hairline module grid: three cells (Part, Sheet "n of N", Qty) over a full-width Spec cell. On a lesson the Part cell is left out (the heading above names the part) and Sheet and Qty share the row. Sheet fill, rule-strong frame, rule dividers, 0.5rem 0.75rem cell padding; muted caps label over a Barlow value. Spec values are no-wrap groups separated by " · ". On the overview it shows the reference quad and "Overview".
 
 ### Balloons and Questions
 

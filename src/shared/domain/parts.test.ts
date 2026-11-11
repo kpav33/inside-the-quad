@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { isInsidePart, PART_IDS } from './parts';
+import { isInsidePart, PART_IDS, partNeighbours } from './parts';
 
 describe('parts', () => {
   it('lists the parts in teaching order', () => {
@@ -28,5 +28,19 @@ describe('isInsidePart', () => {
     for (const part of ['camera', 'battery', 'strap', 'extras', 'frame', null] as const) {
       expect(isInsidePart(part), String(part)).toBe(false);
     }
+  });
+});
+
+describe('partNeighbours', () => {
+  it('gives the first sheet no previous part', () => {
+    expect(partNeighbours('frame')).toEqual({ previous: null, next: 'motors' });
+  });
+
+  it('gives the last sheet no next part', () => {
+    expect(partNeighbours('extras')).toEqual({ previous: 'vtx', next: null });
+  });
+
+  it('steps through the sheets in teaching order', () => {
+    expect(partNeighbours('fc')).toEqual({ previous: 'esc', next: 'battery' });
   });
 });

@@ -3,19 +3,20 @@
 Each section is one branch, one plan in `plans/`, one review in `reviews/`.
 Status: `planned` · `in progress` · `in review` · `done`.
 
-| #   | Section                                                                                                                                                             | Branch                   | Status  |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ------- |
-| 00  | Project scaffold and engineering setup                                                                                                                              | `chore/project-scaffold` | done    |
-| 01  | First slice: 3D viewer + frame, motors, props lessons                                                                                                               | `feat/first-slice`       | done    |
-| 02  | Design pass (visual design review)                                                                                                                                  | `feat/design-pass`       | done    |
-| 02b | Model that teaches: dimensions, callouts, front marker, spin arcs in 3D; drone fills the drawing field; zone markers used or removed; 3D hover mirrored in the list | —                        | planned |
-| 02c | Lookup and navigation: part URLs, next/previous, progress, onboarding; connection links name their target; no duplicated part name                                  | —                        | planned |
-| 03a | Power and control parts: ESC, flight controller, battery; exploded stack                                                                                            | `feat/power-and-control` | done    |
-| 03b | Radio and video parts: receiver, camera, VTX and antennas, extras                                                                                                   | `feat/radio-and-video`   | done    |
-| 04  | "What is an FPV drone?" intro (Module 1)                                                                                                                            | —                        | planned |
-| 05  | How it all works together: simulator (Module 3)                                                                                                                     | —                        | planned |
-| 06  | Gear you hold and wear (Module 4)                                                                                                                                   | —                        | planned |
-| 07  | Compatibility checker                                                                                                                                               | —                        | planned |
+| #   | Section                                                                                                                                                             | Branch                       | Status  |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ------- |
+| 00  | Project scaffold and engineering setup                                                                                                                              | `chore/project-scaffold`     | done    |
+| 01  | First slice: 3D viewer + frame, motors, props lessons                                                                                                               | `feat/first-slice`           | done    |
+| 02  | Design pass (visual design review)                                                                                                                                  | `feat/design-pass`           | done    |
+| 02b | Model that teaches: dimensions, callouts, front marker, spin arcs in 3D; drone fills the drawing field; zone markers used or removed; 3D hover mirrored in the list | —                            | planned |
+| 02c | Lookup and navigation: part URLs, next/previous, progress, onboarding; connection links name their target; no duplicated part name                                  | `feat/lookup-and-navigation` | done    |
+| 03a | Power and control parts: ESC, flight controller, battery; exploded stack                                                                                            | `feat/power-and-control`     | done    |
+| 03b | Radio and video parts: receiver, camera, VTX and antennas, extras                                                                                                   | `feat/radio-and-video`       | done    |
+| 03c | Real parts: a photo of each part (CC-licensed, with attribution) beside its lesson                                                                                  | —                            | planned |
+| 04  | "What is an FPV drone?" intro (Module 1)                                                                                                                            | —                            | planned |
+| 05  | How it all works together: simulator (Module 3)                                                                                                                     | —                            | planned |
+| 06  | Gear you hold and wear (Module 4)                                                                                                                                   | —                            | planned |
+| 07  | Compatibility checker                                                                                                                                               | —                            | planned |
 
 ## 01 — First slice (summary)
 

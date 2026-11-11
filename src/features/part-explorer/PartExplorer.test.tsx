@@ -1,10 +1,13 @@
 import type { ThreeEvent } from '@react-three/fiber';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { DroneViewerProps } from '@/features/drone-viewer/DroneViewer';
 
+import { PART_IDS } from '@/shared/domain/parts';
+
+import { OVERVIEW_FOCUS_ID } from './ids';
 import { PartExplorer } from './PartExplorer';
 
 // WebGL is unavailable in jsdom: the viewer is replaced by buttons that call its props.
@@ -42,6 +45,8 @@ vi.mock('@/features/drone-viewer/DroneViewer', () => ({
   },
 }));
 
+const READ_KEY = 'inside-the-quad.read-parts.v1';
+
 const lessonHeading = (name: string) => screen.queryByRole('heading', { level: 2, name });
 
 async function renderExplorer() {
@@ -52,6 +57,7 @@ async function renderExplorer() {
 describe('PartExplorer', () => {
   afterEach(() => {
     viewer.shouldThrow = false;
+    window.localStorage.clear();
   });
 
   it('starts on the overview sheet and invites the user to pick a part', async () => {
@@ -103,8 +109,35 @@ describe('PartExplorer', () => {
   it('follows connection links to another lesson and focuses its title', async () => {
     await renderExplorer();
     await userEvent.click(screen.getByRole('button', { name: 'Motors' }));
-    await userEvent.click(screen.getByRole('button', { name: /propeller slides onto/ }));
+    await userEvent.click(screen.getByRole('link', { name: 'Propellers · sheet 3' }));
     expect(lessonHeading('Propellers')).toHaveFocus();
+    expect(window.location.pathname).toBe('/parts/props');
+  });
+
+  it('walks to the next sheet and focuses its title', async () => {
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Frame' }));
+    await userEvent.click(screen.getByRole('link', { name: 'Next: Motors · sheet 2' }));
+    expect(lessonHeading('Motors')).toHaveFocus();
+  });
+
+  it('returns from the last sheet to the overview', async () => {
+    window.history.replaceState(null, '', '/parts/extras');
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('link', { name: 'Next: Back to overview' }));
+    expect(lessonHeading('Extras')).toBeNull();
+    expect(document.getElementById(OVERVIEW_FOCUS_ID)).toHaveFocus();
+  });
+
+  it('remembers a lesson marked as read', async () => {
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Frame' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Mark as read' }));
+    expect(screen.getByRole('button', { name: 'Mark as read' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(window.localStorage.getItem('inside-the-quad.read-parts.v1')).toBe('["frame"]');
   });
 
   it('closes with Escape and keeps focus on the part button', async () => {
@@ -123,6 +156,91 @@ describe('PartExplorer', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Close lesson' }));
     expect(lessonHeading('Propellers')).toBeNull();
     expect(screen.getByRole('button', { name: 'Propellers' })).toHaveFocus();
+  });
+
+  it('opens the lesson the address names and titles the page after it', async () => {
+    window.history.replaceState(null, '', '/parts/vtx');
+    await renderExplorer();
+    expect(lessonHeading('VTX')).toBeInTheDocument();
+    expect(document.title).toBe('VTX · Inside the Quad');
+  });
+
+  it('puts the chosen part in the address, and the overview after closing', async () => {
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Frame' }));
+    expect(window.location.pathname).toBe('/parts/frame');
+    await userEvent.click(screen.getByRole('button', { name: 'Close lesson' }));
+    expect(window.location.pathname).toBe('/');
+    expect(document.title).toBe('Inside the Quad');
+  });
+
+  it('closes the lesson on Back and keeps focus on the sheet', async () => {
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Frame' }));
+    act(() => {
+      window.history.replaceState(null, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+    expect(lessonHeading('Frame')).toBeNull();
+    expect(document.getElementById(OVERVIEW_FOCUS_ID)).toHaveFocus();
+  });
+
+  it('focuses the lesson title when Forward reopens it', async () => {
+    await renderExplorer();
+    act(() => {
+      window.history.pushState(null, '', '/parts/esc');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+    expect(lessonHeading('ESC')).toHaveFocus();
+  });
+
+  it('tells the user when the address names no part', async () => {
+    window.history.replaceState(null, '', '/parts/foo');
+    await renderExplorer();
+    expect(screen.getByRole('status')).toHaveTextContent('There’s no part called “foo”');
+    expect(window.location.pathname).toBe('/');
+  });
+
+  it('offers sheet 1 to a new visitor', async () => {
+    await renderExplorer();
+    const start = screen.getByRole('link', { name: 'Start with sheet 1: Frame' });
+    expect(start).toHaveAttribute('href', '/parts/frame');
+    expect(screen.queryByText(/of 11 read/)).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Clear progress' })).toBeNull();
+    await userEvent.click(start);
+    expect(lessonHeading('Frame')).toHaveFocus();
+  });
+
+  it('offers the first unread sheet once something is read', async () => {
+    window.localStorage.setItem(READ_KEY, '["frame"]');
+    await renderExplorer();
+    expect(screen.getByRole('link', { name: 'Continue with sheet 2: Motors' })).toBeInTheDocument();
+    expect(screen.getByText('1 of 11 read')).toBeInTheDocument();
+  });
+
+  it('says when every part is read and offers to start again', async () => {
+    window.localStorage.setItem(READ_KEY, JSON.stringify(PART_IDS));
+    await renderExplorer();
+    expect(screen.getByText(/all 11 parts read/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Start again from sheet 1' })).toHaveAttribute(
+      'href',
+      '/parts/frame',
+    );
+  });
+
+  it('clears progress and returns focus to the start link', async () => {
+    window.localStorage.setItem(READ_KEY, '["frame","motors"]');
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Clear progress' }));
+    expect(screen.queryByText(/of 11 read/)).toBeNull();
+    expect(screen.getByRole('link', { name: 'Start with sheet 1: Frame' })).toHaveFocus();
+  });
+
+  it('ticks a part in the list once its lesson is marked read', async () => {
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Motors' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Mark as read' }));
+    expect(screen.getByRole('button', { name: 'Motors, read' })).toBeInTheDocument();
   });
 
   it('keeps the part list and lessons working when the 3D viewer fails', async () => {

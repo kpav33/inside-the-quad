@@ -2,6 +2,7 @@ import { PART_LABELS, UI } from '@/content/ui';
 import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
 import { PART_IDS, type PartId } from '@/shared/domain/parts';
 import { partQuantity } from '@/shared/domain/quantity';
+import { CheckIcon } from '@/shared/ui/icons';
 
 import type { CSSProperties } from 'react';
 
@@ -13,6 +14,8 @@ const ROWS_IN_THREE = Math.ceil(PART_IDS.length / 3);
 
 export interface PartListProps {
   selectedPart: PartId | null;
+  /** Parts whose lessons are marked as read: ticked after the name. */
+  read: ReadonlySet<PartId>;
   /** Called with the pressed part; the parent decides whether that selects or deselects. */
   onToggle: (part: PartId) => void;
 }
@@ -22,7 +25,7 @@ export interface PartListProps {
  * fields split it into two or three columns (each with its own column headings) so the 3D view
  * keeps its height.
  */
-export function PartList({ selectedPart, onToggle }: PartListProps) {
+export function PartList({ selectedPart, read, onToggle }: PartListProps) {
   const { columns } = UI.parts;
   const columnHeadings = (
     <>
@@ -75,7 +78,19 @@ export function PartList({ selectedPart, onToggle }: PartListProps) {
                   <span className="part-list-item" aria-hidden="true">
                     {index + 1}
                   </span>
-                  <span className="part-list-name">{PART_LABELS[part]}</span>
+                  <span className="part-list-name">
+                    {read.has(part) ? (
+                      <>
+                        <span className="visually-hidden">
+                          {UI.parts.readName(PART_LABELS[part])}
+                        </span>
+                        <span aria-hidden="true">{PART_LABELS[part]}</span>
+                        <CheckIcon className="part-list-read" />
+                      </>
+                    ) : (
+                      PART_LABELS[part]
+                    )}
+                  </span>
                   <span className="part-list-qty" aria-hidden="true">
                     {partQuantity(part, REFERENCE_5_INCH)}
                   </span>

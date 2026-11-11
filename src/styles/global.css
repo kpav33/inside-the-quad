@@ -375,8 +375,17 @@ a {
   font-weight: 700;
 }
 
+/* A part whose lesson is marked as read: a drawn check after the name, in ink. */
+.part-list-read {
+  margin-left: var(--space-2);
+  vertical-align: -0.125em;
+}
+
 /* Sheet column */
 .part-explorer-sheet {
+  /* Contains visually hidden text, which is absolutely positioned, inside the column's own
+     scroll box; otherwise it lengthens the page. */
+  position: relative;
   padding: var(--space-4) var(--space-4) var(--space-7);
   min-width: 0;
 }
@@ -390,6 +399,61 @@ a {
 .part-explorer-hint {
   max-width: 40ch;
   color: var(--color-muted);
+}
+
+.part-explorer-notice {
+  max-width: 40ch;
+  overflow-wrap: anywhere;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-rule-strong);
+}
+
+/* Where to start: the hint, one way in, and the progress so far. */
+.overview-start {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.overview-start-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block: var(--space-2);
+  text-decoration: none;
+}
+
+.overview-progress {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--space-4);
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.overview-clear {
+  min-height: var(--target-min);
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--color-muted);
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.overview-clear:hover {
+  text-decoration-color: var(--color-ink);
 }
 
 .lesson-panel {
@@ -419,8 +483,14 @@ a {
   min-width: 0;
 }
 
-.title-block-cell:nth-child(3) {
+.title-block-qty {
   border-right: 0;
+}
+
+/* A lesson's title block has no part cell (its heading names the part): sheet and qty halve the
+   row. */
+.title-block-without-part .title-block-cell:not(.title-block-spec) {
+  grid-column: span 3;
 }
 
 .title-block-spec {
@@ -449,13 +519,12 @@ a {
 
 /* Narrow title blocks: the part gets its own row, sheet and quantity share the next. */
 @container (max-width: 22rem) {
-  .title-block-cell:first-child {
+  .title-block-part {
     grid-column: span 6;
     border-right: 0;
   }
 
-  .title-block-cell:nth-child(2),
-  .title-block-cell:nth-child(3) {
+  .title-block-cell:not(.title-block-part, .title-block-spec) {
     grid-column: span 3;
   }
 }
@@ -613,16 +682,15 @@ a {
   }
 }
 
-.lesson-connections li::marker {
-  color: var(--color-muted);
-}
-
+/* Each connection is a sentence and the sheet it leads to; space separates connections, the
+   link's own target height separates the two halves of one. */
 .lesson-connections {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-4);
   margin: 0;
-  padding-left: 1.1rem;
+  padding: 0;
+  list-style: none;
 }
 
 .lesson-link {
@@ -639,6 +707,116 @@ a {
 
 .lesson-link:hover {
   text-decoration-color: var(--color-ink);
+}
+
+/* Drawn icons sit on the text's centre line at the text's size. */
+.icon {
+  flex: none;
+  width: 1em;
+  height: 1em;
+}
+
+.lesson-connections li {
+  display: flex;
+  flex-direction: column;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+/* "See sheet 6": the part a connection leads to, in the drawing's lettering. */
+.lesson-connection-link {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target-min);
+  font-family: var(--font-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lesson-connection-link .icon {
+  color: var(--color-muted);
+}
+
+/* Lesson footer: mark as read, then the previous and next sheets as title-block cells. */
+.lesson-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-rule);
+}
+
+.lesson-read {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.lesson-read[aria-pressed='true'] {
+  border-color: var(--color-ink);
+  background: var(--color-rule);
+}
+
+.lesson-sheets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-self: stretch;
+  border: 1px solid var(--color-rule-strong);
+  background: var(--color-sheet);
+}
+
+.lesson-sheet-link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-height: var(--target-min);
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  text-decoration: none;
+  transition: background-color var(--duration) var(--ease-out);
+}
+
+.lesson-sheet-link + .lesson-sheet-link {
+  border-left: 1px solid var(--color-rule);
+}
+
+a.lesson-sheet-link:hover {
+  background: color-mix(in srgb, var(--color-rule) 45%, transparent);
+}
+
+.lesson-sheet-link:focus-visible {
+  outline-offset: -2px;
+}
+
+.lesson-sheet-next {
+  align-items: flex-end;
+  text-align: end;
+}
+
+.lesson-sheet-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.lesson-sheet-target {
+  overflow-wrap: anywhere;
+  font-family: var(--font-label);
+  font-size: var(--step-1);
+  font-weight: 600;
+  letter-spacing: 0.03em;
 }
 
 /* A field wide enough for two columns of part names; longer translated names wrap. */

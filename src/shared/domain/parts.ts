@@ -21,3 +21,9 @@ export const INSIDE_PARTS = ['esc', 'fc', 'receiver', 'vtx'] as const satisfies 
 export function isInsidePart(part: PartId | null): boolean {
   return (INSIDE_PARTS as readonly (PartId | null)[]).includes(part);
 }
+
+/** The sheets before and after a part, in teaching order; null at either end. */
+export function partNeighbours(part: PartId): { previous: PartId | null; next: PartId | null } {
+  const index = PART_IDS.indexOf(part);
+  return { previous: PART_IDS[index - 1] ?? null, next: PART_IDS[index + 1] ?? null };
+}

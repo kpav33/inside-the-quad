@@ -1,6 +1,7 @@
 import { expect, type Page, test } from '@playwright/test';
 
 import { PART_NAMES } from './parts';
+import { stretchText } from './stretch';
 
 test.describe('base styles', () => {
   test('the page sits on the carbon ground', async ({ page }) => {
@@ -48,21 +49,6 @@ test.describe('base styles', () => {
 });
 
 test.describe('layout robustness', () => {
-  async function stretchText(page: Page) {
-    // Simulate a translation about 40% longer: lengthen every word in the sheet column.
-    await page.evaluate(() => {
-      const root = document.querySelector('.part-explorer');
-      if (!root) throw new Error('no explorer');
-      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-        node.textContent = (node.textContent ?? '').replace(
-          /[A-Za-z]{3,}/g,
-          (w) => w + w.slice(0, Math.ceil(w.length * 0.4)),
-        );
-      }
-    });
-  }
-
   test('a 40% longer translation fits a 320 px screen', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 640 });
     for (const part of PART_NAMES) {
@@ -122,7 +108,7 @@ test.describe('layout robustness', () => {
   test('the lesson title shows focus after following a connection', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Motors', exact: true }).click();
-    await page.getByRole('button', { name: /propeller slides onto/ }).press('Enter');
+    await page.getByRole('link', { name: 'Propellers · sheet 3', exact: true }).press('Enter');
     const title = page.getByRole('heading', { level: 2, name: 'Propellers' });
     await expect(title).toBeFocused();
     const outline = await title.evaluate((el) => getComputedStyle(el).outlineStyle);
