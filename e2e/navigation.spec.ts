@@ -116,3 +116,10 @@ test.describe('fit at 320 px with 40% longer text', () => {
     expect(await overflowing(page)).toEqual({ page: 0, elements: [] });
   });
 });
+
+test('a lesson link opened on a phone shows the lesson, without moving focus', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto('/parts/vtx');
+  await expect(lessonHeading(page, 'VTX')).toBeInViewport();
+  await expect(lessonHeading(page, 'VTX')).not.toBeFocused();
+});

@@ -56,17 +56,22 @@ export function PartExplorer() {
   }, [selectedPart]);
 
   // After choosing a part, bring the start of its lesson into view if it is off screen: below the
-  // fold on phones, or scrolled away in the desktop sheet column.
-  const revealLesson = useRef(false);
+  // fold on phones, or scrolled away in the desktop sheet column. A lesson address opened directly
+  // (a bookmark or shared link) is revealed too, at once and without moving focus.
+  const revealLesson = useRef<'load' | 'choose' | null>(
+    cause === 'load' && selectedPart ? 'load' : null,
+  );
   useEffect(() => {
-    if (!revealLesson.current || !selectedPart) return;
-    revealLesson.current = false;
+    const reveal = revealLesson.current;
+    if (!reveal || !selectedPart) return;
+    revealLesson.current = null;
     const panel = document.getElementById(LESSON_PANEL_ID);
     if (!panel) return;
     const { top } = panel.getBoundingClientRect();
     if (top < 0 || top > window.innerHeight * 0.75) {
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      panel.scrollIntoView({ block: 'start', behavior: reduceMotion ? 'auto' : 'smooth' });
+      const instant = reduceMotion || reveal === 'load';
+      panel.scrollIntoView({ block: 'start', behavior: instant ? 'auto' : 'smooth' });
     }
   }, [selectedPart]);
 
@@ -87,20 +92,20 @@ export function PartExplorer() {
   }, [closeLesson]);
 
   const togglePart = (part: PartId) => {
-    revealLesson.current = selectedPart !== part;
+    revealLesson.current = selectedPart !== part ? 'choose' : null;
     navigate(selectedPart === part ? null : part);
   };
 
   // A link in the sheet (a connection, previous or next) moves focus to what it opens.
   const followLink = (part: PartId | null) => {
     focusTarget.current = part ? lessonTitleId(part) : OVERVIEW_FOCUS_ID;
-    revealLesson.current = part !== null;
+    revealLesson.current = part !== null ? 'choose' : null;
   };
 
   const onPartClick = (part: PartId, event: ThreeEvent<MouseEvent>) => {
     if (!isDeliberateClick(event.delta)) return;
     // Clicking the part that is already open changes nothing, so there is nothing to reveal.
-    revealLesson.current = part !== selectedPart;
+    revealLesson.current = part !== selectedPart ? 'choose' : null;
     navigate(part);
   };
 
