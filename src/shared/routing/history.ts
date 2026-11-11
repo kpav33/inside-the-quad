@@ -47,10 +47,13 @@ export function navigateTo(path: string): void {
   update({ path, cause: 'push', replacedSlug: null });
 }
 
-/** Replaces the current address without a new history entry, remembering what it replaced. */
-export function replaceUnknown(path: string, slug: string): void {
+/**
+ * Replaces the current address without a new history entry: an unknown address (remembering its
+ * slug for the notice) or another spelling of a known one.
+ */
+export function replacePath(path: string, replacedSlug: string | null = null): void {
   window.history.replaceState(null, '', path);
-  update({ path, cause: getSnapshot().cause, replacedSlug: slug });
+  update({ path, cause: getSnapshot().cause, replacedSlug });
 }
 
 /** True for a click the app should handle; modified and non-primary clicks belong to the browser. */

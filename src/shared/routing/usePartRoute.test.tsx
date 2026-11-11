@@ -69,4 +69,14 @@ describe('usePartRoute', () => {
     });
     expect(result.current.unknownSlug).toBeNull();
   });
+
+  it('drops a trailing slash, so choosing the open part adds no entry', () => {
+    const { result } = start('/parts/fc/');
+    expect(window.location.pathname).toBe('/parts/fc');
+    const before = window.history.length;
+    act(() => {
+      result.current.navigate('fc');
+    });
+    expect(window.history.length).toBe(before);
+  });
 });

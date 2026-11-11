@@ -2,13 +2,7 @@ import { useCallback, useEffect, useSyncExternalStore } from 'react';
 
 import type { PartId } from '@/shared/domain/parts';
 
-import {
-  getSnapshot,
-  type NavigationCause,
-  navigateTo,
-  replaceUnknown,
-  subscribe,
-} from './history';
+import { getSnapshot, type NavigationCause, navigateTo, replacePath, subscribe } from './history';
 import { OVERVIEW_PATH, parseRoute, partPath } from './routes';
 
 export type PageRoute = { kind: 'overview' } | { kind: 'part'; part: PartId };
@@ -28,9 +22,13 @@ export function usePartRoute(): PartRoute {
   const parsed = parseRoute(snapshot.path);
 
   const unknown = parsed.kind === 'unknown' ? parsed.slug : null;
+  // One address per page: `/parts/vtx/` becomes `/parts/vtx`, so choosing the open part again
+  // finds the page already there and adds no history entry.
+  const canonical = parsed.kind === 'part' ? partPath(parsed.part) : OVERVIEW_PATH;
   useEffect(() => {
-    if (unknown !== null) replaceUnknown(OVERVIEW_PATH, unknown);
-  }, [unknown]);
+    if (unknown !== null) replacePath(OVERVIEW_PATH, unknown);
+    else if (snapshot.path !== canonical) replacePath(canonical);
+  }, [unknown, canonical, snapshot.path]);
 
   const navigate = useCallback((part: PartId | null) => {
     navigateTo(part ? partPath(part) : OVERVIEW_PATH);
