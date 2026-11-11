@@ -200,6 +200,14 @@ describe('lessons', () => {
     expect(power?.meaning).toMatch(/EU/);
   });
 
+  it('quotes the strap size from the drone spec', () => {
+    expect(specValues(LESSONS.strap).some((v) => v.includes('20 × 250 mm'))).toBe(true);
+  });
+
+  it('explains that a lost battery means a crash', () => {
+    expect(lessonText(LESSONS.strap)).toMatch(/crash/i);
+  });
+
   it('computes the battery voltages from the cell count', () => {
     const cells = REFERENCE_5_INCH.motor.batteryCells;
     const text = lessonText(LESSONS.battery);
@@ -229,6 +237,8 @@ describe('lessons', () => {
     ['vtx', 'fc'],
     ['vtx', 'camera'],
     ['vtx', 'frame'],
+    ['strap', 'battery'],
+    ['strap', 'frame'],
   ];
 
   it.each(PAIRS)('links %s and %s both ways', (a, b) => {

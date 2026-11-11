@@ -6,6 +6,7 @@ export const PART_IDS = [
   'esc',
   'fc',
   'battery',
+  'strap',
   'receiver',
   'camera',
   'vtx',

@@ -8,6 +8,7 @@ import { frameLesson } from './frame';
 import { motorsLesson } from './motors';
 import { propsLesson } from './props';
 import { receiverLesson } from './receiver';
+import { strapLesson } from './strap';
 import type { Lesson } from './types';
 import { vtxLesson } from './vtx';
 
@@ -20,6 +21,7 @@ export const LESSONS: Record<PartId, Lesson> = {
   esc: escLesson,
   fc: fcLesson,
   battery: batteryLesson,
+  strap: strapLesson,
   receiver: receiverLesson,
   camera: cameraLesson,
   vtx: vtxLesson,

@@ -11,6 +11,7 @@ describe('parts', () => {
       'esc',
       'fc',
       'battery',
+      'strap',
       'receiver',
       'camera',
       'vtx',

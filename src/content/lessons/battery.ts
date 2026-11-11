@@ -55,9 +55,10 @@ export const batteryLesson: Lesson = {
       partId: 'esc',
     },
     {
-      text: 'It sits on the frame’s top plate, held down by a strap on a grippy pad.',
+      text: 'It sits on the frame’s top plate.',
       partId: 'frame',
     },
+    { text: 'A strap and a grippy pad hold it in place.', partId: 'strap' },
     { text: 'The balance lead plugs into the charger; it is only used for charging.' },
   ],
 };

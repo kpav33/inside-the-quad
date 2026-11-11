@@ -59,6 +59,10 @@ export const frameLesson: Lesson = {
       text: 'The video transmitter (VTX) sits at the back too, with its antenna out the rear.',
       partId: 'vtx',
     },
-    { text: 'The battery sits on the top plate, held down by a strap.', partId: 'battery' },
+    { text: 'The battery sits on the top plate.', partId: 'battery' },
+    {
+      text: 'The battery strap wraps around the top plate to hold the battery down.',
+      partId: 'strap',
+    },
   ],
 };
