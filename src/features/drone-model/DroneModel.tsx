@@ -99,8 +99,20 @@ export function DroneModel({ spec, selectedPart, onPartClick }: DroneModelProps)
           <Fc spec={spec} highlighted={selectedPart === 'fc'} />
         </Lift>,
       )}
-      {partGroup('receiver', <Receiver spec={spec} highlighted={selectedPart === 'receiver'} />)}
-      {partGroup('vtx', <Vtx spec={spec} highlighted={selectedPart === 'vtx'} />)}
+      {partGroup(
+        'receiver',
+        <Receiver
+          spec={spec}
+          highlighted={selectedPart === 'receiver'}
+          rearBayLiftMm={lift.rearBay}
+        />,
+      )}
+      {partGroup(
+        'vtx',
+        <Lift liftMm={lift.rearBay}>
+          <Vtx spec={spec} highlighted={selectedPart === 'vtx'} />
+        </Lift>,
+      )}
       {partGroup('camera', <Camera spec={spec} highlighted={selectedPart === 'camera'} />)}
       {partGroup(
         'strap',

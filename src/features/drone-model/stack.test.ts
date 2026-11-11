@@ -17,7 +17,12 @@ describe('stack layers', () => {
   });
 
   it('does not move anything when closed', () => {
-    expect(explodedOffsets(REFERENCE_5_INCH, false)).toEqual({ esc: 0, fc: 0, topPlate: 0 });
+    expect(explodedOffsets(REFERENCE_5_INCH, false)).toEqual({
+      esc: 0,
+      fc: 0,
+      topPlate: 0,
+      rearBay: 0,
+    });
   });
 
   it('separates every layer by a clear gap when open', () => {

@@ -7,6 +7,7 @@ import {
   STANDOFF_RADIUS_MM,
   XT60_MM,
 } from './dimensions';
+import { motorPlacements } from './layout';
 import { stackLayers } from './stack';
 
 /** A point in frame coordinates, in millimetres: x right, y up from the frame's bottom, z rear. */
@@ -67,9 +68,11 @@ const VTX_SIZE: Vec3 = [20, 4, 20];
 const RECEIVER_SIZE: Vec3 = [12, 3, 18];
 const CAPACITOR = { radius: 5, length: 16, x: 8 } as const;
 const VTX_ANTENNA = { lengthMm: 45, angleDeg: 30 } as const;
-const RECEIVER_ANTENNA = { stemMm: 20, angleDeg: 45, barHalfMm: 15 } as const;
+// Zip-tied to the rear-right arm, off the carbon body and clear of the prop.
+const RECEIVER_ANTENNA = { alongArmMm: 32, stemMm: 20, angleDeg: 45, barHalfMm: 12 } as const;
 const GPS_SIZE: Vec3 = [20, 7, 20];
-const GPS_POST = { x: -14, heightMm: 12, widthMm: 4 } as const;
+// A tall mast keeps the GPS above the battery, with a clear view of the sky (and of the viewer).
+const GPS_POST = { x: -14, heightMm: 36, widthMm: 4 } as const;
 
 /** A straight antenna from `start` up and back at `angleDeg`. */
 function rearwardTip(start: Vec3, lengthMm: number, angleDeg: number): Vec3 {
@@ -103,11 +106,13 @@ export function rearBay(spec: DroneSpec) {
   };
 
   const vtxAntennaStart: Vec3 = [vtx.centre[0], vtx.centre[1], vtx.centre[2] + VTX_SIZE[2] / 2];
-  const rearRightStandoff = standoffBoxes(spec)['standoff rear right'];
+  const rearRight = motorPlacements(spec).find((p) => p.corner === 'rear-right');
+  const [ax, , az] = rearRight?.position ?? [1, 0, 1];
+  const armLength = Math.hypot(ax, az);
   const receiverAntennaStart: Vec3 = [
-    rearRightStandoff?.centre[0] ?? 0,
-    armThicknessMm + spec.frame.standoffHeightMm / 2,
-    (rearRightStandoff?.centre[2] ?? 0) + STANDOFF_RADIUS_MM,
+    (ax / armLength) * RECEIVER_ANTENNA.alongArmMm,
+    armThicknessMm,
+    (az / armLength) * RECEIVER_ANTENNA.alongArmMm,
   ];
   const receiverTip = rearwardTip(
     receiverAntennaStart,

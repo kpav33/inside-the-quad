@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
+import { INCH_MM, REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
 
 import { BATTERY_PAD_MM } from './dimensions';
+import { motorPlacements } from './layout';
 import { type Box, boxesOverlap, escBox, rearBay, standoffBoxes, xt60Box } from './rear';
-import { stackLayers } from './stack';
+import { explodedOffsets, stackLayers } from './stack';
 
 const spec = REFERENCE_5_INCH;
 const bay = rearBay(spec);
@@ -58,8 +59,47 @@ describe('rear bay', () => {
     expect(boxesOverlap(bay.gpsPost, xt60Box(spec))).toBe(false);
   });
 
-  it('points both antennas out of the back of the frame', () => {
+  it('points the VTX antenna out of the back of the frame', () => {
     expect(bay.vtxAntenna.tip[2]).toBeGreaterThan(spec.frame.bodyLengthMm / 2);
-    expect(bay.receiverAntenna.tip[2]).toBeGreaterThan(spec.frame.bodyLengthMm / 2);
+  });
+
+  it('mounts the receiver antenna on a rear arm, off the carbon body and clear of the props', () => {
+    const { bodyWidthMm } = spec.frame;
+    const propRadius = (spec.prop.diameterIn * INCH_MM) / 2;
+    const { start, tip, barEnds } = bay.receiverAntenna;
+    expect(Math.abs(start[0])).toBeGreaterThan(bodyWidthMm / 2);
+    for (const [x, , z] of [tip, ...barEnds]) {
+      expect(Math.abs(x)).toBeGreaterThan(bodyWidthMm / 2);
+      for (const { position } of motorPlacements(spec)) {
+        const distance = Math.hypot(x - position[0] * 1000, z - position[2] * 1000);
+        expect(distance).toBeGreaterThanOrEqual(propRadius + 2);
+      }
+    }
+  });
+});
+
+describe('rear bay in the open frame', () => {
+  const lift = explodedOffsets(spec, true);
+  const raise = ({ centre: [x, y, z], size }: Box, by: number): Box => ({
+    centre: [x, y + by, z],
+    size,
+  });
+  const vtx = raise(bay.vtx, lift.rearBay);
+  const receiver = raise(bay.receiver, lift.rearBay);
+
+  it('lifts the VTX and receiver up into the gap', () => {
+    expect(lift.rearBay).toBeGreaterThan(0);
+  });
+
+  it('keeps them under the lifted top plate and clear of the lifted ESC and its capacitor', () => {
+    const plateBottom = layers.topPlate.bottomMm + lift.topPlate;
+    for (const [name, box] of Object.entries({ vtx, receiver })) {
+      expect(box.centre[1] + box.size[1] / 2, name).toBeLessThan(plateBottom);
+      expect(boxesOverlap(box, raise(escBox(spec), lift.esc)), `${name} / esc`).toBe(false);
+      expect(boxesOverlap(box, raise(bay.capacitor, lift.esc)), `${name} / capacitor`).toBe(false);
+      for (const [standoff, b] of Object.entries(standoffBoxes(spec))) {
+        expect(boxesOverlap(box, b), `${name} / ${standoff}`).toBe(false);
+      }
+    }
   });
 });
