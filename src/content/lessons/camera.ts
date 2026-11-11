@@ -48,6 +48,6 @@ export const cameraLesson: Lesson = {
       text: 'Its video passes through the flight controller, which adds the on-screen text and powers the camera with 5 V.',
       partId: 'fc',
     },
-    { text: 'From there the video goes on to the video transmitter.' },
+    { text: 'From there the video goes on to the video transmitter (VTX).', partId: 'vtx' },
   ],
 };

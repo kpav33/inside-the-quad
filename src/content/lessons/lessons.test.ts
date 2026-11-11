@@ -97,6 +97,9 @@ describe('lessons', () => {
     telemetry: /back to (your|the) radio/i,
     failsafe: /signal is lost|loses (the )?signal/i,
     latency: /delay/i,
+    mW: /milliwatt/i,
+    RHCP: /right-hand/i,
+    OSD: /on-screen/i,
   };
 
   it.each(allLessons.map((l) => [l.partId, l] as const))(
@@ -174,6 +177,29 @@ describe('lessons', () => {
     expect(text).toMatch(/action camera/);
   });
 
+  it('quotes the VTX numbers from the drone spec', () => {
+    const values = specValues(LESSONS.vtx);
+    for (const expected of ['5.8 GHz', '48', '25 mW', '20 × 20 mm', 'RHCP']) {
+      expect(
+        values.some((v) => v.includes(expected)),
+        expected,
+      ).toBe(true);
+    }
+  });
+
+  it('teaches channels, analog and digital, and never running without an antenna', () => {
+    const text = lessonText(LESSONS.vtx);
+    for (const term of [/never .*without its antenna/i, /analog/i, /digital/i, /channel/i]) {
+      expect(text).toMatch(term);
+    }
+  });
+
+  it('says power limits vary by country, with the EU as the example', () => {
+    const power = LESSONS.vtx.specs.find((row) => row.value.includes('mW'));
+    expect(power?.meaning).toMatch(/vary by country/);
+    expect(power?.meaning).toMatch(/EU/);
+  });
+
   it('computes the battery voltages from the cell count', () => {
     const cells = REFERENCE_5_INCH.motor.batteryCells;
     const text = lessonText(LESSONS.battery);
@@ -200,6 +226,9 @@ describe('lessons', () => {
     ['receiver', 'fc'],
     ['receiver', 'frame'],
     ['camera', 'frame'],
+    ['vtx', 'fc'],
+    ['vtx', 'camera'],
+    ['vtx', 'frame'],
   ];
 
   it.each(PAIRS)('links %s and %s both ways', (a, b) => {

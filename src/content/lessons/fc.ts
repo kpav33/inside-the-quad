@@ -65,6 +65,7 @@ export const fcLesson: Lesson = {
     },
     {
       text: 'The video transmitter plugs into another UART, so the flight controller can set its channel and power.',
+      partId: 'vtx',
     },
     {
       text: 'It adds on-screen text (battery voltage, timer) to your video. With analog video, the camera’s signal passes through the flight controller on its way to the video transmitter; digital video systems get the text over that UART instead.',

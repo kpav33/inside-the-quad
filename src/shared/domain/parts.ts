@@ -8,6 +8,7 @@ export const PART_IDS = [
   'battery',
   'receiver',
   'camera',
+  'vtx',
 ] as const;
 
 export type PartId = (typeof PART_IDS)[number];

@@ -9,6 +9,7 @@ import { motorsLesson } from './motors';
 import { propsLesson } from './props';
 import { receiverLesson } from './receiver';
 import type { Lesson } from './types';
+import { vtxLesson } from './vtx';
 
 export type { Lesson, LessonConnection, LessonSpecRow } from './types';
 
@@ -21,4 +22,5 @@ export const LESSONS: Record<PartId, Lesson> = {
   battery: batteryLesson,
   receiver: receiverLesson,
   camera: cameraLesson,
+  vtx: vtxLesson,
 };

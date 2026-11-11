@@ -10,6 +10,7 @@ export const PART_LABELS: Record<PartId, string> = {
   battery: 'Battery',
   receiver: 'Receiver',
   camera: 'Camera',
+  vtx: 'VTX',
 };
 
 /**

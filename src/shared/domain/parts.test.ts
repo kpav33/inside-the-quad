@@ -13,6 +13,7 @@ describe('parts', () => {
       'battery',
       'receiver',
       'camera',
+      'vtx',
     ]);
   });
 });
