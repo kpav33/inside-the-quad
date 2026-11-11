@@ -14,6 +14,7 @@ describe('partQuantity', () => {
     expect(partQuantity('esc', REFERENCE_5_INCH)).toBe(1);
     expect(partQuantity('fc', REFERENCE_5_INCH)).toBe(1);
     expect(partQuantity('receiver', REFERENCE_5_INCH)).toBe(1);
+    expect(partQuantity('camera', REFERENCE_5_INCH)).toBe(1);
     expect(partQuantity('battery', REFERENCE_5_INCH)).toBe(1);
   });
 });

@@ -31,6 +31,7 @@ export const MODEL_COLOR: Record<PartId, string> = {
   fc: '#202326',
   battery: '#22262a',
   receiver: '#1f2327',
+  camera: '#212529',
 };
 
 /** Scene lighting for the 3D drawing: a cool fill light so dark parts keep their shape. */

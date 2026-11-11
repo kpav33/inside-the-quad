@@ -96,6 +96,7 @@ describe('lessons', () => {
     CRSF: /serial/i,
     telemetry: /back to (your|the) radio/i,
     failsafe: /signal is lost|loses (the )?signal/i,
+    latency: /delay/i,
   };
 
   it.each(allLessons.map((l) => [l.partId, l] as const))(
@@ -157,6 +158,22 @@ describe('lessons', () => {
     for (const term of [/bind/i, /telemetry/i, /failsafe/i, /900 MHz/]) expect(text).toMatch(term);
   });
 
+  it('quotes the camera numbers from the drone spec', () => {
+    const values = specValues(LESSONS.camera);
+    for (const expected of ['micro, 19 mm', '30°', 'Analog', '28 · 21 · 19 · 14 mm']) {
+      expect(
+        values.some((v) => v.includes(expected)),
+        expected,
+      ).toBe(true);
+    }
+  });
+
+  it('explains the camera tilt and how it differs from an action camera', () => {
+    const text = lessonText(LESSONS.camera);
+    expect(text).toMatch(/tilt/i);
+    expect(text).toMatch(/action camera/);
+  });
+
   it('computes the battery voltages from the cell count', () => {
     const cells = REFERENCE_5_INCH.motor.batteryCells;
     const text = lessonText(LESSONS.battery);
@@ -182,6 +199,7 @@ describe('lessons', () => {
     ['fc', 'frame'],
     ['receiver', 'fc'],
     ['receiver', 'frame'],
+    ['camera', 'frame'],
   ];
 
   it.each(PAIRS)('links %s and %s both ways', (a, b) => {

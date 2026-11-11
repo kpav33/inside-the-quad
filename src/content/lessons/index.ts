@@ -1,6 +1,7 @@
 import type { PartId } from '@/shared/domain/parts';
 
 import { batteryLesson } from './battery';
+import { cameraLesson } from './camera';
 import { escLesson } from './esc';
 import { fcLesson } from './fc';
 import { frameLesson } from './frame';
@@ -19,4 +20,5 @@ export const LESSONS: Record<PartId, Lesson> = {
   fc: fcLesson,
   battery: batteryLesson,
   receiver: receiverLesson,
+  camera: cameraLesson,
 };
