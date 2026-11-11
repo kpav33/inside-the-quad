@@ -1,6 +1,6 @@
 import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
 
-import { cameraPlacement } from '../front';
+import { CAMERA_BODY_DEPTH_MM, cameraPlacement } from '../front';
 
 import { PartMaterial } from './PartMaterial';
 
@@ -9,7 +9,7 @@ interface CameraProps {
   highlighted: boolean;
 }
 
-const BODY_DEPTH_MM = 18;
+const BODY_DEPTH_MM = CAMERA_BODY_DEPTH_MM;
 const LENS_RADIUS_MM = 6;
 const LENS_LENGTH_MM = 7;
 

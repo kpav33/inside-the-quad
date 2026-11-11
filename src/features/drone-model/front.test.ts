@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
 
-import { cameraPlacement, cameraPlates } from './front';
+import { CAMERA_BODY_DEPTH_MM, cameraPlacement, cameraPlates } from './front';
 import { type Box, boxesOverlap, escBox, standoffBoxes } from './rear';
 import { stackLayers } from './stack';
 
@@ -12,8 +12,15 @@ describe('front of the frame', () => {
   const { centre, tiltRad } = cameraPlacement(spec);
   const width = spec.camera.widthMm;
   // The camera body as a box big enough to hold it at any tilt.
-  const reach = Math.hypot(width, 18) / 2;
+  const reach = Math.hypot(width, CAMERA_BODY_DEPTH_MM) / 2;
   const camera: Box = { centre, size: [width, reach * 2, reach * 2] };
+
+  it('fits the tilted camera body between the bottom and top plates', () => {
+    // Height of the tilted body: its front face leans back and its side shows its depth.
+    const height = width * Math.cos(tiltRad) + CAMERA_BODY_DEPTH_MM * Math.sin(tiltRad);
+    expect(centre[1] - height / 2).toBeGreaterThanOrEqual(spec.frame.armThicknessMm);
+    expect(centre[1] + height / 2).toBeLessThanOrEqual(stackLayers(spec).topPlate.bottomMm);
+  });
 
   it('tilts the camera up by the spec angle', () => {
     expect(tiltRad).toBeCloseTo((spec.camera.tiltDeg * Math.PI) / 180, 10);
