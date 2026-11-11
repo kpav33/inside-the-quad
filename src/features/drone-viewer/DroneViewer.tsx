@@ -7,7 +7,9 @@ import { SCENE_LIGHT } from '@/shared/design/tokens';
 import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
 import type { PartId } from '@/shared/domain/parts';
 
+import { DEFAULT_CAMERA_POSITION } from './part-views';
 import { TouchScrollPassThrough } from './TouchScrollPassThrough';
+import { TurnToPart } from './TurnToPart';
 
 export interface DroneViewerProps {
   selectedPart: PartId | null;
@@ -29,7 +31,7 @@ export default function DroneViewer({
     <div className="drone-viewer">
       <Canvas
         aria-hidden="true"
-        camera={{ position: [0.22, 0.18, -0.28], fov: 40, near: 0.01, far: 10 }}
+        camera={{ position: DEFAULT_CAMERA_POSITION, fov: 40, near: 0.01, far: 10 }}
         onPointerMissed={onBackgroundClick}
         // Nothing moves on its own, so draw only when the camera or selection changes.
         frameloop="demand"
@@ -53,6 +55,7 @@ export default function DroneViewer({
           touches={{ TWO: TOUCH.DOLLY_ROTATE }}
         />
         <TouchScrollPassThrough />
+        <TurnToPart part={selectedPart} />
       </Canvas>
     </div>
   );

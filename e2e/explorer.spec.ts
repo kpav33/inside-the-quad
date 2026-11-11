@@ -1,6 +1,7 @@
 import { expect, type Page, test } from '@playwright/test';
 
 import { PART_NAMES } from './parts';
+import { redlinePixels } from './redline';
 
 const lessonHeading = (page: Page, name: string) =>
   page.getByRole('heading', { level: 2, name, exact: true });
@@ -87,17 +88,8 @@ test('mouse: the open stack keeps every layer clickable', async ({ page }) => {
   await expect(lessonHeading(page, 'Battery')).toBeHidden();
 });
 
-test('mouse: the receiver opens the frame, and the camera is clickable at the front', async ({
-  page,
-}) => {
+test('mouse: the camera is clickable at the front', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Receiver', exact: true }).click();
-  await expect(lessonHeading(page, 'Receiver')).toBeVisible();
-
-  // The flight controller is only at this point when the frame is open.
-  await clickAt(page, POINTS.liftedFc);
-  await expect(lessonHeading(page, 'Flight controller')).toBeVisible();
-
   await clickAt(page, POINTS.camera);
   await expect(lessonHeading(page, 'Camera')).toBeVisible();
 });
@@ -213,4 +205,14 @@ test('resizing the window while the stack is open keeps the closed drone framed'
 
   await canvasBox(page);
   expect((await canvas.screenshot()).equals(before)).toBe(true);
+});
+
+test('every selected part shows clearly, turning the drone when it has to', async ({ page }) => {
+  test.setTimeout(120_000);
+  for (const part of PART_NAMES) {
+    await page.goto('/');
+    await page.getByRole('button', { name: part, exact: true }).click();
+    await canvasBox(page);
+    expect(await redlinePixels(page), part).toBeGreaterThanOrEqual(150);
+  }
 });
