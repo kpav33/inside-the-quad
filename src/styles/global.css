@@ -1042,6 +1042,12 @@ a.lesson-sheet-link:hover {
   cursor: pointer;
 }
 
+/* A transparent fill makes a device's inside clickable, not just its 1px outline. */
+.scene-device rect,
+.scene-device circle {
+  fill: transparent;
+}
+
 .scene-device[data-highlight='true'] {
   stroke-width: 2.5px;
 }
