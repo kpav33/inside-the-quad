@@ -389,6 +389,14 @@
       "description": "Mark as read toggle (pressed: rule fill, ink border, check), then previous and next sheet cells in a hairline grid.",
       "html": "<nav class=\"ds-foot\"><button class=\"ds-read\" aria-pressed=\"true\">Read</button><div class=\"ds-sheets\"><a href=\"#\"><span class=\"ds-l\">Previous</span><span class=\"ds-v\">Motors · sheet 2</span></a><a href=\"#\" class=\"ds-next\"><span class=\"ds-l\">Next</span><span class=\"ds-v\">ESC · sheet 4</span></a></div></nav>",
       "css": ".ds-foot{display:flex;flex-direction:column;align-items:flex-start;gap:1rem;padding-top:1.5rem;border-top:1px solid var(--color-rule,#2a2e32);color:var(--color-ink,#dfe3e6)}.ds-read{min-height:2.75rem;padding:0 1rem;border:1px solid var(--color-ink,#dfe3e6);background:var(--color-rule,#2a2e32);color:inherit;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:600;letter-spacing:.08em;text-transform:uppercase}.ds-sheets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-self:stretch;border:1px solid var(--color-rule-strong,#3a3f44);background:var(--color-sheet,#1c1f22)}.ds-sheets a{display:flex;flex-direction:column;gap:.25rem;padding:.5rem .75rem;color:inherit;text-decoration:none}.ds-sheets a+a{border-left:1px solid var(--color-rule,#2a2e32)}.ds-next{align-items:flex-end;text-align:end}.ds-l{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:.833rem;letter-spacing:.1em;text-transform:uppercase;color:var(--color-muted,#9aa3ab)}.ds-v{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:1.2rem;font-weight:600;letter-spacing:.03em}"
+    },
+    {
+      "name": "Intro Drawing",
+      "kind": "custom",
+      "refersTo": "intro-drawing",
+      "description": "Flat SVG linework framed like a title block: ink hairlines that stay 1px at any scale, dashed muted links that turn 2.5px solid ink when their device is chosen, caps labels in drawing units. Hidden from assistive technology; the text beside it carries the facts.",
+      "html": "<svg class=\"ds-draw\" viewBox=\"0 0 200 80\" aria-hidden=\"true\"><rect x=\"20\" y=\"40\" width=\"30\" height=\"18\"/><circle cx=\"160\" cy=\"30\" r=\"14\"/><g class=\"ds-link\"><line x1=\"52\" y1=\"44\" x2=\"144\" y2=\"34\"/></g><text x=\"98\" y=\"30\" text-anchor=\"middle\">CONTROL</text></svg>",
+      "css": ".ds-draw{display:block;width:100%;height:auto;border:1px solid var(--color-rule-strong,#3a3f44);background:var(--color-sheet,#1c1f22);fill:none;stroke:var(--color-ink,#dfe3e6)}.ds-draw *{vector-effect:non-scaling-stroke}.ds-draw text{fill:var(--color-muted,#9aa3ab);stroke:none;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:700;font-size:11px;letter-spacing:.08em}.ds-link line{stroke:var(--color-muted,#9aa3ab);stroke-dasharray:5 4}"
     }
   ],
   "narrative": {

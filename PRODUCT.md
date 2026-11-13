@@ -50,9 +50,11 @@ it work, what do the numbers mean, what is it connected to.
   frame as an exploded view. Every lesson has its own address (`/parts/<id>`) for bookmarks and
   sharing, Back and Forward move between lessons, lessons run in sheet order with previous/next,
   and learners can mark lessons as read (kept in this browser only); the overview offers where to
-  start or continue.
-- Planned (see `docs/roadmap.md`): photos of the real parts (CC-licensed, with attribution), an
-  intro module, a "how it all works together" simulator, the
+  start or continue. An intro sheet ("What is an FPV drone?", `/intro`) comes before sheet 1: FPV
+  vs camera drones, the drone–radio–goggles system with its two links (drawn as a flat diagram),
+  sizes drawn to scale, and why 5-inch is the reference. The overview offers it to newcomers.
+- Planned (see `docs/roadmap.md`): photos of the real parts (CC-licensed, with attribution), a
+  "how it all works together" simulator, the
   gear you hold and wear, and a compatibility checker; later other drone sizes and types.
 - Content source of truth: `docs/product/scope.md`. Product recommendations, Betaflight tuning and
   flight training are out of scope.

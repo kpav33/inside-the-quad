@@ -245,7 +245,7 @@ Below the questions, over a hairline: the **Mark as read** outline button (a tog
 
 ### Overview start
 
-Under the overview's title block: the hint (or, once every part is read, the all-read line), one outline-button link ("START WITH SHEET 1: FRAME", then "CONTINUE WITH SHEET N: …", then "START AGAIN FROM SHEET 1") with a leader arrow, and once anything is read a muted caps count ("3 OF 11 READ") with a quiet underlined "Clear progress". An unknown part address shows a framed one-line notice above the title block.
+A newcomer (nothing read, not even the intro) sees the hint, "New to FPV? Start here." in bold, one outline-button link "WHAT IS AN FPV DRONE?" with a leader arrow, and "Already know the basics? Start with sheet 1: Frame" as a muted line with an ink link. Once the intro or any part is read: the hint (or, once every part is read, the all-read line), one outline-button link ("START WITH SHEET 1: FRAME", then "CONTINUE WITH SHEET N: …", then "START AGAIN FROM SHEET 1") with a leader arrow, and once anything is read a muted caps count ("3 OF 11 READ") with a quiet underlined "What is an FPV drone?" link and "Clear progress" (Clear shows once anything, the intro included, is read; it clears both). An unknown part address shows a framed one-line notice above the title block.
 
 ### Navigation: Parts List
 
@@ -260,6 +260,18 @@ The drawing's parts list is the part picker.
 ### Title Block
 
 The sheet's identity in a strict hairline module grid: three cells (Part, Sheet "n of N", Qty) over a full-width Spec cell. On a lesson the Part cell is left out (the heading above names the part) and Sheet and Qty share the row. Sheet fill, rule-strong frame, rule dividers, 0.5rem 0.75rem cell padding; muted caps label over a Barlow value. Spec values are no-wrap groups separated by " · ". On the overview it shows the reference quad and "Overview".
+
+### Intro sheet
+
+"What is an FPV drone?" is the sheet before sheet 1, in the sheet column like a lesson: the display heading with "Close intro", a title block with only Sheet "Intro", then four balloon-numbered sections (FPV vs camera drones, the whole system, sizes, why 5-inch) and the same footer (no Previous; Next to "Frame · sheet 1"). The Frame lesson's Previous leads back to it.
+
+### Intro drawings
+
+Two flat SVG drawings, framed like a title block (sheet fill, rule-strong border) and hidden from assistive technology; the visible text beside each carries the facts.
+
+- **System scene:** the pilot (muted, not a device) with the radio and goggles, the drone as a top view, and two dashed muted link arrows labelled CONTROL and VIDEO with their frequency. A list of device toggles (outline buttons, `aria-pressed`) sits under it, each with its role and link. Pressing a device, or tapping it in the drawing, draws it and its links in 2.5px solid ink; a mouse hover previews; the drone lights both links. Redline is not used. On sheets under 26rem the drawing drops the frequency details (the list repeats them), enlarges its labels, and the list stacks each button above its text.
+- **Size comparison:** a tiny whoop, 3″, 5″ and 7″ as top views drawn to one scale (millimetres), each in a column at least wide enough for its short caps label; the 5″ carries a muted REFERENCE note. Under it, a plain three-column table (size, props, motor to motor) with Barlow values that never stacks.
+- Lines stay 1px hairlines at any scale (`vector-effect: non-scaling-stroke`). Label sizes inside the SVGs are in drawing units and scale with the drawing, so they sit outside the CSS type ramp by design.
 
 ### Balloons and Questions
 
