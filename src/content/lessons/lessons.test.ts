@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { motorSizeCode, propSizeCode, REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
 import { LIPO_CELL_VOLTS, packVolts } from '@/shared/domain/lipo';
 import { PART_IDS, type PartId } from '@/shared/domain/parts';
+import { expectJargonExplained } from '@/test/jargon';
 
 import { PART_LABELS } from '../ui';
 
@@ -81,37 +82,10 @@ describe('lessons', () => {
     expect(values.some((v) => v.includes('30.5 × 30.5'))).toBe(true);
   });
 
-  // Beginners can't be expected to know these; any lesson that uses one must explain it.
-  const JARGON: Record<string, RegExp> = {
-    ESC: /electronic speed controller/i,
-    'flight controller': /drone’s brain/i,
-    Betaflight: /software/i,
-    LiPo: /lithium polymer/i,
-    mAh: /milliamp/i,
-    DShot: /digital/i,
-    'back-EMF': /voltage/i,
-    UART: /serial port/i,
-    BEC: /regulator/i,
-    gyro: /rotat/i,
-    AIO: /all-in-one/i,
-    ELRS: /ExpressLRS/,
-    CRSF: /serial/i,
-    telemetry: /back to (your|the) radio/i,
-    failsafe: /signal is lost|loses (the )?signal/i,
-    latency: /delay/i,
-    mW: /milliwatt/i,
-    RHCP: /right-hand/i,
-    OSD: /on-screen/i,
-    'GPS Rescue': /fl(y|ies) (back|home)/i,
-  };
-
   it.each(allLessons.map((l) => [l.partId, l] as const))(
     '%s explains the jargon it uses',
     (_id, lesson) => {
-      const text = lessonText(lesson);
-      for (const [term, explanation] of Object.entries(JARGON)) {
-        if (text.includes(term)) expect(text, `${term} is unexplained`).toMatch(explanation);
-      }
+      expectJargonExplained(lessonText(lesson));
     },
   );
 
