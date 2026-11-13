@@ -8,9 +8,9 @@ import {
 
 const GAP_MM = 40;
 const PAD_MM = 30;
-const LABEL_SPACE_MM = 130;
+const LABEL_SPACE_MM = 175;
 /** Every column is at least this wide, so its label fits under even the smallest drone. */
-const MIN_COLUMN_MM = 190;
+const MIN_COLUMN_MM = 220;
 
 /** Half the drone's drawn extent: motor offset plus a prop radius. */
 function halfExtent(sizeClass: SizeClass): number {
@@ -70,13 +70,13 @@ export function SizeComparison() {
         {placed.map(({ sizeClass, cx }) => (
           <g key={sizeClass.id} className="size-drone">
             <TopView sizeClass={sizeClass} cx={cx} cy={cy} />
-            <text x={cx} y={PAD_MM + tallest + 62} textAnchor="middle">
+            <text x={cx} y={PAD_MM + tallest + 80} textAnchor="middle">
               {sizes.short[sizeClass.id]}
             </text>
             {sizeClass.id === '5in' && (
               <text
                 x={cx}
-                y={PAD_MM + tallest + 108}
+                y={PAD_MM + tallest + 150}
                 textAnchor="middle"
                 className="size-reference"
               >

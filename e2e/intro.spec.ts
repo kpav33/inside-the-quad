@@ -108,3 +108,44 @@ test.describe('the intro fits', () => {
     });
   }
 });
+
+test.describe('the intro drawings', () => {
+  test('tapping inside a device in the drawing chooses it', async ({ page }) => {
+    await page.goto('/intro');
+    const radio = page.locator('[data-device="radio"] rect').first();
+    await radio.scrollIntoViewIfNeeded();
+    const box = await radio.boundingBox();
+    if (!box) throw new Error('no radio body');
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(page.getByRole('button', { name: 'Radio' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  });
+
+  for (const [width, height] of [
+    [320, 640],
+    [768, 900],
+    [1280, 800],
+  ] as const) {
+    test(`drawing labels stay readable and below heading size at ${width} px`, async ({ page }) => {
+      await page.setViewportSize({ width, height });
+      await page.goto('/intro');
+      await expect(page.locator('.size-comparison svg')).toBeVisible();
+      const sizes = await page.evaluate(() =>
+        [...document.querySelectorAll<SVGTextElement>('.intro-drawing text')]
+          .filter((text) => text.getBoundingClientRect().width > 0)
+          .map((text) => {
+            const scale = text.ownerSVGElement?.getScreenCTM()?.a ?? 1;
+            const size = parseFloat(getComputedStyle(text).fontSize) * scale;
+            return { text: text.textContent, size: Math.round(size * 10) / 10 };
+          }),
+      );
+      expect(sizes.length).toBeGreaterThan(0);
+      for (const { text, size } of sizes) {
+        expect(size, `${text} at ${width} px`).toBeGreaterThanOrEqual(9.5);
+        expect(size, `${text} at ${width} px`).toBeLessThanOrEqual(20);
+      }
+    });
+  }
+});

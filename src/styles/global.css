@@ -1004,6 +1004,8 @@ a.lesson-sheet-link:hover {
 .intro-drawing {
   display: block;
   width: 100%;
+  /* Labels scale with the drawing, so it stops growing before they outgrow the headings. */
+  max-width: 28rem;
   height: auto;
   border: 1px solid var(--color-rule-strong);
   background: var(--color-sheet);
@@ -1194,5 +1196,13 @@ a.lesson-sheet-link:hover {
 
   .scene-device-button {
     justify-self: start;
+  }
+
+  .size-comparison text {
+    font-size: 72px;
+  }
+
+  .size-comparison .size-reference {
+    font-size: 60px;
   }
 }
