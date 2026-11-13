@@ -46,6 +46,9 @@ vi.mock('@/features/drone-viewer/DroneViewer', () => ({
 }));
 
 const READ_KEY = 'inside-the-quad.read-parts.v1';
+const INTRO_KEY = 'inside-the-quad.intro-read.v1';
+const introHeading = () =>
+  screen.queryByRole('heading', { level: 2, name: 'What is an FPV drone?' });
 
 const lessonHeading = (name: string) => screen.queryByRole('heading', { level: 2, name });
 
@@ -233,7 +236,9 @@ describe('PartExplorer', () => {
     await renderExplorer();
     await userEvent.click(screen.getByRole('button', { name: 'Clear progress' }));
     expect(screen.queryByText(/of 11 read/)).toBeNull();
-    expect(screen.getByRole('link', { name: 'Start with sheet 1: Frame' })).toHaveFocus();
+    // Clearing everything returns to the newcomer's start, which leads with the intro.
+    expect(document.getElementById(OVERVIEW_FOCUS_ID)).toHaveFocus();
+    expect(document.getElementById(OVERVIEW_FOCUS_ID)).toHaveAttribute('href', '/intro');
   });
 
   it('ticks a part in the list once its lesson is marked read', async () => {
@@ -241,6 +246,98 @@ describe('PartExplorer', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Motors' }));
     await userEvent.click(screen.getByRole('button', { name: 'Mark as read' }));
     expect(screen.getByRole('button', { name: 'Motors, read' })).toBeInTheDocument();
+  });
+
+  it('opens the intro sheet at /intro, with nothing selected', async () => {
+    window.history.replaceState(null, '', '/intro');
+    await renderExplorer();
+    expect(introHeading()).toBeInTheDocument();
+    expect(document.title).toBe('What is an FPV drone? · Inside the Quad');
+    for (const row of screen.queryAllByRole('button', { pressed: true })) {
+      expect(row.closest('.part-list')).toBeNull();
+    }
+    expect(screen.getByTestId('explorer-announcer')).toHaveTextContent(
+      'What is an FPV drone? opened',
+    );
+  });
+
+  it('closes the intro with Close and returns focus to the start link', async () => {
+    window.history.replaceState(null, '', '/intro');
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Close intro' }));
+    expect(window.location.pathname).toBe('/');
+    expect(document.getElementById(OVERVIEW_FOCUS_ID)).toHaveFocus();
+  });
+
+  it('closes the intro with Escape', async () => {
+    window.history.replaceState(null, '', '/intro');
+    await renderExplorer();
+    await userEvent.keyboard('{Escape}');
+    expect(window.location.pathname).toBe('/');
+    expect(document.getElementById(OVERVIEW_FOCUS_ID)).toHaveFocus();
+  });
+
+  it('keeps the intro open when the empty 3D background is clicked', async () => {
+    window.history.replaceState(null, '', '/intro');
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'stub: background' }));
+    expect(window.location.pathname).toBe('/intro');
+  });
+
+  it('does nothing on Escape when no sheet is open', async () => {
+    await renderExplorer();
+    const frame = screen.getByRole('button', { name: 'Frame' });
+    frame.focus();
+    await userEvent.keyboard('{Escape}');
+    expect(window.location.pathname).toBe('/');
+    expect(frame).toHaveFocus();
+  });
+
+  it('follows sheet 1 back to the intro and focuses its title', async () => {
+    window.history.replaceState(null, '', '/parts/frame');
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('link', { name: 'Previous: What is an FPV drone?' }));
+    expect(introHeading()).toHaveFocus();
+  });
+
+  it('focuses a lesson title when Back returns to it from the intro', async () => {
+    window.history.replaceState(null, '', '/intro');
+    await renderExplorer();
+    act(() => {
+      window.history.pushState(null, '', '/parts/frame');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+    expect(lessonHeading('Frame')).toHaveFocus();
+  });
+
+  it('offers the intro first to a visitor who has read nothing', async () => {
+    await renderExplorer();
+    expect(screen.getByText('New to FPV? Start here.')).toBeInTheDocument();
+    const intro = screen.getByRole('link', { name: 'What is an FPV drone?' });
+    expect(intro).toHaveAttribute('href', '/intro');
+    expect(intro).toHaveAttribute('id', OVERVIEW_FOCUS_ID);
+    expect(screen.getByRole('link', { name: 'Start with sheet 1: Frame' })).toBeInTheDocument();
+  });
+
+  it('offers sheet 1 once the intro is read, with a way to clear it', async () => {
+    window.localStorage.setItem(INTRO_KEY, '1');
+    await renderExplorer();
+    const start = screen.getByRole('link', { name: 'Start with sheet 1: Frame' });
+    expect(start).toHaveAttribute('id', OVERVIEW_FOCUS_ID);
+    expect(screen.queryByText(/of 11 read/)).toBeNull();
+    expect(screen.getByRole('link', { name: 'What is an FPV drone?' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Clear progress' }));
+    expect(screen.getByText('New to FPV? Start here.')).toBeInTheDocument();
+    expect(window.localStorage.getItem(INTRO_KEY)).toBeNull();
+  });
+
+  it('clears parts and the intro together', async () => {
+    window.localStorage.setItem(INTRO_KEY, '1');
+    window.localStorage.setItem(READ_KEY, '["frame"]');
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Clear progress' }));
+    expect(window.localStorage.getItem(INTRO_KEY)).toBeNull();
+    expect(window.localStorage.getItem(READ_KEY)).toBe('[]');
   });
 
   it('keeps the part list and lessons working when the 3D viewer fails', async () => {

@@ -48,6 +48,7 @@ export const UI = {
   explorer: {
     opened: (part: string) => `${part} lesson opened`,
     hint: 'Select a part on the drone or in the parts list to see what it does and how it works.',
+    introOpened: 'What is an FPV drone? opened',
     unknownPart: (slug: string) => `There’s no part called “${slug}”. Pick one from the list.`,
   },
   intro: {
@@ -55,8 +56,11 @@ export const UI = {
     sheet: 'Intro',
     /** How links name the intro. */
     link: 'What is an FPV drone?',
+    close: 'Close intro',
   },
   overview: {
+    newHere: 'New to FPV? Start here.',
+    knowBasics: 'Already know the basics?',
     start: (part: string) => `Start with sheet 1: ${part}`,
     continue: (sheet: number, part: string) => `Continue with sheet ${sheet}: ${part}`,
     allRead: (total: number) => `All ${total} parts read. Open any sheet to look something up.`,

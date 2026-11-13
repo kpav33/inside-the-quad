@@ -7,7 +7,10 @@ import {
 } from '@/shared/domain/size-classes';
 
 const GAP_MM = 40;
-const LABEL_SPACE_MM = 110;
+const PAD_MM = 30;
+const LABEL_SPACE_MM = 130;
+/** Every column is at least this wide, so its label fits under even the smallest drone. */
+const MIN_COLUMN_MM = 190;
 
 /** Half the drone's drawn extent: motor offset plus a prop radius. */
 function halfExtent(sizeClass: SizeClass): number {
@@ -15,14 +18,17 @@ function halfExtent(sizeClass: SizeClass): number {
   return drawingSizeMm(sizeClass) / (2 * Math.SQRT2) + propMm / 2;
 }
 
+const columnWidth = (c: SizeClass) => Math.max(halfExtent(c) * 2, MIN_COLUMN_MM);
 const tallest = Math.max(...SIZE_CLASSES.map(halfExtent)) * 2;
 const width =
-  SIZE_CLASSES.reduce((sum, c) => sum + halfExtent(c) * 2, 0) + GAP_MM * (SIZE_CLASSES.length - 1);
+  SIZE_CLASSES.reduce((sum, c) => sum + columnWidth(c), 0) +
+  GAP_MM * (SIZE_CLASSES.length - 1) +
+  PAD_MM * 2;
 
-/** Each drone's centre along the row: side by side, GAP_MM apart. */
+/** Each drone's centre along the row: one column each, GAP_MM apart, drones to one scale. */
 const placed = SIZE_CLASSES.map((sizeClass, index) => {
-  const before = SIZE_CLASSES.slice(0, index).reduce((sum, c) => sum + halfExtent(c) * 2, 0);
-  return { sizeClass, cx: before + GAP_MM * index + halfExtent(sizeClass) };
+  const before = SIZE_CLASSES.slice(0, index).reduce((sum, c) => sum + columnWidth(c), 0);
+  return { sizeClass, cx: PAD_MM + before + GAP_MM * index + columnWidth(sizeClass) / 2 };
 });
 
 /** One drone as a top view, in millimetres, centred on (cx, cy). */
@@ -51,12 +57,12 @@ function TopView({ sizeClass, cx, cy }: { sizeClass: SizeClass; cx: number; cy: 
 /** The four common sizes drawn to one scale, with the same numbers as a table. */
 export function SizeComparison() {
   const { sizes } = INTRO;
-  const cy = tallest / 2;
+  const cy = PAD_MM + tallest / 2;
 
   return (
     <figure className="intro-figure size-comparison">
       <svg
-        viewBox={`0 0 ${width} ${tallest + LABEL_SPACE_MM}`}
+        viewBox={`0 0 ${width} ${PAD_MM + tallest + LABEL_SPACE_MM}`}
         aria-hidden="true"
         focusable="false"
         className="intro-drawing"
@@ -64,11 +70,16 @@ export function SizeComparison() {
         {placed.map(({ sizeClass, cx }) => (
           <g key={sizeClass.id} className="size-drone">
             <TopView sizeClass={sizeClass} cx={cx} cy={cy} />
-            <text x={cx} y={tallest + 52} textAnchor="middle">
-              {sizes.names[sizeClass.id]}
+            <text x={cx} y={PAD_MM + tallest + 62} textAnchor="middle">
+              {sizes.short[sizeClass.id]}
             </text>
             {sizeClass.id === '5in' && (
-              <text x={cx} y={tallest + 96} textAnchor="middle" className="size-reference">
+              <text
+                x={cx}
+                y={PAD_MM + tallest + 108}
+                textAnchor="middle"
+                className="size-reference"
+              >
                 {sizes.reference}
               </text>
             )}
@@ -76,7 +87,7 @@ export function SizeComparison() {
         ))}
       </svg>
 
-      <table className="spec-grid size-table" aria-label={sizes.label}>
+      <table className="size-table" aria-label={sizes.label}>
         <thead>
           <tr>
             <th scope="col">{sizes.columns.size}</th>
@@ -88,8 +99,8 @@ export function SizeComparison() {
           {SIZE_CLASSES.map((sizeClass) => (
             <tr key={sizeClass.id}>
               <th scope="row">{sizes.names[sizeClass.id]}</th>
-              <td className="spec-grid-value">{formatRangeMm(sizeClass.propMm)}</td>
-              <td className="spec-grid-value">{formatRangeMm(sizeClass.frameMm)}</td>
+              <td>{formatRangeMm(sizeClass.propMm)}</td>
+              <td>{formatRangeMm(sizeClass.frameMm)}</td>
             </tr>
           ))}
         </tbody>

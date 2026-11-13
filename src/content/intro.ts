@@ -28,6 +28,8 @@ export interface IntroContent {
   sizes: {
     label: string;
     names: Record<SizeClassId, string>;
+    /** Short names for the drawing's labels, which must fit under the smallest drone. */
+    short: Record<SizeClassId, string>;
     columns: { size: string; prop: string; frame: string };
     reference: string;
   };
@@ -105,6 +107,7 @@ export const INTRO: IntroContent = {
   sizes: {
     label: 'Drone sizes compared, drawn to one scale',
     names: { whoop: 'Tiny whoop', '3in': '3‑inch', '5in': '5‑inch', '7in': '7‑inch' },
+    short: { whoop: 'Whoop', '3in': '3″', '5in': '5″', '7in': '7″' },
     columns: { size: 'Size', prop: 'Props', frame: 'Motor to motor' },
     reference: 'Reference',
   },

@@ -12,3 +12,6 @@ export function partButtonId(part: PartId): string {
 export function lessonTitleId(part: PartId): string {
   return `lesson-title-${part}`;
 }
+
+/** The intro sheet's heading, focused when the intro opens. */
+export const INTRO_TITLE_ID = 'intro-title';

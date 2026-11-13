@@ -101,9 +101,12 @@ describe('LessonPanel', () => {
     );
   });
 
-  it('has no previous sheet on sheet 1', () => {
+  it('leads back from sheet 1 to the intro', () => {
     renderLesson('frame');
-    expect(screen.queryByRole('link', { name: /^Previous/ })).toBeNull();
+    expect(screen.getByRole('link', { name: 'Previous: What is an FPV drone?' })).toHaveAttribute(
+      'href',
+      '/intro',
+    );
   });
 
   it('leads back to the overview from the last sheet', () => {

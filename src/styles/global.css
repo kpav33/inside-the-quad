@@ -437,6 +437,33 @@ a {
   color: var(--color-muted);
 }
 
+.overview-new {
+  font-weight: 700;
+}
+
+.overview-basics {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.overview-basics .lesson-link {
+  color: var(--color-ink);
+}
+
+.overview-quiet-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--color-muted);
+  text-underline-offset: 0.2em;
+}
+
+.overview-quiet-link:hover {
+  text-decoration-color: var(--color-ink);
+}
+
 .overview-clear {
   min-height: var(--target-min);
   padding: 0;
@@ -491,6 +518,13 @@ a {
    row. */
 .title-block-without-part .title-block-cell:not(.title-block-spec) {
   grid-column: span 3;
+}
+
+/* The intro's title block names only its sheet. */
+.title-block-sheet-only .title-block-cell {
+  grid-column: 1 / -1;
+  border-right: 0;
+  border-bottom: 0;
 }
 
 .title-block-spec {
@@ -1082,11 +1116,73 @@ a.lesson-sheet-link:hover {
 }
 
 .size-comparison text {
-  font-size: 40px;
+  font-size: 52px;
 }
 
 .size-comparison .size-reference {
   fill: var(--color-muted);
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 500;
+}
+
+/* The sizes as numbers: a plain three-column table that never stacks. */
+.size-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1px solid var(--color-rule-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.size-table th,
+.size-table td {
+  padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  border-bottom: 1px solid var(--color-rule);
+  text-align: left;
+  vertical-align: top;
+}
+
+.size-table thead th {
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.size-table tbody th,
+.size-table td {
+  font-family: var(--font-label);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.size-table tbody th {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.size-table td {
+  white-space: nowrap;
+}
+
+/* Narrow sheets: the drawing keeps its link names and drops the details the list repeats, and
+   each device's text goes under its button. */
+@container (max-width: 26rem) {
+  .system-scene text {
+    font-size: 17px;
+  }
+
+  .scene-link tspan:not(.scene-link-label) {
+    display: none;
+  }
+
+  .scene-devices li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+
+  .scene-device-button {
+    justify-self: start;
+  }
 }
