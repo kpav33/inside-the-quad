@@ -7,7 +7,7 @@ import { PART_LABELS, UI } from '@/content/ui';
 import { DroneViewer } from '@/features/drone-viewer';
 import { useReadParts } from '@/features/progress';
 import type { PartId } from '@/shared/domain/parts';
-import { usePartRoute } from '@/shared/routing';
+import { type Page, usePartRoute } from '@/shared/routing';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
 
 import { isDeliberateClick } from './clicks';
@@ -97,7 +97,9 @@ export function PartExplorer() {
   };
 
   // A link in the sheet (a connection, previous or next) moves focus to what it opens.
-  const followLink = (part: PartId | null) => {
+  const followLink = (page: Page) => {
+    // The intro sheet arrives in a later task; until then it falls back to the overview's focus.
+    const part = page === 'intro' ? null : page;
     focusTarget.current = part ? lessonTitleId(part) : OVERVIEW_FOCUS_ID;
     revealLesson.current = part !== null ? 'choose' : null;
   };

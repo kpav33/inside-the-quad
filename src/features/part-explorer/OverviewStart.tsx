@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { PART_LABELS, UI } from '@/content/ui';
 import { startState } from '@/features/progress';
 import { PART_IDS, type PartId } from '@/shared/domain/parts';
-import { PartLink } from '@/shared/routing';
+import { type Page, PartLink } from '@/shared/routing';
 import { ArrowIcon } from '@/shared/ui/icons';
 
 import { OVERVIEW_FOCUS_ID } from './ids';
@@ -11,7 +11,7 @@ import { OVERVIEW_FOCUS_ID } from './ids';
 export interface OverviewStartProps {
   read: ReadonlySet<PartId>;
   /** Called before the start link opens its sheet. */
-  onFollowLink: (part: PartId | null) => void;
+  onFollowLink: (page: Page) => void;
   onClear: () => void;
 }
 

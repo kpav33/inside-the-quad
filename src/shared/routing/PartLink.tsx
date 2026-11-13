@@ -1,23 +1,21 @@
 import type { ReactNode } from 'react';
 
-import type { PartId } from '@/shared/domain/parts';
-
 import { isPlainLeftClick, navigateTo } from './history';
-import { OVERVIEW_PATH, partPath } from './routes';
+import { type Page, pagePath } from './routes';
 
 export interface PartLinkProps {
-  /** The part whose lesson to open, or null for the overview. */
-  to: PartId | null;
+  /** The page to open: the intro, a part's lesson, or null for the overview. */
+  to: Page;
   id?: string | undefined;
   className?: string | undefined;
   /** Called on a click the app handles, just before it navigates. */
-  onFollow?: ((to: PartId | null) => void) | undefined;
+  onFollow?: ((to: Page) => void) | undefined;
   children: ReactNode;
 }
 
-/** A real link to a part's lesson: handled in the app on a plain click, by the browser otherwise. */
+/** A real link to a page: handled in the app on a plain click, by the browser otherwise. */
 export function PartLink({ to, id, className, onFollow, children }: PartLinkProps) {
-  const href = to ? partPath(to) : OVERVIEW_PATH;
+  const href = pagePath(to);
   return (
     <a
       id={id}

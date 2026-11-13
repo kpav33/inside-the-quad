@@ -5,7 +5,7 @@ import { PART_LABELS, UI } from '@/content/ui';
 import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
 import { PART_IDS, type PartId, partNeighbours } from '@/shared/domain/parts';
 import { partQuantity } from '@/shared/domain/quantity';
-import { PartLink } from '@/shared/routing';
+import { type Page, PartLink } from '@/shared/routing';
 import { ArrowIcon, CheckIcon } from '@/shared/ui/icons';
 
 import { LESSON_PANEL_ID, lessonTitleId } from './ids';
@@ -18,7 +18,7 @@ export interface LessonPanelProps {
   onClose: () => void;
   onToggleRead: () => void;
   /** Called before a link in the sheet opens another lesson (null: the overview). */
-  onFollowLink?: (part: PartId | null) => void;
+  onFollowLink?: (page: Page) => void;
 }
 
 const sheetNumber = (part: PartId) => PART_IDS.indexOf(part) + 1;

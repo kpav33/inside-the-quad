@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { PART_IDS } from '@/shared/domain/parts';
 
-import { OVERVIEW_PATH, parseRoute, partPath } from './routes';
+import { INTRO_PATH, OVERVIEW_PATH, pagePath, parseRoute, partPath } from './routes';
 
 describe('part routes', () => {
   it.each(PART_IDS)('round-trips the path of %s', (part) => {
@@ -36,5 +36,23 @@ describe('part routes', () => {
 
   it('reports any other path whole', () => {
     expect(parseRoute('/about')).toEqual({ kind: 'unknown', slug: '/about' });
+  });
+});
+
+describe('intro route', () => {
+  it('reads /intro, with or without a trailing slash', () => {
+    expect(parseRoute('/intro')).toEqual({ kind: 'intro' });
+    expect(parseRoute('/intro/')).toEqual({ kind: 'intro' });
+  });
+
+  it('treats anything under /intro/ as unknown', () => {
+    expect(parseRoute('/intro/x')).toEqual({ kind: 'unknown', slug: '/intro/x' });
+  });
+
+  it('gives every page its address', () => {
+    expect(pagePath('intro')).toBe(INTRO_PATH);
+    expect(INTRO_PATH).toBe('/intro');
+    expect(pagePath(null)).toBe('/');
+    expect(pagePath('vtx')).toBe('/parts/vtx');
   });
 });

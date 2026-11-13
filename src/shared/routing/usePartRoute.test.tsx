@@ -79,4 +79,19 @@ describe('usePartRoute', () => {
     });
     expect(window.history.length).toBe(before);
   });
+
+  it('reads the intro and drops its trailing slash', () => {
+    const { result } = start('/intro/');
+    expect(result.current.route).toEqual({ kind: 'intro' });
+    expect(window.location.pathname).toBe('/intro');
+  });
+
+  it('navigates to the intro', () => {
+    const { result } = start('/');
+    act(() => {
+      result.current.navigate('intro');
+    });
+    expect(result.current.route).toEqual({ kind: 'intro' });
+    expect(window.location.pathname).toBe('/intro');
+  });
 });

@@ -33,4 +33,9 @@ describe('PartLink', () => {
     fireEvent.click(renderLink(), { button: 1 });
     expect(window.location.pathname).toBe('/parts/esc');
   });
+
+  it('links to the intro', () => {
+    render(<PartLink to="intro">Intro</PartLink>);
+    expect(screen.getByRole('link', { name: 'Intro' })).toHaveAttribute('href', '/intro');
+  });
 });
