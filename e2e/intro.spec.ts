@@ -1,0 +1,110 @@
+import { expect, type Page, test } from '@playwright/test';
+
+import { redlinePixels } from './redline';
+import { stretchText } from './stretch';
+
+const introHeading = (page: Page) =>
+  page.getByRole('heading', { level: 2, name: 'What is an FPV drone?' });
+const lessonHeading = (page: Page, name: string) =>
+  page.getByRole('heading', { level: 2, name, exact: true });
+
+test.describe('the intro sheet', () => {
+  for (const path of ['/intro', '/intro/']) {
+    test(`${path} opens the intro, also after a reload`, async ({ page }) => {
+      await page.goto(path);
+      await expect(introHeading(page)).toBeVisible();
+      await expect(page).toHaveTitle('What is an FPV drone? · Inside the Quad');
+      await expect(page).toHaveURL(/\/intro$/);
+      await page.reload();
+      await expect(introHeading(page)).toBeVisible();
+    });
+  }
+
+  test('a newcomer goes from the overview to the intro, on to sheet 1 and back', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await expect(page.getByText('New to FPV? Start here.')).toBeVisible();
+    await page.getByRole('link', { name: 'What is an FPV drone?' }).click();
+    await expect(introHeading(page)).toBeFocused();
+    await page.getByRole('link', { name: /^Next.*Frame · sheet 1/ }).click();
+    await expect(lessonHeading(page, 'Frame')).toBeFocused();
+    await page.getByRole('link', { name: /^Previous.*What is an FPV drone/ }).click();
+    await expect(introHeading(page)).toBeFocused();
+  });
+
+  test('Back retraces overview, intro and sheet 1 with focus', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('link', { name: 'What is an FPV drone?' }).click();
+    await page.getByRole('link', { name: /^Next.*Frame · sheet 1/ }).click();
+    await expect(lessonHeading(page, 'Frame')).toBeVisible();
+
+    await page.goBack();
+    await expect(introHeading(page)).toBeFocused();
+    await page.goBack();
+    await expect(page.getByRole('link', { name: 'What is an FPV drone?' })).toBeFocused();
+  });
+
+  test('leaving an open stack for the intro clears the selection', async ({ page }) => {
+    await page.goto('/parts/esc');
+    await expect(lessonHeading(page, 'ESC')).toBeVisible();
+    await page.getByRole('link', { name: /^Previous/ }).click();
+    await page.getByRole('link', { name: /^Previous/ }).click();
+    await page.getByRole('link', { name: /^Previous/ }).click();
+    await page.getByRole('link', { name: /^Previous/ }).click();
+    await expect(introHeading(page)).toBeVisible();
+    await expect(page.locator('.part-list [aria-pressed="true"]')).toHaveCount(0);
+    await expect.poll(() => redlinePixels(page), { timeout: 10_000 }).toBe(0);
+  });
+
+  test('marking the intro read moves the start on to sheet 1', async ({ page }) => {
+    await page.goto('/intro');
+    await page.getByRole('button', { name: 'Mark as read' }).click();
+    await page.getByRole('button', { name: 'Close intro' }).click();
+    await expect(page.getByRole('link', { name: 'Start with sheet 1: Frame' })).toBeFocused();
+    await expect(page.getByText('New to FPV? Start here.')).toBeHidden();
+  });
+
+  test('a device button highlights its links in the drawing', async ({ page }) => {
+    await page.goto('/intro');
+    await page.getByRole('button', { name: 'Drone' }).click();
+    for (const link of ['control', 'video']) {
+      await expect(page.locator(`[data-link="${link}"]`)).toHaveAttribute('data-highlight', 'true');
+    }
+  });
+});
+
+test.describe('the intro fits', () => {
+  test('a 320 px screen with 40% longer text', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 640 });
+    for (const path of ['/intro', '/']) {
+      await page.goto(path);
+      // The canvas starts at its default 300 px until three.js sizes it to the drawing field.
+      await expect(page.locator('canvas')).toBeVisible();
+      await stretchText(page);
+      await expect
+        .poll(() => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth), {
+          message: path,
+        })
+        .toBeLessThanOrEqual(0);
+      const figures = await page.evaluate(() =>
+        [...document.querySelectorAll('.intro-figure')]
+          .filter((el) => el.scrollWidth > el.clientWidth + 1)
+          .map((el) => el.className),
+      );
+      expect(figures, path).toEqual([]);
+    }
+  });
+
+  for (const width of [900, 1000, 1100]) {
+    test(`a ${width} × 700 window without page scrolling`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 700 });
+      await page.goto('/intro');
+      await expect(introHeading(page)).toBeVisible();
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollHeight - window.innerHeight,
+      );
+      expect(overflow).toBeLessThanOrEqual(0);
+    });
+  }
+});

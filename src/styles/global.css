@@ -1141,6 +1141,10 @@ a.lesson-sheet-link:hover {
   vertical-align: top;
 }
 
+.size-table :is(th, td):last-child {
+  padding-right: 0;
+}
+
 .size-table thead th {
   font-family: var(--font-label);
   font-size: var(--step--1);
