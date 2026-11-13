@@ -5,13 +5,21 @@ import { LESSONS } from '@/content/lessons';
 import { overviewSpecs } from '@/content/overview';
 import { PART_LABELS, UI } from '@/content/ui';
 import { DroneViewer } from '@/features/drone-viewer';
-import { useReadParts } from '@/features/progress';
+import { useIntroRead, useReadParts } from '@/features/progress';
 import type { PartId } from '@/shared/domain/parts';
-import { usePartRoute } from '@/shared/routing';
+import type { SheetId } from '@/shared/domain/sheets';
+import { type Page, usePartRoute } from '@/shared/routing';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
 
 import { isDeliberateClick } from './clicks';
-import { LESSON_PANEL_ID, lessonTitleId, OVERVIEW_FOCUS_ID, partButtonId } from './ids';
+import {
+  INTRO_TITLE_ID,
+  LESSON_PANEL_ID,
+  lessonTitleId,
+  OVERVIEW_FOCUS_ID,
+  partButtonId,
+} from './ids';
+import { IntroPanel } from './IntroPanel';
 import { LessonPanel } from './LessonPanel';
 import { OverviewStart } from './OverviewStart';
 import { PartList } from './PartList';
@@ -26,6 +34,10 @@ const viewerFallback = <p role="alert">{UI.viewer.fallback}</p>;
 /** Element id to focus after the next render, so keyboard focus never falls back to the page. */
 type FocusTarget = string | null;
 
+/** The heading of a sheet, which takes focus when the sheet opens. */
+const sheetTitleId = (sheet: SheetId) =>
+  sheet === 'intro' ? INTRO_TITLE_ID : lessonTitleId(sheet);
+
 /**
  * Lets the user pick a drone part in the 3D view or the part list, and shows its lesson.
  * The list and lessons work on their own when the 3D view can't load.
@@ -33,37 +45,43 @@ type FocusTarget = string | null;
 export function PartExplorer() {
   const { route, unknownSlug, cause, navigate } = usePartRoute();
   const selectedPart = route.kind === 'part' ? route.part : null;
+  // The sheet in the sheet column: a part's lesson, the intro, or none (the overview).
+  const openSheet: SheetId | null = route.kind === 'intro' ? 'intro' : selectedPart;
   const focusTarget = useRef<FocusTarget>(null);
   const { read, toggle: toggleRead, clear: clearRead } = useReadParts();
+  const intro = useIntroRead();
 
   useEffect(() => {
-    document.title = selectedPart ? UI.app.pageTitle(PART_LABELS[selectedPart]) : UI.app.title;
-  }, [selectedPart]);
+    document.title =
+      openSheet === 'intro'
+        ? UI.app.introTitle
+        : openSheet
+          ? UI.app.pageTitle(PART_LABELS[openSheet])
+          : UI.app.title;
+  }, [openSheet]);
 
   // Back and Forward move focus to the sheet they open, so it never falls back to the page.
   useEffect(() => {
     if (cause !== 'pop') return;
-    document
-      .getElementById(selectedPart ? lessonTitleId(selectedPart) : OVERVIEW_FOCUS_ID)
-      ?.focus();
-  }, [cause, selectedPart]);
+    document.getElementById(openSheet ? sheetTitleId(openSheet) : OVERVIEW_FOCUS_ID)?.focus();
+  }, [cause, openSheet]);
 
   useEffect(() => {
     if (focusTarget.current) {
       document.getElementById(focusTarget.current)?.focus();
       focusTarget.current = null;
     }
-  }, [selectedPart]);
+  }, [openSheet]);
 
   // After choosing a part, bring the start of its lesson into view if it is off screen: below the
   // fold on phones, or scrolled away in the desktop sheet column. A lesson address opened directly
   // (a bookmark or shared link) is revealed too, at once and without moving focus.
   const revealLesson = useRef<'load' | 'choose' | null>(
-    cause === 'load' && selectedPart ? 'load' : null,
+    cause === 'load' && openSheet ? 'load' : null,
   );
   useEffect(() => {
     const reveal = revealLesson.current;
-    if (!reveal || !selectedPart) return;
+    if (!reveal || !openSheet) return;
     revealLesson.current = null;
     const panel = document.getElementById(LESSON_PANEL_ID);
     if (!panel) return;
@@ -73,13 +91,14 @@ export function PartExplorer() {
       const instant = reduceMotion || reveal === 'load';
       panel.scrollIntoView({ block: 'start', behavior: instant ? 'auto' : 'smooth' });
     }
-  }, [selectedPart]);
+  }, [openSheet]);
 
+  // Closing a lesson returns focus to its row in the parts list; closing the intro, to the start.
   const closeLesson = useCallback(() => {
-    if (!selectedPart) return;
-    focusTarget.current = partButtonId(selectedPart);
+    if (!openSheet) return;
+    focusTarget.current = openSheet === 'intro' ? OVERVIEW_FOCUS_ID : partButtonId(openSheet);
     navigate(null);
-  }, [selectedPart, navigate]);
+  }, [openSheet, navigate]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -97,9 +116,9 @@ export function PartExplorer() {
   };
 
   // A link in the sheet (a connection, previous or next) moves focus to what it opens.
-  const followLink = (part: PartId | null) => {
-    focusTarget.current = part ? lessonTitleId(part) : OVERVIEW_FOCUS_ID;
-    revealLesson.current = part !== null ? 'choose' : null;
+  const followLink = (page: Page) => {
+    focusTarget.current = page ? sheetTitleId(page) : OVERVIEW_FOCUS_ID;
+    revealLesson.current = page !== null ? 'choose' : null;
   };
 
   const onPartClick = (part: PartId, event: ThreeEvent<MouseEvent>) => {
@@ -109,14 +128,20 @@ export function PartExplorer() {
     navigate(part);
   };
 
+  // A click on the empty 3D background clears a selected part; the intro stays open, so the
+  // drone can be turned while reading it.
   const clearSelection = () => {
-    navigate(null);
+    if (selectedPart) navigate(null);
   };
 
   return (
     <div className="part-explorer">
       <p className="visually-hidden" aria-live="polite" data-testid="explorer-announcer">
-        {selectedPart ? UI.explorer.opened(PART_LABELS[selectedPart]) : ''}
+        {openSheet === 'intro'
+          ? UI.explorer.introOpened
+          : openSheet
+            ? UI.explorer.opened(PART_LABELS[openSheet])
+            : ''}
       </p>
       <div className="part-explorer-field">
         <div className="drawing-frame">
@@ -163,6 +188,13 @@ export function PartExplorer() {
             }}
             onFollowLink={followLink}
           />
+        ) : openSheet === 'intro' ? (
+          <IntroPanel
+            read={intro.read}
+            onClose={closeLesson}
+            onToggleRead={intro.toggle}
+            onFollowLink={followLink}
+          />
         ) : (
           <div className="part-explorer-overview">
             {unknownSlug !== null && (
@@ -176,7 +208,15 @@ export function PartExplorer() {
               quantity={1}
               specs={overviewSpecs()}
             />
-            <OverviewStart read={read} onFollowLink={followLink} onClear={clearRead} />
+            <OverviewStart
+              read={read}
+              introRead={intro.read}
+              onFollowLink={followLink}
+              onClear={() => {
+                clearRead();
+                intro.clear();
+              }}
+            />
           </div>
         )}
       </div>

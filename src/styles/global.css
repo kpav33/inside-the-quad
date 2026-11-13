@@ -437,6 +437,33 @@ a {
   color: var(--color-muted);
 }
 
+.overview-new {
+  font-weight: 700;
+}
+
+.overview-basics {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.overview-basics .lesson-link {
+  color: var(--color-ink);
+}
+
+.overview-quiet-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--color-muted);
+  text-underline-offset: 0.2em;
+}
+
+.overview-quiet-link:hover {
+  text-decoration-color: var(--color-ink);
+}
+
 .overview-clear {
   min-height: var(--target-min);
   padding: 0;
@@ -491,6 +518,13 @@ a {
    row. */
 .title-block-without-part .title-block-cell:not(.title-block-spec) {
   grid-column: span 3;
+}
+
+/* The intro's title block names only its sheet. */
+.title-block-sheet-only .title-block-cell {
+  grid-column: 1 / -1;
+  border-right: 0;
+  border-bottom: 0;
 }
 
 .title-block-spec {
@@ -956,5 +990,219 @@ a.lesson-sheet-link:hover {
     background: Highlight;
     border-color: Highlight;
     color: HighlightText;
+  }
+}
+
+/* Intro drawings: flat linework on a framed sheet, like the rest of the drawing set. */
+.intro-figure {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+}
+
+.intro-drawing {
+  display: block;
+  width: 100%;
+  /* Labels scale with the drawing, so it stops growing before they outgrow the headings. */
+  max-width: 28rem;
+  height: auto;
+  border: 1px solid var(--color-rule-strong);
+  background: var(--color-sheet);
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1px;
+}
+
+/* Lines stay hairlines however far the drawing is scaled. */
+.intro-drawing * {
+  vector-effect: non-scaling-stroke;
+}
+
+.intro-drawing text {
+  fill: var(--color-ink);
+  stroke: none;
+  font-family: var(--font-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.system-scene text {
+  font-size: 13px;
+}
+
+.scene-ground {
+  stroke: var(--color-rule-strong);
+}
+
+.scene-pilot {
+  stroke: var(--color-muted);
+}
+
+.scene-device {
+  cursor: pointer;
+}
+
+/* A transparent fill makes a device's inside clickable, not just its 1px outline. */
+.scene-device rect,
+.scene-device circle {
+  fill: transparent;
+}
+
+.scene-device[data-highlight='true'] {
+  stroke-width: 2.5px;
+}
+
+.scene-link line,
+.scene-link polyline {
+  stroke: var(--color-muted);
+  stroke-dasharray: 5 4;
+  transition:
+    stroke var(--duration) var(--ease-out),
+    stroke-width var(--duration) var(--ease-out);
+}
+
+.scene-link polyline {
+  stroke-dasharray: none;
+}
+
+.scene-link text {
+  fill: var(--color-muted);
+  font-weight: 500;
+}
+
+.scene-link .scene-link-label {
+  font-weight: 700;
+}
+
+.scene-link[data-highlight='true'] line,
+.scene-link[data-highlight='true'] polyline {
+  stroke: var(--color-ink);
+  stroke-width: 2.5px;
+  stroke-dasharray: none;
+}
+
+.scene-link[data-highlight='true'] text {
+  fill: var(--color-ink);
+}
+
+.scene-devices {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scene-devices li {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.scene-device-button[aria-pressed='true'] {
+  border-color: var(--color-ink);
+  background: var(--color-rule);
+}
+
+.scene-device-role {
+  margin: 0;
+}
+
+.scene-device-links {
+  display: block;
+  margin-top: var(--space-1);
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.size-comparison text {
+  font-size: 52px;
+}
+
+.size-comparison .size-reference {
+  fill: var(--color-muted);
+  font-size: 36px;
+  font-weight: 500;
+}
+
+/* The sizes as numbers: a plain three-column table that never stacks. */
+.size-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1px solid var(--color-rule-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.size-table th,
+.size-table td {
+  padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  border-bottom: 1px solid var(--color-rule);
+  text-align: left;
+  vertical-align: top;
+}
+
+.size-table :is(th, td):last-child {
+  padding-right: 0;
+}
+
+.size-table thead th {
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.size-table tbody th,
+.size-table td {
+  font-family: var(--font-label);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.size-table tbody th {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.size-table td {
+  white-space: nowrap;
+}
+
+/* Narrow sheets: the drawing keeps its link names and drops the details the list repeats, and
+   each device's text goes under its button. */
+@container (max-width: 26rem) {
+  .system-scene text {
+    font-size: 17px;
+  }
+
+  .scene-link tspan:not(.scene-link-label) {
+    display: none;
+  }
+
+  .scene-devices li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+
+  .scene-device-button {
+    justify-self: start;
+  }
+
+  .size-comparison text {
+    font-size: 72px;
+  }
+
+  .size-comparison .size-reference {
+    font-size: 60px;
   }
 }

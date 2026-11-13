@@ -28,6 +28,8 @@ export const UI = {
     tagline: 'How an FPV drone works, part by part.',
     /** The browser tab's title while a part's lesson is open. */
     pageTitle: (part: string) => `${part} · Inside the Quad`,
+    /** The browser tab's title while the intro is open. */
+    introTitle: 'What is an FPV drone? · Inside the Quad',
   },
   viewer: {
     loading: 'Loading the 3D drawing…',
@@ -46,9 +48,19 @@ export const UI = {
   explorer: {
     opened: (part: string) => `${part} lesson opened`,
     hint: 'Select a part on the drone or in the parts list to see what it does and how it works.',
+    introOpened: 'What is an FPV drone? opened',
     unknownPart: (slug: string) => `There’s no part called “${slug}”. Pick one from the list.`,
   },
+  intro: {
+    /** The title block's Sheet value on the intro. */
+    sheet: 'Intro',
+    /** How links name the intro. */
+    link: 'What is an FPV drone?',
+    close: 'Close intro',
+  },
   overview: {
+    newHere: 'New to FPV? Start here.',
+    knowBasics: 'Already know the basics?',
     start: (part: string) => `Start with sheet 1: ${part}`,
     continue: (sheet: number, part: string) => `Continue with sheet ${sheet}: ${part}`,
     allRead: (total: number) => `All ${total} parts read. Open any sheet to look something up.`,

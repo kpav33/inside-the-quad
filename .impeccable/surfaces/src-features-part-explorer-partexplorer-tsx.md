@@ -15,7 +15,10 @@ PRODUCT.md. Section 02 (design pass) builds the world's foundation; the model-as
 (dimension lines and callouts drawn in 3D, spin arcs) is a later roadmap section. Section 02c
 added lookup and navigation: each lesson has its own URL, a lesson footer with Mark as read and
 previous/next sheet cells, connection links set as "see sheet" references, read checks in the
-parts list, and a start/continue link on the overview.
+parts list, and a start/continue link on the overview. Section 04 added the intro sheet ("What is
+an FPV drone?") before sheet 1, in the same sheet column with the drone still in view, with two
+flat SVG drawings (the system scene and a size comparison to scale) and an overview start block
+that offers it to newcomers.
 
 Physical scene: a beginner at a desk or workbench, often in the evening under a bench lamp, laptop
 or phone beside loose parts and a soldering iron. That forces a dark ground.
