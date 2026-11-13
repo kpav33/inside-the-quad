@@ -83,10 +83,11 @@ test.describe('layout robustness', () => {
     await page.goto('/');
     await page.evaluate(() => (document.documentElement.style.fontSize = '200%'));
     await page.getByRole('button', { name: 'Motors', exact: true }).click();
-    const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth - window.innerWidth,
-    );
-    expect(overflow).toBeLessThanOrEqual(0);
+    // The canvas starts at its default 300 px until three.js sizes it to the drawing field.
+    await expect(page.locator('canvas')).toBeVisible();
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth))
+      .toBeLessThanOrEqual(0);
   });
 
   test('200% text size fits a 1280 px screen', async ({ page }) => {
