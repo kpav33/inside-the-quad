@@ -19,7 +19,8 @@ const FIRST: PartId = 'frame';
 
 /** Where to start on the overview: sheet 1, the first unread sheet, or all done. */
 export function OverviewStart({ read, onFollowLink, onClear }: OverviewStartProps) {
-  const state = startState(read);
+  // The intro read flag is wired in a later task; until then the 02c states apply.
+  const state = startState(read, true);
 
   // Clearing removes the Clear button, so focus moves to the start link instead of the page.
   const refocus = useRef(false);
