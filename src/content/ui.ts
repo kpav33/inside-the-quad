@@ -28,6 +28,9 @@ export const UI = {
     tagline: 'How an FPV drone works, part by part.',
     /** The browser tab's title while a part's lesson is open. */
     pageTitle: (part: string) => `${part} · Inside the Quad`,
+    /** The masthead's sections, and its link to the intro. */
+    navLabel: 'Sections',
+    introLink: 'What is an FPV drone?',
     /** The browser tab's title while the intro is open. */
     introTitle: 'What is an FPV drone? · Inside the Quad',
   },

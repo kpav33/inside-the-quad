@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import { App } from './App';
@@ -18,5 +19,16 @@ describe('App', () => {
     render(<App />);
     expect(await screen.findByTestId('drone-viewer')).toBeInTheDocument();
     expect(screen.getByRole('navigation', { name: 'Drone parts' })).toBeInTheDocument();
+  });
+
+  it('links the intro from the masthead, marked current while it is open', async () => {
+    render(<App />);
+    const nav = screen.getByRole('navigation', { name: 'Sections' });
+    const link = within(nav).getByRole('link', { name: 'What is an FPV drone?' });
+    expect(link).toHaveAttribute('href', '/intro');
+    expect(link).not.toHaveAttribute('aria-current');
+    await userEvent.click(link);
+    expect(link).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('heading', { level: 2, name: 'What is an FPV drone?' })).toHaveFocus();
   });
 });
