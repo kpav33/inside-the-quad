@@ -216,3 +216,36 @@ test('every selected part shows clearly, turning the drone when it has to', asyn
     expect(await redlinePixels(page), part).toBeGreaterThanOrEqual(150);
   }
 });
+
+test('turning on reduced motion mid-visit makes the next change instant', async ({ page }) => {
+  // Count the animation frames in which three.js draws, by wrapping WebGL's draw calls.
+  await page.addInitScript(() => {
+    const frames = new Set<number>();
+    let frame = 0;
+    const tick = () => {
+      frame++;
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    for (const proto of [WebGLRenderingContext.prototype, WebGL2RenderingContext.prototype]) {
+      // Wrapped and called with the original receiver, so the unbound reference is intended.
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const draw = proto.drawElements;
+      proto.drawElements = function (this: WebGLRenderingContext, ...args) {
+        frames.add(frame);
+        draw.apply(this, args);
+      };
+    }
+    Object.assign(window, { drawnFrames: () => frames.size });
+  });
+  await page.goto('/');
+  await canvasBox(page);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const drawn = () =>
+    page.evaluate(() => (window as unknown as { drawnFrames: () => number }).drawnFrames());
+  const before = await drawn();
+  await page.getByRole('button', { name: 'ESC', exact: true }).click();
+  await page.waitForTimeout(600);
+  // Easing the stack apart draws a dozen or more frames; an instant change draws one or two.
+  expect((await drawn()) - before).toBeLessThanOrEqual(4);
+});
