@@ -1,13 +1,13 @@
 {
   "battery": {
-    "title": "File:Racing Drone.jpg",
-    "author": "Commanderbryce",
+    "title": "File:Xlabs Shrike-200 V2 5″ FPV quad with components collage.jpg",
+    "author": "Lucasbosch",
     "licence": "CC BY-SA 4.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Racing_Drone.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Xlabs_Shrike-200_V2_5%E2%80%B3_FPV_quad_with_components_collage.jpg",
     "cropped": true,
     "width": 1280,
-    "height": 950
+    "height": 762
   },
   "camera": {
     "title": "File:Runcam Eagle black FPV camera with bracket.jpg",
@@ -59,14 +59,14 @@
     "height": 819
   },
   "motors": {
-    "title": "File:FPV Quadrocopter.jpg",
-    "author": "Clicklabs",
+    "title": "File:Xlabs Shrike-200 V2 5″ FPV quad with components collage.jpg",
+    "author": "Lucasbosch",
     "licence": "CC BY-SA 4.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:FPV_Quadrocopter.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Xlabs_Shrike-200_V2_5%E2%80%B3_FPV_quad_with_components_collage.jpg",
     "cropped": true,
-    "width": 1280,
-    "height": 1051
+    "width": 761,
+    "height": 906
   },
   "props": {
     "title": "File:ImpulseRC Alien 5″ FPV quad with components collage.jpg",
@@ -89,14 +89,14 @@
     "height": 1010
   },
   "strap": {
-    "title": "File:Racing Drone.jpg",
-    "author": "Commanderbryce",
+    "title": "File:Xlabs Shrike-200 V2 5″ FPV quad with components collage.jpg",
+    "author": "Lucasbosch",
     "licence": "CC BY-SA 4.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Racing_Drone.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Xlabs_Shrike-200_V2_5%E2%80%B3_FPV_quad_with_components_collage.jpg",
     "cropped": true,
-    "width": 1180,
-    "height": 1130
+    "width": 1160,
+    "height": 1015
   },
   "vtx": {
     "title": "File:TeamBlacksheep (TBS) Unify Pro HV 5.8 GHz RF video transmitter with RP SMA pigtail front.png",

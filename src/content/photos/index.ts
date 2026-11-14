@@ -51,9 +51,9 @@ const TEXT: Record<PartId, { alt: string; caption: string }> = {
       'One example: a carbon-fibre 5″ frame with its motors and camera fitted. Yours may look different.',
   },
   motors: {
-    alt: 'Close-up of a small brushless motor bolted to the end of a carbon arm, its shaft pointing up.',
+    alt: 'Two small brushless motors on the ends of carbon arms, each with a purple propeller on top.',
     caption:
-      'One example: a brushless motor on the end of an arm, the copper windings showing under the bell. Yours may look different.',
+      'One example: brushless motors on the ends of the arms, the copper windings showing under the bells. Yours may look different.',
   },
   props: {
     alt: 'A quad seen from directly above, with an orange three-blade propeller at the end of each arm.',
@@ -71,12 +71,12 @@ const TEXT: Record<PartId, { alt: string; caption: string }> = {
       'One example: an older flight controller board. Newer ones look much like it and do the same job.',
   },
   battery: {
-    alt: 'A green LiPo battery pack held on top of a racing quad by a black strap, with its power lead and yellow plug.',
+    alt: 'A white LiPo battery held under a quad’s frame by a black strap, with red power wires and a yellow plug.',
     caption:
-      'One example: a LiPo pack strapped on top of a quad, its power plug at the back. Yours may look different.',
+      'One example: a LiPo pack strapped under the frame, with its yellow XT60 power plug. Many builds carry it on top instead.',
   },
   strap: {
-    alt: 'A black hook-and-loop strap wrapped around a green battery on top of a quad.',
+    alt: 'A black hook-and-loop strap with a red logo, wrapped around a battery under a quad’s frame.',
     caption:
       'One example: a hook-and-loop strap holding the battery down. Yours may look different.',
   },

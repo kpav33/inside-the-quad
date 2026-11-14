@@ -13,15 +13,15 @@
   },
   {
     "part": "motors",
-    "title": "File:FPV Quadrocopter.jpg",
+    "title": "File:Xlabs Shrike-200 V2 5″ FPV quad with components collage.jpg",
     "licence": "CC BY-SA 4.0",
     "crop": {
-      "left": 4950,
-      "top": 1500,
-      "width": 1400,
-      "height": 1150
+      "left": 7611,
+      "top": 1196,
+      "width": 761,
+      "height": 906
     },
-    "note": "The motor on the right arm, the one in focus."
+    "note": "A motor under its prop, from a sharp studio photo; the bench photo's motors were out of focus."
   },
   {
     "part": "props",
@@ -61,27 +61,27 @@
   },
   {
     "part": "battery",
-    "title": "File:Racing Drone.jpg",
+    "title": "File:Xlabs Shrike-200 V2 5″ FPV quad with components collage.jpg",
     "licence": "CC BY-SA 4.0",
     "crop": {
-      "left": 870,
-      "top": 205,
-      "width": 2210,
-      "height": 1640
+      "left": 9930,
+      "top": 1600,
+      "width": 2100,
+      "height": 1250
     },
-    "note": "The LiPo strapped on the quad, with its XT60 plug."
+    "note": "The LiPo strapped under the frame, with its XT60 plug; the racing-quad photo was out of focus there."
   },
   {
     "part": "strap",
-    "title": "File:Racing Drone.jpg",
+    "title": "File:Xlabs Shrike-200 V2 5″ FPV quad with components collage.jpg",
     "licence": "CC BY-SA 4.0",
     "crop": {
-      "left": 1690,
-      "top": 565,
-      "width": 1180,
-      "height": 1130
+      "left": 10437,
+      "top": 1740,
+      "width": 1160,
+      "height": 1015
     },
-    "note": "The hook-and-loop strap over the battery; the components photo was too small to crop."
+    "note": "The strap around the battery, from a sharp studio photo."
   },
   {
     "part": "receiver",
