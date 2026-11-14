@@ -84,10 +84,12 @@ test('resizing keeps the angle the visitor turned to, and the whole drone', asyn
   const canvas = page.locator('canvas');
   const box = await canvas.boundingBox();
   if (!box) throw new Error('canvas has no bounding box');
+  // A sideways turn only: tilting by hand may push a tip past the frame, which the design accepts.
   await page.mouse.move(box.x + box.width * 0.1, box.y + box.height * 0.1);
   await page.mouse.down();
-  await page.mouse.move(box.x + box.width * 0.35, box.y + box.height * 0.15, { steps: 8 });
+  await page.mouse.move(box.x + box.width * 0.3, box.y + box.height * 0.1, { steps: 8 });
   await page.mouse.up();
+  expectInside(await drawnBox(page, await settledCanvas(page)));
 
   await page.setViewportSize({ width: 900, height: 800 });
   const turned = await settledCanvas(page);
@@ -96,4 +98,14 @@ test('resizing keeps the angle the visitor turned to, and the whole drone', asyn
   await page.goto('/');
   const fresh = await settledCanvas(page);
   expect(turned.equals(fresh)).toBe(false);
+});
+
+test('resizing a settled rear view across the layout switch keeps the whole drone', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/parts/vtx');
+  await settledCanvas(page);
+  await page.setViewportSize({ width: 1280, height: 800 });
+  expectInside(await drawnBox(page, await settledCanvas(page)));
 });
