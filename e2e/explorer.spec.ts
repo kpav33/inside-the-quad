@@ -41,15 +41,16 @@ test('keyboard: open and close a lesson from the part list', async ({ page }) =>
 
 /**
  * Points on the canvas (as fractions of its size) that land on a part with the default camera in
- * the 1280 × 720 test viewport. Found by clicking a grid over the canvas, one fresh page per point.
+ * the 1280 × 720 test viewport, with the camera fitted to the drone's outline. Found by clicking a
+ * grid over the canvas, one fresh page per point.
  */
 const POINTS = {
-  battery: { x: 0.525, y: 0.49 },
-  frameArm: { x: 0.42, y: 0.58 },
-  camera: { x: 0.545, y: 0.59 },
+  battery: { x: 0.5, y: 0.45 },
+  frameArm: { x: 0.4, y: 0.6 },
+  camera: { x: 0.55, y: 0.625 },
   // With the frame open:
-  liftedFc: { x: 0.495, y: 0.46 },
-  liftedBattery: { x: 0.525, y: 0.31 },
+  liftedFc: { x: 0.495, y: 0.45 },
+  liftedBattery: { x: 0.5, y: 0.3 },
 };
 
 async function clickAt(page: Page, point: { x: number; y: number }) {
