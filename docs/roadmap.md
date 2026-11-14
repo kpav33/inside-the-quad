@@ -13,7 +13,7 @@ Status: `planned` · `in progress` · `in review` · `done`.
 | 02d | Phones and keyboard: masthead intro link, focus follows the opened sheet, narrow sheets reflow with large or long text, live reduced motion | `feat/phones-and-keyboard`   | done    |
 | 03a | Power and control parts: ESC, flight controller, battery; exploded stack                                                                    | `feat/power-and-control`     | done    |
 | 03b | Radio and video parts: receiver, camera, VTX and antennas, extras                                                                           | `feat/radio-and-video`       | done    |
-| 03c | Real parts: a photo of each part (CC-licensed, with attribution) beside its lesson                                                          | —                            | planned |
+| 03c | Real parts: a photo of each part (CC-licensed, with attribution) beside its lesson                                                          | `feat/real-parts`            | done    |
 | 04  | "What is an FPV drone?" intro (Module 1)                                                                                                    | `feat/intro`                 | done    |
 | 05  | How it all works together: simulator (Module 3)                                                                                             | —                            | planned |
 | 06  | Gear you hold and wear (Module 4)                                                                                                           | —                            | planned |

@@ -1,0 +1,113 @@
+[
+  {
+    "part": "frame",
+    "title": "File:FPV Quadrocopter.jpg",
+    "licence": "CC BY-SA 4.0",
+    "crop": {
+      "left": 840,
+      "top": 700,
+      "width": 5250,
+      "height": 3360
+    },
+    "note": "Trim the bench clutter around the bare 5-inch frame."
+  },
+  {
+    "part": "motors",
+    "title": "File:Xlabs Shrike-200 V2 5″ FPV quad with components collage.jpg",
+    "licence": "CC BY-SA 4.0",
+    "crop": {
+      "left": 7611,
+      "top": 1196,
+      "width": 761,
+      "height": 906
+    },
+    "note": "A motor under its prop, from a sharp studio photo; the bench photo's motors were out of focus."
+  },
+  {
+    "part": "props",
+    "title": "File:ImpulseRC Alien 5″ FPV quad with components collage.jpg",
+    "licence": "CC BY-SA 4.0",
+    "crop": {
+      "left": 0,
+      "top": 1970,
+      "width": 3580,
+      "height": 2620
+    },
+    "note": "The top-view panel of the collage: four 3-blade props."
+  },
+  {
+    "part": "esc",
+    "title": "File:Esc2.jpg",
+    "licence": "CC BY-SA 3.0",
+    "crop": {
+      "left": 0,
+      "top": 210,
+      "width": 1024,
+      "height": 320
+    },
+    "note": "The ESC and its wires, without the hand-written notes."
+  },
+  {
+    "part": "fc",
+    "title": "File:AbuseMark AfroFlight Naze 32 Flight Controller rev5 white.jpg",
+    "licence": "Public domain",
+    "crop": {
+      "left": 0,
+      "top": 0,
+      "width": 3150,
+      "height": 3200
+    },
+    "note": "The front side of the board."
+  },
+  {
+    "part": "battery",
+    "title": "File:Xlabs Shrike-200 V2 5″ FPV quad with components collage.jpg",
+    "licence": "CC BY-SA 4.0",
+    "crop": {
+      "left": 9930,
+      "top": 1600,
+      "width": 2100,
+      "height": 1250
+    },
+    "note": "The LiPo strapped under the frame, with its XT60 plug; the racing-quad photo was out of focus there."
+  },
+  {
+    "part": "strap",
+    "title": "File:Xlabs Shrike-200 V2 5″ FPV quad with components collage.jpg",
+    "licence": "CC BY-SA 4.0",
+    "crop": {
+      "left": 10437,
+      "top": 1740,
+      "width": 1160,
+      "height": 1015
+    },
+    "note": "The strap around the battery, from a sharp studio photo."
+  },
+  {
+    "part": "receiver",
+    "title": "File:TBS Crossfire Nano receiver (XF nano).jpg",
+    "licence": "CC BY-SA 4.0"
+  },
+  {
+    "part": "camera",
+    "title": "File:Runcam Eagle black FPV camera with bracket.jpg",
+    "licence": "CC BY-SA 3.0"
+  },
+  {
+    "part": "vtx",
+    "title": "File:TeamBlacksheep (TBS) Unify Pro HV 5.8 GHz RF video transmitter with RP SMA pigtail front.png",
+    "licence": "CC BY-SA 3.0"
+  },
+  {
+    "part": "extras",
+    "title": "File:MATEKSys F405-WSE FC.jpg",
+    "licence": "CC BY-SA 4.0",
+    "crop": {
+      "left": 130,
+      "top": 560,
+      "width": 1300,
+      "height": 1350
+    },
+    "note": "The buzzer board only; the components photo was too small to crop the GPS."
+  }
+]

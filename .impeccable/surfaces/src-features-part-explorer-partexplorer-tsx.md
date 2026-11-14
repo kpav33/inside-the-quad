@@ -16,7 +16,10 @@ teach: with a sheet open, the open part is redline, the parts its lesson connect
 connected grey and everything else fades; spin arcs on the Propellers sheet; the camera fitted to
 the drone's outline; 3D hover lights the list row. Dimension lines, callout balloons, a front
 marker and per-part greys were tried and dropped (the parts list already names parts; photos in
-03c show what real parts look like). Section 02c
+03c show what real parts look like). Section 03c added a real part photo to every part sheet: a detail figure under the title
+block (muted "Real part" label, the photo at most 22rem tall, a bold sentence-case caption that
+always says "One example:", and a muted credit line), from Wikimedia Commons under free licences
+only. Section 02c
 added lookup and navigation: each lesson has its own URL, a lesson footer with Mark as read and
 previous/next sheet cells, connection links set as "see sheet" references, read checks in the
 parts list, and a start/continue link on the overview. Section 04 added the intro sheet ("What is

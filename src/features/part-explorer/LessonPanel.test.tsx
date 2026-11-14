@@ -130,4 +130,17 @@ describe('LessonPanel', () => {
       .map((h) => h.closest('section')?.querySelector('[data-question-number]')?.textContent);
     expect(numbers).toEqual(['1', '2', '3', '4']);
   });
+
+  it('shows the real part between the title block and the first question', () => {
+    renderLesson('esc');
+    const figure = document.querySelector('figure.part-photo');
+    const titleBlock = screen.getByRole('group', { name: 'Title block' });
+    const firstQuestion = screen.getByRole('heading', { level: 3, name: 'What does it do?' });
+    expect(figure).not.toBeNull();
+    if (!figure) return;
+    const follows = (a: Node, b: Node) =>
+      Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(follows(titleBlock, figure)).toBe(true);
+    expect(follows(figure, firstQuestion)).toBe(true);
+  });
 });

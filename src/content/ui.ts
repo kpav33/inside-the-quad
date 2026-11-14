@@ -82,6 +82,18 @@ export const UI = {
     quantity: 'Qty',
     spec: 'Spec',
   },
+  /** The real part photo on each lesson sheet. */
+  photo: {
+    label: 'Real part',
+    by: 'Photo:',
+    /** Said after a cropped photo: share-alike licences carry over to the crop. */
+    cropped: (shareAlike: boolean) =>
+      shareAlike ? 'Cropped; shared under the same licence.' : 'Cropped.',
+    /** The photo's own title, linked to its Commons page. */
+    title: (title: string) => `“${title}”`,
+    byAuthor: (author: string) => `by ${author}`,
+    via: 'Via Wikimedia Commons.',
+  },
   lesson: {
     close: 'Close lesson',
     /** The sheet half of a reference to another sheet ("Battery · sheet 6"), kept on one line. */

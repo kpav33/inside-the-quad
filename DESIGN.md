@@ -284,6 +284,10 @@ Two flat SVG drawings, framed like a title block (sheet fill, rule-strong border
 
 Each lesson answers four questions, numbered 1 to 4 in muted ring balloons, heading in title caps beside it, body indented under the heading.
 
+### Real Part Photo
+
+A detail figure on every part sheet, between the title block and question 1: sheet fill, a 1px rule-strong frame, 0.5rem 0.75rem padding; a muted caps "Real part" label; the photo full width with its own background, at most 22rem tall and scaled down whole (`object-fit: contain`, left-aligned); then the caption in the reading face, bold, sentence case, always starting "One example:" (a photo is never a recommendation); then the credit, muted and small: "Photo: author, licence (link). Cropped; shared under the same licence. Source: Wikimedia Commons (link)." Links use the muted underline and turn ink on hover. No redline. The image has its own width and height (no layout jump), 640 and 1280 px WebP sources and lazy loading. Not on the overview or the intro.
+
 ### Spec Table
 
 A hairline table (rule-strong top, rule between rows) with muted caps headers, caps row labels and Barlow values; stacks into blocks in narrow sheets.

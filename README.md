@@ -25,8 +25,17 @@ pnpm dev        # http://localhost:5173
 | `pnpm test:e2e`      | End-to-end tests (Playwright, Chromium)      |
 | `pnpm lint:fix`      | Fix lint problems where possible             |
 | `pnpm format`        | Format all files with Prettier               |
+| `pnpm photos:fetch`  | Refetch and crop the real part photos        |
 
 First e2e run: `pnpm exec playwright install chromium`.
+
+## Photos
+
+The real part photos in `src/assets/photos/` are third-party works from Wikimedia Commons under
+their own free licences (CC BY-SA or public domain), separate from the code. Each lesson sheet
+credits its photo; `src/content/photos/credits.json` lists the author, licence and source of each,
+and `scripts/photos/manifest.json` records which file and crop was used. `pnpm photos:fetch`
+re-downloads them, checks their licences, and rewrites the files and credits.
 
 ## Tech stack
 

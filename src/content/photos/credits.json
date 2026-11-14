@@ -1,0 +1,111 @@
+{
+  "battery": {
+    "title": "Xlabs Shrike-200 V2 5″ FPV quad with components collage",
+    "author": "Lucasbosch",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Xlabs_Shrike-200_V2_5%E2%80%B3_FPV_quad_with_components_collage.jpg",
+    "cropped": true,
+    "width": 1280,
+    "height": 762
+  },
+  "camera": {
+    "title": "Runcam Eagle black FPV camera with bracket",
+    "author": "Lucasbosch",
+    "licence": "CC BY-SA 3.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Runcam_Eagle_black_FPV_camera_with_bracket.jpg",
+    "cropped": false,
+    "width": 1280,
+    "height": 1168
+  },
+  "esc": {
+    "title": "Esc2",
+    "author": "1sfoerster",
+    "licence": "CC BY-SA 3.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Esc2.jpg",
+    "cropped": true,
+    "width": 1024,
+    "height": 320
+  },
+  "extras": {
+    "title": "MATEKSys F405-WSE FC",
+    "author": "SokilFPV",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:MATEKSys_F405-WSE_FC.jpg",
+    "cropped": true,
+    "width": 1280,
+    "height": 1329
+  },
+  "fc": {
+    "title": "AbuseMark AfroFlight Naze 32 Flight Controller rev5 white",
+    "author": "Lucasbosch",
+    "licence": "Public domain",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:AbuseMark_AfroFlight_Naze_32_Flight_Controller_rev5_white.jpg",
+    "cropped": true,
+    "width": 1280,
+    "height": 1300
+  },
+  "frame": {
+    "title": "FPV Quadrocopter",
+    "author": "Clicklabs",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:FPV_Quadrocopter.jpg",
+    "cropped": true,
+    "width": 1280,
+    "height": 819
+  },
+  "motors": {
+    "title": "Xlabs Shrike-200 V2 5″ FPV quad with components collage",
+    "author": "Lucasbosch",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Xlabs_Shrike-200_V2_5%E2%80%B3_FPV_quad_with_components_collage.jpg",
+    "cropped": true,
+    "width": 761,
+    "height": 906
+  },
+  "props": {
+    "title": "ImpulseRC Alien 5″ FPV quad with components collage",
+    "author": "Lucasbosch",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:ImpulseRC_Alien_5%E2%80%B3_FPV_quad_with_components_collage.jpg",
+    "cropped": true,
+    "width": 1280,
+    "height": 937
+  },
+  "receiver": {
+    "title": "TBS Crossfire Nano receiver (XF nano)",
+    "author": "SokilFPV",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:TBS_Crossfire_Nano_receiver_(XF_nano).jpg",
+    "cropped": false,
+    "width": 1280,
+    "height": 1010
+  },
+  "strap": {
+    "title": "Xlabs Shrike-200 V2 5″ FPV quad with components collage",
+    "author": "Lucasbosch",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Xlabs_Shrike-200_V2_5%E2%80%B3_FPV_quad_with_components_collage.jpg",
+    "cropped": true,
+    "width": 1160,
+    "height": 1015
+  },
+  "vtx": {
+    "title": "TeamBlacksheep (TBS) Unify Pro HV 5.8 GHz RF video transmitter with RP SMA pigtail front",
+    "author": "Lucasbosch",
+    "licence": "CC BY-SA 3.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:TeamBlacksheep_(TBS)_Unify_Pro_HV_5.8_GHz_RF_video_transmitter_with_RP_SMA_pigtail_front.png",
+    "cropped": false,
+    "width": 1280,
+    "height": 341
+  }
+}

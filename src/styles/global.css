@@ -586,6 +586,63 @@ a {
   letter-spacing: 0.03em;
 }
 
+/* The real part photo: a detail figure under the title block, framed like the title block. */
+.part-photo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  border: 1px solid var(--color-rule-strong);
+  background: var(--color-sheet);
+}
+
+.part-photo-label {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* Photos keep their own background; a very wide or tall one scales down whole. */
+.part-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 22rem;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.part-photo figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.part-photo-caption {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.part-photo-credit {
+  font-size: var(--step--1);
+  color: var(--color-muted);
+  overflow-wrap: anywhere;
+}
+
+.part-photo-credit a {
+  text-decoration-color: var(--color-muted);
+}
+
+.part-photo-credit a:hover {
+  color: var(--color-ink);
+  text-decoration-color: var(--color-ink);
+}
+
 /* Narrow title blocks: the part gets its own row, sheet and quantity share the next. */
 @container (max-width: 22rem) {
   .title-block-part {

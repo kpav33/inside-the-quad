@@ -1,4 +1,5 @@
 import type { Lesson } from '@/content/lessons';
+import { PART_PHOTOS } from '@/content/photos';
 import { UI } from '@/content/ui';
 import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
 import { PART_IDS, type PartId } from '@/shared/domain/parts';
@@ -7,6 +8,7 @@ import { type Page, PartLink } from '@/shared/routing';
 import { ArrowIcon } from '@/shared/ui/icons';
 
 import { LESSON_PANEL_ID, lessonTitleId } from './ids';
+import { PartPhoto } from './PartPhoto';
 import { Question } from './Question';
 import { SheetFooter, SheetRef } from './SheetFooter';
 import { TitleBlock } from './TitleBlock';
@@ -23,7 +25,10 @@ export interface LessonPanelProps {
 
 const sheetNumber = (part: PartId) => PART_IDS.indexOf(part) + 1;
 
-/** One part's drawing sheet: its name, the title block, the four questions, then the way on. */
+/**
+ * One part's drawing sheet: its name, the title block, a real photo, the four questions, then the
+ * way on.
+ */
 export function LessonPanel({
   lesson,
   read,
@@ -50,6 +55,8 @@ export function LessonPanel({
         quantity={partQuantity(lesson.partId, REFERENCE_5_INCH)}
         specs={lesson.specs}
       />
+
+      <PartPhoto photo={PART_PHOTOS[lesson.partId]} />
 
       <Question number={1} heading={UI.lesson.questions[0]}>
         <p className="lesson-lead">{lesson.whatItDoes}</p>
