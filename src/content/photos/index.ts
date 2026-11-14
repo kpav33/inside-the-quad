@@ -117,6 +117,7 @@ export const PART_PHOTOS = Object.fromEntries(
       width: credit.width,
       height: credit.height,
       credit: {
+        title: credit.title,
         author: credit.author,
         licence: asLicence(credit.licence),
         ...('licenceUrl' in credit ? { licenceUrl: credit.licenceUrl } : {}),

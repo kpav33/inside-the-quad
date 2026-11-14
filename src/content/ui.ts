@@ -89,8 +89,10 @@ export const UI = {
     /** Said after a cropped photo: share-alike licences carry over to the crop. */
     cropped: (shareAlike: boolean) =>
       shareAlike ? 'Cropped; shared under the same licence.' : 'Cropped.',
-    source: 'Wikimedia Commons',
-    via: 'Source:',
+    /** The photo's own title, linked to its Commons page. */
+    title: (title: string) => `“${title}”`,
+    byAuthor: (author: string) => `by ${author}`,
+    via: 'Via Wikimedia Commons.',
   },
   lesson: {
     close: 'Close lesson',

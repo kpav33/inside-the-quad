@@ -13,6 +13,7 @@ const photo: Photo = {
   alt: 'A small ESC wrapped in blue shrink tube.',
   caption: 'One example: a single ESC, one per motor.',
   credit: {
+    title: 'Esc2',
     author: '1sfoerster',
     licence: 'CC BY-SA 3.0',
     licenceUrl: 'https://creativecommons.org/licenses/by-sa/3.0',
@@ -39,7 +40,8 @@ describe('PartPhoto', () => {
     expect(screen.getByText(/1sfoerster/)).toHaveTextContent(/cropped/i);
     const licence = screen.getByRole('link', { name: 'CC BY-SA 3.0' });
     expect(licence).toHaveAttribute('href', photo.credit.licenceUrl);
-    const source = screen.getByRole('link', { name: 'Wikimedia Commons' });
+    // CC BY 3.0 and later ask for the title the author supplied: it names the source link.
+    const source = screen.getByRole('link', { name: '“Esc2”' });
     expect(source).toHaveAttribute('href', photo.credit.sourceUrl);
     for (const link of [licence, source]) expect(link).toHaveAttribute('rel', 'noreferrer');
   });

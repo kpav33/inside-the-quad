@@ -1,6 +1,6 @@
 {
   "battery": {
-    "title": "File:Xlabs Shrike-200 V2 5″ FPV quad with components collage.jpg",
+    "title": "Xlabs Shrike-200 V2 5″ FPV quad with components collage",
     "author": "Lucasbosch",
     "licence": "CC BY-SA 4.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
@@ -10,7 +10,7 @@
     "height": 762
   },
   "camera": {
-    "title": "File:Runcam Eagle black FPV camera with bracket.jpg",
+    "title": "Runcam Eagle black FPV camera with bracket",
     "author": "Lucasbosch",
     "licence": "CC BY-SA 3.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
@@ -20,7 +20,7 @@
     "height": 1168
   },
   "esc": {
-    "title": "File:Esc2.jpg",
+    "title": "Esc2",
     "author": "1sfoerster",
     "licence": "CC BY-SA 3.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
@@ -30,17 +30,17 @@
     "height": 320
   },
   "extras": {
-    "title": "File:MATEKSys F405-WSE FC.jpg",
+    "title": "MATEKSys F405-WSE FC",
     "author": "SokilFPV",
     "licence": "CC BY-SA 4.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:MATEKSys_F405-WSE_FC.jpg",
     "cropped": true,
-    "width": 1127,
-    "height": 1170
+    "width": 1280,
+    "height": 1329
   },
   "fc": {
-    "title": "File:AbuseMark AfroFlight Naze 32 Flight Controller rev5 white.jpg",
+    "title": "AbuseMark AfroFlight Naze 32 Flight Controller rev5 white",
     "author": "Lucasbosch",
     "licence": "Public domain",
     "sourceUrl": "https://commons.wikimedia.org/wiki/File:AbuseMark_AfroFlight_Naze_32_Flight_Controller_rev5_white.jpg",
@@ -49,7 +49,7 @@
     "height": 1300
   },
   "frame": {
-    "title": "File:FPV Quadrocopter.jpg",
+    "title": "FPV Quadrocopter",
     "author": "Clicklabs",
     "licence": "CC BY-SA 4.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
@@ -59,7 +59,7 @@
     "height": 819
   },
   "motors": {
-    "title": "File:Xlabs Shrike-200 V2 5″ FPV quad with components collage.jpg",
+    "title": "Xlabs Shrike-200 V2 5″ FPV quad with components collage",
     "author": "Lucasbosch",
     "licence": "CC BY-SA 4.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
@@ -69,7 +69,7 @@
     "height": 906
   },
   "props": {
-    "title": "File:ImpulseRC Alien 5″ FPV quad with components collage.jpg",
+    "title": "ImpulseRC Alien 5″ FPV quad with components collage",
     "author": "Lucasbosch",
     "licence": "CC BY-SA 4.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
@@ -79,7 +79,7 @@
     "height": 937
   },
   "receiver": {
-    "title": "File:TBS Crossfire Nano receiver (XF nano).jpg",
+    "title": "TBS Crossfire Nano receiver (XF nano)",
     "author": "SokilFPV",
     "licence": "CC BY-SA 4.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
@@ -89,7 +89,7 @@
     "height": 1010
   },
   "strap": {
-    "title": "File:Xlabs Shrike-200 V2 5″ FPV quad with components collage.jpg",
+    "title": "Xlabs Shrike-200 V2 5″ FPV quad with components collage",
     "author": "Lucasbosch",
     "licence": "CC BY-SA 4.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
@@ -99,7 +99,7 @@
     "height": 1015
   },
   "vtx": {
-    "title": "File:TeamBlacksheep (TBS) Unify Pro HV 5.8 GHz RF video transmitter with RP SMA pigtail front.png",
+    "title": "TeamBlacksheep (TBS) Unify Pro HV 5.8 GHz RF video transmitter with RP SMA pigtail front",
     "author": "Lucasbosch",
     "licence": "CC BY-SA 3.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",

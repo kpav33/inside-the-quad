@@ -8,6 +8,8 @@ import { fileURLToPath } from 'node:url';
 
 import sharp from 'sharp';
 
+import { cachedOriginalIsUsable, displayTitle } from './download.mjs';
+
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..', '..');
 const cacheDir = join(here, '.cache');
@@ -16,8 +18,6 @@ const creditsFile = join(root, 'src', 'content', 'photos', 'credits.json');
 
 const ALLOWED = ['CC BY 3.0', 'CC BY 4.0', 'CC BY-SA 3.0', 'CC BY-SA 4.0', 'CC0', 'Public domain'];
 const WIDTHS = [640, 1280];
-/** Originals wider than this are fetched as Commons' own scaled copy; crops scale with them. */
-const DOWNLOAD_WIDTH = 2560;
 const QUALITY = 70;
 const USER_AGENT = 'inside-the-quad-photo-fetch/1.0 (educational project)';
 
@@ -49,7 +49,6 @@ const query = new URLSearchParams({
   action: 'query',
   prop: 'imageinfo',
   iiprop: 'extmetadata|url|size',
-  iiurlwidth: String(DOWNLOAD_WIDTH),
   format: 'json',
   formatversion: '2',
   titles: titles.join('|'),
@@ -79,30 +78,19 @@ for (const entry of manifest) {
   const author = plain(meta.Artist?.value) || plain(meta.Credit?.value);
   if (!author) throw new Error(`${entry.part}: no author on ${entry.title}`);
 
-  // A scaled copy for large originals: smaller downloads, and fewer rate limits. Any copy already
-  // in the cache is reused, whatever its size; the crop scales with its width.
+  // Always the full-size original, so crops (in the original's pixels) come out the same on every
+  // run. A cached file of any other size is downloaded again.
   const original = join(cacheDir, encodeURIComponent(page.title));
-  if (!existsSync(original)) {
-    const scaled = info.width > DOWNLOAD_WIDTH && info.thumburl;
-    await writeFile(
-      original,
-      Buffer.from(await (await get(scaled ? info.thumburl : info.url)).arrayBuffer()),
-    );
+  const cachedWidth = existsSync(original) ? (await sharp(original).metadata()).width : undefined;
+  if (!cachedOriginalIsUsable(cachedWidth, info.width)) {
+    await writeFile(original, Buffer.from(await (await get(info.url)).arrayBuffer()));
     await sleep(10_000);
   }
-  const downloaded = await sharp(original).metadata();
-  const scale = downloaded.width / info.width;
+  const crop = entry.crop;
+  const sourceWidth = crop?.width ?? info.width;
 
-  // Crops are given in the original's pixels.
-  const crop = entry.crop && {
-    left: Math.round(entry.crop.left * scale),
-    top: Math.round(entry.crop.top * scale),
-    width: Math.round(entry.crop.width * scale),
-    height: Math.round(entry.crop.height * scale),
-  };
   let image = sharp(original);
   if (crop) image = image.extract(crop);
-  const sourceWidth = crop?.width ?? downloaded.width;
   let largest = null;
   for (const width of WIDTHS) {
     const { data, info: out } = await image
@@ -115,7 +103,7 @@ for (const entry of manifest) {
   }
 
   credits[entry.part] = {
-    title: page.title,
+    title: displayTitle(page.title),
     author,
     licence,
     ...(meta.LicenseUrl?.value ? { licenceUrl: plain(meta.LicenseUrl.value) } : {}),

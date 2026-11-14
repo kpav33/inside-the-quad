@@ -29,8 +29,12 @@ describe('PART_PHOTOS', () => {
     });
 
     it('is credited under a free licence', () => {
-      const { author, licence, licenceUrl, sourceUrl } = photo.credit;
+      const { title, author, licence, licenceUrl, sourceUrl } = photo.credit;
       expect(author.trim()).not.toBe('');
+      // The title the author supplied on Commons, without "File:" or the extension.
+      expect(title.trim()).not.toBe('');
+      expect(title).not.toMatch(/^File:|\.(jpe?g|png|webp)$/i);
+      expect(decodeURIComponent(sourceUrl).replace(/_/g, ' ')).toContain(title);
       expect(LICENCES).toContain(licence);
       if (licence === 'Public domain') expect(licenceUrl).toBeUndefined();
       else expect(licenceUrl).toMatch(/^https:\/\//);

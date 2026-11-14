@@ -9,7 +9,7 @@ const SIZES = '(min-width: 56rem) 36rem, 100vw';
  * its licence asks for.
  */
 export function PartPhoto({ photo }: { photo: Photo }) {
-  const { author, licence, licenceUrl, sourceUrl, cropped } = photo.credit;
+  const { title, author, licence, licenceUrl, sourceUrl, cropped } = photo.credit;
   const text = UI.photo;
   return (
     <figure className="part-photo">
@@ -29,7 +29,11 @@ export function PartPhoto({ photo }: { photo: Photo }) {
       <figcaption>
         <span className="part-photo-caption">{photo.caption}</span>
         <span className="part-photo-credit">
-          {text.by} {author},{' '}
+          {text.by}{' '}
+          <a href={sourceUrl} rel="noreferrer">
+            {text.title(title)}
+          </a>{' '}
+          {text.byAuthor(author)},{' '}
           {licenceUrl ? (
             <a href={licenceUrl} rel="noreferrer">
               {licence}
@@ -37,11 +41,7 @@ export function PartPhoto({ photo }: { photo: Photo }) {
           ) : (
             licence
           )}
-          .{cropped ? ` ${text.cropped(licence.includes('SA'))}` : ''} {text.via}{' '}
-          <a href={sourceUrl} rel="noreferrer">
-            {text.source}
-          </a>
-          .
+          .{cropped ? ` ${text.cropped(licence.includes('SA'))}` : ''} {text.via}
         </span>
       </figcaption>
     </figure>
