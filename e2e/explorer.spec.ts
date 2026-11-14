@@ -41,15 +41,16 @@ test('keyboard: open and close a lesson from the part list', async ({ page }) =>
 
 /**
  * Points on the canvas (as fractions of its size) that land on a part with the default camera in
- * the 1280 × 720 test viewport. Found by clicking a grid over the canvas, one fresh page per point.
+ * the 1280 × 720 test viewport, with the camera fitted to the drone's outline. Found by clicking a
+ * grid over the canvas, one fresh page per point.
  */
 const POINTS = {
-  battery: { x: 0.525, y: 0.49 },
-  frameArm: { x: 0.42, y: 0.58 },
-  camera: { x: 0.545, y: 0.59 },
+  battery: { x: 0.5, y: 0.45 },
+  frameArm: { x: 0.4, y: 0.6 },
+  camera: { x: 0.55, y: 0.625 },
   // With the frame open:
-  liftedFc: { x: 0.495, y: 0.46 },
-  liftedBattery: { x: 0.525, y: 0.31 },
+  liftedFc: { x: 0.495, y: 0.45 },
+  liftedBattery: { x: 0.5, y: 0.3 },
 };
 
 async function clickAt(page: Page, point: { x: number; y: number }) {
@@ -69,6 +70,50 @@ test('mouse: click a part in 3D, then the background', async ({ page }) => {
 
   await clickAt(page, { x: 0.01, y: 0.01 });
   await expect(lessonHeading(page, 'Frame')).toBeHidden();
+});
+
+test('mouse: a faded part still opens its sheet', async ({ page }) => {
+  // On the Propellers sheet the battery is unrelated, so it is drawn faded.
+  await page.goto('/parts/props');
+  await expect(lessonHeading(page, 'Propellers')).toBeVisible();
+
+  await clickAt(page, POINTS.battery);
+  await expect(lessonHeading(page, 'Battery')).toBeVisible();
+  await expect(page).toHaveURL(/\/parts\/battery$/);
+});
+
+test('mouse: hovering a part in 3D lights up its parts-list row', async ({ page }) => {
+  await page.goto('/');
+  const box = await canvasBox(page);
+  const row = page.getByRole('button', { name: 'Battery', exact: true });
+
+  await page.mouse.move(
+    box.x + box.width * POINTS.battery.x,
+    box.y + box.height * POINTS.battery.y,
+  );
+  await expect(row).toHaveAttribute('data-hovered', 'true');
+
+  await page.mouse.move(box.x + 4, box.y + 4);
+  await expect(page.locator('[data-hovered="true"]')).toHaveCount(0);
+});
+
+test('mouse: a hover never carries over to the next sheet', async ({ page }) => {
+  await page.goto('/');
+  const box = await canvasBox(page);
+  // Hover the battery and click it without moving: its sheet opens under a resting mouse.
+  await page.mouse.move(
+    box.x + box.width * POINTS.battery.x,
+    box.y + box.height * POINTS.battery.y,
+  );
+  await page.mouse.down();
+  await page.mouse.up();
+  await expect(lessonHeading(page, 'Battery')).toBeVisible();
+
+  // Open another sheet from the keyboard while the mouse still rests on the battery.
+  await page.getByRole('button', { name: 'Motors', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(lessonHeading(page, 'Motors')).toBeVisible();
+  await expect(page.locator('[data-hovered="true"]')).toHaveCount(0);
 });
 
 test('mouse: the open stack keeps every layer clickable', async ({ page }) => {

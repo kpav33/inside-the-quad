@@ -149,7 +149,7 @@ A near-monochrome carbon palette with a single warm redline; every colour is a t
 
 ### Primary
 
-- **Redline** (accent): the drafter's correction red. Selected parts-list row (3px left rule and filled balloon), the selected part's fill in the 3D drawing, the focus ring, text selection, and the "QUAD" of the wordmark. Nothing else.
+- **Redline** (accent): the drafter's correction red. Selected parts-list row (3px left rule and filled balloon), the open part's fill in the 3D drawing, the focus ring, text selection, and the "QUAD" of the wordmark. Nothing else.
 
 ### Neutral
 
@@ -160,6 +160,7 @@ A near-monochrome carbon palette with a single warm redline; every colour is a t
 - **Drafting Ink** (ink): reading text, values, and the 3D model's edge lines; also the hover border colour.
 - **Graphite** (muted): secondary text: column headers, cell labels, hints, zone markers, tagline, question balloon numerals, link underlines at rest.
 - **Part Fills** (model-motors, model-props, model-esc, model-fc, model-battery, model-strap, model-receiver, model-camera, model-vtx, model-extras): 3D-only fills, small tonal steps around the sheet so parts separate without colour.
+- **Connected Grey** (`MODEL_LOOK.connected`, #4a525a): 3D-only, the fill of parts the open part connects to; lighter than every part fill and still a dark tone (contrast under 3:1 on ground). Never a surface or text colour.
 - **Scene Fill Light** (`SCENE_LIGHT.fill`, #b8c4d0): 3D-only, the cool fill light that keeps dark parts' shapes readable. Never used as a surface or text colour.
 
 Contrast (WCAG 2.x): ink 14.3:1 on ground, 12.8:1 on sheet; muted 7.2:1 on ground, 6.5:1 on sheet, 5.3:1 on the rule fill; redline 6.0:1 on ground; ground text on redline 6.0:1.
@@ -289,7 +290,15 @@ A hairline table (rule-strong top, rule between rows) with muted caps headers, c
 
 ### The 3D Drawing (signature)
 
-The reference quad drawn as linework on carbon. Unselected parts: dark tonal fill (sheet, model-motors, model-props) with ink drafting edges (edge threshold 20°). Selected part: redline fill with ground edges, the same redline as the selected list row, lit in both places at once. The canvas renders on demand; nothing moves unless the visitor turns it or the selection changes. The viewer sits inside the drawing frame, inset 1.5rem.
+The reference quad drawn as linework on carbon. With no sheet open (the overview), every part is drawn plainly: dark tonal fill (sheet, model-motors, model-props) with ink drafting edges (edge threshold 20°), and nothing else is drawn. With a sheet open, each part takes one of three looks:
+
+- **Open:** redline fill with ground edges, the same redline as the selected list row, lit in both places at once.
+- **Connected** (the parts its lesson's "What is it connected to?" names): Connected Grey fill (`MODEL_LOOK.connected`, #4a525a) with ink edges.
+- **Faded** (everything else): ground fill at 25 % opacity (`MODEL_LOOK.fadedOpacity`) that writes no depth, with rule-strong edges, so it reads as a faint drawing behind the open part. Faded parts stay clickable.
+
+Looks switch at once, without animation. On the Propellers sheet an ink arc with an open arrowhead over each prop shows its spin direction (props in), inside the blade tips. Hovering a part with a mouse gives its parts-list row the row hover look (never redline); touch never hovers.
+
+The camera is fitted to the drone's outline (blade tips, motors, body, battery, antennas; closed and with the stack lifted) for the canvas's shape, looking at the closed drone's middle, so the drone fills the drawing field with the lifted stack still inside it. Each view the camera turns to has its own fitted distance, eased with the turn; a resize keeps the visitor's angle and scales the distance; zoom runs from half to twice the fitted distance. The canvas renders on demand; nothing moves unless the visitor turns it or the selection changes. The viewer sits inside the drawing frame, inset 1.5rem.
 
 ## Do's and Don'ts
 

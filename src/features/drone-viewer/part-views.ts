@@ -34,13 +34,13 @@ export const DEFAULT_CAMERA_POSITION: Vec3 = [0.22, 0.18, -0.28];
 export const DEFAULT_VIEW = viewFromPosition(DEFAULT_CAMERA_POSITION);
 
 /** Nearly head-on and a little to the right, looking into the camera's lens. */
-const FRONT_VIEW: View = {
+export const FRONT_VIEW: View = {
   azimuthRad: MathUtils.degToRad(160),
   elevationRad: MathUtils.degToRad(18),
 };
 
 /** High over the right rear quarter, looking down into the open frame and the rear bay. */
-const REAR_VIEW: View = {
+export const REAR_VIEW: View = {
   azimuthRad: MathUtils.degToRad(35),
   elevationRad: MathUtils.degToRad(45),
 };

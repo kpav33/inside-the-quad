@@ -4,11 +4,13 @@ import { motorPlacements } from '../layout';
 import { Lift } from '../Lift';
 import { type Box, rearBay } from '../rear';
 
+import type { PartLook } from '../materials';
+
 import { PartMaterial } from './PartMaterial';
 
 interface ExtrasProps {
   spec: DroneSpec;
-  highlighted: boolean;
+  look: PartLook;
   /** The GPS stands on the top plate, so it lifts with it. */
   topPlateLiftMm: number;
 }
@@ -18,10 +20,10 @@ const LED_STRIP = { fromMm: 55, toMm: 80, width: 5, height: 1.5 } as const;
 const LED_MM = 3;
 
 /** GPS on a post at the rear, a buzzer on the rear-left arm and an LED strip on each rear arm. */
-export function Extras({ spec, highlighted, topPlateLiftMm }: ExtrasProps) {
+export function Extras({ spec, look, topPlateLiftMm }: ExtrasProps) {
   const { gps, gpsPost } = rearBay(spec);
   const arm = spec.frame.armThicknessMm;
-  const material = <PartMaterial part="extras" highlighted={highlighted} />;
+  const material = <PartMaterial part="extras" look={look} />;
   const box = ({ centre: [x, y, z], size: [w, h, d] }: Box) => (
     <mesh position={[mm(x), mm(y), mm(z)]}>
       <boxGeometry args={[mm(w), mm(h), mm(d)]} />

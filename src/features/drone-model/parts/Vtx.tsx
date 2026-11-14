@@ -2,12 +2,14 @@ import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
 
 import { rearBay } from '../rear';
 
+import type { PartLook } from '../materials';
+
 import { PartMaterial } from './PartMaterial';
 import { Rod } from './Rod';
 
 interface VtxProps {
   spec: DroneSpec;
-  highlighted: boolean;
+  look: PartLook;
 }
 
 const PCB_MM = 1.2;
@@ -15,12 +17,12 @@ const ANTENNA_RADIUS_MM = 1.2;
 const ANTENNA_HEAD = { radius: 7, thickness: 3 } as const;
 
 /** Analog VTX: a small board under a shield, with its antenna leaving the back of the frame. */
-export function Vtx({ spec, highlighted }: VtxProps) {
+export function Vtx({ spec, look }: VtxProps) {
   const { vtx, vtxAntenna } = rearBay(spec);
   const [x, y, z] = vtx.centre;
   const [width, height, depth] = vtx.size;
   const bottom = y - height / 2;
-  const material = <PartMaterial part="vtx" highlighted={highlighted} />;
+  const material = <PartMaterial part="vtx" look={look} />;
   const [tx, ty, tz] = vtxAntenna.tip;
 
   return (

@@ -2,11 +2,13 @@ import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
 
 import { FC_HEIGHT_MM, stackLayers } from '../stack';
 
+import type { PartLook } from '../materials';
+
 import { PartMaterial } from './PartMaterial';
 
 interface FcProps {
   spec: DroneSpec;
-  highlighted: boolean;
+  look: PartLook;
 }
 
 const PCB_MM = 1.6;
@@ -14,11 +16,11 @@ const GROMMET_RADIUS_MM = 2.6;
 
 /** Flight controller: a square board with the processor and gyro, soft-mounted on four rubber
  * grommets at the stack holes. */
-export function Fc({ spec, highlighted }: FcProps) {
+export function Fc({ spec, look }: FcProps) {
   const board = spec.fc.boardSizeMm;
   const bottom = stackLayers(spec).fc.bottomMm;
   const hole = spec.frame.stackMountMm / 2;
-  const material = <PartMaterial part="fc" highlighted={highlighted} />;
+  const material = <PartMaterial part="fc" look={look} />;
   const top = bottom + PCB_MM;
 
   return (

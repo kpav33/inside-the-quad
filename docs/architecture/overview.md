@@ -12,7 +12,7 @@ src/
     intro.ts        The intro sheet's copy, scene and size labels
   features/         One folder per feature; owns its components, hooks, logic and tests
     drone-model/    Procedural 3D parts (one component per part), built from a DroneSpec
-    drone-viewer/   The 3D viewport: Canvas, camera fitting, orbit controls (lazy loaded)
+    drone-viewer/   The 3D viewport: Canvas, camera fit to the outline, orbit controls (lazy loaded)
     intro/          The intro's flat SVG drawings: the system scene and the size comparison
     part-explorer/  The open sheet (from the URL); composes the viewer, part list, lesson, intro
                     and overview
@@ -51,8 +51,14 @@ nginx/              Production server config (copied into the Docker image)
   overlaps. All are plain functions of the spec. `drone-model/Lift.tsx` eases a group to its
   offset and only asks for new frames while it moves (the canvas draws on demand).
 - Parts the starting view hides are shown by turning the view: `drone-viewer/part-views.ts` picks
-  an angle per part, and `TurnToPart.tsx` eases the camera there, keeping the zoom, until the user
-  drags.
+  an angle per part, and `TurnToPart.tsx` eases the camera there (and to that view's fitted
+  distance) until the user drags.
+- The camera is fitted, not tuned: `drone-model/extents.ts` gives the drone's outline points
+  (closed and lifted), `drone-viewer/fit.ts` finds the smallest distance that keeps them inside the
+  canvas for a view and aspect ratio, and `FitCamera.tsx` applies it on load and resize.
+- What the open part connects to comes from its lesson: `content/lessons/connections.ts` derives
+  the set, the part explorer passes it to the viewer as a prop, and `drone-model/materials.ts`
+  turns (part, open part, connected set) into a look. The 3D code never imports `content/`.
 - The part list is the accessible equivalent of clicking in 3D, so the canvas is hidden from
   assistive technology and everything still works if WebGL fails.
 

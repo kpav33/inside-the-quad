@@ -1,19 +1,24 @@
-import { Bounds, OrbitControls } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import { Canvas, type ThreeEvent } from '@react-three/fiber';
 import { TOUCH } from 'three';
 
-import { DroneModel, FitBox } from '@/features/drone-model';
+import { DroneModel } from '@/features/drone-model';
 import { SCENE_LIGHT } from '@/shared/design/tokens';
 import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
 import type { PartId } from '@/shared/domain/parts';
 
+import { FitCamera } from './FitCamera';
 import { DEFAULT_CAMERA_POSITION } from './part-views';
 import { TouchScrollPassThrough } from './TouchScrollPassThrough';
 import { TurnToPart } from './TurnToPart';
 
 export interface DroneViewerProps {
   selectedPart: PartId | null;
+  /** Parts the open part connects to, from its lesson. */
+  connectedParts: ReadonlySet<PartId>;
   onPartClick: (part: PartId, event: ThreeEvent<MouseEvent>) => void;
+  /** Called with the part under the mouse, and null when the mouse leaves it. */
+  onPartHover: (part: PartId | null) => void;
   /** Called when a click hits empty space instead of a part. */
   onBackgroundClick: () => void;
 }
@@ -24,7 +29,9 @@ export interface DroneViewerProps {
  */
 export default function DroneViewer({
   selectedPart,
+  connectedParts,
   onPartClick,
+  onPartHover,
   onBackgroundClick,
 }: DroneViewerProps) {
   return (
@@ -40,20 +47,22 @@ export default function DroneViewer({
         <ambientLight intensity={0.55} />
         <directionalLight position={[1, 2, 1.5]} intensity={1.8} />
         <directionalLight position={[-1.5, 0.8, -1]} intensity={0.6} color={SCENE_LIGHT.fill} />
-        {/* Fits the camera to the closed drone on load and on resize, so no viewport crops it and
-            an open stack never changes the framing. */}
-        <Bounds fit observe margin={1.08}>
-          <FitBox spec={REFERENCE_5_INCH} />
-        </Bounds>
-        <DroneModel spec={REFERENCE_5_INCH} selectedPart={selectedPart} onPartClick={onPartClick} />
+        <DroneModel
+          spec={REFERENCE_5_INCH}
+          selectedPart={selectedPart}
+          connectedParts={connectedParts}
+          onPartClick={onPartClick}
+          onPartHover={onPartHover}
+        />
         <OrbitControls
           makeDefault
           enablePan={false}
-          minDistance={0.15}
-          maxDistance={0.8}
           // One finger scrolls the page (see TouchScrollPassThrough); two fingers turn and zoom.
           touches={{ TWO: TOUCH.DOLLY_ROTATE }}
         />
+        {/* Fits the camera to the drone's outline, so it fills the drawing at every canvas shape;
+            sets the zoom limits from that distance. */}
+        <FitCamera />
         <TouchScrollPassThrough />
         <TurnToPart part={selectedPart} />
       </Canvas>

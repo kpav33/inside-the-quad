@@ -1,14 +1,18 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useRef } from 'react';
-import type { Vector3 } from 'three';
+import { MathUtils, type Vector3 } from 'three';
 
 import type { PartId } from '@/shared/domain/parts';
 import { usePrefersReducedMotion } from '@/shared/ui/usePrefersReducedMotion';
 
+import { useDroneFit } from './useDroneFit';
 import { partView, stepView, type View, viewFromPosition, viewToPosition } from './part-views';
 
 // A long pause between demand-driven frames must not turn into one big jump.
 const MAX_FRAME_S = 1 / 30;
+// The zoom eases at the same pace as the turn, and settles within a tenth of a millimetre.
+const ZOOM_LAMBDA = 7.5;
+const SETTLE_DISTANCE = 0.0001;
 
 /** The parts of OrbitControls this component uses. */
 interface Controls {
@@ -20,7 +24,8 @@ interface Controls {
 
 /**
  * Turns the drone so the selected part can be seen, for the parts the starting view hides (see
- * `partView`). The turn keeps the zoom, eases, and stops as soon as the user starts dragging.
+ * `partView`). The turn eases to that view's fitted distance, so the drone fills the drawing from
+ * there too, and stops as soon as the user starts dragging.
  */
 export function TurnToPart({ part }: { part: PartId | null }) {
   const controls = useThree((state) => state.controls) as unknown as Controls | null;
@@ -28,6 +33,7 @@ export function TurnToPart({ part }: { part: PartId | null }) {
   const invalidate = useThree((state) => state.invalidate);
   const goal = useRef<View | null>(null);
   const reduceMotion = usePrefersReducedMotion();
+  const fit = useDroneFit();
 
   useEffect(() => {
     goal.current = partView(part);
@@ -57,10 +63,15 @@ export function TurnToPart({ part }: { part: PartId | null }) {
       Math.min(delta, MAX_FRAME_S),
       reduceMotion,
     );
-    const [x, y, z] = viewToPosition(step.view, offset.length());
+    const goalDistance = fit.distanceFor(target);
+    const distance = reduceMotion
+      ? goalDistance
+      : MathUtils.damp(offset.length(), goalDistance, ZOOM_LAMBDA, Math.min(delta, MAX_FRAME_S));
+    const zoomSettled = Math.abs(distance - goalDistance) < SETTLE_DISTANCE;
+    const [x, y, z] = viewToPosition(step.view, zoomSettled ? goalDistance : distance);
     camera.position.set(centre.x + x, centre.y + y, centre.z + z);
     controls.update();
-    if (step.settled) goal.current = null;
+    if (step.settled && zoomSettled) goal.current = null;
     else invalidate();
   });
 

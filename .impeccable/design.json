@@ -258,6 +258,21 @@
           "oklch(83.6% 0.003 248.2)",
           "oklch(95.0% 0.002 248.2)"
         ]
+      },
+      "model-connected": {
+        "role": "neutral",
+        "displayName": "Connected Grey",
+        "canonical": "oklch(43.4% 0.017 248.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.017 248.2)",
+          "oklch(26.4% 0.015 248.2)",
+          "oklch(37.9% 0.013 248.2)",
+          "oklch(49.3% 0.011 248.2)",
+          "oklch(60.7% 0.009 248.2)",
+          "oklch(72.1% 0.007 248.2)",
+          "oklch(83.6% 0.005 248.2)",
+          "oklch(95.0% 0.003 248.2)"
+        ]
       }
     },
     "typographyMeta": {
@@ -328,8 +343,13 @@
       "purpose": "Global focus ring; offset -2px inside parts-list rows."
     },
     "model3d": {
-      "unselected": "fill MODEL_COLOR[part] (sheet / model-* for each part), Edges color ink, threshold 20",
-      "selected": "fill accent, Edges color ground",
+      "unselected": "No sheet open: fill MODEL_COLOR[part] (sheet / model-* for each part), Edges color ink, threshold 20",
+      "selected": "Open part: fill accent, Edges color ground",
+      "connected": "Parts the open part's lesson connects to: fill MODEL_LOOK.connected (model-connected), Edges color ink",
+      "faded": "Every other part while a sheet is open: fill ground at MODEL_LOOK.fadedOpacity 0.25, transparent, depthWrite off, Edges color rule-strong; still clickable",
+      "spinArcs": "Propellers sheet only: ink line arc (1.5px) with an open arrowhead over each prop, inside the blade tips, in the layout's spin direction",
+      "hover": "Mouse hover on a part gives its parts-list row the row hover look; touch never hovers",
+      "camera": "Fitted to the drone's outline (closed and lifted) for the canvas aspect, looking at the closed drone's middle; each turn view has its own distance; zoom 0.5x to 2x the fit",
       "material": "meshStandardMaterial roughness 1 metalness 0"
     }
   },
