@@ -20,6 +20,7 @@ import { Propeller } from './parts/Propeller';
 import { Receiver } from './parts/Receiver';
 import { Strap } from './parts/Strap';
 import { Vtx } from './parts/Vtx';
+import { SpinArcs } from './SpinArcs';
 import { explodedOffsets } from './stack';
 
 export interface DroneModelProps {
@@ -64,6 +65,8 @@ export function DroneModel({ spec, selectedPart, connectedParts, onPartClick }: 
 
   return (
     <group>
+      {/* The Propellers sheet shows which way each prop spins. Not clickable: raycasts pass. */}
+      {selectedPart === 'props' && <SpinArcs spec={spec} />}
       {partGroup(
         'frame',
         <Frame spec={spec} look={look('frame')} topPlateLiftMm={lift.topPlate} />,
