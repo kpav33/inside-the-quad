@@ -11,8 +11,12 @@ related_targets: ['src/app/App.tsx', 'src/styles/global.css']
 
 The single screen of the app: 3D reference quad, part picker, lesson panel. Mode: **Read** (the
 visitor understands something), with an interactive 3D figure. Users and constraints live in
-PRODUCT.md. Section 02 (design pass) builds the world's foundation; the model-as-teacher layer
-(dimension lines and callouts drawn in 3D, spin arcs) is a later roadmap section. Section 02c
+PRODUCT.md. Section 02 (design pass) builds the world's foundation. Section 02b made the model
+teach: with a sheet open, the open part is redline, the parts its lesson connects to stay in a
+connected grey and everything else fades; spin arcs on the Propellers sheet; the camera fitted to
+the drone's outline; 3D hover lights the list row. Dimension lines, callout balloons, a front
+marker and per-part greys were tried and dropped (the parts list already names parts; photos in
+03c show what real parts look like). Section 02c
 added lookup and navigation: each lesson has its own URL, a lesson footer with Mark as read and
 previous/next sheet cells, connection links set as "see sheet" references, read checks in the
 parts list, and a start/continue link on the overview. Section 04 added the intro sheet ("What is
@@ -55,7 +59,7 @@ FORM: Engineering drawing sheet (ISO technical drawing with title block and part
 declined challengers: structure is the only ornament (exposed binding); state reads without colour
 via outline, fill and balloon number (exposure record); one ink, committed (cutting bench); a
 strict hairline module grid for spec rows (high-density modules); one continuous leader line from
-the selected part to its lesson (provenance ribbon; drawn in the model-as-teacher section).
+the selected part to its lesson (provenance ribbon; not drawn: 02b chose fading the rest instead).
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the
 verdict, DESIGN.md, and every shipping raster carrying its provenance
