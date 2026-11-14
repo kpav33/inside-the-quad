@@ -1239,3 +1239,56 @@ a.lesson-sheet-link:hover {
     font-size: 60px;
   }
 }
+
+/* Narrow sheets with large or long text (02d). Headings and long words may break, and values may
+   wrap between items, so the page never scrolls sideways. These rem thresholds scale with the
+   text size, so normal-size phones keep their layout. */
+.lesson-panel-header h2,
+.lesson-question-body h3,
+.title-block-value,
+.lesson-sheet-target,
+.lesson-connection-link {
+  overflow-wrap: anywhere;
+}
+
+.lesson-question-body p,
+.scene-device-role {
+  overflow-wrap: break-word;
+}
+
+.size-table-frame {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+@container (max-width: 20rem) {
+  .title-block-nowrap {
+    white-space: normal;
+  }
+}
+
+@container (max-width: 16rem) {
+  /* One long word ("CONTROLLER") must fit on a line before it is allowed to break. */
+  .lesson-panel-header h2 {
+    font-size: var(--step-2);
+  }
+
+  .lesson-question {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+
+  .lesson-sheets {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lesson-sheet-link + .lesson-sheet-link {
+    border-left: 0;
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .lesson-sheet-next {
+    align-items: flex-start;
+    text-align: start;
+  }
+}
