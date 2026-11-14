@@ -1,6 +1,6 @@
 import { useCursor } from '@react-three/drei';
 import type { ThreeEvent } from '@react-three/fiber';
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 
 import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
 import { isInsidePart, type PartId } from '@/shared/domain/parts';
@@ -46,9 +46,14 @@ export function DroneModel({
 }: DroneModelProps) {
   const [hovered, setHovered] = useState<PartId | null>(null);
   useCursor(hovered !== null);
-  useEffect(() => {
-    onPartHover?.(hovered);
-  }, [hovered, onPartHover]);
+  // The latest hovered part, read by pointer handlers that may run before a re-render. Hover is
+  // reported only as the pointer moves, so a new sheet never gets an old hover replayed.
+  const hoveredNow = useRef<PartId | null>(null);
+  const hover = (part: PartId | null) => {
+    hoveredNow.current = part;
+    setHovered(part);
+    onPartHover?.(part);
+  };
 
   const look = (part: PartId) => partLook(part, selectedPart, connectedParts);
   const placements = motorPlacements(spec);
@@ -65,10 +70,10 @@ export function DroneModel({
       onPointerOver={(event) => {
         event.stopPropagation();
         // A tap's pointer is not a hover; it would leave the row lit after the finger lifts.
-        if (event.pointerType === 'mouse') setHovered(part);
+        if (event.pointerType === 'mouse') hover(part);
       }}
       onPointerOut={() => {
-        setHovered((current) => (current === part ? null : current));
+        if (hoveredNow.current === part) hover(null);
       }}
     >
       {children}

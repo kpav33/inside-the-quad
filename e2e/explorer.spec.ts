@@ -97,6 +97,25 @@ test('mouse: hovering a part in 3D lights up its parts-list row', async ({ page 
   await expect(page.locator('[data-hovered="true"]')).toHaveCount(0);
 });
 
+test('mouse: a hover never carries over to the next sheet', async ({ page }) => {
+  await page.goto('/');
+  const box = await canvasBox(page);
+  // Hover the battery and click it without moving: its sheet opens under a resting mouse.
+  await page.mouse.move(
+    box.x + box.width * POINTS.battery.x,
+    box.y + box.height * POINTS.battery.y,
+  );
+  await page.mouse.down();
+  await page.mouse.up();
+  await expect(lessonHeading(page, 'Battery')).toBeVisible();
+
+  // Open another sheet from the keyboard while the mouse still rests on the battery.
+  await page.getByRole('button', { name: 'Motors', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(lessonHeading(page, 'Motors')).toBeVisible();
+  await expect(page.locator('[data-hovered="true"]')).toHaveCount(0);
+});
+
 test('mouse: the open stack keeps every layer clickable', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'ESC', exact: true }).click();
