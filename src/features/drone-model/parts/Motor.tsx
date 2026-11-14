@@ -2,25 +2,27 @@ import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
 
 import { MOTOR_BASE_HEIGHT_MM } from '../dimensions';
 
+import type { PartLook } from '../materials';
+
 import { PartMaterial } from './PartMaterial';
 
 interface MotorProps {
   spec: DroneSpec;
   /** Centre of the motor base, on top of the arm. */
   position: [number, number, number];
-  highlighted: boolean;
+  look: PartLook;
 }
 
 const SHAFT_RADIUS_MM = 2.5;
 const SHAFT_HEIGHT_MM = 10;
 
 /** Base, bell (the spinning outer cup) and shaft. */
-export function Motor({ spec, position, highlighted }: MotorProps) {
+export function Motor({ spec, position, look }: MotorProps) {
   const radius = mm(spec.motor.bellDiameterMm) / 2;
   const base = mm(MOTOR_BASE_HEIGHT_MM);
   const bell = mm(spec.motor.bellHeightMm);
   const shaft = mm(SHAFT_HEIGHT_MM);
-  const material = <PartMaterial part="motors" highlighted={highlighted} />;
+  const material = <PartMaterial part="motors" look={look} />;
 
   return (
     <group position={position}>

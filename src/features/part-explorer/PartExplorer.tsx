@@ -1,7 +1,7 @@
 import type { ThreeEvent } from '@react-three/fiber';
 import { Suspense, useCallback, useEffect, useRef } from 'react';
 
-import { LESSONS } from '@/content/lessons';
+import { connectedParts, LESSONS } from '@/content/lessons';
 import { overviewSpecs } from '@/content/overview';
 import { PART_LABELS, UI } from '@/content/ui';
 import { DroneViewer } from '@/features/drone-viewer';
@@ -28,6 +28,9 @@ import { TitleBlock } from './TitleBlock';
 /** Drawing-frame zone markers, as on a technical drawing's border. */
 const ZONE_COLUMNS = ['1', '2', '3', '4'];
 const ZONE_ROWS = ['A', 'B', 'C'];
+
+/** No sheet open: nothing is connected, and the drawing is shown plainly. */
+const NO_PARTS: ReadonlySet<PartId> = new Set();
 
 const viewerFallback = <p role="alert">{UI.viewer.fallback}</p>;
 
@@ -166,6 +169,7 @@ export function PartExplorer() {
                 <Suspense fallback={<p role="status">{UI.viewer.loading}</p>}>
                   <DroneViewer
                     selectedPart={selectedPart}
+                    connectedParts={selectedPart ? connectedParts(selectedPart) : NO_PARTS}
                     onPartClick={onPartClick}
                     onBackgroundClick={clearSelection}
                   />

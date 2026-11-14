@@ -3,11 +3,13 @@ import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
 import { rearBay } from '../rear';
 import { ESC_HEIGHT_MM, stackLayers } from '../stack';
 
+import type { PartLook } from '../materials';
+
 import { PartMaterial } from './PartMaterial';
 
 interface EscProps {
   spec: DroneSpec;
-  highlighted: boolean;
+  look: PartLook;
 }
 
 const PCB_MM = 1.6;
@@ -16,10 +18,10 @@ const LEAD_RADIUS_MM = 0.8;
 
 /** 4-in-1 ESC: a square board with one block of power switches per motor, plus the capacitor
  * on two leads at the rear. */
-export function Esc({ spec, highlighted }: EscProps) {
+export function Esc({ spec, look }: EscProps) {
   const board = spec.esc.boardSizeMm;
   const bottom = stackLayers(spec).esc.bottomMm;
-  const material = <PartMaterial part="esc" highlighted={highlighted} />;
+  const material = <PartMaterial part="esc" look={look} />;
   // One block of power switches near each corner, one for each motor.
   const corner = board / 2 - 7;
   // The capacitor sits at the rear, beside the VTX (see rear.ts).

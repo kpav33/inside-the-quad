@@ -5,17 +5,19 @@ import { cameraPlates } from '../front';
 import { motorPlacements } from '../layout';
 import { Lift } from '../Lift';
 
+import type { PartLook } from '../materials';
+
 import { PartMaterial } from './PartMaterial';
 
 interface FrameProps {
   spec: DroneSpec;
-  highlighted: boolean;
+  look: PartLook;
   /** How far the top plate is lifted for the exploded stack, in millimetres. */
   topPlateLiftMm: number;
 }
 
 /** Bottom plate with four arms, standoffs and a top plate. */
-export function Frame({ spec, highlighted, topPlateLiftMm }: FrameProps) {
+export function Frame({ spec, look, topPlateLiftMm }: FrameProps) {
   const { frame, motor } = spec;
   const armThickness = mm(frame.armThicknessMm);
   // Arms run from the centre to just past the motor, so the whole motor base sits on carbon.
@@ -23,7 +25,7 @@ export function Frame({ spec, highlighted, topPlateLiftMm }: FrameProps) {
   const standoffHeight = mm(frame.standoffHeightMm);
   const standoffX = mm(frame.bodyWidthMm / 2 - STANDOFF_INSET_MM);
   const standoffZ = mm(frame.bodyLengthMm / 2 - STANDOFF_INSET_MM);
-  const material = <PartMaterial part="frame" highlighted={highlighted} />;
+  const material = <PartMaterial part="frame" look={look} />;
 
   return (
     <group>

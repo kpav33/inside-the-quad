@@ -3,18 +3,20 @@ import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
 import { BATTERY_PAD_MM } from '../dimensions';
 import { stackLayers } from '../stack';
 
+import type { PartLook } from '../materials';
+
 import { PartMaterial } from './PartMaterial';
 
 interface StrapProps {
   spec: DroneSpec;
-  highlighted: boolean;
+  look: PartLook;
 }
 
 const BAND_MM = 1.5;
 const PAD_INSET_MM = 5;
 
 /** The grippy pad under the battery and the strap wrapped around the battery and top plate. */
-export function Strap({ spec, highlighted }: StrapProps) {
+export function Strap({ spec, look }: StrapProps) {
   const { topPlate } = stackLayers(spec);
   const { packWidthMm, packHeightMm, packLengthMm } = spec.battery;
   const width = spec.strap.widthMm;
@@ -22,7 +24,7 @@ export function Strap({ spec, highlighted }: StrapProps) {
   const sideX = Math.max(spec.frame.bodyWidthMm, packWidthMm) / 2 + BAND_MM / 2;
   const bottom = topPlate.bottomMm - BAND_MM;
   const top = batteryTop + BAND_MM;
-  const material = <PartMaterial part="strap" highlighted={highlighted} />;
+  const material = <PartMaterial part="strap" look={look} />;
 
   return (
     <group>

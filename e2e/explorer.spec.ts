@@ -71,6 +71,16 @@ test('mouse: click a part in 3D, then the background', async ({ page }) => {
   await expect(lessonHeading(page, 'Frame')).toBeHidden();
 });
 
+test('mouse: a faded part still opens its sheet', async ({ page }) => {
+  // On the Propellers sheet the battery is unrelated, so it is drawn faded.
+  await page.goto('/parts/props');
+  await expect(lessonHeading(page, 'Propellers')).toBeVisible();
+
+  await clickAt(page, POINTS.battery);
+  await expect(lessonHeading(page, 'Battery')).toBeVisible();
+  await expect(page).toHaveURL(/\/parts\/battery$/);
+});
+
 test('mouse: the open stack keeps every layer clickable', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'ESC', exact: true }).click();

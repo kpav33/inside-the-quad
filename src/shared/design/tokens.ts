@@ -37,6 +37,15 @@ export const MODEL_COLOR: Record<PartId, string> = {
   extras: '#25292d',
 };
 
+/**
+ * How the 3D drawing sets the open sheet's part apart: the parts it connects to keep a lighter
+ * grey fill (3D only, never a surface or text colour), and every other part fades to faint lines.
+ */
+export const MODEL_LOOK = {
+  connected: '#4a525a',
+  fadedOpacity: 0.25,
+} as const;
+
 /** Scene lighting for the 3D drawing: a cool fill light so dark parts keep their shape. */
 export const SCENE_LIGHT = {
   fill: '#b8c4d0',

@@ -8,6 +8,7 @@ import { isInsidePart, type PartId } from '@/shared/domain/parts';
 import { motorTopMm, PROP_HUB_HEIGHT_MM } from './dimensions';
 import { motorPlacements } from './layout';
 import { Lift } from './Lift';
+import { partLook } from './materials';
 import { Battery } from './parts/Battery';
 import { Camera } from './parts/Camera';
 import { Esc } from './parts/Esc';
@@ -24,6 +25,8 @@ import { explodedOffsets } from './stack';
 export interface DroneModelProps {
   spec: DroneSpec;
   selectedPart: PartId | null;
+  /** Parts the open part connects to: drawn in grey while everything else fades. */
+  connectedParts: ReadonlySet<PartId>;
   onPartClick?: (part: PartId, event: ThreeEvent<MouseEvent>) => void;
 }
 
@@ -31,10 +34,11 @@ export interface DroneModelProps {
  * The whole drone, built from a spec. Each kind of part is one clickable group. Selecting a board
  * under the top plate opens the frame like an exploded-view drawing.
  */
-export function DroneModel({ spec, selectedPart, onPartClick }: DroneModelProps) {
+export function DroneModel({ spec, selectedPart, connectedParts, onPartClick }: DroneModelProps) {
   const [hovered, setHovered] = useState<PartId | null>(null);
   useCursor(hovered !== null);
 
+  const look = (part: PartId) => partLook(part, selectedPart, connectedParts);
   const placements = motorPlacements(spec);
   const lift = explodedOffsets(spec, isInsidePart(selectedPart));
   const propCentreAboveArm = mm(motorTopMm(spec) + PROP_HUB_HEIGHT_MM / 2);
@@ -62,17 +66,12 @@ export function DroneModel({ spec, selectedPart, onPartClick }: DroneModelProps)
     <group>
       {partGroup(
         'frame',
-        <Frame spec={spec} highlighted={selectedPart === 'frame'} topPlateLiftMm={lift.topPlate} />,
+        <Frame spec={spec} look={look('frame')} topPlateLiftMm={lift.topPlate} />,
       )}
       {partGroup(
         'motors',
         placements.map((p) => (
-          <Motor
-            key={p.number}
-            spec={spec}
-            position={p.position}
-            highlighted={selectedPart === 'motors'}
-          />
+          <Motor key={p.number} spec={spec} position={p.position} look={look('motors')} />
         )),
       )}
       {partGroup(
@@ -83,55 +82,47 @@ export function DroneModel({ spec, selectedPart, onPartClick }: DroneModelProps)
             spec={spec}
             position={[x, y + propCentreAboveArm, z]}
             spin={spin}
-            highlighted={selectedPart === 'props'}
+            look={look('props')}
           />
         )),
       )}
       {partGroup(
         'esc',
         <Lift liftMm={lift.esc}>
-          <Esc spec={spec} highlighted={selectedPart === 'esc'} />
+          <Esc spec={spec} look={look('esc')} />
         </Lift>,
       )}
       {partGroup(
         'fc',
         <Lift liftMm={lift.fc}>
-          <Fc spec={spec} highlighted={selectedPart === 'fc'} />
+          <Fc spec={spec} look={look('fc')} />
         </Lift>,
       )}
       {partGroup(
         'receiver',
-        <Receiver
-          spec={spec}
-          highlighted={selectedPart === 'receiver'}
-          rearBayLiftMm={lift.rearBay}
-        />,
+        <Receiver spec={spec} look={look('receiver')} rearBayLiftMm={lift.rearBay} />,
       )}
       {partGroup(
         'vtx',
         <Lift liftMm={lift.rearBay}>
-          <Vtx spec={spec} highlighted={selectedPart === 'vtx'} />
+          <Vtx spec={spec} look={look('vtx')} />
         </Lift>,
       )}
-      {partGroup('camera', <Camera spec={spec} highlighted={selectedPart === 'camera'} />)}
+      {partGroup('camera', <Camera spec={spec} look={look('camera')} />)}
       {partGroup(
         'strap',
         <Lift liftMm={lift.topPlate}>
-          <Strap spec={spec} highlighted={selectedPart === 'strap'} />
+          <Strap spec={spec} look={look('strap')} />
         </Lift>,
       )}
       {partGroup(
         'extras',
-        <Extras
-          spec={spec}
-          highlighted={selectedPart === 'extras'}
-          topPlateLiftMm={lift.topPlate}
-        />,
+        <Extras spec={spec} look={look('extras')} topPlateLiftMm={lift.topPlate} />,
       )}
       {partGroup(
         'battery',
         <Lift liftMm={lift.topPlate}>
-          <Battery spec={spec} highlighted={selectedPart === 'battery'} />
+          <Battery spec={spec} look={look('battery')} />
         </Lift>,
       )}
     </group>

@@ -151,7 +151,7 @@ segments: number): [x: number, z: number][]` around the origin, in travel order,
       towards the centre line (props in).
 - [ ] **Step 2:** Run; fail. Implement `SpinArcs` with drei `Line` in `COLOR.ink`, one arc + head
       per prop just above the prop disc, rendered by `DroneModel` only when `selectedPart ===
-  'props'`; radius, sweep and arrowhead size by eye (spec leaves them to the builder).
+'props'`; radius, sweep and arrowhead size by eye (spec leaves them to the builder).
 - [ ] **Step 3:** Look at `/parts/props` at 1280 and 390 px with impeccable (arcs legible, not
       clashing with the redline props); `pnpm check`.
 - [ ] **Step 4:** `feat(drone-model): show which way each propeller spins`

@@ -13,6 +13,8 @@ import { TurnToPart } from './TurnToPart';
 
 export interface DroneViewerProps {
   selectedPart: PartId | null;
+  /** Parts the open part connects to, from its lesson. */
+  connectedParts: ReadonlySet<PartId>;
   onPartClick: (part: PartId, event: ThreeEvent<MouseEvent>) => void;
   /** Called when a click hits empty space instead of a part. */
   onBackgroundClick: () => void;
@@ -24,6 +26,7 @@ export interface DroneViewerProps {
  */
 export default function DroneViewer({
   selectedPart,
+  connectedParts,
   onPartClick,
   onBackgroundClick,
 }: DroneViewerProps) {
@@ -45,7 +48,12 @@ export default function DroneViewer({
         <Bounds fit observe margin={1.08}>
           <FitBox spec={REFERENCE_5_INCH} />
         </Bounds>
-        <DroneModel spec={REFERENCE_5_INCH} selectedPart={selectedPart} onPartClick={onPartClick} />
+        <DroneModel
+          spec={REFERENCE_5_INCH}
+          selectedPart={selectedPart}
+          connectedParts={connectedParts}
+          onPartClick={onPartClick}
+        />
         <OrbitControls
           makeDefault
           enablePan={false}

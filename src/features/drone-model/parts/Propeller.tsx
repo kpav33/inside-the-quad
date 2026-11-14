@@ -4,6 +4,8 @@ import { PROP_HUB_HEIGHT_MM } from '../dimensions';
 import type { SpinDirection } from '../layout';
 import { bladeTwist } from '../propeller-geometry';
 
+import type { PartLook } from '../materials';
+
 import { PartMaterial } from './PartMaterial';
 
 interface PropellerProps {
@@ -11,7 +13,7 @@ interface PropellerProps {
   /** Centre of the hub. */
   position: [number, number, number];
   spin: SpinDirection;
-  highlighted: boolean;
+  look: PartLook;
 }
 
 const HUB_RADIUS_MM = 7;
@@ -19,11 +21,11 @@ const BLADE_WIDTH_MM = 12;
 const BLADE_THICKNESS_MM = 1.5;
 
 /** Hub plus evenly spaced blades, angled so each prop pushes air down in its spin direction. */
-export function Propeller({ spec, position, spin, highlighted }: PropellerProps) {
+export function Propeller({ spec, position, spin, look }: PropellerProps) {
   const hubRadius = mm(HUB_RADIUS_MM);
   const bladeLength = mm((spec.prop.diameterIn * INCH_MM) / 2) - hubRadius;
   const twist = bladeTwist(spin);
-  const material = <PartMaterial part="props" highlighted={highlighted} />;
+  const material = <PartMaterial part="props" look={look} />;
 
   return (
     <group position={position}>
