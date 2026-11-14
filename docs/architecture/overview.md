@@ -22,7 +22,8 @@ src/
     domain/         Part ids, sheet order, the drone spec, size classes and part quantities: plain
                     data, no React or three.js
     routing/        Page URLs over the History API (ADR 0004): routes, usePartRoute, PartLink
-    ui/             Generic UI building blocks (e.g. ErrorBoundary)
+    ui/             Generic UI building blocks (ErrorBoundary, drawn icons,
+                    usePrefersReducedMotion: follows the reduced-motion setting live)
   styles/           tokens.css (mirrors design/tokens.ts) and global.css
   test/             Test setup and helpers
 e2e/                Playwright end-to-end tests

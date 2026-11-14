@@ -195,7 +195,7 @@ The ramp is a fixed rem scale at ratio 1.2 (0.833, 1, 1.2, 1.44, 1.728, 2.488rem
 
 **The Two Voices Rule.** The drawing speaks in condensed caps; the teacher speaks in Atkinson. Never set a reading paragraph in condensed caps, and never set a label or value in the body face.
 
-**The Unbroken Value Rule.** A number is never split from its unit. Title-block spec values are each a no-wrap group joined by " · ", and copy uses U+2011 (non-breaking hyphen) for "5-inch".
+**The Unbroken Value Rule.** A number is never split from its unit. Title-block spec values are each a no-wrap group joined by " · ", and copy uses U+2011 (non-breaking hyphen) for "5-inch". Narrow-sheet exception: when a title block is under 20rem (in practice, enlarged text on a phone), values may wrap between items rather than push the page sideways.
 
 ## Layout
 
@@ -204,6 +204,12 @@ Spacing is a 7-step scale (0.25, 0.5, 0.75, 1, 1.5, 2, 3rem); touch targets are 
 **Wide (when the main area is at least 56rem wide, a container query, so enlarged text falls back to the stacked layout):** a two-column grid filling the viewport under a thin masthead: the drawing field on the left (flexible) and the sheet column on the right (20 to 36rem, and at most 44 % of the width so mid-size windows keep a two-column parts list), which scrolls on its own with a stable gutter. The drawing frame fills the field as a grid: the canvas (zone markers 1 to 4 along its top, A to C down its left edge, drawing hint at its lower right) fills the space above, and the parts list sits in its own row across the bottom.
 
 **Narrow:** a single scrolling column: masthead, a drawing frame of 40svh (min 15rem), the parts list full width, then the sheet. One finger scrolls the page over the drawing; two fingers turn it. The hint text switches to touch wording under `(hover: none) and (pointer: coarse)`.
+
+**Large or long text on narrow sheets:** the page never scrolls sideways. Headings and long words may break. Under 16rem of sheet (container queries in rem, so this applies to enlarged text, not normal-size phones) the numbered balloon sits above its heading, the footer's previous/next cells stack and the sheet heading drops to 1.44rem. The intro's size table scrolls inside its own frame as a last resort.
+
+**Masthead:** the wordmark and tagline on the left, the sections on the right (for now one link, "WHAT IS AN FPV DRONE?" with a leader arrow, Barlow 600 caps with a muted underline). It takes its own line when the masthead wraps on phones, and its 2.75rem tap target reaches into the header padding so the masthead keeps its height. While the intro is open the link has `aria-current="page"` and a 2px redline underline: it marks the current sheet.
+
+**Focus:** any sheet the app opens (from the parts list, a link, the masthead, the start link or the 3D model) takes focus at its heading, so keyboard focus never stays behind; closing returns it to where the sheet was opened from. A page load moves no focus. Browsers show no focus ring after a mouse click, so this is invisible to mouse users.
 
 **Parts list columns:** the parts list runs down two columns when the drawing field (a container query on the field, not the page) is at least 28rem wide, and three from 40rem, filled top to bottom, each column with its own headings and a hairline between them. Narrower fields keep one column. With a fine pointer the rows are 2.5rem; touch keeps 3rem.
 
@@ -295,7 +301,7 @@ The reference quad drawn as linework on carbon. Unselected parts: dark tonal fil
 - **Do** set labels, titles, values and numerals in Barlow Condensed caps, and reading text in Atkinson Hyperlegible at up to 68ch.
 - **Do** use structure as ornament: hairline frames, zone markers, numbered balloons, title-block cells.
 - **Do** keep a number with its unit (no-wrap groups, U+2011 non-breaking hyphen).
-- **Do** keep motion to 180ms ease-out state transitions, collapsed under reduced motion.
+- **Do** keep motion to 180ms ease-out state transitions, collapsed under reduced motion (followed live: switching it on mid-visit applies at once).
 
 ### Don't:
 
