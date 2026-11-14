@@ -29,3 +29,4 @@ blob-report/
 
 # Agent plan-execution workspaces
 .superpowers/
+scripts/photos/.cache/

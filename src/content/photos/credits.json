@@ -1,0 +1,111 @@
+{
+  "battery": {
+    "title": "File:Racing Drone.jpg",
+    "author": "Commanderbryce",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Racing_Drone.jpg",
+    "cropped": true,
+    "width": 1280,
+    "height": 950
+  },
+  "camera": {
+    "title": "File:Runcam Eagle black FPV camera with bracket.jpg",
+    "author": "Lucasbosch",
+    "licence": "CC BY-SA 3.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Runcam_Eagle_black_FPV_camera_with_bracket.jpg",
+    "cropped": false,
+    "width": 1280,
+    "height": 1168
+  },
+  "esc": {
+    "title": "File:Esc2.jpg",
+    "author": "1sfoerster",
+    "licence": "CC BY-SA 3.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Esc2.jpg",
+    "cropped": true,
+    "width": 1024,
+    "height": 320
+  },
+  "extras": {
+    "title": "File:MATEKSys F405-WSE FC.jpg",
+    "author": "SokilFPV",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:MATEKSys_F405-WSE_FC.jpg",
+    "cropped": true,
+    "width": 1127,
+    "height": 1170
+  },
+  "fc": {
+    "title": "File:AbuseMark AfroFlight Naze 32 Flight Controller rev5 white.jpg",
+    "author": "Lucasbosch",
+    "licence": "Public domain",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:AbuseMark_AfroFlight_Naze_32_Flight_Controller_rev5_white.jpg",
+    "cropped": true,
+    "width": 1280,
+    "height": 1300
+  },
+  "frame": {
+    "title": "File:FPV Quadrocopter.jpg",
+    "author": "Clicklabs",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:FPV_Quadrocopter.jpg",
+    "cropped": true,
+    "width": 1280,
+    "height": 819
+  },
+  "motors": {
+    "title": "File:FPV Quadrocopter.jpg",
+    "author": "Clicklabs",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:FPV_Quadrocopter.jpg",
+    "cropped": true,
+    "width": 1280,
+    "height": 1051
+  },
+  "props": {
+    "title": "File:ImpulseRC Alien 5″ FPV quad with components collage.jpg",
+    "author": "Lucasbosch",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:ImpulseRC_Alien_5%E2%80%B3_FPV_quad_with_components_collage.jpg",
+    "cropped": true,
+    "width": 1280,
+    "height": 937
+  },
+  "receiver": {
+    "title": "File:TBS Crossfire Nano receiver (XF nano).jpg",
+    "author": "SokilFPV",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:TBS_Crossfire_Nano_receiver_(XF_nano).jpg",
+    "cropped": false,
+    "width": 1280,
+    "height": 1010
+  },
+  "strap": {
+    "title": "File:Racing Drone.jpg",
+    "author": "Commanderbryce",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Racing_Drone.jpg",
+    "cropped": true,
+    "width": 1180,
+    "height": 1130
+  },
+  "vtx": {
+    "title": "File:TeamBlacksheep (TBS) Unify Pro HV 5.8 GHz RF video transmitter with RP SMA pigtail front.png",
+    "author": "Lucasbosch",
+    "licence": "CC BY-SA 3.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:TeamBlacksheep_(TBS)_Unify_Pro_HV_5.8_GHz_RF_video_transmitter_with_RP_SMA_pigtail_front.png",
+    "cropped": false,
+    "width": 1280,
+    "height": 341
+  }
+}
