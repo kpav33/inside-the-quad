@@ -66,12 +66,15 @@ export function PartExplorer() {
     document.getElementById(openSheet ? sheetTitleId(openSheet) : OVERVIEW_FOCUS_ID)?.focus();
   }, [cause, openSheet]);
 
+  // Any sheet the app opens takes focus at its heading, wherever it was opened from (the list, a
+  // link, the masthead, the 3D model), so keyboard focus never stays behind. Closing sets its own
+  // target. A page load moves no focus, and Back/Forward are handled above.
   useEffect(() => {
-    if (focusTarget.current) {
-      document.getElementById(focusTarget.current)?.focus();
-      focusTarget.current = null;
-    }
-  }, [openSheet]);
+    const target =
+      focusTarget.current ?? (cause === 'push' && openSheet ? sheetTitleId(openSheet) : null);
+    focusTarget.current = null;
+    if (target) document.getElementById(target)?.focus();
+  }, [cause, openSheet]);
 
   // After choosing a part, bring the start of its lesson into view if it is off screen: below the
   // fold on phones, or scrolled away in the desktop sheet column. A lesson address opened directly
