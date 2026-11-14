@@ -294,3 +294,43 @@ test('turning on reduced motion mid-visit makes the next change instant', async 
   // Easing the stack apart draws a dozen or more frames; an instant change draws one or two.
   expect((await drawn()) - before).toBeLessThanOrEqual(4);
 });
+
+const PART_PATHS = [
+  'frame',
+  'motors',
+  'props',
+  'esc',
+  'fc',
+  'battery',
+  'strap',
+  'receiver',
+  'camera',
+  'vtx',
+  'extras',
+];
+
+for (const viewport of [
+  { width: 1280, height: 720 },
+  { width: 390, height: 844 },
+]) {
+  test(`every part sheet shows its real photo, kept to a sensible height, at ${viewport.width} px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    for (const part of PART_PATHS) {
+      await page.goto(`/parts/${part}`);
+      const image = page.locator('figure.part-photo img');
+      await image.scrollIntoViewIfNeeded();
+      await expect
+        .poll(() => image.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth), {
+          message: `${part} photo loads`,
+        })
+        .toBeGreaterThan(0);
+      const { height, limit } = await image.evaluate((img) => ({
+        height: img.getBoundingClientRect().height,
+        limit: 22 * parseFloat(getComputedStyle(document.documentElement).fontSize),
+      }));
+      expect(height, part).toBeLessThanOrEqual(limit + 0.5);
+    }
+  });
+}

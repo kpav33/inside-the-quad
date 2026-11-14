@@ -430,3 +430,16 @@ describe('3D hover', () => {
     expect(document.querySelector('[data-hovered="true"]')).toBeNull();
   });
 });
+
+describe('real part photos', () => {
+  it('appear on part sheets only, not on the overview or the intro', async () => {
+    await renderExplorer();
+    expect(document.querySelector('.part-photo')).toBeNull();
+    window.history.pushState(null, '', '/intro');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+    expect(
+      await screen.findByRole('heading', { level: 2, name: 'What is an FPV drone?' }),
+    ).toBeInTheDocument();
+    expect(document.querySelector('.part-photo')).toBeNull();
+  });
+});
