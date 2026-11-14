@@ -10,6 +10,7 @@ src/
   content/          Teaching content as typed data
     lessons/        One Lesson per part, answering the four scope questions
     intro.ts        The intro sheet's copy, scene and size labels
+    photos/         One real photo per part: caption, alt text and credit (credits.json is generated)
   features/         One folder per feature; owns its components, hooks, logic and tests
     drone-model/    Procedural 3D parts (one component per part), built from a DroneSpec
     drone-viewer/   The 3D viewport: Canvas, camera fit to the outline, orbit controls (lazy loaded)
@@ -59,6 +60,11 @@ nginx/              Production server config (copied into the Docker image)
 - What the open part connects to comes from its lesson: `content/lessons/connections.ts` derives
   the set, the part explorer passes it to the viewer as a prop, and `drone-model/materials.ts`
   turns (part, open part, connected set) into a look. The 3D code never imports `content/`.
+- Real part photos are fetched by hand, not at build time: `scripts/photos/fetch-photos.mjs` reads
+  `manifest.json`, checks each Commons licence against the allowed free set, crops and writes WebP
+  files to `src/assets/photos/` and their credits to `content/photos/credits.json`. Both are
+  committed; `content/photos` joins them with captions and alt text, and the part explorer shows
+  them as hashed Vite assets, so a visitor's browser never contacts Wikimedia.
 - The part list is the accessible equivalent of clicking in 3D, so the canvas is hidden from
   assistive technology and everything still works if WebGL fails.
 

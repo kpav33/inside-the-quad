@@ -53,8 +53,9 @@ it work, what do the numbers mean, what is it connected to.
   start or continue. An intro sheet ("What is an FPV drone?", `/intro`) comes before sheet 1: FPV
   vs camera drones, the drone–radio–goggles system with its two links (drawn as a flat diagram),
   sizes drawn to scale, and why 5-inch is the reference. The overview offers it to newcomers.
-- Planned (see `docs/roadmap.md`): photos of the real parts (CC-licensed, with attribution), a
-  "how it all works together" simulator, the
+- A real photo of each part on its lesson sheet: one example of that kind of part, freely licensed
+  (CC BY, CC BY-SA, CC0 or public domain only, never non-commercial), credited, stored in the app.
+- Planned (see `docs/roadmap.md`): a "how it all works together" simulator, the
   gear you hold and wear, and a compatibility checker; later other drone sizes and types.
 - Content source of truth: `docs/product/scope.md`. Product recommendations, Betaflight tuning and
   flight training are out of scope.
@@ -73,7 +74,9 @@ it work, what do the numbers mean, what is it connected to.
 - Lesson content for frame, motors and propellers (`src/content/lessons/`), checked against the
   scope and real-world FPV facts.
 - Reference drone spec (`src/shared/domain/drone-spec.ts`).
-- No logo, imagery, testimonials, user numbers or press exist. Do not fabricate any.
+- No logo, testimonials, user numbers or press exist. Do not fabricate any. The only imagery is
+  the real part photos: real photographs from Wikimedia Commons, never shop, manufacturer or
+  AI-generated images.
 
 ## Product Principles
 
