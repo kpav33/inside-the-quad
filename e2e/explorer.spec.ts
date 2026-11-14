@@ -82,6 +82,21 @@ test('mouse: a faded part still opens its sheet', async ({ page }) => {
   await expect(page).toHaveURL(/\/parts\/battery$/);
 });
 
+test('mouse: hovering a part in 3D lights up its parts-list row', async ({ page }) => {
+  await page.goto('/');
+  const box = await canvasBox(page);
+  const row = page.getByRole('button', { name: 'Battery', exact: true });
+
+  await page.mouse.move(
+    box.x + box.width * POINTS.battery.x,
+    box.y + box.height * POINTS.battery.y,
+  );
+  await expect(row).toHaveAttribute('data-hovered', 'true');
+
+  await page.mouse.move(box.x + 4, box.y + 4);
+  await expect(page.locator('[data-hovered="true"]')).toHaveCount(0);
+});
+
 test('mouse: the open stack keeps every layer clickable', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'ESC', exact: true }).click();

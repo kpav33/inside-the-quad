@@ -365,11 +365,13 @@ a {
   transition: background-color var(--duration) var(--ease-out);
 }
 
-.part-list-row:hover {
+.part-list-row:hover,
+.part-list-row[data-hovered='true'] {
   background: color-mix(in srgb, var(--color-rule) 45%, transparent);
 }
 
-.part-list-row:hover .part-list-item {
+.part-list-row:hover .part-list-item,
+.part-list-row[data-hovered='true'] .part-list-item {
   border-color: var(--color-ink);
 }
 

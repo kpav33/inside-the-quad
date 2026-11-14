@@ -69,6 +69,23 @@ test.describe('phone touch', () => {
     expect(after.equals(before)).toBe(false);
   });
 
+  test('a tap never leaves a parts-list row lit as hovered', async ({ page }) => {
+    // Battery already open, so the tap changes no sheet that would clear a hover anyway.
+    await page.goto('/parts/battery');
+    await page.evaluate(() => {
+      window.scrollTo(0, 0);
+    });
+    const canvas = page.locator('canvas');
+    await expect(canvas).toBeVisible();
+    await page.waitForTimeout(800);
+    const box = await canvas.boundingBox();
+    if (!box) throw new Error('canvas has no box');
+
+    await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+    await page.waitForTimeout(300);
+    await expect(page.locator('[data-hovered="true"]')).toHaveCount(0);
+  });
+
   test('choosing a part brings its lesson onto the screen', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Motors', exact: true }).tap();

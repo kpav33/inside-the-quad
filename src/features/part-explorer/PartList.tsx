@@ -14,6 +14,8 @@ const ROWS_IN_THREE = Math.ceil(PART_IDS.length / 3);
 
 export interface PartListProps {
   selectedPart: PartId | null;
+  /** The part under the mouse in the 3D view: its row gets the hover look. */
+  hoveredPart: PartId | null;
   /** Parts whose lessons are marked as read: ticked after the name. */
   read: ReadonlySet<PartId>;
   /** Called with the pressed part; the parent decides whether that selects or deselects. */
@@ -25,7 +27,7 @@ export interface PartListProps {
  * fields split it into two or three columns (each with its own column headings) so the 3D view
  * keeps its height.
  */
-export function PartList({ selectedPart, read, onToggle }: PartListProps) {
+export function PartList({ selectedPart, hoveredPart, read, onToggle }: PartListProps) {
   const { columns } = UI.parts;
   const columnHeadings = (
     <>
@@ -71,6 +73,7 @@ export function PartList({ selectedPart, read, onToggle }: PartListProps) {
                   aria-pressed={selected}
                   aria-controls={selectedPart ? LESSON_PANEL_ID : undefined}
                   data-selected={selected}
+                  data-hovered={hoveredPart === part ? 'true' : undefined}
                   onClick={() => {
                     onToggle(part);
                   }}

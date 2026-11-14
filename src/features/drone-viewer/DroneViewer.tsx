@@ -17,6 +17,8 @@ export interface DroneViewerProps {
   /** Parts the open part connects to, from its lesson. */
   connectedParts: ReadonlySet<PartId>;
   onPartClick: (part: PartId, event: ThreeEvent<MouseEvent>) => void;
+  /** Called with the part under the mouse, and null when the mouse leaves it. */
+  onPartHover: (part: PartId | null) => void;
   /** Called when a click hits empty space instead of a part. */
   onBackgroundClick: () => void;
 }
@@ -29,6 +31,7 @@ export default function DroneViewer({
   selectedPart,
   connectedParts,
   onPartClick,
+  onPartHover,
   onBackgroundClick,
 }: DroneViewerProps) {
   return (
@@ -49,6 +52,7 @@ export default function DroneViewer({
           selectedPart={selectedPart}
           connectedParts={connectedParts}
           onPartClick={onPartClick}
+          onPartHover={onPartHover}
         />
         <OrbitControls
           makeDefault

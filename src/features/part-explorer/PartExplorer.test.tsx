@@ -8,14 +8,18 @@ import type { DroneViewerProps } from '@/features/drone-viewer/DroneViewer';
 import { PART_IDS } from '@/shared/domain/parts';
 import { PartLink } from '@/shared/routing';
 
-import { OVERVIEW_FOCUS_ID } from './ids';
+import { OVERVIEW_FOCUS_ID, partButtonId } from './ids';
 import { PartExplorer } from './PartExplorer';
 
 // WebGL is unavailable in jsdom: the viewer is replaced by buttons that call its props.
 const viewer = vi.hoisted(() => ({ shouldThrow: false }));
 
 vi.mock('@/features/drone-viewer/DroneViewer', () => ({
-  default: function DroneViewerStub({ onPartClick, onBackgroundClick }: DroneViewerProps) {
+  default: function DroneViewerStub({
+    onPartClick,
+    onBackgroundClick,
+    onPartHover,
+  }: DroneViewerProps) {
     if (viewer.shouldThrow) throw new Error('WebGL unavailable');
     const click = (delta: number) => {
       onPartClick('motors', { delta } as ThreeEvent<MouseEvent>);
@@ -40,6 +44,22 @@ vi.mock('@/features/drone-viewer/DroneViewer', () => ({
         </button>
         <button type="button" onClick={onBackgroundClick}>
           stub: background
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            onPartHover('motors');
+          }}
+        >
+          stub: hover motors
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            onPartHover(null);
+          }}
+        >
+          stub: hover nothing
         </button>
       </div>
     );
@@ -382,5 +402,31 @@ describe('PartExplorer', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('3D model couldn’t be loaded');
     await userEvent.click(screen.getByRole('button', { name: 'Frame' }));
     expect(lessonHeading('Frame')).toBeInTheDocument();
+  });
+});
+
+describe('3D hover', () => {
+  const motorsRow = () => {
+    const row = document.getElementById(partButtonId('motors'));
+    if (!row) throw new Error('no Motors row');
+    return row;
+  };
+
+  it("gives the hovered part's row the hover look, and clears it", async () => {
+    const user = userEvent.setup();
+    await renderExplorer();
+    await user.click(screen.getByRole('button', { name: 'stub: hover motors' }));
+    expect(motorsRow().dataset.hovered).toBe('true');
+    await user.click(screen.getByRole('button', { name: 'stub: hover nothing' }));
+    expect(document.querySelector('[data-hovered="true"]')).toBeNull();
+  });
+
+  it("clears the hover look when the hovered part's sheet opens", async () => {
+    const user = userEvent.setup();
+    await renderExplorer();
+    await user.click(screen.getByRole('button', { name: 'stub: hover motors' }));
+    await user.click(screen.getByRole('button', { name: 'stub: click motors' }));
+    expect(lessonHeading('Motors')).not.toBeNull();
+    expect(document.querySelector('[data-hovered="true"]')).toBeNull();
   });
 });

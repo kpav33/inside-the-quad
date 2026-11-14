@@ -1,5 +1,5 @@
 import type { ThreeEvent } from '@react-three/fiber';
-import { Suspense, useCallback, useEffect, useRef } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 
 import { connectedParts, LESSONS } from '@/content/lessons';
 import { overviewSpecs } from '@/content/overview';
@@ -116,6 +116,17 @@ export function PartExplorer() {
     };
   }, [closeLesson]);
 
+  // The part under the mouse in 3D, lit in the parts list. It belongs to the sheet it was hovered
+  // on: when another sheet opens, the row lets go until the mouse moves to a part again.
+  const [hover, setHover] = useState<{ part: PartId; sheet: SheetId | null } | null>(null);
+  const hoveredPart = hover?.sheet === openSheet ? hover.part : null;
+  const onPartHover = useCallback(
+    (part: PartId | null) => {
+      setHover(part ? { part, sheet: openSheet } : null);
+    },
+    [openSheet],
+  );
+
   const togglePart = (part: PartId) => {
     revealLesson.current = selectedPart !== part ? 'choose' : null;
     navigate(selectedPart === part ? null : part);
@@ -171,6 +182,7 @@ export function PartExplorer() {
                     selectedPart={selectedPart}
                     connectedParts={selectedPart ? connectedParts(selectedPart) : NO_PARTS}
                     onPartClick={onPartClick}
+                    onPartHover={onPartHover}
                     onBackgroundClick={clearSelection}
                   />
                 </Suspense>
@@ -181,7 +193,12 @@ export function PartExplorer() {
               <span className="drawing-hint-touch">{UI.viewer.touchHint}</span>
             </p>
           </div>
-          <PartList selectedPart={selectedPart} read={read} onToggle={togglePart} />
+          <PartList
+            selectedPart={selectedPart}
+            hoveredPart={hoveredPart}
+            read={read}
+            onToggle={togglePart}
+          />
         </div>
       </div>
       <div className="part-explorer-sheet">

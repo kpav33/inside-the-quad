@@ -1,6 +1,6 @@
 import { useCursor } from '@react-three/drei';
 import type { ThreeEvent } from '@react-three/fiber';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 
 import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
 import { isInsidePart, type PartId } from '@/shared/domain/parts';
@@ -29,15 +29,26 @@ export interface DroneModelProps {
   /** Parts the open part connects to: drawn in grey while everything else fades. */
   connectedParts: ReadonlySet<PartId>;
   onPartClick?: (part: PartId, event: ThreeEvent<MouseEvent>) => void;
+  /** Called with the part under a mouse pointer, and null when it leaves (never for touch). */
+  onPartHover?: (part: PartId | null) => void;
 }
 
 /**
  * The whole drone, built from a spec. Each kind of part is one clickable group. Selecting a board
  * under the top plate opens the frame like an exploded-view drawing.
  */
-export function DroneModel({ spec, selectedPart, connectedParts, onPartClick }: DroneModelProps) {
+export function DroneModel({
+  spec,
+  selectedPart,
+  connectedParts,
+  onPartClick,
+  onPartHover,
+}: DroneModelProps) {
   const [hovered, setHovered] = useState<PartId | null>(null);
   useCursor(hovered !== null);
+  useEffect(() => {
+    onPartHover?.(hovered);
+  }, [hovered, onPartHover]);
 
   const look = (part: PartId) => partLook(part, selectedPart, connectedParts);
   const placements = motorPlacements(spec);
@@ -53,7 +64,8 @@ export function DroneModel({ spec, selectedPart, connectedParts, onPartClick }: 
       }}
       onPointerOver={(event) => {
         event.stopPropagation();
-        setHovered(part);
+        // A tap's pointer is not a hover; it would leave the row lit after the finger lifts.
+        if (event.pointerType === 'mouse') setHovered(part);
       }}
       onPointerOut={() => {
         setHovered((current) => (current === part ? null : current));
