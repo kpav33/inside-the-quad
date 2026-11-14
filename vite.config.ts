@@ -18,7 +18,7 @@ export default defineConfig({
     environment: 'jsdom',
     restoreMocks: true,
     setupFiles: ['./src/test/setup.ts'],
-    include: ['src/**/*.test.{ts,tsx}'],
+    include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.mjs'],
     // Only tokens.css is processed, so its test can read the raw file.
     css: { include: [/tokens\.css/] },
     coverage: {
