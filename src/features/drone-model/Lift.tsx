@@ -1,8 +1,9 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import type { Group } from 'three';
 
 import { mm } from '@/shared/domain/drone-spec';
+import { usePrefersReducedMotion } from '@/shared/ui/usePrefersReducedMotion';
 
 import { stepLift } from './stack';
 
@@ -22,10 +23,7 @@ export function Lift({ liftMm, children }: LiftProps) {
   // Placed once at mount; after that only the frame loop moves the group.
   const [startY] = useState(() => mm(liftMm));
   const invalidate = useThree((state) => state.invalidate);
-  const reduceMotion = useMemo(
-    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-    [],
-  );
+  const reduceMotion = usePrefersReducedMotion();
 
   // The scene only draws on demand, so ask for a frame whenever the target changes.
   useEffect(() => {

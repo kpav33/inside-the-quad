@@ -8,19 +8,22 @@ export interface PartLinkProps {
   to: Page;
   id?: string | undefined;
   className?: string | undefined;
+  /** Marks the link as the page being shown (`aria-current="page"`). */
+  current?: boolean | undefined;
   /** Called on a click the app handles, just before it navigates. */
   onFollow?: ((to: Page) => void) | undefined;
   children: ReactNode;
 }
 
 /** A real link to a page: handled in the app on a plain click, by the browser otherwise. */
-export function PartLink({ to, id, className, onFollow, children }: PartLinkProps) {
+export function PartLink({ to, id, className, current, onFollow, children }: PartLinkProps) {
   const href = pagePath(to);
   return (
     <a
       id={id}
       href={href}
       className={className}
+      aria-current={current ? 'page' : undefined}
       onClick={(event) => {
         if (!isPlainLeftClick(event)) return;
         event.preventDefault();

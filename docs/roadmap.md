@@ -10,6 +10,7 @@ Status: `planned` · `in progress` · `in review` · `done`.
 | 02  | Design pass (visual design review)                                                                                                                                  | `feat/design-pass`           | done    |
 | 02b | Model that teaches: dimensions, callouts, front marker, spin arcs in 3D; drone fills the drawing field; zone markers used or removed; 3D hover mirrored in the list | —                            | planned |
 | 02c | Lookup and navigation: part URLs, next/previous, progress, onboarding; connection links name their target; no duplicated part name                                  | `feat/lookup-and-navigation` | done    |
+| 02d | Phones and keyboard: masthead intro link, focus follows the opened sheet, narrow sheets reflow with large or long text, live reduced motion                         | `feat/phones-and-keyboard`   | done    |
 | 03a | Power and control parts: ESC, flight controller, battery; exploded stack                                                                                            | `feat/power-and-control`     | done    |
 | 03b | Radio and video parts: receiver, camera, VTX and antennas, extras                                                                                                   | `feat/radio-and-video`       | done    |
 | 03c | Real parts: a photo of each part (CC-licensed, with attribution) beside its lesson                                                                                  | —                            | planned |

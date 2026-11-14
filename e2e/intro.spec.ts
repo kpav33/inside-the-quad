@@ -25,7 +25,7 @@ test.describe('the intro sheet', () => {
   }) => {
     await page.goto('/');
     await expect(page.getByText('New to FPV? Start here.')).toBeVisible();
-    await page.getByRole('link', { name: 'What is an FPV drone?' }).click();
+    await page.locator('#overview-start').click();
     await expect(introHeading(page)).toBeFocused();
     await page.getByRole('link', { name: /^Next.*Frame · sheet 1/ }).click();
     await expect(lessonHeading(page, 'Frame')).toBeFocused();
@@ -35,14 +35,14 @@ test.describe('the intro sheet', () => {
 
   test('Back retraces overview, intro and sheet 1 with focus', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('link', { name: 'What is an FPV drone?' }).click();
+    await page.locator('#overview-start').click();
     await page.getByRole('link', { name: /^Next.*Frame · sheet 1/ }).click();
     await expect(lessonHeading(page, 'Frame')).toBeVisible();
 
     await page.goBack();
     await expect(introHeading(page)).toBeFocused();
     await page.goBack();
-    await expect(page.getByRole('link', { name: 'What is an FPV drone?' })).toBeFocused();
+    await expect(page.locator('#overview-start')).toBeFocused();
   });
 
   test('leaving an open stack for the intro clears the selection', async ({ page }) => {
@@ -148,4 +148,16 @@ test.describe('the intro drawings', () => {
       }
     });
   }
+});
+
+test('the masthead link is on a phone’s first screen and opens the intro', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await page.goto('/');
+  const link = page
+    .getByRole('navigation', { name: 'Sections' })
+    .getByRole('link', { name: 'What is an FPV drone?' });
+  await expect(link).toBeInViewport();
+  await link.press('Enter');
+  await expect(introHeading(page)).toBeFocused();
+  await expect(link).toHaveAttribute('aria-current', 'page');
 });

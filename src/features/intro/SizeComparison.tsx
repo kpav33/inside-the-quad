@@ -87,24 +87,27 @@ export function SizeComparison() {
         ))}
       </svg>
 
-      <table className="size-table" aria-label={sizes.label}>
-        <thead>
-          <tr>
-            <th scope="col">{sizes.columns.size}</th>
-            <th scope="col">{sizes.columns.prop}</th>
-            <th scope="col">{sizes.columns.frame}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {SIZE_CLASSES.map((sizeClass) => (
-            <tr key={sizeClass.id}>
-              <th scope="row">{sizes.names[sizeClass.id]}</th>
-              <td>{formatRangeMm(sizeClass.propMm)}</td>
-              <td>{formatRangeMm(sizeClass.frameMm)}</td>
+      {/* As a last resort on very narrow screens, the table scrolls inside its frame. */}
+      <div className="size-table-frame">
+        <table className="size-table" aria-label={sizes.label}>
+          <thead>
+            <tr>
+              <th scope="col">{sizes.columns.size}</th>
+              <th scope="col">{sizes.columns.prop}</th>
+              <th scope="col">{sizes.columns.frame}</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {SIZE_CLASSES.map((sizeClass) => (
+              <tr key={sizeClass.id}>
+                <th scope="row">{sizes.names[sizeClass.id]}</th>
+                <td>{formatRangeMm(sizeClass.propMm)}</td>
+                <td>{formatRangeMm(sizeClass.frameMm)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </figure>
   );
 }

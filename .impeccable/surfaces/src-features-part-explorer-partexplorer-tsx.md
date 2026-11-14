@@ -18,7 +18,9 @@ previous/next sheet cells, connection links set as "see sheet" references, read 
 parts list, and a start/continue link on the overview. Section 04 added the intro sheet ("What is
 an FPV drone?") before sheet 1, in the same sheet column with the drone still in view, with two
 flat SVG drawings (the system scene and a size comparison to scale) and an overview start block
-that offers it to newcomers.
+that offers it to newcomers. Section 02d added the masthead's first section link (the intro), moved
+focus into every sheet the app opens, let narrow sheets reflow with enlarged or longer text, and
+made reduced motion apply live.
 
 Physical scene: a beginner at a desk or workbench, often in the evening under a bench lamp, laptop
 or phone beside loose parts and a soldering iron. That forces a dark ground.

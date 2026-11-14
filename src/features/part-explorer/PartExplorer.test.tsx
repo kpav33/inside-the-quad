@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { DroneViewerProps } from '@/features/drone-viewer/DroneViewer';
 
 import { PART_IDS } from '@/shared/domain/parts';
+import { PartLink } from '@/shared/routing';
 
 import { OVERVIEW_FOCUS_ID } from './ids';
 import { PartExplorer } from './PartExplorer';
@@ -338,6 +339,39 @@ describe('PartExplorer', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Clear progress' }));
     expect(window.localStorage.getItem(INTRO_KEY)).toBeNull();
     expect(window.localStorage.getItem(READ_KEY)).toBe('[]');
+  });
+
+  it('moves focus into a lesson opened from the parts list with the keyboard', async () => {
+    await renderExplorer();
+    screen.getByRole('button', { name: 'Frame' }).focus();
+    await userEvent.keyboard('{Enter}');
+    expect(lessonHeading('Frame')).toHaveFocus();
+  });
+
+  it('moves focus into a lesson opened from the 3D model, and back to its row on Escape', async () => {
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'stub: click motors' }));
+    expect(lessonHeading('Motors')).toHaveFocus();
+    await userEvent.keyboard('{Escape}');
+    expect(screen.getByRole('button', { name: 'Motors' })).toHaveFocus();
+  });
+
+  it('leaves focus alone when a lesson address is loaded directly', async () => {
+    window.history.replaceState(null, '', '/parts/vtx');
+    await renderExplorer();
+    expect(document.body).toHaveFocus();
+  });
+
+  it('moves focus into the intro when a link outside the explorer opens it', async () => {
+    render(
+      <>
+        <PartLink to="intro">outside link</PartLink>
+        <PartExplorer />
+      </>,
+    );
+    await screen.findByRole('button', { name: 'stub: click motors' });
+    await userEvent.click(screen.getByRole('link', { name: 'outside link' }));
+    expect(introHeading()).toHaveFocus();
   });
 
   it('keeps the part list and lessons working when the 3D viewer fails', async () => {

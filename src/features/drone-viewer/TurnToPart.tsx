@@ -1,8 +1,9 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import type { Vector3 } from 'three';
 
 import type { PartId } from '@/shared/domain/parts';
+import { usePrefersReducedMotion } from '@/shared/ui/usePrefersReducedMotion';
 
 import { partView, stepView, type View, viewFromPosition, viewToPosition } from './part-views';
 
@@ -26,10 +27,7 @@ export function TurnToPart({ part }: { part: PartId | null }) {
   const camera = useThree((state) => state.camera);
   const invalidate = useThree((state) => state.invalidate);
   const goal = useRef<View | null>(null);
-  const reduceMotion = useMemo(
-    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-    [],
-  );
+  const reduceMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     goal.current = partView(part);

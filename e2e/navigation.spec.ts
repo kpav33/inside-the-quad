@@ -30,7 +30,7 @@ test.describe('part addresses', () => {
 
     await page.goBack();
     await expect(lessonHeading(page, 'Frame')).toBeHidden();
-    await expect(page.getByRole('link', { name: 'What is an FPV drone?' })).toBeFocused();
+    await expect(page.locator('#overview-start')).toBeFocused();
 
     await page.goForward();
     await expect(lessonHeading(page, 'Frame')).toBeFocused();
@@ -58,7 +58,7 @@ test.describe('sheets and progress', () => {
       await page.getByRole('link', { name: /^Next/ }).click();
     }
     await expect(page).toHaveURL(/\/$/);
-    await expect(page.getByRole('link', { name: 'What is an FPV drone?' })).toBeFocused();
+    await expect(page.locator('#overview-start')).toBeFocused();
   });
 
   test('a lesson marked as read stays read after a reload', async ({ page }) => {
