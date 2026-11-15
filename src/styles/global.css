@@ -243,6 +243,151 @@ a {
   pointer-events: none;
 }
 
+/* The moves sheet's motor balloons: number and speed, beside each motor. */
+.motor-pins {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.motor-pin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-2) 0 0;
+  border: 1px solid var(--color-rule-strong);
+  border-radius: 999px;
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.motor-pin-number {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-right: 1px solid var(--color-rule-strong);
+  font-weight: 700;
+}
+
+/* The motors working harder for the move are in redline; the slower ones go quiet. */
+.motor-pin[data-state='up'] {
+  border-color: var(--color-accent);
+}
+
+.motor-pin[data-state='up'] .motor-pin-number {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-ground);
+}
+
+.motor-pin[data-state='down'] {
+  color: var(--color-muted);
+}
+
+/* The moves sheet's sticks: a mode 2 radio's two gimbals in the drawing field's lower corners. */
+.sticks {
+  --stick-size: 5.5rem;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.stick {
+  position: absolute;
+  bottom: var(--space-4);
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+}
+
+.stick[data-side='left'] {
+  left: var(--space-4);
+}
+
+.stick[data-side='right'] {
+  right: var(--space-4);
+}
+
+.stick-pad {
+  position: relative;
+  width: var(--stick-size);
+  height: var(--stick-size);
+  border: 1px solid var(--color-rule-strong);
+  background: color-mix(in srgb, var(--color-ground) 82%, transparent);
+  cursor: grab;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+}
+
+.stick-pad:active {
+  cursor: grabbing;
+}
+
+/* The pad shows focus for whichever of its two sliders has it. */
+.stick-pad:has(:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Centre lines, like a gimbal's travel marked on a drawing. */
+.stick-cross {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(var(--color-rule-strong), var(--color-rule-strong)) center / 1px 100% no-repeat,
+    linear-gradient(var(--color-rule-strong), var(--color-rule-strong)) center / 100% 1px no-repeat;
+}
+
+/* The focused axis' line is drawn in ink, so a keyboard user sees which way the arrows move it. */
+.stick-pad:has(.stick-axis[aria-orientation='vertical']:focus-visible) .stick-cross {
+  background:
+    linear-gradient(var(--color-ink), var(--color-ink)) center / 1px 100% no-repeat,
+    linear-gradient(var(--color-rule-strong), var(--color-rule-strong)) center / 100% 1px no-repeat;
+}
+
+.stick-pad:has(.stick-axis[aria-orientation='horizontal']:focus-visible) .stick-cross {
+  background:
+    linear-gradient(var(--color-rule-strong), var(--color-rule-strong)) center / 1px 100% no-repeat,
+    linear-gradient(var(--color-ink), var(--color-ink)) center / 100% 1px no-repeat;
+}
+
+.stick-thumb {
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--color-ink);
+  border-radius: 50%;
+  background: var(--color-sheet);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.stick-label {
+  max-width: var(--stick-size);
+  text-align: center;
+  overflow-wrap: anywhere;
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 500;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+
 .drawing-zones {
   position: absolute;
   inset: 0;
@@ -1273,6 +1418,86 @@ a.lesson-sheet-link:hover {
   }
 }
 
+/* Stacked, on the moves sheet: the drawing and its sticks stay pinned at the top while the steps
+   scroll under them, so the drone is in view while reading and when a step's demo plays. The
+   parts list isn't needed on this sheet and stays out of the pinned area. */
+@container main (max-width: 55.9375rem) {
+  .part-explorer[data-sheet='moves'] {
+    /* In px and vw, not rem: with enlarged text the drawing and sticks keep their size, so the
+       steps keep most of the screen to be read in. */
+    --moves-canvas: max(46svh, 240px);
+    --pinned-drawing: calc(var(--moves-canvas) + 2 * var(--space-3));
+    --phone-stick: min(4.5rem, 24vw);
+    /* Below the drone, a band for the sticks and their labels, so they never cover it. */
+    --stick-band: calc(var(--phone-stick) + 2.75rem);
+  }
+
+  .part-explorer[data-sheet='moves'] .drawing-canvas {
+    height: var(--moves-canvas);
+    min-height: 0;
+  }
+
+  .part-explorer[data-sheet='moves'] .drone-viewer {
+    height: calc(100% - var(--stick-band));
+  }
+
+  .part-explorer[data-sheet='moves'] .sticks {
+    --stick-size: var(--phone-stick);
+  }
+
+  /* Both pads start just under the drone's area, level with each other whatever their labels do. */
+  .part-explorer[data-sheet='moves'] .stick {
+    top: calc(100% - var(--stick-band) + var(--space-2));
+    bottom: auto;
+    width: var(--stick-size);
+  }
+
+  /* The pads' labels repeat the sliders' names (which grow with the text); here they stay small
+     so two sticks always fit side by side under the drone. */
+  .part-explorer[data-sheet='moves'] .stick-label {
+    font-size: min(var(--step--1), 3.4vw);
+  }
+
+  .part-explorer[data-sheet='moves'] .stick[data-side='left'] {
+    left: var(--space-2);
+  }
+
+  .part-explorer[data-sheet='moves'] .stick[data-side='right'] {
+    right: var(--space-2);
+  }
+
+  .part-explorer[data-sheet='moves'] .part-explorer-field {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: var(--space-3) min(var(--space-4), 16px);
+    background: var(--color-ground);
+  }
+
+  /* Margins in px too, so larger text never squeezes the sticks together. */
+  .part-explorer[data-sheet='moves'] .part-explorer-viewer {
+    inset: min(var(--space-5), 24px);
+  }
+
+  .part-explorer[data-sheet='moves'] .part-list {
+    display: none;
+  }
+
+  /* Only the drawing is pinned here: pinning the step controls under it too would leave no room
+     to read with larger text. What takes focus or comes into view keeps clear of the drawing. */
+  .part-explorer[data-sheet='moves'] .path-controls {
+    position: static;
+  }
+
+  .part-explorer[data-sheet='moves'] .path-controls::before {
+    display: none;
+  }
+
+  .part-explorer[data-sheet='moves'] .part-explorer-sheet :is(button, a, input, h2, .path-stop) {
+    scroll-margin-top: calc(var(--pinned-drawing) + var(--space-2));
+  }
+}
+
 /* Wide: drawing field left, sheet column right, both filling the viewport. A container query in
    rem (not a viewport media query) so larger text falls back to the stacked layout. */
 @container main (min-width: 56rem) {
@@ -1606,4 +1831,9 @@ a.lesson-sheet-link:hover {
     align-items: flex-start;
     text-align: start;
   }
+}
+
+/* On the moves sheet the drawing is for flying: clicking a part opens nothing, so its hint goes. */
+.part-explorer[data-sheet='moves'] .drawing-hint {
+  display: none;
 }

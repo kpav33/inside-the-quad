@@ -23,7 +23,11 @@ only. Section 05a added a second chapter, How it works together, with three path
 Power, Video, numbered 1–3; the footer marks the chapter crossing): the same sheet frame with a
 chapter title block, a path switcher, step controls and numbered stops, while the drawing opens the
 frame, lights the current stop and draws a redline leader from part to part with numbered
-balloons over the canvas (see DESIGN.md: Path Sheet, Path Leader). Section 02c
+balloons over the canvas (see DESIGN.md: Path Sheet, Path Leader). Section 05b added sheet 4 of
+that chapter, How a quad moves: the path sheet's frame with five steps and Show me, Gust and Level
+in the step controls; the drawing flies the drone from two stick pads in its lower corners, with a
+motor balloon per motor (see DESIGN.md: Stick Pad, Motor Readout). On phones the drawing is pinned
+above the steps with a band for the sticks. Section 02c
 added lookup and navigation: each lesson has its own URL, a lesson footer with Mark as read and
 previous/next sheet cells, connection links set as "see sheet" references, read checks in the
 parts list, and a start/continue link on the overview. Section 04 added the intro sheet ("What is

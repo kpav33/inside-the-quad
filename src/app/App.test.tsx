@@ -42,4 +42,12 @@ describe('App', () => {
     expect(link).toHaveAttribute('aria-current', 'page');
     expect(screen.getByRole('heading', { level: 2, name: 'Control path' })).toHaveFocus();
   });
+
+  it('marks How it works together current on the moves sheet', () => {
+    window.history.replaceState(null, '', '/moves');
+    render(<App />);
+    const nav = screen.getByRole('navigation', { name: 'Sections' });
+    const link = within(nav).getByRole('link', { name: 'How it works together' });
+    expect(link).toHaveAttribute('aria-current', 'page');
+  });
 });

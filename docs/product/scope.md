@@ -146,7 +146,8 @@ Each part gets its own lesson. Every lesson answers the same four questions:
 ## Module 3 — How it all works together (the simulator)
 
 Built in three sections: **05a** the three paths (done as path sheets on the drawing), **05b** how
-a quad moves (virtual sticks, motor speeds, the gyro loop), **05c** "what if".
+a quad moves (done as a guided sheet with virtual sticks: acro, motor speeds, a gust and the gyro
+loop), **05c** "what if".
 
 The centerpiece. Three animated "paths" through the 3D drone:
 

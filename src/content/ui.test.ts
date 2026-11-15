@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { PART_IDS } from '@/shared/domain/parts';
 
-import { PART_LABELS, UI } from './ui';
+import { PART_LABELS, sheetName, UI } from './ui';
 
 function strings(value: unknown): string[] {
   if (typeof value === 'string') return [value];
@@ -27,6 +27,10 @@ describe('interface text', () => {
 
   it('labels every part', () => {
     for (const id of PART_IDS) expect(PART_LABELS[id].trim()).not.toBe('');
+  });
+
+  it('names the moves sheet', () => {
+    expect(sheetName('moves')).toBe('How a quad moves');
   });
 
   it('has no empty strings', () => {

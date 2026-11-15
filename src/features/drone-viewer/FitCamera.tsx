@@ -3,7 +3,13 @@ import { useLayoutEffect, useRef } from 'react';
 import type { Camera, Vector3 } from 'three';
 
 import { FIT_VIEWS, ZOOM_RANGE } from './fit';
-import { DEFAULT_VIEW, viewFromPosition, viewToPosition } from './part-views';
+import {
+  DEFAULT_VIEW,
+  MOVES_VIEW,
+  type View,
+  viewFromPosition,
+  viewToPosition,
+} from './part-views';
 import { type DroneFit, useDroneFit } from './useDroneFit';
 
 /** The camera parts of OrbitControls this file uses. */
@@ -20,11 +26,17 @@ interface Controls {
  * direction's fit changed, so the visitor's angle and zoom both survive a resize. The zoom limits
  * span every view the camera turns to.
  */
-function applyFit(camera: Camera, controls: Controls, fit: DroneFit, previous: DroneFit | null) {
+function applyFit(
+  camera: Camera,
+  controls: Controls,
+  fit: DroneFit,
+  previous: DroneFit | null,
+  start: View,
+) {
   const [cx, cy, cz] = fit.centre;
   controls.target.set(cx, cy, cz);
   if (previous === null) {
-    const [x, y, z] = viewToPosition(DEFAULT_VIEW, fit.distanceFor(DEFAULT_VIEW));
+    const [x, y, z] = viewToPosition(start, fit.distanceFor(start));
     camera.position.set(cx + x, cy + y, cz + z);
   } else {
     const offset = camera.position.clone().sub(controls.target);
@@ -40,21 +52,25 @@ function applyFit(camera: Camera, controls: Controls, fit: DroneFit, previous: D
 
 /**
  * Frames the drone so it fills the canvas: from the starting view on load, and on every resize by
- * rescaling the camera's distance for the direction it faces.
+ * rescaling the camera's distance for the direction it faces. With `sphere`, the drone fits at
+ * any attitude (the moves sheet).
  */
-export function FitCamera() {
+export function FitCamera({ sphere = false }: { sphere?: boolean }) {
   const controls = useThree((state) => state.controls) as unknown as Controls | null;
   const camera = useThree((state) => state.camera);
   const invalidate = useThree((state) => state.invalidate);
-  const fit = useDroneFit();
-  const previous = useRef<DroneFit | null>(null);
+  const fit = useDroneFit(sphere);
+  const previous = useRef<{ fit: DroneFit; sphere: boolean } | null>(null);
 
   useLayoutEffect(() => {
     if (!controls) return;
-    applyFit(camera, controls, fit, previous.current);
-    previous.current = fit;
+    // Opening or leaving the moves sheet starts again from that sheet's starting view: on the
+    // moves sheet, from behind and above, as a pilot sees the drone.
+    const last = previous.current?.sphere === sphere ? previous.current.fit : null;
+    applyFit(camera, controls, fit, last, sphere ? MOVES_VIEW : DEFAULT_VIEW);
+    previous.current = { fit, sphere };
     invalidate();
-  }, [controls, camera, fit, invalidate]);
+  }, [controls, camera, fit, sphere, invalidate]);
 
   return null;
 }

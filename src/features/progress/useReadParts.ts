@@ -31,7 +31,7 @@ export interface ReadParts {
   clear: () => void;
 }
 
-/** The part and path sheets the learner has marked as read, kept in this browser only. */
+/** The numbered sheets the learner has marked as read, kept in this browser only. */
 export function useReadParts(): ReadParts {
   const [read, setRead] = useState(load);
 

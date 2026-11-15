@@ -10,15 +10,18 @@ import { DroneViewer } from '@/features/drone-viewer';
 import type { DroneViewerProps } from '@/features/drone-viewer/DroneViewer';
 import { useIntroRead, useReadParts } from '@/features/progress';
 import { isInsidePart, isPartId, type PartId } from '@/shared/domain/parts';
+import { MOVES_SHEET } from '@/shared/domain/moves';
 import { isPathId, type PathId } from '@/shared/domain/paths';
 import type { SheetId } from '@/shared/domain/sheets';
 import { type Page, usePartRoute } from '@/shared/routing';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
+import { Sticks } from '@/features/flight';
 
 import { isDeliberateClick } from './clicks';
 import {
   INTRO_TITLE_ID,
   LESSON_PANEL_ID,
+  MOVES_TITLE_ID,
   lessonTitleId,
   OVERVIEW_FOCUS_ID,
   partButtonId,
@@ -26,10 +29,12 @@ import {
 } from './ids';
 import { IntroPanel } from './IntroPanel';
 import { LessonPanel } from './LessonPanel';
+import { MovesPanel } from './MovesPanel';
 import { OverviewStart } from './OverviewStart';
 import { PathPanel } from './PathPanel';
 import { PartList } from './PartList';
 import { TitleBlock } from './TitleBlock';
+import { useMovesSheet } from './useMovesSheet';
 import { usePathStep } from './usePathStep';
 
 /** Drawing-frame zone markers, as on a technical drawing's border. */
@@ -82,12 +87,27 @@ function pathDrawing(path: PathContent, step: number): Drawing {
   };
 }
 
+/** The moves sheet's drawing: the closed drone in its plain look, flying (the flight is added). */
+const MOVES_DRAWING: Drawing = {
+  openParts: NO_PARTS,
+  connectedParts: NO_PARTS,
+  exploded: false,
+  turnTo: null,
+  leader: null,
+};
+
 /** Element id to focus after the next render, so keyboard focus never falls back to the page. */
 type FocusTarget = string | null;
 
 /** The heading of a sheet, which takes focus when the sheet opens. */
 const sheetTitleId = (sheet: SheetId) =>
-  sheet === 'intro' ? INTRO_TITLE_ID : isPathId(sheet) ? pathTitleId(sheet) : lessonTitleId(sheet);
+  sheet === 'intro'
+    ? INTRO_TITLE_ID
+    : sheet === MOVES_SHEET
+      ? MOVES_TITLE_ID
+      : isPathId(sheet)
+        ? pathTitleId(sheet)
+        : lessonTitleId(sheet);
 
 /**
  * Lets the user pick a drone part in the 3D view or the part list, and shows its lesson.
@@ -97,9 +117,12 @@ export function PartExplorer() {
   const { route, unknownSlug, cause, navigate, replaceStep } = usePartRoute();
   const selectedPart = route.kind === 'part' ? route.part : null;
   const openPath = route.kind === 'path' ? PATHS[route.path] : null;
-  // The sheet in the sheet column: a part's lesson, the intro, a path, or none (the overview).
+  const movesOpen = route.kind === 'moves';
+  const moves = useMovesSheet(movesOpen, movesOpen ? route.step - 1 : 0, replaceStep);
+  // The sheet in the sheet column: a part's lesson, the intro, a path, how a quad moves, or none
+  // (the overview).
   const openSheet: SheetId | null =
-    route.kind === 'intro' ? 'intro' : (openPath?.id ?? selectedPart);
+    route.kind === 'intro' ? 'intro' : movesOpen ? MOVES_SHEET : (openPath?.id ?? selectedPart);
   // A path's step is in its address (from 1); one past the end shows the last stop.
   const stopCount = openPath?.stops.length ?? 0;
   const addressStep = route.kind === 'path' ? route.step - 1 : 0;
@@ -173,8 +196,7 @@ export function PartExplorer() {
   const closeLesson = useCallback(() => {
     if (!openSheet) return;
     // A part goes back to its row in the parts list; the intro and paths have none.
-    focusTarget.current =
-      openSheet === 'intro' || isPathId(openSheet) ? OVERVIEW_FOCUS_ID : partButtonId(openSheet);
+    focusTarget.current = isPartId(openSheet) ? partButtonId(openSheet) : OVERVIEW_FOCUS_ID;
     navigate(null);
   }, [openSheet, navigate]);
 
@@ -236,7 +258,8 @@ export function PartExplorer() {
   };
 
   const onPartClick = (part: PartId, event: ThreeEvent<MouseEvent>) => {
-    if (!isDeliberateClick(event.delta)) return;
+    // On the moves sheet the drawing is for flying: a click opens nothing.
+    if (movesOpen || !isDeliberateClick(event.delta)) return;
     // On a path sheet the drawing belongs to the path: a part on it opens its stop, a part off it
     // does nothing. Lessons are one link away in the stop list.
     if (openPath) {
@@ -253,19 +276,22 @@ export function PartExplorer() {
   // A click on the empty 3D background clears a selected part; the intro stays open, so the
   // drone can be turned while reading it.
   const clearSelection = () => {
+    if (movesOpen) return;
     if (selectedPart) navigate(null);
   };
 
   return (
-    <div className="part-explorer">
+    <div className="part-explorer" data-sheet={movesOpen ? MOVES_SHEET : undefined}>
       <p className="visually-hidden" aria-live="polite" data-testid="explorer-announcer">
         {openSheet === 'intro'
           ? UI.explorer.introOpened
           : openPath
             ? UI.explorer.pathOpened(openPath.title)
-            : selectedPart
-              ? UI.explorer.opened(PART_LABELS[selectedPart])
-              : ''}
+            : movesOpen
+              ? UI.explorer.pathOpened(UI.moves.title)
+              : selectedPart
+                ? UI.explorer.opened(PART_LABELS[selectedPart])
+                : ''}
       </p>
       <div className="part-explorer-field">
         <div className="drawing-frame">
@@ -286,14 +312,19 @@ export function PartExplorer() {
               <ErrorBoundary fallback={viewerFallback}>
                 <Suspense fallback={<p role="status">{UI.viewer.loading}</p>}>
                   <DroneViewer
-                    {...(openPath && currentStop
-                      ? pathDrawing(openPath, pathStep.step)
-                      : partDrawing(selectedPart))}
+                    {...(movesOpen
+                      ? MOVES_DRAWING
+                      : openPath && currentStop
+                        ? pathDrawing(openPath, pathStep.step)
+                        : partDrawing(selectedPart))}
+                    flight={moves.flight}
                     onPartClick={onPartClick}
                     onPartHover={onPartHover}
                     onBackgroundClick={clearSelection}
                   />
                 </Suspense>
+                {/* Inside the boundary: if the 3D view fails, the sticks go with it. */}
+                {moves.flight && <Sticks flight={moves.flight} />}
               </ErrorBoundary>
             </div>
             <p className="drawing-hint" aria-hidden="true">
@@ -310,7 +341,20 @@ export function PartExplorer() {
         </div>
       </div>
       <div className="part-explorer-sheet">
-        {openPath ? (
+        {movesOpen ? (
+          <MovesPanel
+            flight={moves.flight}
+            step={moves.step}
+            read={read.has(MOVES_SHEET)}
+            onStep={moves.goTo}
+            onShowMe={moves.showMe}
+            onClose={closeLesson}
+            onToggleRead={() => {
+              toggleRead(MOVES_SHEET);
+            }}
+            onFollowLink={followLink}
+          />
+        ) : openPath ? (
           <PathPanel
             path={openPath}
             step={pathStep.step}

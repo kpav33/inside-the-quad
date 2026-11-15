@@ -1,15 +1,15 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 import type { PathContent, PathStop } from '@/content/paths';
 import { PART_LABELS, UI } from '@/content/ui';
-import { PATH_IDS } from '@/shared/domain/paths';
 import { chapterCount, sheetNumber } from '@/shared/domain/sheets';
 import { type Page, PartLink } from '@/shared/routing';
-import { usePrefersReducedMotion } from '@/shared/ui/usePrefersReducedMotion';
 
+import { ChapterSwitcher } from './ChapterSwitcher';
 import { LESSON_PANEL_ID, pathTitleId } from './ids';
 import { SheetFooter } from './SheetFooter';
 import { TitleBlock } from './TitleBlock';
+import { useStepScroll } from './useStepScroll';
 
 export interface PathPanelProps {
   path: PathContent;
@@ -81,22 +81,7 @@ export function PathPanel({
   const titleId = pathTitleId(path.id);
   const list = useRef<HTMLOListElement>(null);
   const controls = useRef<HTMLDivElement>(null);
-  const reduceMotion = usePrefersReducedMotion();
-  // When the step changes on the same path (a step button, Play, a click on the drawing), bring the
-  // new stop into view if it isn't. Opening a sheet doesn't scroll: its heading takes focus.
-  const shown = useRef({ path: path.id, step });
-  useEffect(() => {
-    const before = shown.current;
-    shown.current = { path: path.id, step };
-    if (before.path !== path.id || before.step === step) return;
-    const current = list.current?.querySelector<HTMLElement>('[aria-current="step"]');
-    // Not every environment can scroll an element into view (jsdom can't).
-    if (typeof current?.scrollIntoView !== 'function') return;
-    // Leave room for the step controls pinned at the top, so the stop isn't tucked under them.
-    const pinned = controls.current?.offsetHeight ?? 0;
-    current.style.scrollMarginTop = `${String(pinned + 8)}px`;
-    current.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
-  }, [path.id, step, reduceMotion]);
+  useStepScroll(list, controls, path.id, step);
   const { stops } = path;
   const current = stops[step];
   const last = stops.length - 1;
@@ -122,19 +107,7 @@ export function PathPanel({
         ]}
       />
 
-      <nav className="path-switcher" aria-label={t.switcherLabel}>
-        {PATH_IDS.map((id) => (
-          <PartLink
-            key={id}
-            to={id}
-            className="path-switcher-link"
-            current={id === path.id}
-            onFollow={onFollowLink}
-          >
-            {t.short[id]}
-          </PartLink>
-        ))}
-      </nav>
+      <ChapterSwitcher open={path.id} onFollowLink={onFollowLink} />
 
       <p className="lesson-lead path-lead">{path.lead}</p>
 

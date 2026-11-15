@@ -29,7 +29,7 @@ describe('PathPanel', () => {
     expect(screen.getByRole('heading', { level: 2, name: 'Control path' })).toBeInTheDocument();
     const block = screen.getByRole('group', { name: 'Title block' });
     expect(block).toHaveTextContent('ChapterHow it works together');
-    expect(block).toHaveTextContent('Sheet1 of 3');
+    expect(block).toHaveTextContent('Sheet1 of 4');
     expect(block).toHaveTextContent('FromYour radio');
     expect(block).toHaveTextContent('ToPropellers');
     expect(block).toHaveTextContent('CarriesStick commands');
@@ -128,11 +128,20 @@ describe('PathPanel', () => {
     expect(onStop).toHaveBeenCalledOnce();
   });
 
-  it('switches between the three paths, marking the open one', () => {
+  it('switches between every sheet of the chapter, marking the open one', () => {
     renderPath('video');
-    const nav = screen.getByRole('navigation', { name: 'Paths' });
+    const nav = screen.getByRole('navigation', { name: 'How it works together' });
     const links = within(nav).getAllByRole('link');
-    expect(links.map((link) => link.textContent)).toEqual(['Control', 'Power', 'Video']);
+    expect(links.map((link) => link.textContent)).toEqual([
+      'Control',
+      'Power',
+      'Video',
+      'How a quad moves',
+    ]);
+    expect(within(nav).getByRole('link', { name: 'How a quad moves' })).toHaveAttribute(
+      'href',
+      '/moves',
+    );
     expect(within(nav).getByRole('link', { name: 'Video' })).toHaveAttribute(
       'aria-current',
       'page',
@@ -143,11 +152,11 @@ describe('PathPanel', () => {
     );
   });
 
-  it('ends the set: the video path leads back to the overview', () => {
+  it('runs on from the video path to how a quad moves', () => {
     renderPath('video');
-    expect(screen.getByRole('link', { name: 'Next: Back to overview' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Next: How a quad moves · sheet 4' })).toHaveAttribute(
       'href',
-      '/',
+      '/moves',
     );
   });
 

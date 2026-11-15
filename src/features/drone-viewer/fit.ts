@@ -71,3 +71,21 @@ export function fitDistance(
   }
   return far;
 }
+
+/** How much of the narrower half field of view a sphere fit leaves the drone. */
+const SPHERE_FILL = 0.8;
+
+/**
+ * The camera distance at which a sphere of `radius` fills `fill` of the narrower half field of
+ * view: the drone fits inside it however it is turned, so a tumbling drone never leaves the canvas.
+ */
+export function sphereFitDistance(
+  radius: number,
+  fovDeg: number,
+  aspect: number,
+  fill = SPHERE_FILL,
+): number {
+  const halfV = MathUtils.degToRad(fovDeg) / 2;
+  const halfH = Math.atan(Math.tan(halfV) * aspect);
+  return radius / Math.sin(fill * Math.min(halfV, halfH));
+}

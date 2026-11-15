@@ -2,7 +2,15 @@ import { describe, expect, it } from 'vitest';
 
 import { PART_IDS } from '@/shared/domain/parts';
 
-import { INTRO_PATH, OVERVIEW_PATH, pagePath, parseRoute, partPath, pathSheetPath } from './routes';
+import {
+  INTRO_PATH,
+  OVERVIEW_PATH,
+  pagePath,
+  parseRoute,
+  partPath,
+  pathSheetPath,
+  steppedPath,
+} from './routes';
 
 describe('part routes', () => {
   it.each(PART_IDS)('round-trips the path of %s', (part) => {
@@ -94,5 +102,28 @@ describe('path routes', () => {
   it('gives every path its address', () => {
     expect(pagePath('video')).toBe('/paths/video');
     expect(pathSheetPath('control')).toBe('/paths/control');
+  });
+});
+
+describe('the moves sheet', () => {
+  it('reads /moves as step 1 and /moves/n as step n', () => {
+    expect(parseRoute('/moves')).toEqual({ kind: 'moves', step: 1 });
+    expect(parseRoute('/moves/')).toEqual({ kind: 'moves', step: 1 });
+    expect(parseRoute('/moves/3')).toEqual({ kind: 'moves', step: 3 });
+    expect(parseRoute('/moves/0')).toEqual({ kind: 'moves', step: 1 });
+  });
+
+  it('treats a step that is not a whole number as unknown', () => {
+    expect(parseRoute('/moves/x').kind).toBe('unknown');
+    expect(parseRoute('/moves/2/3').kind).toBe('unknown');
+    expect(parseRoute('/movesx').kind).toBe('unknown');
+  });
+
+  it('writes the step into the address, leaving out step 1', () => {
+    expect(steppedPath('moves', 1)).toBe('/moves');
+    expect(steppedPath('moves', 4)).toBe('/moves/4');
+    expect(steppedPath('power', 2)).toBe('/paths/power/2');
+    expect(pagePath('moves')).toBe('/moves');
+    expect(pagePath('moves', 3)).toBe('/moves/3');
   });
 });

@@ -9,5 +9,6 @@ export {
   partPath,
   pathSheetPath,
   type Route,
+  steppedPath,
 } from './routes';
 export { type PageRoute, type PartRoute, usePartRoute } from './usePartRoute';

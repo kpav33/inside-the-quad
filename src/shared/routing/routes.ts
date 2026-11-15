@@ -1,12 +1,14 @@
 import { isPartId, type PartId } from '@/shared/domain/parts';
+import { MOVES_SHEET } from '@/shared/domain/moves';
 import { isPathId, type PathId } from '@/shared/domain/paths';
-import type { SheetId } from '@/shared/domain/sheets';
+import type { SheetId, SteppedSheet } from '@/shared/domain/sheets';
 
 export const OVERVIEW_PATH = '/';
 export const INTRO_PATH = '/intro';
 
 const PART_PREFIX = '/parts/';
 const PATH_PREFIX = '/paths/';
+const MOVES_PATH = `/${MOVES_SHEET}`;
 /** A cap for a step read from an address; far beyond any path's stops. */
 const MAX_STEP = 999;
 
@@ -19,22 +21,40 @@ export type Route =
   | { kind: 'intro' }
   | { kind: 'part'; part: PartId }
   | { kind: 'path'; path: PathId; step: number }
+  | { kind: 'moves'; step: number }
   | { kind: 'unknown'; slug: string };
 
 export function partPath(part: PartId): string {
   return `${PART_PREFIX}${part}`;
 }
 
-/** A path sheet's address at a step (from 1); step 1 is the path's own address. */
-export function pathSheetPath(path: PathId, step = 1): string {
-  return step > 1 ? `${PATH_PREFIX}${path}/${String(step)}` : `${PATH_PREFIX}${path}`;
+/** A stepped sheet's address at a step (from 1); step 1 is the sheet's own address. */
+export function steppedPath(sheet: SteppedSheet, step = 1): string {
+  const base = sheet === MOVES_SHEET ? MOVES_PATH : `${PATH_PREFIX}${sheet}`;
+  return step > 1 ? `${base}/${String(step)}` : base;
 }
 
-/** A page's address; `step` applies to a path sheet only. */
+/** A path sheet's address at a step (from 1); step 1 is the path's own address. */
+export function pathSheetPath(path: PathId, step = 1): string {
+  return steppedPath(path, step);
+}
+
+/** A page's address; `step` applies to a stepped sheet only (a path, or how a quad moves). */
 export function pagePath(page: Page, step?: number): string {
   if (page === null) return OVERVIEW_PATH;
   if (page === 'intro') return INTRO_PATH;
-  return isPathId(page) ? pathSheetPath(page, step) : partPath(page);
+  if (page === MOVES_SHEET || isPathId(page)) return steppedPath(page, step);
+  return partPath(page);
+}
+
+/**
+ * A step read from an address: a whole number outside the sheet is kept as the nearest sensible
+ * one (below 1 is 1, a huge one is capped; the explorer then shows the last step). NaN when the
+ * value is not a whole number.
+ */
+function readStep(step: string | undefined): number {
+  if (step === undefined) return 1;
+  return /^-?\d+$/.test(step) ? Math.min(Math.max(Number(step), 1), MAX_STEP) : NaN;
 }
 
 function decode(value: string): string {
@@ -56,16 +76,17 @@ export function parseRoute(pathname: string): Route {
   if (pathname.startsWith(PATH_PREFIX)) {
     const slug = decode(pathname.slice(PATH_PREFIX.length).replace(/\/$/, ''));
     const [id, step, ...rest] = slug.split('/');
-    // A whole-number step outside the path is kept as the nearest sensible one: below 1 is 1, and a
-    // huge one is capped (the explorer then shows the path's last stop).
-    const stepNumber =
-      step === undefined
-        ? 1
-        : /^-?\d+$/.test(step)
-          ? Math.min(Math.max(Number(step), 1), MAX_STEP)
-          : NaN;
+    const stepNumber = readStep(step);
     return isPathId(id) && rest.length === 0 && !Number.isNaN(stepNumber)
       ? { kind: 'path', path: id, step: stepNumber }
+      : { kind: 'unknown', slug };
+  }
+  if (pathname === MOVES_PATH || pathname.startsWith(`${MOVES_PATH}/`)) {
+    const slug = decode(pathname.slice(1).replace(/\/$/, ''));
+    const [, step, ...rest] = slug.split('/');
+    const stepNumber = readStep(step);
+    return rest.length === 0 && !Number.isNaN(stepNumber)
+      ? { kind: 'moves', step: stepNumber }
       : { kind: 'unknown', slug };
   }
   return { kind: 'unknown', slug: decode(pathname) };

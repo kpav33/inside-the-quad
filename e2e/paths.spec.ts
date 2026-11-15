@@ -47,7 +47,7 @@ test('Back from one path to another lands on its heading, at the step it was on'
   await page.goto('/paths/control');
   await page.getByRole('button', { name: 'Next step' }).click();
   await page
-    .getByRole('navigation', { name: 'Paths' })
+    .getByRole('navigation', { name: 'How it works together' })
     .getByRole('link', { name: 'Power' })
     .click();
   await expect(pathHeading(page, 'Power')).toBeFocused();
