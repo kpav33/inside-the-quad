@@ -1,5 +1,4 @@
-import { PART_LABELS, UI } from '@/content/ui';
-import { isPathId } from '@/shared/domain/paths';
+import { sheetName, UI } from '@/content/ui';
 import { type SheetId, sheetNeighbours, sheetNumber } from '@/shared/domain/sheets';
 import { type Page, PartLink } from '@/shared/routing';
 import { ArrowIcon, CheckIcon } from '@/shared/ui/icons';
@@ -12,8 +11,7 @@ export function SheetRef({ sheet }: { sheet: SheetId }) {
   if (sheet === 'intro') return <>{UI.intro.link}</>;
   return (
     <>
-      {isPathId(sheet) ? UI.paths.title[sheet] : PART_LABELS[sheet]}{' '}
-      <span className="nowrap">{UI.lesson.sheetNumber(sheetNumber(sheet))}</span>
+      {sheetName(sheet)} <span className="nowrap">{UI.lesson.sheetNumber(sheetNumber(sheet))}</span>
     </>
   );
 }

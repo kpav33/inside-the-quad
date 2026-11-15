@@ -1,5 +1,6 @@
 import type { PartId } from '@/shared/domain/parts';
-import type { PathId } from '@/shared/domain/paths';
+import { isPathId, type PathId } from '@/shared/domain/paths';
+import type { NumberedSheet } from '@/shared/domain/sheets';
 
 /** Part names as shown in the parts list and lesson titles. */
 export const PART_LABELS: Record<PartId, string> = {
@@ -66,8 +67,8 @@ export const UI = {
     newHere: 'New to FPV? Start here.',
     knowBasics: 'Already know the basics?',
     start: (part: string) => `Start with sheet 1: ${part}`,
-    continue: (sheet: number, part: string) => `Continue with sheet ${sheet}: ${part}`,
-    allRead: (total: number) => `All ${total} parts read. Open any sheet to look something up.`,
+    continue: (sheet: number, name: string) => `Continue with sheet ${sheet}: ${name}`,
+    allRead: (total: number) => `All ${total} sheets read. Open any sheet to look something up.`,
     startAgain: 'Start again from sheet 1',
     count: (read: number, total: number) => `${read} of ${total} read`,
     clear: 'Clear progress',
@@ -121,3 +122,8 @@ export const UI = {
     specColumns: { label: 'Spec', value: 'Value', meaning: 'What it means' },
   },
 } as const;
+
+/** A numbered sheet's name: the part's label or the path's title. */
+export function sheetName(sheet: NumberedSheet): string {
+  return isPathId(sheet) ? UI.paths.title[sheet] : PART_LABELS[sheet];
+}

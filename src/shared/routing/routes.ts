@@ -1,4 +1,4 @@
-import { PART_IDS, type PartId } from '@/shared/domain/parts';
+import { isPartId, type PartId } from '@/shared/domain/parts';
 import { isPathId, type PathId } from '@/shared/domain/paths';
 import type { SheetId } from '@/shared/domain/sheets';
 
@@ -31,10 +31,6 @@ export function pagePath(page: Page): string {
   if (page === null) return OVERVIEW_PATH;
   if (page === 'intro') return INTRO_PATH;
   return isPathId(page) ? pathSheetPath(page) : partPath(page);
-}
-
-function isPartId(value: string): value is PartId {
-  return (PART_IDS as readonly string[]).includes(value);
 }
 
 function decode(value: string): string {

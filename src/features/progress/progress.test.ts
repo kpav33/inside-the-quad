@@ -1,28 +1,45 @@
 import { describe, expect, it } from 'vitest';
 
-import { PART_IDS, type PartId } from '@/shared/domain/parts';
+import { PART_IDS } from '@/shared/domain/parts';
+import { NUMBERED_SHEETS } from '@/shared/domain/sheets';
 
-import { firstUnread, parseReadParts, serializeReadParts, startState } from './progress';
+import {
+  firstUnread,
+  parseReadSheets,
+  type ReadableSheet,
+  serializeReadSheets,
+  startState,
+} from './progress';
 
-const set = (...parts: PartId[]) => new Set<PartId>(parts);
+const set = (...sheets: ReadableSheet[]) => new Set<ReadableSheet>(sheets);
 
-describe('parseReadParts', () => {
+describe('parseReadSheets', () => {
   it.each([null, 'nope', '{}', '[1]', '"vtx"'])('reads %j as nothing read', (raw) => {
-    expect(parseReadParts(raw).size).toBe(0);
+    expect(parseReadSheets(raw).size).toBe(0);
+  });
+
+  it('keeps parts and paths, and drops anything else', () => {
+    expect(parseReadSheets('["frame","power","nope",3]')).toEqual(set('frame', 'power'));
+  });
+
+  it('reads progress stored before the paths existed', () => {
+    expect(parseReadSheets('["frame"]')).toEqual(set('frame'));
   });
 
   it('drops unknown ids and duplicates', () => {
-    expect([...parseReadParts('["vtx","x","vtx"]')]).toEqual(['vtx']);
+    expect([...parseReadSheets('["vtx","x","vtx"]')]).toEqual(['vtx']);
   });
 });
 
-describe('serializeReadParts', () => {
-  it('writes the parts in sheet order', () => {
-    expect(serializeReadParts(set('vtx', 'frame'))).toBe('["frame","vtx"]');
+describe('serializeReadSheets', () => {
+  it('writes the sheets in sheet order', () => {
+    expect(serializeReadSheets(set('video', 'vtx', 'frame'))).toBe('["frame","vtx","video"]');
   });
 
-  it('round-trips through parseReadParts', () => {
-    expect(parseReadParts(serializeReadParts(set('esc', 'camera')))).toEqual(set('esc', 'camera'));
+  it('round-trips through parseReadSheets', () => {
+    expect(parseReadSheets(serializeReadSheets(set('esc', 'camera')))).toEqual(
+      set('esc', 'camera'),
+    );
   });
 });
 
@@ -33,16 +50,21 @@ describe('where to start', () => {
   });
 
   it('continues at the next sheet after the frame', () => {
-    expect(startState(set('frame'), true)).toEqual({ kind: 'continue', part: 'motors' });
+    expect(startState(set('frame'), true)).toEqual({ kind: 'continue', sheet: 'motors' });
   });
 
   it('continues at the first unread sheet, not after the last read one', () => {
-    expect(startState(set('vtx'), true)).toEqual({ kind: 'continue', part: 'frame' });
+    expect(startState(set('vtx'), true)).toEqual({ kind: 'continue', sheet: 'frame' });
   });
 
-  it('is done when every part is read', () => {
-    expect(firstUnread(set(...PART_IDS))).toBeNull();
-    expect(startState(set(...PART_IDS), true)).toEqual({ kind: 'done' });
+  it('continues into the paths once every part is read', () => {
+    expect(firstUnread(set(...PART_IDS))).toBe('control');
+    expect(startState(set(...PART_IDS), true)).toEqual({ kind: 'continue', sheet: 'control' });
+  });
+
+  it('is done when every sheet is read', () => {
+    expect(firstUnread(set(...NUMBERED_SHEETS))).toBeNull();
+    expect(startState(set(...NUMBERED_SHEETS), true)).toEqual({ kind: 'done' });
   });
 });
 
@@ -56,10 +78,10 @@ describe('where to start, with the intro', () => {
   });
 
   it('continues with the parts once any part is read, intro or not', () => {
-    expect(startState(set('frame'), false)).toEqual({ kind: 'continue', part: 'motors' });
+    expect(startState(set('frame'), false)).toEqual({ kind: 'continue', sheet: 'motors' });
   });
 
-  it('is done when every part is read, intro or not', () => {
-    expect(startState(set(...PART_IDS), false)).toEqual({ kind: 'done' });
+  it('is done when every sheet is read, intro or not', () => {
+    expect(startState(set(...NUMBERED_SHEETS), false)).toEqual({ kind: 'done' });
   });
 });

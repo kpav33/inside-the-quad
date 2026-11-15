@@ -1,4 +1,5 @@
 import { PART_LABELS, UI } from '@/content/ui';
+import type { ReadableSheet } from '@/features/progress';
 import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
 import { PART_IDS, type PartId } from '@/shared/domain/parts';
 import { partQuantity } from '@/shared/domain/quantity';
@@ -17,7 +18,7 @@ export interface PartListProps {
   /** The part under the mouse in the 3D view: its row gets the hover look. */
   hoveredPart: PartId | null;
   /** Parts whose lessons are marked as read: ticked after the name. */
-  read: ReadonlySet<PartId>;
+  read: ReadonlySet<ReadableSheet>;
   /** Called with the pressed part; the parent decides whether that selects or deselects. */
   onToggle: (part: PartId) => void;
 }

@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { DroneViewerProps } from '@/features/drone-viewer/DroneViewer';
 
 import { PART_IDS } from '@/shared/domain/parts';
+import { NUMBERED_SHEETS } from '@/shared/domain/sheets';
 import { PartLink } from '@/shared/routing';
 
 import { OVERVIEW_FOCUS_ID, partButtonId } from './ids';
@@ -228,7 +229,7 @@ describe('PartExplorer', () => {
     await renderExplorer();
     const start = screen.getByRole('link', { name: 'Start with sheet 1: Frame' });
     expect(start).toHaveAttribute('href', '/parts/frame');
-    expect(screen.queryByText(/of 11 read/)).toBeNull();
+    expect(screen.queryByText(/of 14 read/)).toBeNull();
     expect(screen.queryByRole('button', { name: 'Clear progress' })).toBeNull();
     await userEvent.click(start);
     expect(lessonHeading('Frame')).toHaveFocus();
@@ -238,13 +239,22 @@ describe('PartExplorer', () => {
     window.localStorage.setItem(READ_KEY, '["frame"]');
     await renderExplorer();
     expect(screen.getByRole('link', { name: 'Continue with sheet 2: Motors' })).toBeInTheDocument();
-    expect(screen.getByText('1 of 11 read')).toBeInTheDocument();
+    expect(screen.getByText('1 of 14 read')).toBeInTheDocument();
   });
 
-  it('says when every part is read and offers to start again', async () => {
+  it('continues into the control path once every part is read', async () => {
     window.localStorage.setItem(READ_KEY, JSON.stringify(PART_IDS));
     await renderExplorer();
-    expect(screen.getByText(/all 11 parts read/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Continue with sheet 12: Control path' }),
+    ).toHaveAttribute('href', '/paths/control');
+    expect(screen.getByText('11 of 14 read')).toBeInTheDocument();
+  });
+
+  it('says when every sheet is read and offers to start again', async () => {
+    window.localStorage.setItem(READ_KEY, JSON.stringify(NUMBERED_SHEETS));
+    await renderExplorer();
+    expect(screen.getByText(/all 14 sheets read/i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Start again from sheet 1' })).toHaveAttribute(
       'href',
       '/parts/frame',
@@ -255,7 +265,7 @@ describe('PartExplorer', () => {
     window.localStorage.setItem(READ_KEY, '["frame","motors"]');
     await renderExplorer();
     await userEvent.click(screen.getByRole('button', { name: 'Clear progress' }));
-    expect(screen.queryByText(/of 11 read/)).toBeNull();
+    expect(screen.queryByText(/of 14 read/)).toBeNull();
     // Clearing everything returns to the newcomer's start, which leads with the intro.
     expect(document.getElementById(OVERVIEW_FOCUS_ID)).toHaveFocus();
     expect(document.getElementById(OVERVIEW_FOCUS_ID)).toHaveAttribute('href', '/intro');
@@ -344,7 +354,7 @@ describe('PartExplorer', () => {
     await renderExplorer();
     const start = screen.getByRole('link', { name: 'Start with sheet 1: Frame' });
     expect(start).toHaveAttribute('id', OVERVIEW_FOCUS_ID);
-    expect(screen.queryByText(/of 11 read/)).toBeNull();
+    expect(screen.queryByText(/of 14 read/)).toBeNull();
     expect(screen.getByRole('link', { name: 'What is an FPV drone?' })).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Clear progress' }));
     expect(screen.getByText('New to FPV? Start here.')).toBeInTheDocument();
