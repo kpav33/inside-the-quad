@@ -128,11 +128,20 @@ describe('PathPanel', () => {
     expect(onStop).toHaveBeenCalledOnce();
   });
 
-  it('switches between the three paths, marking the open one', () => {
+  it('switches between every sheet of the chapter, marking the open one', () => {
     renderPath('video');
-    const nav = screen.getByRole('navigation', { name: 'Paths' });
+    const nav = screen.getByRole('navigation', { name: 'How it works together' });
     const links = within(nav).getAllByRole('link');
-    expect(links.map((link) => link.textContent)).toEqual(['Control', 'Power', 'Video']);
+    expect(links.map((link) => link.textContent)).toEqual([
+      'Control',
+      'Power',
+      'Video',
+      'How a quad moves',
+    ]);
+    expect(within(nav).getByRole('link', { name: 'How a quad moves' })).toHaveAttribute(
+      'href',
+      '/moves',
+    );
     expect(within(nav).getByRole('link', { name: 'Video' })).toHaveAttribute(
       'aria-current',
       'page',

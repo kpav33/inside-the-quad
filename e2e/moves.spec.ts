@@ -38,6 +38,16 @@ test('the next sheet after the video path is How a quad moves', async ({ page })
   await expect(currentStep(page)).toContainText('Throttle');
 });
 
+test('every path sheet links How a quad moves in its switcher', async ({ page }) => {
+  await page.goto('/paths/control');
+  await page
+    .getByRole('navigation', { name: 'How it works together' })
+    .getByRole('link', { name: 'How a quad moves' })
+    .click();
+  await expect(page).toHaveURL(/\/moves$/);
+  await expect(heading(page)).toBeFocused();
+});
+
 test('rolling right speeds up the left motors, and centring holds them level', async ({ page }) => {
   await page.goto('/moves/2');
   await expect(page.locator('.motor-pin')).toHaveCount(4);

@@ -98,4 +98,18 @@ describe('MovesPanel', () => {
       '/',
     );
   });
+
+  it('offers the whole chapter in its switcher, itself marked open', () => {
+    renderMoves();
+    const nav = screen.getByRole('navigation', { name: 'How it works together' });
+    expect(within(nav).getAllByRole('link')).toHaveLength(4);
+    expect(within(nav).getByRole('link', { name: 'How a quad moves' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    expect(within(nav).getByRole('link', { name: 'Control' })).toHaveAttribute(
+      'href',
+      '/paths/control',
+    );
+  });
 });

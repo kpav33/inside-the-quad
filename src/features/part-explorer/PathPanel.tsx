@@ -2,10 +2,10 @@ import { useRef } from 'react';
 
 import type { PathContent, PathStop } from '@/content/paths';
 import { PART_LABELS, UI } from '@/content/ui';
-import { PATH_IDS } from '@/shared/domain/paths';
 import { chapterCount, sheetNumber } from '@/shared/domain/sheets';
 import { type Page, PartLink } from '@/shared/routing';
 
+import { ChapterSwitcher } from './ChapterSwitcher';
 import { LESSON_PANEL_ID, pathTitleId } from './ids';
 import { SheetFooter } from './SheetFooter';
 import { TitleBlock } from './TitleBlock';
@@ -107,19 +107,7 @@ export function PathPanel({
         ]}
       />
 
-      <nav className="path-switcher" aria-label={t.switcherLabel}>
-        {PATH_IDS.map((id) => (
-          <PartLink
-            key={id}
-            to={id}
-            className="path-switcher-link"
-            current={id === path.id}
-            onFollow={onFollowLink}
-          >
-            {t.short[id]}
-          </PartLink>
-        ))}
-      </nav>
+      <ChapterSwitcher open={path.id} onFollowLink={onFollowLink} />
 
       <p className="lesson-lead path-lead">{path.lead}</p>
 

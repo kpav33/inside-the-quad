@@ -7,6 +7,7 @@ import { MOVE_STEP_IDS, MOVES_SHEET } from '@/shared/domain/moves';
 import { chapterCount, sheetNumber } from '@/shared/domain/sheets';
 import { type Page, PartLink } from '@/shared/routing';
 
+import { ChapterSwitcher } from './ChapterSwitcher';
 import { LESSON_PANEL_ID, MOVES_TITLE_ID } from './ids';
 import { SheetFooter } from './SheetFooter';
 import { TitleBlock } from './TitleBlock';
@@ -93,6 +94,8 @@ export function MovesPanel({
         sheet={UI.titleBlock.sheetOf(sheetNumber(MOVES_SHEET), chapterCount(MOVES_SHEET))}
         specs={MOVES.facts.map((fact) => ({ ...fact, wraps: true }))}
       />
+
+      <ChapterSwitcher open={MOVES_SHEET} onFollowLink={onFollowLink} />
 
       <p className="lesson-lead path-lead">{MOVES.lead}</p>
 

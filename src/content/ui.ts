@@ -114,7 +114,8 @@ export const UI = {
     >,
     /** The path switcher's short names. */
     short: { control: 'Control', power: 'Power', video: 'Video' } satisfies Record<PathId, string>,
-    switcherLabel: 'Paths',
+    /** The switcher between the chapter's sheets: the paths and How a quad moves. */
+    switcherLabel: 'How it works together',
     close: 'Close sheet',
     stopsLabel: 'Stops',
     from: 'From',
