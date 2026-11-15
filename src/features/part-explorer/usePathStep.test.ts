@@ -1,14 +1,20 @@
 import { act, renderHook } from '@testing-library/react';
+import { useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { PathId } from '@/shared/domain/paths';
 
 import { PLAY_INTERVAL_MS, usePathStep } from './usePathStep';
 
-function start(path: PathId | null = 'control', stops = 6) {
-  return renderHook(({ path: p, stops: n }) => usePathStep(p, n), {
-    initialProps: { path, stops },
-  });
+/** The hook as the explorer uses it: the step lives outside (in the address). */
+function start(path: PathId | null = 'control', stops = 6, initial = 0) {
+  return renderHook(
+    ({ path: p, stops: n }) => {
+      const [step, setStep] = useState(initial);
+      return usePathStep(p, n, step, setStep);
+    },
+    { initialProps: { path, stops } },
+  );
 }
 
 describe('usePathStep', () => {
@@ -19,9 +25,9 @@ describe('usePathStep', () => {
     vi.useRealTimers();
   });
 
-  it('starts at the first stop, not playing', () => {
-    const { result } = start();
-    expect(result.current.step).toBe(0);
+  it('starts at the step it is given, not playing', () => {
+    const { result } = start('control', 6, 2);
+    expect(result.current.step).toBe(2);
     expect(result.current.playing).toBe(false);
   });
 
@@ -64,10 +70,7 @@ describe('usePathStep', () => {
   });
 
   it('plays from the start when asked at the last stop', () => {
-    const { result } = start('video', 5);
-    act(() => {
-      result.current.goTo(4);
-    });
+    const { result } = start('video', 5, 4);
     act(() => {
       result.current.play();
     });
@@ -90,28 +93,17 @@ describe('usePathStep', () => {
     expect(result.current.step).toBe(1);
   });
 
-  it('starts a new path at its first stop and stops playing', () => {
+  it('stops playing when another path opens', () => {
     const { result, rerender } = start('control', 6);
     act(() => {
-      result.current.goTo(5);
       result.current.play();
     });
     rerender({ path: 'video', stops: 5 });
-    expect(result.current.step).toBe(0);
     expect(result.current.playing).toBe(false);
+    const at = result.current.step;
     act(() => {
       vi.advanceTimersByTime(PLAY_INTERVAL_MS * 3);
     });
-    expect(result.current.step).toBe(0);
-  });
-
-  it('resets when the sheet closes and the path reopens', () => {
-    const { result, rerender } = start('power', 6);
-    act(() => {
-      result.current.goTo(3);
-    });
-    rerender({ path: null, stops: 0 });
-    rerender({ path: 'power', stops: 6 });
-    expect(result.current.step).toBe(0);
+    expect(result.current.step).toBe(at);
   });
 });

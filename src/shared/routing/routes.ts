@@ -16,21 +16,23 @@ export type Route =
   | { kind: 'overview' }
   | { kind: 'intro' }
   | { kind: 'part'; part: PartId }
-  | { kind: 'path'; path: PathId }
+  | { kind: 'path'; path: PathId; step: number }
   | { kind: 'unknown'; slug: string };
 
 export function partPath(part: PartId): string {
   return `${PART_PREFIX}${part}`;
 }
 
-export function pathSheetPath(path: PathId): string {
-  return `${PATH_PREFIX}${path}`;
+/** A path sheet's address at a step (from 1); step 1 is the path's own address. */
+export function pathSheetPath(path: PathId, step = 1): string {
+  return step > 1 ? `${PATH_PREFIX}${path}/${String(step)}` : `${PATH_PREFIX}${path}`;
 }
 
-export function pagePath(page: Page): string {
+/** A page's address; `step` applies to a path sheet only. */
+export function pagePath(page: Page, step?: number): string {
   if (page === null) return OVERVIEW_PATH;
   if (page === 'intro') return INTRO_PATH;
-  return isPathId(page) ? pathSheetPath(page) : partPath(page);
+  return isPathId(page) ? pathSheetPath(page, step) : partPath(page);
 }
 
 function decode(value: string): string {
@@ -51,7 +53,11 @@ export function parseRoute(pathname: string): Route {
   }
   if (pathname.startsWith(PATH_PREFIX)) {
     const slug = decode(pathname.slice(PATH_PREFIX.length).replace(/\/$/, ''));
-    return isPathId(slug) ? { kind: 'path', path: slug } : { kind: 'unknown', slug };
+    const [id, step, ...rest] = slug.split('/');
+    const stepNumber = step === undefined ? 1 : /^[1-9]\d*$/.test(step) ? Number(step) : NaN;
+    return isPathId(id) && rest.length === 0 && !Number.isNaN(stepNumber)
+      ? { kind: 'path', path: id, step: stepNumber }
+      : { kind: 'unknown', slug };
   }
   return { kind: 'unknown', slug: decode(pathname) };
 }

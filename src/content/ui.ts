@@ -139,6 +139,8 @@ export const UI = {
     previous: 'Previous',
     /** The footer link out of the last part, into the paths chapter. */
     endOfParts: 'End of the parts',
+    /** A lesson opened from a path's stop: the way back to that step. */
+    backToPath: (title: string, step: number) => `Back to ${title}, step ${String(step)}`,
     /** The footer link back from the first path into the parts chapter. */
     backToParts: 'Back to the parts',
     /** A path named from outside its chapter. */

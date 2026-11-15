@@ -9,8 +9,8 @@ import type { Leader } from '@/features/drone-model';
 import { DroneViewer } from '@/features/drone-viewer';
 import type { DroneViewerProps } from '@/features/drone-viewer/DroneViewer';
 import { useIntroRead, useReadParts } from '@/features/progress';
-import { isInsidePart, type PartId } from '@/shared/domain/parts';
-import { isPathId } from '@/shared/domain/paths';
+import { isInsidePart, isPartId, type PartId } from '@/shared/domain/parts';
+import { isPathId, type PathId } from '@/shared/domain/paths';
 import type { SheetId } from '@/shared/domain/sheets';
 import { type Page, usePartRoute } from '@/shared/routing';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
@@ -94,13 +94,31 @@ const sheetTitleId = (sheet: SheetId) =>
  * The list and lessons work on their own when the 3D view can't load.
  */
 export function PartExplorer() {
-  const { route, unknownSlug, cause, navigate } = usePartRoute();
+  const { route, unknownSlug, cause, navigate, replaceStep } = usePartRoute();
   const selectedPart = route.kind === 'part' ? route.part : null;
   const openPath = route.kind === 'path' ? PATHS[route.path] : null;
   // The sheet in the sheet column: a part's lesson, the intro, a path, or none (the overview).
   const openSheet: SheetId | null =
     route.kind === 'intro' ? 'intro' : (openPath?.id ?? selectedPart);
-  const pathStep = usePathStep(openPath?.id ?? null, openPath?.stops.length ?? 0);
+  // A path's step is in its address (from 1); one past the end shows the last stop.
+  const stopCount = openPath?.stops.length ?? 0;
+  const addressStep = route.kind === 'path' ? route.step - 1 : 0;
+  const shownStep = Math.min(addressStep, Math.max(stopCount - 1, 0));
+  const openPathId = openPath?.id ?? null;
+  const onStep = useCallback(
+    (step: number) => {
+      if (openPathId) replaceStep(openPathId, step + 1);
+    },
+    [openPathId, replaceStep],
+  );
+  useEffect(() => {
+    if (openPathId && addressStep !== shownStep) replaceStep(openPathId, shownStep + 1);
+  }, [openPathId, addressStep, shownStep, replaceStep]);
+  const pathStep = usePathStep(openPathId, stopCount, shownStep, onStep);
+  // A lesson opened from a path's stop offers the way back to that step, until another sheet opens.
+  const [returnTo, setReturnTo] = useState<{ path: PathId; step: number; part: PartId } | null>(
+    null,
+  );
   const currentStop = openPath?.stops[pathStep.step];
   const focusTarget = useRef<FocusTarget>(null);
   const { read, toggle: toggleRead, clear: clearRead } = useReadParts();
@@ -195,18 +213,25 @@ export function PartExplorer() {
   );
 
   const togglePart = (part: PartId) => {
+    setReturnTo(null);
     revealLesson.current = selectedPart !== part ? 'choose' : null;
     navigate(selectedPart === part ? null : part);
   };
 
   // A link in the sheet (a connection, previous or next) moves focus to what it opens.
   const followLink = (page: Page) => {
+    setReturnTo(
+      openPath && page !== null && isPartId(page)
+        ? { path: openPath.id, step: pathStep.step, part: page }
+        : null,
+    );
     focusTarget.current = page ? sheetTitleId(page) : OVERVIEW_FOCUS_ID;
     revealLesson.current = page !== null ? 'choose' : null;
   };
 
   const onPartClick = (part: PartId, event: ThreeEvent<MouseEvent>) => {
     if (!isDeliberateClick(event.delta)) return;
+    setReturnTo(null);
     // Clicking the part that is already open changes nothing, so there is nothing to reveal.
     revealLesson.current = part !== selectedPart ? 'choose' : null;
     navigate(part);
@@ -290,6 +315,11 @@ export function PartExplorer() {
         ) : selectedPart ? (
           <LessonPanel
             lesson={LESSONS[selectedPart]}
+            returnTo={
+              returnTo?.part === selectedPart
+                ? { path: returnTo.path, step: returnTo.step, title: PATHS[returnTo.path].title }
+                : null
+            }
             read={read.has(selectedPart)}
             onClose={closeLesson}
             onToggleRead={() => {

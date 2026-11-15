@@ -59,12 +59,29 @@ describe('intro route', () => {
 
 describe('path routes', () => {
   it('reads a path under /paths/, with or without a trailing slash', () => {
-    expect(parseRoute('/paths/power')).toEqual({ kind: 'path', path: 'power' });
-    expect(parseRoute('/paths/power/')).toEqual({ kind: 'path', path: 'power' });
+    expect(parseRoute('/paths/power')).toEqual({ kind: 'path', path: 'power', step: 1 });
+    expect(parseRoute('/paths/power/')).toEqual({ kind: 'path', path: 'power', step: 1 });
   });
 
   it('treats an unknown path id as unknown', () => {
     expect(parseRoute('/paths/wires')).toEqual({ kind: 'unknown', slug: 'wires' });
+  });
+
+  it('reads the step after the path, from 1', () => {
+    expect(parseRoute('/paths/power/3')).toEqual({ kind: 'path', path: 'power', step: 3 });
+    expect(parseRoute('/paths/power/3/')).toEqual({ kind: 'path', path: 'power', step: 3 });
+  });
+
+  it('treats a step that is not a whole number from 1 as unknown', () => {
+    for (const slug of ['power/0', 'power/x', 'power/2.5', 'power/-1']) {
+      expect(parseRoute(`/paths/${slug}`)).toEqual({ kind: 'unknown', slug });
+    }
+  });
+
+  it('writes the step into the address, leaving out step 1', () => {
+    expect(pathSheetPath('video', 4)).toBe('/paths/video/4');
+    expect(pathSheetPath('video', 1)).toBe('/paths/video');
+    expect(pagePath('video', 2)).toBe('/paths/video/2');
   });
 
   it('gives every path its address', () => {

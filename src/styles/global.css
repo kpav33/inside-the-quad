@@ -967,6 +967,14 @@ a {
 }
 
 /* Lesson footer: mark as read, then the previous and next sheets as title-block cells. */
+/* A lesson opened from a path's stop: the way back to that step, under the heading. */
+.lesson-return .lesson-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target-min);
+}
+
 /* Path sheet: a switcher between the three paths, the numbered stops, and the step controls. */
 .path-switcher {
   display: flex;

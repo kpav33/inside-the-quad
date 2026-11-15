@@ -2,6 +2,7 @@ import type { Lesson } from '@/content/lessons';
 import { PART_PHOTOS } from '@/content/photos';
 import { UI } from '@/content/ui';
 import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
+import type { PathId } from '@/shared/domain/paths';
 import { partQuantity } from '@/shared/domain/quantity';
 import { chapterCount, sheetNumber } from '@/shared/domain/sheets';
 import { type Page, PartLink } from '@/shared/routing';
@@ -21,6 +22,8 @@ export interface LessonPanelProps {
   onToggleRead: () => void;
   /** Called before a link in the sheet opens another lesson (null: the overview). */
   onFollowLink?: (page: Page) => void;
+  /** The path step this lesson was opened from (step from 0), offered as the way back. */
+  returnTo?: { path: PathId; step: number; title: string } | null;
 }
 
 /**
@@ -33,6 +36,7 @@ export function LessonPanel({
   onClose,
   onToggleRead,
   onFollowLink,
+  returnTo = null,
 }: LessonPanelProps) {
   const titleId = lessonTitleId(lesson.partId);
   const columns = UI.lesson.specColumns;
@@ -47,6 +51,20 @@ export function LessonPanel({
           {UI.lesson.close}
         </button>
       </header>
+
+      {returnTo && (
+        <p className="lesson-return">
+          <PartLink
+            to={returnTo.path}
+            step={returnTo.step + 1}
+            className="lesson-link"
+            onFollow={onFollowLink}
+          >
+            <ArrowIcon back />
+            {UI.lesson.backToPath(returnTo.title, returnTo.step + 1)}
+          </PartLink>
+        </p>
+      )}
 
       <TitleBlock
         sheet={UI.titleBlock.sheetOf(sheetNumber(lesson.partId), chapterCount(lesson.partId))}

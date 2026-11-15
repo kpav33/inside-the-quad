@@ -4,13 +4,13 @@ import type { PartId } from '@/shared/domain/parts';
 import type { PathId } from '@/shared/domain/paths';
 
 import { getSnapshot, type NavigationCause, navigateTo, replacePath, subscribe } from './history';
-import { OVERVIEW_PATH, type Page, pagePath, parseRoute, partPath } from './routes';
+import { OVERVIEW_PATH, type Page, pagePath, parseRoute, partPath, pathSheetPath } from './routes';
 
 export type PageRoute =
   | { kind: 'overview' }
   | { kind: 'intro' }
   | { kind: 'part'; part: PartId }
-  | { kind: 'path'; path: PathId };
+  | { kind: 'path'; path: PathId; step: number };
 
 export interface PartRoute {
   route: PageRoute;
@@ -19,6 +19,8 @@ export interface PartRoute {
   cause: NavigationCause;
   /** Opens a sheet, or the overview for null, adding one history entry. */
   navigate: (page: Page) => void;
+  /** Moves a path sheet to a step (from 1) in place, adding no history entry. */
+  replaceStep: (path: PathId, step: number) => void;
 }
 
 /** The page the address shows. An unknown address is replaced by the overview. */
@@ -33,7 +35,7 @@ export function usePartRoute(): PartRoute {
     parsed.kind === 'part'
       ? partPath(parsed.part)
       : parsed.kind === 'path'
-        ? pagePath(parsed.path)
+        ? pagePath(parsed.path, parsed.step)
         : parsed.kind === 'intro'
           ? pagePath('intro')
           : OVERVIEW_PATH;
@@ -45,11 +47,16 @@ export function usePartRoute(): PartRoute {
   const navigate = useCallback((page: Page) => {
     navigateTo(pagePath(page));
   }, []);
+  const replaceStep = useCallback((path: PathId, step: number) => {
+    const next = pathSheetPath(path, step);
+    if (window.location.pathname !== next) replacePath(next);
+  }, []);
 
   return {
     route: parsed.kind === 'unknown' ? { kind: 'overview' } : parsed,
     unknownSlug: unknown ?? snapshot.replacedSlug,
     cause: snapshot.cause,
     navigate,
+    replaceStep,
   };
 }

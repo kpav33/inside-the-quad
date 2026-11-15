@@ -197,6 +197,48 @@ describe('PartExplorer', () => {
     });
   });
 
+  it('opens a path at the step its address names', async () => {
+    window.history.replaceState(null, '', '/paths/power/3');
+    await renderExplorer();
+    expect(viewerState()).toMatchObject({ open: ['esc'], step: 2 });
+  });
+
+  it('keeps the step in the address, without a history entry per step', async () => {
+    window.history.replaceState(null, '', '/paths/power');
+    await renderExplorer();
+    const before = window.history.length;
+    await userEvent.click(screen.getByRole('button', { name: 'Next step' }));
+    expect(window.location.pathname).toBe('/paths/power/2');
+    expect(window.history.length).toBe(before);
+  });
+
+  it('replaces a step past the end with the last stop', async () => {
+    window.history.replaceState(null, '', '/paths/video/9');
+    await renderExplorer();
+    expect(window.location.pathname).toBe('/paths/video/5');
+    expect(viewerState().step).toBe(4);
+  });
+
+  it('offers the way back to the step a lesson was opened from', async () => {
+    window.history.replaceState(null, '', '/paths/control/3');
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('link', { name: 'Flight controller' }));
+    const back = screen.getByRole('link', { name: 'Back to Control path, step 3' });
+    expect(back).toHaveAttribute('href', '/paths/control/3');
+    await userEvent.click(back);
+    expect(screen.getByRole('heading', { level: 2, name: 'Control path' })).toHaveFocus();
+    expect(viewerState().step).toBe(2);
+  });
+
+  it('drops the way back once another sheet opens', async () => {
+    window.history.replaceState(null, '', '/paths/control/3');
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('link', { name: 'Flight controller' }));
+    await userEvent.click(screen.getByRole('link', { name: /^Next/ }));
+    await userEvent.click(screen.getByRole('link', { name: /^Previous/ }));
+    expect(screen.queryByRole('link', { name: /^Back to Control path/ })).toBeNull();
+  });
+
   it('moves the drawing along as the learner steps through a path', async () => {
     window.history.replaceState(null, '', '/paths/power');
     await renderExplorer();

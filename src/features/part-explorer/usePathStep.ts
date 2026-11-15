@@ -18,51 +18,61 @@ export interface PathStep {
 }
 
 /**
- * The current stop on the open path, and playing through it. Any step by hand stops play; a new
- * path (or the sheet closing) starts again at stop 1, not playing, so no step from one path is
- * ever used on another.
+ * Stepping through the open path and playing it. The step itself lives outside (in the address):
+ * this hook reads `step` and asks for changes with `onStep`, clamped to the path's stops. Any step
+ * by hand stops play, and so does another path opening.
  */
-export function usePathStep(path: PathId | null, stopCount: number): PathStep {
-  const [state, setState] = useState({ path, step: 0, playing: false });
-  // A different path from the one the state belongs to starts fresh, in the same render.
-  const current = state.path === path ? state : { path, step: 0, playing: false };
-  if (current !== state) setState(current);
+export function usePathStep(
+  path: PathId | null,
+  stopCount: number,
+  step: number,
+  onStep: (step: number) => void,
+): PathStep {
+  const [playing, setPlaying] = useState<{ path: PathId | null; on: boolean }>({
+    path,
+    on: false,
+  });
+  // Play belongs to the path it started on; another path opens stopped.
+  const isPlaying = playing.on && playing.path === path;
 
   const last = Math.max(stopCount - 1, 0);
-  const clamp = useCallback((step: number) => Math.min(Math.max(step, 0), last), [last]);
+  const clamp = useCallback((value: number) => Math.min(Math.max(value, 0), last), [last]);
 
   const goTo = useCallback(
-    (step: number) => {
-      setState((s) => ({ ...s, step: clamp(step), playing: false }));
+    (value: number) => {
+      setPlaying({ path, on: false });
+      onStep(clamp(value));
     },
-    [clamp],
+    [clamp, onStep, path],
   );
   const next = useCallback(() => {
-    setState((s) => ({ ...s, step: clamp(s.step + 1), playing: false }));
-  }, [clamp]);
+    goTo(step + 1);
+  }, [goTo, step]);
   const previous = useCallback(() => {
-    setState((s) => ({ ...s, step: clamp(s.step - 1), playing: false }));
-  }, [clamp]);
+    goTo(step - 1);
+  }, [goTo, step]);
   const play = useCallback(() => {
-    setState((s) => ({ ...s, step: s.step >= last ? 0 : s.step, playing: last > 0 }));
-  }, [last]);
+    if (last === 0) return;
+    if (step >= last) onStep(0);
+    setPlaying({ path, on: true });
+  }, [last, onStep, path, step]);
   const stop = useCallback(() => {
-    setState((s) => ({ ...s, playing: false }));
-  }, []);
+    setPlaying({ path, on: false });
+  }, [path]);
 
-  const { playing, step } = current;
   useEffect(() => {
-    if (!playing) return;
+    if (!isPlaying) return;
+    if (step >= last) {
+      setPlaying({ path, on: false });
+      return;
+    }
     const timer = window.setTimeout(() => {
-      setState((s) => {
-        const following = clamp(s.step + 1);
-        return { ...s, step: following, playing: following < last };
-      });
+      onStep(clamp(step + 1));
     }, PLAY_INTERVAL_MS);
     return () => {
       window.clearTimeout(timer);
     };
-  }, [playing, step, clamp, last]);
+  }, [isPlaying, step, last, clamp, onStep, path]);
 
-  return { step, goTo, next, previous, playing, play, stop };
+  return { step, goTo, next, previous, playing: isPlaying, play, stop };
 }

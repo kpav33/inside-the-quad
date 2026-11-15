@@ -41,7 +41,9 @@ test('the next sheet after Extras is the control path', async ({ page }) => {
   await expect(pathHeading(page, 'Control')).toBeFocused();
 });
 
-test('Back from one path to another lands on its heading, at stop 1', async ({ page }) => {
+test('Back from one path to another lands on its heading, at the step it was on', async ({
+  page,
+}) => {
   await page.goto('/paths/control');
   await page.getByRole('button', { name: 'Next step' }).click();
   await page
@@ -51,7 +53,22 @@ test('Back from one path to another lands on its heading, at stop 1', async ({ p
   await expect(pathHeading(page, 'Power')).toBeFocused();
   await page.goBack();
   await expect(pathHeading(page, 'Control')).toBeFocused();
-  await expect(currentStop(page)).toContainText('Your radio');
+  await expect(currentStop(page)).toContainText('Receiver');
+});
+
+test('Back from a lesson opened at a stop returns to that stop', async ({ page }) => {
+  await page.goto('/paths/control');
+  await page.getByRole('button', { name: 'Next step' }).click();
+  await page.getByRole('button', { name: 'Next step' }).click();
+  await expect(page).toHaveURL(/\/paths\/control\/3$/);
+  await page
+    .getByRole('list', { name: 'Stops' })
+    .getByRole('link', { name: 'Flight controller' })
+    .click();
+  await expect(page.getByRole('link', { name: 'Back to Control path, step 3' })).toBeVisible();
+  await page.goBack();
+  await expect(pathHeading(page, 'Control')).toBeFocused();
+  await expect(currentStop(page)).toContainText('Flight controller');
 });
 
 test('reduced motion still plays the path, a stop at a time', async ({ page }) => {

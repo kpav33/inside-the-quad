@@ -8,6 +8,8 @@ export interface PartLinkProps {
   to: Page;
   id?: string | undefined;
   className?: string | undefined;
+  /** A step of a path sheet to open at (from 1). */
+  step?: number | undefined;
   /** Marks the link as the page being shown (`aria-current="page"`). */
   current?: boolean | undefined;
   /** Called on a click the app handles, just before it navigates. */
@@ -16,8 +18,8 @@ export interface PartLinkProps {
 }
 
 /** A real link to a page: handled in the app on a plain click, by the browser otherwise. */
-export function PartLink({ to, id, className, current, onFollow, children }: PartLinkProps) {
-  const href = pagePath(to);
+export function PartLink({ to, step, id, className, current, onFollow, children }: PartLinkProps) {
+  const href = pagePath(to, step);
   return (
     <a
       id={id}
