@@ -228,6 +228,34 @@ describe('PartExplorer', () => {
     expect(window.history.length).toBe(before);
   });
 
+  it('replaces a step below 1 with the first stop, keeping the path', async () => {
+    window.history.replaceState(null, '', '/paths/control/0');
+    await renderExplorer();
+    expect(window.location.pathname).toBe('/paths/control');
+    expect(screen.getByRole('heading', { level: 2, name: 'Control path' })).toBeInTheDocument();
+  });
+
+  it('drops the way back when a link outside the sheet opens another page', async () => {
+    window.history.replaceState(null, '', '/paths/control/3');
+    render(
+      <>
+        <PartLink to="intro">masthead: intro</PartLink>
+        <PartExplorer />
+      </>,
+    );
+    await screen.findByRole('button', { name: 'stub: click motors' });
+    await userEvent.click(screen.getByRole('link', { name: 'Flight controller' }));
+    await userEvent.click(screen.getByRole('link', { name: 'masthead: intro' }));
+    await act(async () => {
+      window.history.back();
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    });
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Flight controller' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /^Back to Control path/ })).toBeNull();
+  });
+
   it('replaces a step past the end with the last stop', async () => {
     window.history.replaceState(null, '', '/paths/video/9');
     await renderExplorer();

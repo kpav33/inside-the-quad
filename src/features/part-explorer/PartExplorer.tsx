@@ -193,11 +193,17 @@ export function PartExplorer() {
   const { stop: stopPlaying } = pathStep;
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
-      if (event.target instanceof Element && event.target.closest('a[href]')) stopPlaying();
+      if (!(event.target instanceof Element) || !event.target.closest('a[href]')) return;
+      stopPlaying();
+      // A link outside the explorer (the masthead) opens another sheet through the app, so the way
+      // back from a lesson expires, as it does for links inside the sheet.
+      if (!event.target.closest('.part-explorer')) setReturnTo(null);
     };
-    document.addEventListener('click', onClick);
+    // Captured before React handles the click: by the time it bubbles here, React has already
+    // rendered the next sheet and the clicked link is no longer in the page.
+    document.addEventListener('click', onClick, true);
     return () => {
-      document.removeEventListener('click', onClick);
+      document.removeEventListener('click', onClick, true);
     };
   }, [stopPlaying]);
 

@@ -26,21 +26,37 @@ export interface PathPanelProps {
   onFollowLink?: (page: Page) => void;
 }
 
-/** A stop's name: a link to its one lesson (or the intro, for an end), else plain. */
-function StopName({
+/** Under a stop's text: its lesson (or lessons), or for an off-drone end, the intro. */
+function StopLessons({
   stop,
   onFollowLink,
 }: {
   stop: PathStop;
   onFollowLink?: ((page: Page) => void) | undefined;
 }) {
-  const [only] = stop.parts;
-  const to: Page | undefined = stop.end ? 'intro' : stop.parts.length === 1 ? only : undefined;
-  if (to === undefined) return <span className="path-stop-name">{stop.name}</span>;
+  const t = UI.paths;
+  if (stop.end) {
+    return (
+      <p className="path-stop-lessons">
+        {t.endMoreLabel}{' '}
+        <PartLink to="intro" className="lesson-link" onFollow={onFollowLink}>
+          {UI.intro.link}
+        </PartLink>
+      </p>
+    );
+  }
   return (
-    <PartLink to={to} className="path-stop-name lesson-link" onFollow={onFollowLink}>
-      {stop.name}
-    </PartLink>
+    <p className="path-stop-lessons">
+      {stop.parts.length > 1 ? t.lessonsLabel : t.lessonLabel}{' '}
+      {stop.parts.map((part, i) => (
+        <span key={part}>
+          {i > 0 && ' · '}
+          <PartLink to={part} className="lesson-link" onFollow={onFollowLink}>
+            {PART_LABELS[part]}
+          </PartLink>
+        </span>
+      ))}
+    </p>
   );
 }
 
@@ -64,6 +80,7 @@ export function PathPanel({
   const t = UI.paths;
   const titleId = pathTitleId(path.id);
   const list = useRef<HTMLOListElement>(null);
+  const controls = useRef<HTMLDivElement>(null);
   const reduceMotion = usePrefersReducedMotion();
   // When the step changes on the same path (a step button, Play, a click on the drawing), bring the
   // new stop into view if it isn't. Opening a sheet doesn't scroll: its heading takes focus.
@@ -72,9 +89,12 @@ export function PathPanel({
     const before = shown.current;
     shown.current = { path: path.id, step };
     if (before.path !== path.id || before.step === step) return;
-    const current = list.current?.querySelector('[aria-current="step"]');
+    const current = list.current?.querySelector<HTMLElement>('[aria-current="step"]');
     // Not every environment can scroll an element into view (jsdom can't).
     if (typeof current?.scrollIntoView !== 'function') return;
+    // Leave room for the step controls pinned at the top, so the stop isn't tucked under them.
+    const pinned = controls.current?.offsetHeight ?? 0;
+    current.style.scrollMarginTop = `${String(pinned + 8)}px`;
     current.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
   }, [path.id, step, reduceMotion]);
   const { stops } = path;
@@ -118,7 +138,7 @@ export function PathPanel({
 
       <p className="lesson-lead path-lead">{path.lead}</p>
 
-      <div className="path-controls">
+      <div ref={controls} className="path-controls">
         <button
           type="button"
           className="button-outline"
@@ -162,21 +182,18 @@ export function PathPanel({
               {index + 1}
             </span>
             <div className="path-stop-body">
-              <StopName stop={stop} onFollowLink={onFollowLink} />
+              {/* The name picks this stop, like the step buttons; the lesson is the link below. */}
+              <button
+                type="button"
+                className="path-stop-name"
+                onClick={() => {
+                  onStep(index);
+                }}
+              >
+                {stop.name}
+              </button>
               <p className="path-stop-text">{stop.text}</p>
-              {stop.parts.length > 1 && (
-                <p className="path-stop-lessons">
-                  {t.lessonsLabel}{' '}
-                  {stop.parts.map((part, i) => (
-                    <span key={part}>
-                      {i > 0 && ' · '}
-                      <PartLink to={part} className="lesson-link" onFollow={onFollowLink}>
-                        {PART_LABELS[part]}
-                      </PartLink>
-                    </span>
-                  ))}
-                </p>
-              )}
+              <StopLessons stop={stop} onFollowLink={onFollowLink} />
             </div>
           </li>
         ))}

@@ -58,12 +58,30 @@ describe('PathPanel', () => {
     expect(stops()[0]).not.toHaveAttribute('aria-current');
   });
 
-  it('links each stop to its lesson, and the radio to the intro', () => {
+  it('makes a stop current when its name is clicked, without leaving the path', async () => {
+    const { onStep } = renderPath('control');
+    await userEvent.click(screen.getByRole('button', { name: 'Receiver' }));
+    expect(onStep).toHaveBeenLastCalledWith(1);
+    expect(screen.queryByRole('link', { name: 'Receiver' })).toHaveAttribute(
+      'href',
+      '/parts/receiver',
+    );
+  });
+
+  it('keeps each lesson one quieter link away, and the radio background in the intro', () => {
     renderPath('control');
-    expect(screen.getByRole('link', { name: 'Your radio' })).toHaveAttribute('href', '/intro');
-    expect(screen.getByRole('link', { name: 'Flight controller' })).toHaveAttribute(
+    const fc = stops()[2];
+    if (!fc) throw new Error('no stop 3');
+    expect(within(fc).getByText(/^Lesson:/)).toBeInTheDocument();
+    expect(within(fc).getByRole('link', { name: 'Flight controller' })).toHaveAttribute(
       'href',
       '/parts/fc',
+    );
+    const radio = stops()[0];
+    if (!radio) throw new Error('no stop 1');
+    expect(within(radio).getByRole('link', { name: 'What is an FPV drone?' })).toHaveAttribute(
+      'href',
+      '/intro',
     );
   });
 

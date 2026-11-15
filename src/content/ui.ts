@@ -119,8 +119,11 @@ export const UI = {
     from: 'From',
     to: 'To',
     carries: 'Carries',
-    /** Before the lesson links of a stop with several parts. */
+    /** Before the lesson link of a stop, and of a stop with several parts. */
+    lessonLabel: 'Lesson:',
     lessonsLabel: 'Lessons:',
+    /** Before the intro link under an off-drone end (the radio, the goggles). */
+    endMoreLabel: 'More in',
     previousStep: 'Previous step',
     nextStep: 'Next step',
     play: 'Play the path',

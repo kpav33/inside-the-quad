@@ -82,6 +82,40 @@ test('on a phone, each new step comes into view', async ({ page }) => {
   }
 });
 
+for (const [width, height] of [
+  [1280, 720],
+  [390, 720],
+] as const) {
+  test(`stepping by keyboard keeps the focused button and the stop in view at ${String(width)} px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height });
+    await page.goto('/paths/power');
+    const next = page.getByRole('button', { name: 'Next step' });
+    await next.focus();
+    for (let i = 0; i < 4; i++) {
+      await page.keyboard.press('Enter');
+      await expect(currentStop(page)).toBeInViewport({ ratio: 0.9 });
+      await expect(next).toBeFocused();
+      await expect(next).toBeInViewport();
+      // The pinned controls never cover the current stop.
+      const [stop, bar] = await Promise.all([
+        currentStop(page).boundingBox(),
+        page.locator('.path-controls').boundingBox(),
+      ]);
+      if (!stop || !bar) throw new Error('missing boxes');
+      expect(stop.y).toBeGreaterThanOrEqual(bar.y + bar.height - 1);
+    }
+  });
+}
+
+test('clicking a stop name moves to that stop without leaving the path', async ({ page }) => {
+  await page.goto('/paths/control');
+  await page.getByRole('list', { name: 'Stops' }).getByRole('button', { name: 'ESC' }).click();
+  await expect(page).toHaveURL(/\/paths\/control\/4$/);
+  await expect(currentStop(page)).toContainText('ESC');
+});
+
 test('reduced motion still plays the path, a stop at a time', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/paths/video');
