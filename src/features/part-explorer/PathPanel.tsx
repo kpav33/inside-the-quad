@@ -1,7 +1,7 @@
 import type { PathContent, PathStop } from '@/content/paths';
 import { PART_LABELS, UI } from '@/content/ui';
 import { PATH_IDS } from '@/shared/domain/paths';
-import { NUMBERED_SHEETS, sheetNumber } from '@/shared/domain/sheets';
+import { chapterCount, sheetNumber } from '@/shared/domain/sheets';
 import { type Page, PartLink } from '@/shared/routing';
 
 import { LESSON_PANEL_ID, pathTitleId } from './ids';
@@ -76,8 +76,13 @@ export function PathPanel({
       </header>
 
       <TitleBlock
-        sheet={UI.titleBlock.sheetOf(sheetNumber(path.id), NUMBERED_SHEETS.length)}
-        specs={[{ label: t.stopsLabel, value: String(stops.length) }]}
+        chapter={UI.chapters.paths}
+        sheet={UI.titleBlock.sheetOf(sheetNumber(path.id), chapterCount(path.id))}
+        specs={[
+          { label: t.from, value: path.from, wraps: true },
+          { label: t.to, value: path.to, wraps: true },
+          { label: t.carries, value: path.carries, wraps: true },
+        ]}
       />
 
       <nav className="path-switcher" aria-label={t.switcherLabel}>

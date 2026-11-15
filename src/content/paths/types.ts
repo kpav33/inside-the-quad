@@ -23,5 +23,9 @@ export interface PathContent {
   title: string;
   /** One line under the heading: what the path shows. */
   lead: string;
+  /** Where the path starts and ends, and what travels along it (the title block). */
+  from: string;
+  to: string;
+  carries: string;
   stops: readonly PathStop[];
 }

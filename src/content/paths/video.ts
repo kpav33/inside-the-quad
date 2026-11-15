@@ -9,6 +9,9 @@ export const videoPath: PathContent = {
   id: 'video',
   title: UI.paths.title.video,
   lead: 'How the live picture gets from the front of the drone to your eyes.',
+  from: 'Camera',
+  to: 'Your goggles',
+  carries: 'The live picture',
   stops: [
     {
       name: 'Camera',

@@ -71,9 +71,13 @@ export const UI = {
     knowBasics: 'Already know the basics?',
     start: (part: string) => `Start with sheet 1: ${part}`,
     continue: (sheet: number, name: string) => `Continue with sheet ${sheet}: ${name}`,
-    allRead: (total: number) => `All ${total} sheets read. Open any sheet to look something up.`,
+    /** Continuing into the paths names their chapter, since its sheets are numbered afresh. */
+    continuePaths: (sheet: number, name: string) =>
+      `Continue with How it works together, sheet ${sheet}: ${name}`,
+    allRead: 'Every part and path read. Open any sheet to look something up.',
     startAgain: 'Start again from sheet 1',
-    count: (read: number, total: number) => `${read} of ${total} read`,
+    count: (parts: number, partTotal: number, paths: number, pathTotal: number) =>
+      `Parts ${parts} of ${partTotal} · Paths ${paths} of ${pathTotal}`,
     clear: 'Clear progress',
   },
   titleBlock: {
@@ -83,6 +87,7 @@ export const UI = {
     overviewSheet: 'Overview',
     part: 'Part',
     sheet: 'Sheet',
+    chapter: 'Chapter',
     sheetOf: (sheet: number, sheets: number) => `${sheet} of ${sheets}`,
     quantity: 'Qty',
     spec: 'Spec',
@@ -99,6 +104,7 @@ export const UI = {
     byAuthor: (author: string) => `by ${author}`,
     via: 'Via Wikimedia Commons.',
   },
+  chapters: { parts: 'The parts', paths: 'How it works together' },
   paths: {
     /** Each path sheet's name, as its heading and wherever another sheet refers to it. */
     title: { control: 'Control path', power: 'Power path', video: 'Video path' } satisfies Record<
@@ -110,6 +116,9 @@ export const UI = {
     switcherLabel: 'Paths',
     close: 'Close sheet',
     stopsLabel: 'Stops',
+    from: 'From',
+    to: 'To',
+    carries: 'Carries',
     /** Before the lesson links of a stop with several parts. */
     lessonsLabel: 'Lessons:',
     previousStep: 'Previous step',
@@ -128,6 +137,13 @@ export const UI = {
     sheetNumber: (sheet: number) => `· sheet ${sheet}`,
     footerLabel: 'Sheets',
     previous: 'Previous',
+    /** The footer link out of the last part, into the paths chapter. */
+    endOfParts: 'End of the parts',
+    /** The footer link back from the first path into the parts chapter. */
+    backToParts: 'Back to the parts',
+    /** A path named from outside its chapter. */
+    pathInChapter: (sheet: number, title: string) =>
+      `How it works together, sheet ${sheet}: ${title}`,
     next: 'Next',
     backToOverview: 'Back to overview',
     markRead: 'Mark as read',

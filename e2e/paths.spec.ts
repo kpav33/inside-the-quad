@@ -33,7 +33,11 @@ test('stepping moves the current stop on the sheet and on the drawing', async ({
 
 test('the next sheet after Extras is the control path', async ({ page }) => {
   await page.goto('/parts/extras');
-  await page.getByRole('link', { name: /^Next\s*: Control path/ }).click();
+  await page
+    .getByRole('link', {
+      name: /^End of the parts\s*: How it works together, sheet 1: Control path/,
+    })
+    .click();
   await expect(pathHeading(page, 'Control')).toBeFocused();
 });
 

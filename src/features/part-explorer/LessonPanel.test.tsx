@@ -111,15 +111,16 @@ describe('LessonPanel', () => {
 
   it('runs on from the last part into the control path', () => {
     renderLesson('extras');
-    expect(screen.getByRole('link', { name: 'Next: Control path · sheet 12' })).toHaveAttribute(
-      'href',
-      '/paths/control',
-    );
+    expect(
+      screen.getByRole('link', {
+        name: 'End of the parts: How it works together, sheet 1: Control path',
+      }),
+    ).toHaveAttribute('href', '/paths/control');
   });
 
-  it('numbers its sheet out of the whole set of 14', () => {
+  it('numbers its sheet within the parts chapter', () => {
     renderLesson('frame');
-    expect(screen.getByRole('group', { name: 'Title block' })).toHaveTextContent('1 of 14');
+    expect(screen.getByRole('group', { name: 'Title block' })).toHaveTextContent('1 of 11');
   });
 
   it('can be closed', async () => {

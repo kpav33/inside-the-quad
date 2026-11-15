@@ -24,12 +24,31 @@ function renderPath(path: PathId, step = 0, playing = false) {
 const stops = () => within(screen.getByRole('list', { name: 'Stops' })).getAllByRole('listitem');
 
 describe('PathPanel', () => {
-  it('names the path and numbers its sheet out of 14', () => {
-    renderPath('power');
-    expect(screen.getByRole('heading', { level: 2, name: 'Power path' })).toBeInTheDocument();
+  it('names its chapter, numbers its sheet within it, and says what the path is about', () => {
+    renderPath('control');
+    expect(screen.getByRole('heading', { level: 2, name: 'Control path' })).toBeInTheDocument();
     const block = screen.getByRole('group', { name: 'Title block' });
-    expect(block).toHaveTextContent('13 of 14');
-    expect(block).toHaveTextContent('Stops6');
+    expect(block).toHaveTextContent('ChapterHow it works together');
+    expect(block).toHaveTextContent('Sheet1 of 3');
+    expect(block).toHaveTextContent('FromYour radio');
+    expect(block).toHaveTextContent('ToPropellers');
+    expect(block).toHaveTextContent('CarriesStick commands');
+    expect(block).not.toHaveTextContent('Stops');
+  });
+
+  it('leads back across the chapter break from the first path', () => {
+    renderPath('control');
+    expect(
+      screen.getByRole('link', { name: 'Back to the parts: Extras · sheet 11' }),
+    ).toHaveAttribute('href', '/parts/extras');
+  });
+
+  it('refers to the next path by its sheet in the chapter', () => {
+    renderPath('control');
+    expect(screen.getByRole('link', { name: 'Next: Power path · sheet 2' })).toHaveAttribute(
+      'href',
+      '/paths/power',
+    );
   });
 
   it('lists the stops in order and marks the current one', () => {

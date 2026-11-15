@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { sheetName, UI } from '@/content/ui';
 import { type ReadableSheet, startState } from '@/features/progress';
 import type { PartId } from '@/shared/domain/parts';
-import { NUMBERED_SHEETS, sheetNumber } from '@/shared/domain/sheets';
+import { type Chapter, CHAPTER_SHEETS, chapterOf, sheetNumber } from '@/shared/domain/sheets';
 import { type Page, PartLink } from '@/shared/routing';
 import { ArrowIcon } from '@/shared/ui/icons';
 
@@ -19,6 +19,9 @@ export interface OverviewStartProps {
 }
 
 const FIRST: PartId = 'frame';
+
+const countRead = (read: ReadonlySet<ReadableSheet>, chapter: Chapter) =>
+  CHAPTER_SHEETS[chapter].filter((sheet) => read.has(sheet)).length;
 
 /**
  * Where to start on the overview: the intro for a newcomer, then sheet 1, the first unread sheet,
@@ -67,14 +70,15 @@ export function OverviewStart({ read, introRead, onFollowLink, onClear }: Overvi
     state.kind === 'start'
       ? startSheet1
       : state.kind === 'continue'
-        ? t.continue(sheetNumber(target), sheetName(target))
+        ? (chapterOf(target) === 'paths' ? t.continuePaths : t.continue)(
+            sheetNumber(target),
+            sheetName(target),
+          )
         : t.startAgain;
 
   return (
     <div className="overview-start">
-      <p className="part-explorer-hint">
-        {state.kind === 'done' ? t.allRead(NUMBERED_SHEETS.length) : UI.explorer.hint}
-      </p>
+      <p className="part-explorer-hint">{state.kind === 'done' ? t.allRead : UI.explorer.hint}</p>
       <PartLink
         id={OVERVIEW_FOCUS_ID}
         to={target}
@@ -85,7 +89,16 @@ export function OverviewStart({ read, introRead, onFollowLink, onClear }: Overvi
         <ArrowIcon />
       </PartLink>
       <p className="overview-progress">
-        {read.size > 0 && <span>{t.count(read.size, NUMBERED_SHEETS.length)}</span>}
+        {read.size > 0 && (
+          <span>
+            {t.count(
+              countRead(read, 'parts'),
+              CHAPTER_SHEETS.parts.length,
+              countRead(read, 'paths'),
+              CHAPTER_SHEETS.paths.length,
+            )}
+          </span>
+        )}
         <PartLink to="intro" className="overview-quiet-link" onFollow={onFollowLink}>
           {UI.intro.link}
         </PartLink>

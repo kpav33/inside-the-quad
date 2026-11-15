@@ -9,6 +9,9 @@ export const controlPath: PathContent = {
   id: 'control',
   title: UI.paths.title.control,
   lead: 'How moving a stick becomes a change in motor speed, many times a second.',
+  from: 'Your radio',
+  to: 'Propellers',
+  carries: 'Stick commands',
   stops: [
     {
       name: 'Your radio',

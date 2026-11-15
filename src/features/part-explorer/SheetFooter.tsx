@@ -1,14 +1,24 @@
 import { sheetName, UI } from '@/content/ui';
-import { type SheetId, sheetNeighbours, sheetNumber } from '@/shared/domain/sheets';
+import { chapterOf, type SheetId, sheetNeighbours, sheetNumber } from '@/shared/domain/sheets';
 import { type Page, PartLink } from '@/shared/routing';
 import { ArrowIcon, CheckIcon } from '@/shared/ui/icons';
 
+/** True when moving from one sheet to the other crosses from one chapter into the other. */
+function crossesChapter(from: SheetId, to: SheetId | null): boolean {
+  if (from === 'intro' || to === null || to === 'intro') return false;
+  return chapterOf(from) !== chapterOf(to);
+}
+
 /**
- * "Battery · sheet 6": a reference to another part or path sheet; the sheet number never wraps apart. The intro
- * has no number and is named by its title.
+ * "Battery · sheet 6": a reference to another sheet; the sheet number never wraps apart. A path
+ * named from the parts chapter carries its chapter ("How it works together, sheet 1: Control
+ * path"), since its number counts from 1 again. The intro has no number and is named by its title.
  */
-export function SheetRef({ sheet }: { sheet: SheetId }) {
+export function SheetRef({ sheet, from }: { sheet: SheetId; from?: SheetId }) {
   if (sheet === 'intro') return <>{UI.intro.link}</>;
+  if (from !== undefined && crossesChapter(from, sheet) && chapterOf(sheet) === 'paths') {
+    return <>{UI.lesson.pathInChapter(sheetNumber(sheet), sheetName(sheet))}</>;
+  }
   return (
     <>
       {sheetName(sheet)} <span className="nowrap">{UI.lesson.sheetNumber(sheetNumber(sheet))}</span>
@@ -28,6 +38,9 @@ export interface SheetFooterProps {
 /** The end of every sheet: mark it as read, then the previous and next sheets. */
 export function SheetFooter({ sheet, read, onToggleRead, onFollowLink }: SheetFooterProps) {
   const { previous, next } = sheetNeighbours(sheet);
+  // The footer marks the step from one chapter into the other.
+  const backAcross = crossesChapter(sheet, previous);
+  const onAcross = crossesChapter(sheet, next);
   return (
     <nav className="lesson-footer" aria-label={UI.lesson.footerLabel}>
       <button
@@ -51,11 +64,11 @@ export function SheetFooter({ sheet, read, onToggleRead, onFollowLink }: SheetFo
           <PartLink to={previous} className="lesson-sheet-link" onFollow={onFollowLink}>
             <span className="lesson-sheet-label">
               <ArrowIcon back />
-              {UI.lesson.previous}
+              {backAcross ? UI.lesson.backToParts : UI.lesson.previous}
               <span className="visually-hidden">:</span>
             </span>{' '}
             <span className="lesson-sheet-target">
-              <SheetRef sheet={previous} />
+              <SheetRef sheet={previous} from={sheet} />
             </span>
           </PartLink>
         ) : (
@@ -63,12 +76,12 @@ export function SheetFooter({ sheet, read, onToggleRead, onFollowLink }: SheetFo
         )}
         <PartLink to={next} className="lesson-sheet-link lesson-sheet-next" onFollow={onFollowLink}>
           <span className="lesson-sheet-label">
-            {UI.lesson.next}
+            {onAcross ? UI.lesson.endOfParts : UI.lesson.next}
             <span className="visually-hidden">:</span>
             <ArrowIcon />
           </span>{' '}
           <span className="lesson-sheet-target">
-            {next ? <SheetRef sheet={next} /> : UI.lesson.backToOverview}
+            {next ? <SheetRef sheet={next} from={sheet} /> : UI.lesson.backToOverview}
           </span>
         </PartLink>
       </div>

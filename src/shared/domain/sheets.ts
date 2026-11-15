@@ -13,9 +13,26 @@ export const NUMBERED_SHEETS: readonly NumberedSheet[] = [...PART_IDS, ...PATH_I
 /** The sheets in reading order: the intro before sheet 1. */
 export const SHEET_IDS: readonly SheetId[] = ['intro', ...NUMBERED_SHEETS];
 
-/** A sheet's number in the set, from 1. */
+/** The drawing set's two chapters: the parts, then how they work together (the paths). */
+export type Chapter = 'parts' | 'paths';
+
+export const CHAPTER_SHEETS: Record<Chapter, readonly NumberedSheet[]> = {
+  parts: PART_IDS,
+  paths: PATH_IDS,
+};
+
+export function chapterOf(sheet: NumberedSheet): Chapter {
+  return (PATH_IDS as readonly string[]).includes(sheet) ? 'paths' : 'parts';
+}
+
+/** A sheet's number within its chapter, from 1. */
 export function sheetNumber(sheet: NumberedSheet): number {
-  return NUMBERED_SHEETS.indexOf(sheet) + 1;
+  return CHAPTER_SHEETS[chapterOf(sheet)].indexOf(sheet) + 1;
+}
+
+/** How many sheets a sheet's chapter has. */
+export function chapterCount(sheet: NumberedSheet): number {
+  return CHAPTER_SHEETS[chapterOf(sheet)].length;
 }
 
 /** The sheets before and after one, in reading order; null at either end. */

@@ -2,7 +2,14 @@ import { describe, expect, it } from 'vitest';
 
 import { PART_IDS } from './parts';
 import { PATH_IDS } from './paths';
-import { NUMBERED_SHEETS, SHEET_IDS, sheetNeighbours, sheetNumber } from './sheets';
+import {
+  chapterCount,
+  chapterOf,
+  NUMBERED_SHEETS,
+  SHEET_IDS,
+  sheetNeighbours,
+  sheetNumber,
+} from './sheets';
 
 describe('sheets', () => {
   it('puts the intro before the parts, in teaching order', () => {
@@ -27,11 +34,18 @@ describe('sheets', () => {
     expect(sheetNeighbours('video')).toEqual({ previous: 'power', next: null });
   });
 
-  it('numbers the parts and then the paths, 1 to 14', () => {
+  it('reads the parts, then the paths', () => {
     expect(NUMBERED_SHEETS).toHaveLength(14);
+  });
+
+  it('splits the set into two chapters, each numbered from 1', () => {
+    expect(chapterOf('frame')).toBe('parts');
+    expect(chapterOf('control')).toBe('paths');
     expect(sheetNumber('frame')).toBe(1);
     expect(sheetNumber('extras')).toBe(11);
-    expect(sheetNumber('control')).toBe(12);
-    expect(sheetNumber('video')).toBe(14);
+    expect(sheetNumber('control')).toBe(1);
+    expect(sheetNumber('video')).toBe(3);
+    expect(chapterCount('extras')).toBe(11);
+    expect(chapterCount('power')).toBe(3);
   });
 });

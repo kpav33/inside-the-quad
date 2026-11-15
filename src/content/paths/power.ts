@@ -11,6 +11,9 @@ export const powerPath: PathContent = {
   id: 'power',
   title: UI.paths.title.power,
   lead: 'Where the battery’s energy goes: most to the motors, a little to the electronics.',
+  from: 'Battery',
+  to: 'Motors and electronics',
+  carries: 'Electrical power',
   stops: [
     {
       name: 'Battery',
