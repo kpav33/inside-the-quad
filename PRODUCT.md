@@ -55,10 +55,11 @@ it work, what do the numbers mean, what is it connected to.
   sizes drawn to scale, and why 5-inch is the reference. The overview offers it to newcomers.
 - A real photo of each part on its lesson sheet: one example of that kind of part, freely licensed
   (CC BY, CC BY-SA, CC0 or public domain only, never non-commercial), credited, stored in the app.
-- Three path sheets after the parts (`/paths/control`, `/paths/power`, `/paths/video`), the
-  first part of "how it all works together": each walks the stops a signal or current passes, on
-  the 3D drawing with a redline leader from part to part, step by step or played through. The
-  masthead links them as "How it works together".
+- A second chapter after the parts, "How it works together": three path sheets
+  (`/paths/control`, `/paths/power`, `/paths/video`, numbered 1–3) that walk the stops a signal or
+  current passes, on the 3D drawing with a redline leader from part to part, step by step or played
+  through. The step is in the address, so a lesson opened from a stop leads back to it; clicking
+  the drawing picks a stop. The masthead links the chapter as "How it works together".
 - Planned (see `docs/roadmap.md`): how a quad moves (virtual sticks, motor speeds, the gyro loop)
   and "what if" faults, then the gear you hold and wear, and a compatibility checker; later other
   drone sizes and types.

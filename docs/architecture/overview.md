@@ -70,8 +70,9 @@ nginx/              Production server config (copied into the Docker image)
   `drone-model/path-anchors.ts` turns anchors into points from the model's own layout functions
   and joins stops into leader segments, `PathLeader.tsx` draws the lines, and the viewer draws the
   numbered balloons as DOM over the canvas, moved to their projected points each frame
-  (`drone-viewer/PathPins.tsx`). The explorer's `usePathStep` owns the current stop and Play; the
-  address names only the path, so every path opens at stop 1.
+  (`drone-viewer/PathPins.tsx`). The step is in the address (`/paths/<id>/<n>`, replaced, not pushed);
+  the explorer clamps it and `usePathStep` adds Play. `shared/domain/sheets.ts` splits the set into
+  two chapters (parts, paths), each numbered from 1.
 - The part list is the accessible equivalent of clicking in 3D, so the canvas is hidden from
   assistive technology and everything still works if WebGL fails.
 

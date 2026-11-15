@@ -428,7 +428,7 @@
       "name": "Path Sheet",
       "kind": "sheet",
       "refersTo": "path-stops",
-      "description": "Sheets 12-14 (Control, Power, Video): lesson frame, title block with sheet number and Stops count, a framed caps path switcher (open path ink with 2px redline underline), lead, outline step controls (Previous step, Next step, Play the path / Stop), then hairline-ruled numbered stops with a balloon, caps name linked to its lesson and one or two sentences. Current balloon filled redline; passed balloons keep a redline ring; ahead muted. Lesson footer after."
+      "description": "Chapter 'How it works together', sheets 1-3 (Control, Power, Video): lesson frame, title block with Chapter, Sheet and From/To/Carries, a framed caps path switcher (open path ink with 2px redline underline), lead, outline step controls (Previous step, Next step, Play the path / Stop), then hairline-ruled numbered stops with a balloon, caps name linked to its lesson and one or two sentences. Current balloon filled redline; passed balloons keep a redline ring; ahead muted. Lesson footer after."
     },
     {
       "name": "Path Leader",
