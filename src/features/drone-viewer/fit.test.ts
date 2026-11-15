@@ -4,7 +4,7 @@ import { MathUtils, PerspectiveCamera, Vector3 } from 'three';
 import { closedExtentsMm, droneOutlineMm } from '@/features/drone-model';
 import { mm, REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
 
-import { FIT_MARGIN, FIT_VIEWS, fitDistance, type Vec3 } from './fit';
+import { FIT_MARGIN, FIT_VIEWS, fitDistance, sphereFitDistance, type Vec3 } from './fit';
 import { DEFAULT_VIEW, type View, viewToPosition } from './part-views';
 
 const FOV_DEG = 40;
@@ -53,5 +53,18 @@ describe('fitDistance', () => {
     const tall = fitDistance(points, centre, DEFAULT_VIEW, 0.46, FOV_DEG, FIT_MARGIN);
     expect(tall).toBeGreaterThan(wide);
     expect(MathUtils.clamp(tall, 0, 10)).toBe(tall);
+  });
+});
+
+describe('sphereFitDistance', () => {
+  it.each([0.5, 1, 2])('keeps a sphere inside both fields of view at aspect %s', (aspect) => {
+    const radius = 0.2;
+    const distance = sphereFitDistance(radius, FOV_DEG, aspect);
+    const subtended = Math.asin(radius / distance);
+    const halfV = MathUtils.degToRad(FOV_DEG) / 2;
+    const halfH = Math.atan(Math.tan(halfV) * aspect);
+    expect(subtended).toBeLessThan(Math.min(halfV, halfH));
+    // and not absurdly far: the sphere still fills most of the narrower side
+    expect(subtended).toBeGreaterThan(0.6 * Math.min(halfV, halfH));
   });
 });

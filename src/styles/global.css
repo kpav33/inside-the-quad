@@ -243,6 +243,59 @@ a {
   pointer-events: none;
 }
 
+/* The moves sheet's motor balloons: number and speed, beside each motor. */
+.motor-pins {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.motor-pin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-2) 0 0;
+  border: 1px solid var(--color-rule-strong);
+  border-radius: 999px;
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.motor-pin-number {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-right: 1px solid var(--color-rule-strong);
+  font-weight: 700;
+}
+
+/* The motors working harder for the move are in redline; the slower ones go quiet. */
+.motor-pin[data-state='up'] {
+  border-color: var(--color-accent);
+}
+
+.motor-pin[data-state='up'] .motor-pin-number {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-ground);
+}
+
+.motor-pin[data-state='down'] {
+  color: var(--color-muted);
+}
+
 /* The moves sheet's sticks: a mode 2 radio's two gimbals in the drawing field's lower corners. */
 .sticks {
   --stick-size: 5.5rem;

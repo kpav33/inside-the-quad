@@ -97,7 +97,7 @@ function Stick({
   };
 
   return (
-    <div className="stick" data-side={side}>
+    <div className="stick" data-side={side} data-avoid-pins="">
       <div
         className="stick-pad"
         data-side={side}

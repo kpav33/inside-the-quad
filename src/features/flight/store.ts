@@ -1,3 +1,4 @@
+import { IDLE } from './mixer';
 import {
   CENTRED,
   type FlightState,
@@ -19,6 +20,8 @@ export type StickSource = 'user' | 'demo';
  */
 export interface Flight {
   readonly state: FlightState;
+  /** The slowest a motor turns (0–1), for drawing speeds against. */
+  readonly idle: number;
   readonly sticks: StickInput;
   setSticks(sticks: Partial<StickInput>, by: StickSource): void;
   gust(): void;
@@ -70,6 +73,7 @@ export function createFlight(): Flight {
   const disposal = listeners();
 
   return {
+    idle: IDLE,
     get state() {
       return state;
     },

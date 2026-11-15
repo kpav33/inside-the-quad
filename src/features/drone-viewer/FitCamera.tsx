@@ -40,21 +40,25 @@ function applyFit(camera: Camera, controls: Controls, fit: DroneFit, previous: D
 
 /**
  * Frames the drone so it fills the canvas: from the starting view on load, and on every resize by
- * rescaling the camera's distance for the direction it faces.
+ * rescaling the camera's distance for the direction it faces. With `sphere`, the drone fits at
+ * any attitude (the moves sheet).
  */
-export function FitCamera() {
+export function FitCamera({ sphere = false }: { sphere?: boolean }) {
   const controls = useThree((state) => state.controls) as unknown as Controls | null;
   const camera = useThree((state) => state.camera);
   const invalidate = useThree((state) => state.invalidate);
-  const fit = useDroneFit();
-  const previous = useRef<DroneFit | null>(null);
+  const fit = useDroneFit(sphere);
+  const previous = useRef<{ fit: DroneFit; sphere: boolean } | null>(null);
 
   useLayoutEffect(() => {
     if (!controls) return;
-    applyFit(camera, controls, fit, previous.current);
-    previous.current = fit;
+    // Opening or leaving the moves sheet starts again from the starting view: it is the
+    // three-quarter view from front and above, where roll, pitch and yaw all read.
+    const last = previous.current?.sphere === sphere ? previous.current.fit : null;
+    applyFit(camera, controls, fit, last);
+    previous.current = { fit, sphere };
     invalidate();
-  }, [controls, camera, fit, invalidate]);
+  }, [controls, camera, fit, sphere, invalidate]);
 
   return null;
 }
