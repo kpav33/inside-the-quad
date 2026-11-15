@@ -1,15 +1,16 @@
 import { useEffect, useRef } from 'react';
 
-import { PART_LABELS, UI } from '@/content/ui';
-import { startState } from '@/features/progress';
-import { PART_IDS, type PartId } from '@/shared/domain/parts';
+import { sheetName, UI } from '@/content/ui';
+import { type ReadableSheet, startState } from '@/features/progress';
+import type { PartId } from '@/shared/domain/parts';
+import { type Chapter, CHAPTER_SHEETS, chapterOf, sheetNumber } from '@/shared/domain/sheets';
 import { type Page, PartLink } from '@/shared/routing';
 import { ArrowIcon } from '@/shared/ui/icons';
 
 import { OVERVIEW_FOCUS_ID } from './ids';
 
 export interface OverviewStartProps {
-  read: ReadonlySet<PartId>;
+  read: ReadonlySet<ReadableSheet>;
   introRead: boolean;
   /** Called before a link here opens its sheet. */
   onFollowLink: (page: Page) => void;
@@ -18,6 +19,9 @@ export interface OverviewStartProps {
 }
 
 const FIRST: PartId = 'frame';
+
+const countRead = (read: ReadonlySet<ReadableSheet>, chapter: Chapter) =>
+  CHAPTER_SHEETS[chapter].filter((sheet) => read.has(sheet)).length;
 
 /**
  * Where to start on the overview: the intro for a newcomer, then sheet 1, the first unread sheet,
@@ -35,7 +39,7 @@ export function OverviewStart({ read, introRead, onFollowLink, onClear }: Overvi
   }, [read, introRead]);
 
   const t = UI.overview;
-  const startSheet1 = t.start(PART_LABELS[FIRST]);
+  const startSheet1 = t.start(sheetName(FIRST));
 
   if (state.kind === 'intro') {
     return (
@@ -61,19 +65,20 @@ export function OverviewStart({ read, introRead, onFollowLink, onClear }: Overvi
     );
   }
 
-  const target = state.kind === 'continue' ? state.part : FIRST;
+  const target = state.kind === 'continue' ? state.sheet : FIRST;
   const label =
     state.kind === 'start'
       ? startSheet1
       : state.kind === 'continue'
-        ? t.continue(PART_IDS.indexOf(target) + 1, PART_LABELS[target])
+        ? (chapterOf(target) === 'paths' ? t.continuePaths : t.continue)(
+            sheetNumber(target),
+            sheetName(target),
+          )
         : t.startAgain;
 
   return (
     <div className="overview-start">
-      <p className="part-explorer-hint">
-        {state.kind === 'done' ? t.allRead(PART_IDS.length) : UI.explorer.hint}
-      </p>
+      <p className="part-explorer-hint">{state.kind === 'done' ? t.allRead : UI.explorer.hint}</p>
       <PartLink
         id={OVERVIEW_FOCUS_ID}
         to={target}
@@ -84,7 +89,16 @@ export function OverviewStart({ read, introRead, onFollowLink, onClear }: Overvi
         <ArrowIcon />
       </PartLink>
       <p className="overview-progress">
-        {read.size > 0 && <span>{t.count(read.size, PART_IDS.length)}</span>}
+        {read.size > 0 && (
+          <span>
+            {t.count(
+              countRead(read, 'parts'),
+              CHAPTER_SHEETS.parts.length,
+              countRead(read, 'paths'),
+              CHAPTER_SHEETS.paths.length,
+            )}
+          </span>
+        )}
         <PartLink to="intro" className="overview-quiet-link" onFollow={onFollowLink}>
           {UI.intro.link}
         </PartLink>

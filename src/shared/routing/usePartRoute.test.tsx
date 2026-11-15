@@ -86,6 +86,28 @@ describe('usePartRoute', () => {
     expect(window.location.pathname).toBe('/intro');
   });
 
+  it('reads a path sheet and drops its trailing slash', () => {
+    const { result } = start('/paths/control/');
+    expect(result.current.route).toEqual({ kind: 'path', path: 'control', step: 1 });
+    expect(window.location.pathname).toBe('/paths/control');
+  });
+
+  it('writes step 1 of a path without its number', () => {
+    start('/paths/control/1');
+    expect(window.location.pathname).toBe('/paths/control');
+  });
+
+  it('replaces the address with a new step, adding no history entry', () => {
+    const { result } = start('/paths/power');
+    const before = window.history.length;
+    act(() => {
+      result.current.replaceStep('power', 4);
+    });
+    expect(window.location.pathname).toBe('/paths/power/4');
+    expect(window.history.length).toBe(before);
+    expect(result.current.route).toEqual({ kind: 'path', path: 'power', step: 4 });
+  });
+
   it('navigates to the intro', () => {
     const { result } = start('/');
     act(() => {

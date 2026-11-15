@@ -2,8 +2,9 @@ import type { Lesson } from '@/content/lessons';
 import { PART_PHOTOS } from '@/content/photos';
 import { UI } from '@/content/ui';
 import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
-import { PART_IDS, type PartId } from '@/shared/domain/parts';
+import type { PathId } from '@/shared/domain/paths';
 import { partQuantity } from '@/shared/domain/quantity';
+import { chapterCount, sheetNumber } from '@/shared/domain/sheets';
 import { type Page, PartLink } from '@/shared/routing';
 import { ArrowIcon } from '@/shared/ui/icons';
 
@@ -21,9 +22,9 @@ export interface LessonPanelProps {
   onToggleRead: () => void;
   /** Called before a link in the sheet opens another lesson (null: the overview). */
   onFollowLink?: (page: Page) => void;
+  /** The path step this lesson was opened from (step from 0), offered as the way back. */
+  returnTo?: { path: PathId; step: number; title: string } | null;
 }
-
-const sheetNumber = (part: PartId) => PART_IDS.indexOf(part) + 1;
 
 /**
  * One part's drawing sheet: its name, the title block, a real photo, the four questions, then the
@@ -35,6 +36,7 @@ export function LessonPanel({
   onClose,
   onToggleRead,
   onFollowLink,
+  returnTo = null,
 }: LessonPanelProps) {
   const titleId = lessonTitleId(lesson.partId);
   const columns = UI.lesson.specColumns;
@@ -50,8 +52,22 @@ export function LessonPanel({
         </button>
       </header>
 
+      {returnTo && (
+        <p className="lesson-return">
+          <PartLink
+            to={returnTo.path}
+            step={returnTo.step + 1}
+            className="lesson-link"
+            onFollow={onFollowLink}
+          >
+            <ArrowIcon back />
+            {UI.lesson.backToPath(returnTo.title, returnTo.step + 1)}
+          </PartLink>
+        </p>
+      )}
+
       <TitleBlock
-        sheet={UI.titleBlock.sheetOf(sheetNumber(lesson.partId), PART_IDS.length)}
+        sheet={UI.titleBlock.sheetOf(sheetNumber(lesson.partId), chapterCount(lesson.partId))}
         quantity={partQuantity(lesson.partId, REFERENCE_5_INCH)}
         specs={lesson.specs}
       />

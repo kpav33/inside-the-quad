@@ -111,6 +111,9 @@ a {
 /* The masthead's sections: for now one link, to the intro. It sits at the right and takes its own
    line when the masthead wraps. */
 .app-sections {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-5);
   margin-left: auto;
 }
 
@@ -186,6 +189,12 @@ a {
   border-color: var(--color-ink);
 }
 
+.button-outline:disabled {
+  border-color: var(--color-rule);
+  color: var(--color-muted);
+  cursor: default;
+}
+
 /* Part explorer: drawing field + sheet column */
 .part-explorer {
   display: flex;
@@ -221,8 +230,17 @@ a {
 }
 
 .drone-viewer {
+  position: relative;
   width: 100%;
   height: 100%;
+}
+
+/* The path's pins, over the canvas; each is moved to its stop's point on every frame. */
+.path-pins {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
 }
 
 .drawing-zones {
@@ -269,6 +287,86 @@ a {
 }
 .drawing-zone-row:nth-child(7) {
   top: 83.3%;
+}
+
+/* A path stop on the drawing: its numbered balloon, and an off-drone end's label above it. Drawn
+   over the 3D view, never in the way of a drag. */
+.path-pin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* The pin is its balloon; an end's label stands on top of it. */
+  display: grid;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* A balloon moved off its stop keeps a hairline back to it. */
+.path-pin-tail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 1px;
+  background: var(--color-rule-strong);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+.path-pin-tail[data-state='current'] {
+  background: var(--color-accent);
+}
+
+.path-pin-tail[hidden] {
+  display: none;
+}
+
+.path-marker {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid var(--color-rule-strong);
+  border-radius: 50%;
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.path-pin[data-state='hidden'] {
+  display: none;
+}
+
+/* An end not reached yet: its balloon in the muted ring, number muted. */
+.path-pin[data-state='ahead'] .path-marker {
+  color: var(--color-muted);
+}
+
+/* Only the current stop is in redline; the stops passed stay quiet. */
+.path-pin[data-state='current'] .path-marker {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-ground);
+}
+
+.path-end {
+  position: absolute;
+  bottom: calc(100% + var(--space-1));
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-rule-strong);
+  background: var(--color-sheet);
+  color: var(--color-ink);
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .drawing-hint {
@@ -869,6 +967,164 @@ a {
 }
 
 /* Lesson footer: mark as read, then the previous and next sheets as title-block cells. */
+/* A lesson opened from a path's stop: the way back to that step, under the heading. */
+.lesson-return .lesson-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target-min);
+}
+
+/* Path sheet: a switcher between the three paths, the numbered stops, and the step controls. */
+.path-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--color-rule-strong);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.path-switcher-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  padding: 0 var(--space-4);
+  border-right: 1px solid var(--color-rule);
+  font-family: var(--font-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--color-muted);
+}
+
+.path-switcher-link:last-child {
+  border-right: 0;
+}
+
+.path-switcher-link:hover {
+  color: var(--color-ink);
+}
+
+/* The open path is the current sheet: redline under its name. */
+.path-switcher-link[aria-current='page'] {
+  color: var(--color-ink);
+  box-shadow: inset 0 -2px 0 var(--color-accent);
+}
+
+.path-lead {
+  max-width: 68ch;
+}
+
+.path-stops {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-rule-strong);
+}
+
+.path-stop {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.path-stop-number {
+  display: inline-grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--color-rule-strong);
+  border-radius: 50%;
+  font-family: var(--font-label);
+  font-weight: 700;
+  color: var(--color-muted);
+}
+
+.path-stop[data-state='passed'] .path-stop-number {
+  border-color: var(--color-accent);
+  color: var(--color-ink);
+}
+
+/* The current stop, numbered like its balloon on the drawing. */
+.path-stop[data-state='current'] .path-stop-number {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-ground);
+}
+
+.path-stop-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+  max-width: 68ch;
+  /* Long stop names in large text break rather than push the sheet sideways (02d). */
+  overflow-wrap: anywhere;
+}
+
+.path-stop-name {
+  width: fit-content;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-ink);
+  text-align: left;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--color-rule-strong);
+  text-underline-offset: 0.2em;
+  font-family: var(--font-label);
+  font-size: var(--step-1);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.path-stop-name:hover {
+  text-decoration-color: var(--color-ink);
+}
+
+.path-stop-text {
+  color: var(--color-muted);
+}
+
+.path-stop[data-state='current'] .path-stop-text {
+  color: var(--color-ink);
+}
+
+.path-stop-lessons {
+  font-size: var(--step--1);
+  color: var(--color-muted);
+}
+
+/* The step controls stay at the top of the sheet while the stops scroll under them, so a learner
+   stepping with the keyboard always sees the focused button. */
+.path-controls {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding-block: var(--space-3);
+  border-bottom: 1px solid var(--color-rule);
+  background: var(--color-ground);
+}
+
+/* The sheet column's top padding sits above the pinned bar; fill it so no stop text shows there. */
+.path-controls::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  height: var(--space-6);
+  background: var(--color-ground);
+}
+
 .lesson-footer {
   display: flex;
   flex-direction: column;

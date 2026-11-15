@@ -65,6 +65,14 @@ nginx/              Production server config (copied into the Docker image)
   files to `src/assets/photos/` and their credits to `content/photos/credits.json`. Both are
   committed; `content/photos` joins them with captions and alt text, and the part explorer shows
   them as hashed Vite assets, so a visitor's browser never contacts Wikimedia.
+- Path sheets (05a): `shared/domain/paths.ts` names the paths and the anchors a path can touch;
+  `content/paths/` holds each path's stops (parts lit, anchors, which stops each feeds, text);
+  `drone-model/path-anchors.ts` turns anchors into points from the model's own layout functions
+  and joins stops into leader segments, `PathLeader.tsx` draws the lines, and the viewer draws the
+  numbered balloons as DOM over the canvas, moved to their projected points each frame
+  (`drone-viewer/PathPins.tsx`). The step is in the address (`/paths/<id>/<n>`, replaced, not pushed);
+  the explorer clamps it and `usePathStep` adds Play. `shared/domain/sheets.ts` splits the set into
+  two chapters (parts, paths), each numbered from 1.
 - The part list is the accessible equivalent of clicking in 3D, so the canvas is hidden from
   assistive technology and everything still works if WebGL fails.
 

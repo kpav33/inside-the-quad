@@ -3,10 +3,14 @@ import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 
 import { connectedParts, LESSONS } from '@/content/lessons';
 import { overviewSpecs } from '@/content/overview';
-import { PART_LABELS, UI } from '@/content/ui';
+import { type PathContent, pathParts, PATHS, stopForPart } from '@/content/paths';
+import { PART_LABELS, sheetName, UI } from '@/content/ui';
+import type { Leader } from '@/features/drone-model';
 import { DroneViewer } from '@/features/drone-viewer';
+import type { DroneViewerProps } from '@/features/drone-viewer/DroneViewer';
 import { useIntroRead, useReadParts } from '@/features/progress';
-import type { PartId } from '@/shared/domain/parts';
+import { isInsidePart, isPartId, type PartId } from '@/shared/domain/parts';
+import { isPathId, type PathId } from '@/shared/domain/paths';
 import type { SheetId } from '@/shared/domain/sheets';
 import { type Page, usePartRoute } from '@/shared/routing';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
@@ -18,12 +22,15 @@ import {
   lessonTitleId,
   OVERVIEW_FOCUS_ID,
   partButtonId,
+  pathTitleId,
 } from './ids';
 import { IntroPanel } from './IntroPanel';
 import { LessonPanel } from './LessonPanel';
 import { OverviewStart } from './OverviewStart';
+import { PathPanel } from './PathPanel';
 import { PartList } from './PartList';
 import { TitleBlock } from './TitleBlock';
+import { usePathStep } from './usePathStep';
 
 /** Drawing-frame zone markers, as on a technical drawing's border. */
 const ZONE_COLUMNS = ['1', '2', '3', '4'];
@@ -34,22 +41,85 @@ const NO_PARTS: ReadonlySet<PartId> = new Set();
 
 const viewerFallback = <p role="alert">{UI.viewer.fallback}</p>;
 
+type Drawing = Pick<
+  DroneViewerProps,
+  'openParts' | 'connectedParts' | 'exploded' | 'turnTo' | 'leader'
+>;
+
+/** The drawing for a part's sheet (or the overview, for none): that part open, its links grey. */
+function partDrawing(part: PartId | null): Drawing {
+  return {
+    openParts: part ? new Set([part]) : NO_PARTS,
+    connectedParts: part ? connectedParts(part) : NO_PARTS,
+    exploded: isInsidePart(part),
+    turnTo: part,
+    leader: null,
+  };
+}
+
+/**
+ * The drawing for a path at a stop: the stop's parts open, the rest of the path grey, the frame
+ * opened (every path passes a board under the top plate), the view turned to the stop's part.
+ */
+function pathDrawing(path: PathContent, step: number): Drawing {
+  const open = new Set(path.stops[step]?.parts ?? []);
+  const rest = new Set([...pathParts(path.id)].filter((part) => !open.has(part)));
+  const leader: Leader = {
+    step,
+    stops: path.stops.map((stop, index) => ({
+      anchors: stop.anchors,
+      feeds: stop.feeds,
+      marker: index + 1,
+      ...(stop.end ? { endLabel: UI.paths.endLabel[stop.end] } : {}),
+    })),
+  };
+  return {
+    openParts: open,
+    connectedParts: rest,
+    exploded: true,
+    turnTo: [...open][0] ?? null,
+    leader,
+  };
+}
+
 /** Element id to focus after the next render, so keyboard focus never falls back to the page. */
 type FocusTarget = string | null;
 
 /** The heading of a sheet, which takes focus when the sheet opens. */
 const sheetTitleId = (sheet: SheetId) =>
-  sheet === 'intro' ? INTRO_TITLE_ID : lessonTitleId(sheet);
+  sheet === 'intro' ? INTRO_TITLE_ID : isPathId(sheet) ? pathTitleId(sheet) : lessonTitleId(sheet);
 
 /**
  * Lets the user pick a drone part in the 3D view or the part list, and shows its lesson.
  * The list and lessons work on their own when the 3D view can't load.
  */
 export function PartExplorer() {
-  const { route, unknownSlug, cause, navigate } = usePartRoute();
+  const { route, unknownSlug, cause, navigate, replaceStep } = usePartRoute();
   const selectedPart = route.kind === 'part' ? route.part : null;
-  // The sheet in the sheet column: a part's lesson, the intro, or none (the overview).
-  const openSheet: SheetId | null = route.kind === 'intro' ? 'intro' : selectedPart;
+  const openPath = route.kind === 'path' ? PATHS[route.path] : null;
+  // The sheet in the sheet column: a part's lesson, the intro, a path, or none (the overview).
+  const openSheet: SheetId | null =
+    route.kind === 'intro' ? 'intro' : (openPath?.id ?? selectedPart);
+  // A path's step is in its address (from 1); one past the end shows the last stop.
+  const stopCount = openPath?.stops.length ?? 0;
+  const addressStep = route.kind === 'path' ? route.step - 1 : 0;
+  const shownStep = Math.min(addressStep, Math.max(stopCount - 1, 0));
+  const openPathId = openPath?.id ?? null;
+  const onStep = useCallback(
+    (step: number) => {
+      if (openPathId) replaceStep(openPathId, step + 1);
+    },
+    [openPathId, replaceStep],
+  );
+  useEffect(() => {
+    if (openPathId && addressStep !== shownStep) replaceStep(openPathId, shownStep + 1);
+  }, [openPathId, addressStep, shownStep, replaceStep]);
+  const pathStep = usePathStep(openPathId, stopCount, shownStep, onStep);
+  // A lesson opened from a path's stop offers the way back to that step, until another sheet opens.
+  const [returnTo, setReturnTo] = useState<{ path: PathId; step: number; part: PartId } | null>(
+    null,
+  );
+  const currentStop = openPath?.stops[pathStep.step];
   const focusTarget = useRef<FocusTarget>(null);
   const { read, toggle: toggleRead, clear: clearRead } = useReadParts();
   const intro = useIntroRead();
@@ -59,7 +129,7 @@ export function PartExplorer() {
       openSheet === 'intro'
         ? UI.app.introTitle
         : openSheet
-          ? UI.app.pageTitle(PART_LABELS[openSheet])
+          ? UI.app.pageTitle(sheetName(openSheet))
           : UI.app.title;
   }, [openSheet]);
 
@@ -102,7 +172,9 @@ export function PartExplorer() {
   // Closing a lesson returns focus to its row in the parts list; closing the intro, to the start.
   const closeLesson = useCallback(() => {
     if (!openSheet) return;
-    focusTarget.current = openSheet === 'intro' ? OVERVIEW_FOCUS_ID : partButtonId(openSheet);
+    // A part goes back to its row in the parts list; the intro and paths have none.
+    focusTarget.current =
+      openSheet === 'intro' || isPathId(openSheet) ? OVERVIEW_FOCUS_ID : partButtonId(openSheet);
     navigate(null);
   }, [openSheet, navigate]);
 
@@ -116,6 +188,25 @@ export function PartExplorer() {
     };
   }, [closeLesson]);
 
+  // Any link stops Play, including one to the path already open (the switcher, the masthead),
+  // which changes no address and so would not reset the path by itself.
+  const { stop: stopPlaying } = pathStep;
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      if (!(event.target instanceof Element) || !event.target.closest('a[href]')) return;
+      stopPlaying();
+      // A link outside the explorer (the masthead) opens another sheet through the app, so the way
+      // back from a lesson expires, as it does for links inside the sheet.
+      if (!event.target.closest('.part-explorer')) setReturnTo(null);
+    };
+    // Captured before React handles the click: by the time it bubbles here, React has already
+    // rendered the next sheet and the clicked link is no longer in the page.
+    document.addEventListener('click', onClick, true);
+    return () => {
+      document.removeEventListener('click', onClick, true);
+    };
+  }, [stopPlaying]);
+
   // The part under the mouse in 3D, lit in the parts list. It belongs to the sheet it was hovered
   // on: when another sheet opens, the row lets go until the mouse moves to a part again.
   const [hover, setHover] = useState<{ part: PartId; sheet: SheetId | null } | null>(null);
@@ -128,18 +219,32 @@ export function PartExplorer() {
   );
 
   const togglePart = (part: PartId) => {
+    setReturnTo(null);
     revealLesson.current = selectedPart !== part ? 'choose' : null;
     navigate(selectedPart === part ? null : part);
   };
 
   // A link in the sheet (a connection, previous or next) moves focus to what it opens.
   const followLink = (page: Page) => {
+    setReturnTo(
+      openPath && page !== null && isPartId(page)
+        ? { path: openPath.id, step: pathStep.step, part: page }
+        : null,
+    );
     focusTarget.current = page ? sheetTitleId(page) : OVERVIEW_FOCUS_ID;
     revealLesson.current = page !== null ? 'choose' : null;
   };
 
   const onPartClick = (part: PartId, event: ThreeEvent<MouseEvent>) => {
     if (!isDeliberateClick(event.delta)) return;
+    // On a path sheet the drawing belongs to the path: a part on it opens its stop, a part off it
+    // does nothing. Lessons are one link away in the stop list.
+    if (openPath) {
+      const stop = stopForPart(openPath.id, part);
+      if (stop !== null) pathStep.goTo(stop);
+      return;
+    }
+    setReturnTo(null);
     // Clicking the part that is already open changes nothing, so there is nothing to reveal.
     revealLesson.current = part !== selectedPart ? 'choose' : null;
     navigate(part);
@@ -156,9 +261,11 @@ export function PartExplorer() {
       <p className="visually-hidden" aria-live="polite" data-testid="explorer-announcer">
         {openSheet === 'intro'
           ? UI.explorer.introOpened
-          : openSheet
-            ? UI.explorer.opened(PART_LABELS[openSheet])
-            : ''}
+          : openPath
+            ? UI.explorer.pathOpened(openPath.title)
+            : selectedPart
+              ? UI.explorer.opened(PART_LABELS[selectedPart])
+              : ''}
       </p>
       <div className="part-explorer-field">
         <div className="drawing-frame">
@@ -179,8 +286,9 @@ export function PartExplorer() {
               <ErrorBoundary fallback={viewerFallback}>
                 <Suspense fallback={<p role="status">{UI.viewer.loading}</p>}>
                   <DroneViewer
-                    selectedPart={selectedPart}
-                    connectedParts={selectedPart ? connectedParts(selectedPart) : NO_PARTS}
+                    {...(openPath && currentStop
+                      ? pathDrawing(openPath, pathStep.step)
+                      : partDrawing(selectedPart))}
                     onPartClick={onPartClick}
                     onPartHover={onPartHover}
                     onBackgroundClick={clearSelection}
@@ -202,9 +310,29 @@ export function PartExplorer() {
         </div>
       </div>
       <div className="part-explorer-sheet">
-        {selectedPart ? (
+        {openPath ? (
+          <PathPanel
+            path={openPath}
+            step={pathStep.step}
+            playing={pathStep.playing}
+            read={read.has(openPath.id)}
+            onStep={pathStep.goTo}
+            onPlay={pathStep.play}
+            onStop={pathStep.stop}
+            onClose={closeLesson}
+            onToggleRead={() => {
+              toggleRead(openPath.id);
+            }}
+            onFollowLink={followLink}
+          />
+        ) : selectedPart ? (
           <LessonPanel
             lesson={LESSONS[selectedPart]}
+            returnTo={
+              returnTo?.part === selectedPart
+                ? { path: returnTo.path, step: returnTo.step, title: PATHS[returnTo.path].title }
+                : null
+            }
             read={read.has(selectedPart)}
             onClose={closeLesson}
             onToggleRead={() => {
