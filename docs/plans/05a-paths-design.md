@@ -150,3 +150,29 @@ the test split.
 - e2e: the masthead link opens the Control path; stepping moves the marked stop and the drawing
   keeps the path's parts drawn; next sheet from Extras opens Control; reduced motion stops the
   moving dashes; 320 px with 200 % text has no sideways scroll.
+
+## Amendment 1 (2026-11-15, after the user tried the built sheets)
+
+The user found the paths read as more part sheets, lost their place when the drawing or a lesson
+link took them away, and had to scroll to see each new step. Agreed changes, which replace the
+decisions they contradict above:
+
+1. **Two chapters (user decision: a clear new chapter).** The drawing set has two chapters, "The
+   parts" (sheets 1–11) and "How it works together" (the paths, sheets 1–3). Numbering restarts:
+   Control is "1 of 3"; parts stay "x of 11". The path title block shows the chapter, the sheet,
+   and what the path is about: From, To and Carries (e.g. Your radio → Propellers, stick
+   commands), replacing the Stops count. The footer marks the crossing: from Extras, Next reads
+   "End of the parts" and names "How it works together, sheet 1: Control path"; from Control,
+   Previous reads "Back to the parts". References to a path sheet name it with its chapter
+   sheet number. The overview counts each chapter ("Parts 3 of 11 · Paths 0 of 3") and continues
+   into the paths after the parts. (A chapter label above the heading was rejected: the design
+   system bans eyebrows over headings; the title block and footer carry the chapter.)
+2. **Clicking the drawing on a path sheet stays in the path.** A part on the path opens that part's
+   step (the stop with that part alone, else the first stop with it); a part off the path does
+   nothing. Lessons are reached from the stop list's links.
+3. **The step is in the address** (`/paths/control/3`; stop 1 is `/paths/control`). Stepping and
+   Play replace the address (no history entry per step), so Back from a lesson returns to the same
+   step. An out-of-range step is replaced by the nearest valid one. A lesson opened from a path's
+   stop list shows "Back to Control path, step 3" until another sheet is opened.
+4. **The current step scrolls into view** when it changes (step controls, Play, a click on the
+   drawing) and is not fully visible, smoothly unless motion is reduced.

@@ -274,3 +274,32 @@ Path Leader components; leader redline as current selection), `.impeccable/surfa
 - The user has seen the three paths in the browser before the PR.
 - The independent review (Codex gpt-6.1-sol) is written to `docs/reviews/05a-paths.md`, each
   finding resolved or deferred, before the PR is opened.
+
+## Amendment 1 tasks
+
+Spec: "Amendment 1" in the design doc. Same constraints and commit rules.
+
+- **Task 8 — Chapters.** `shared/domain/sheets.ts`: `Chapter = 'parts' | 'paths'`,
+  `chapterOf(sheet)`, `CHAPTER_SHEETS`, `sheetNumber` within its chapter, `chapterCount(sheet)`.
+  Lesson "x of 11", path "x of 3"; `SheetFooter` marks crossings (`UI.lesson.endOfParts`,
+  `UI.lesson.backToParts`, path refs "How it works together, sheet n: Title"); `TitleBlock` takes
+  `chapter`; path content gains `from`, `to`, `carries`; overview counts per chapter and its
+  "all read" and continue texts name chapters. Tests first in `sheets.test.ts`,
+  `LessonPanel.test.tsx`, `PathPanel.test.tsx`, `OverviewStart`/explorer tests; e2e navigation walk
+  updated. `feat: split the drawing set into two chapters`
+- **Task 9 — Step in the address.** `Route` path gains `step` (1-based, from `/paths/<id>/<n>`;
+  canonical drops `/1`); `pagePath(page, step?)`; `PartLink` takes `step`; `usePartRoute` gains
+  `replaceStep(path, step)`. `usePathStep(path, stopCount, step, onStep)` keeps only Play; the
+  explorer clamps and replaces an out-of-range step; a lesson opened from a stop shows "Back to
+  {title}, step n". Tests first in `routes.test.ts`, `usePartRoute.test.tsx`, `usePathStep.test.ts`,
+  explorer tests; e2e: lesson link then Back returns to the step. `feat: keep the path step in the
+address`
+- **Task 10 — The drawing on a path sheet.** `stopForPart(path, part): number | null` in content;
+  explorer's 3D click on a path sheet goes to that stop or does nothing. Tests first (unit +
+  explorer stub). `feat: let the drawing pick a path's step`
+- **Task 11 — Scroll to the step.** `PathPanel` scrolls the current stop into view on a step change
+  (`block: 'nearest'`, smooth unless reduced motion); not on first render. Component test with a
+  mocked `scrollIntoView`; e2e: Next step at 390 px brings the new stop into the viewport.
+  `feat: bring the current step into view`
+- Docs (DESIGN.md Path Sheet, PRODUCT, architecture), then Codex review of the amendment range,
+  appended to `docs/reviews/05a-paths.md`.
