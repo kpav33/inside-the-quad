@@ -21,3 +21,6 @@ export const INTRO_TITLE_ID = 'intro-title';
 export function pathTitleId(path: PathId): string {
   return `path-title-${path}`;
 }
+
+/** The moves sheet's heading, focused when it opens. */
+export const MOVES_TITLE_ID = 'moves-title';

@@ -3,23 +3,23 @@
 Each section is one branch, one plan in `plans/`, one review in `reviews/`.
 Status: `planned` · `in progress` · `in review` · `done`.
 
-| #   | Section                                                                                                                                     | Branch                       | Status    |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | --------- |
-| 00  | Project scaffold and engineering setup                                                                                                      | `chore/project-scaffold`     | done      |
-| 01  | First slice: 3D viewer + frame, motors, props lessons                                                                                       | `feat/first-slice`           | done      |
-| 02  | Design pass (visual design review)                                                                                                          | `feat/design-pass`           | done      |
-| 02b | Model that teaches: open part with its connections, the rest faded; spin arcs; drone fills the drawing field; 3D hover mirrored in the list | `feat/model-that-teaches`    | done      |
-| 02c | Lookup and navigation: part URLs, next/previous, progress, onboarding; connection links name their target; no duplicated part name          | `feat/lookup-and-navigation` | done      |
-| 02d | Phones and keyboard: masthead intro link, focus follows the opened sheet, narrow sheets reflow with large or long text, live reduced motion | `feat/phones-and-keyboard`   | done      |
-| 03a | Power and control parts: ESC, flight controller, battery; exploded stack                                                                    | `feat/power-and-control`     | done      |
-| 03b | Radio and video parts: receiver, camera, VTX and antennas, extras                                                                           | `feat/radio-and-video`       | done      |
-| 03c | Real parts: a photo of each part (CC-licensed, with attribution) beside its lesson                                                          | `feat/real-parts`            | done      |
-| 04  | "What is an FPV drone?" intro (Module 1)                                                                                                    | `feat/intro`                 | done      |
-| 05a | How it all works together, paths: control, power and video path sheets with a leader on the drawing (Module 3)                              | `feat/paths`                 | in review |
-| 05b | How it all works together, how a quad moves: virtual sticks, motor speeds, the gyro loop                                                    | —                            | planned   |
-| 05c | How it all works together, what if: failsafe, prop on backwards, 4S vs 6S, VTX without antenna                                              | —                            | planned   |
-| 06  | Gear you hold and wear (Module 4)                                                                                                           | —                            | planned   |
-| 07  | Compatibility checker                                                                                                                       | —                            | planned   |
+| #   | Section                                                                                                                                     | Branch                       | Status      |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | ----------- |
+| 00  | Project scaffold and engineering setup                                                                                                      | `chore/project-scaffold`     | done        |
+| 01  | First slice: 3D viewer + frame, motors, props lessons                                                                                       | `feat/first-slice`           | done        |
+| 02  | Design pass (visual design review)                                                                                                          | `feat/design-pass`           | done        |
+| 02b | Model that teaches: open part with its connections, the rest faded; spin arcs; drone fills the drawing field; 3D hover mirrored in the list | `feat/model-that-teaches`    | done        |
+| 02c | Lookup and navigation: part URLs, next/previous, progress, onboarding; connection links name their target; no duplicated part name          | `feat/lookup-and-navigation` | done        |
+| 02d | Phones and keyboard: masthead intro link, focus follows the opened sheet, narrow sheets reflow with large or long text, live reduced motion | `feat/phones-and-keyboard`   | done        |
+| 03a | Power and control parts: ESC, flight controller, battery; exploded stack                                                                    | `feat/power-and-control`     | done        |
+| 03b | Radio and video parts: receiver, camera, VTX and antennas, extras                                                                           | `feat/radio-and-video`       | done        |
+| 03c | Real parts: a photo of each part (CC-licensed, with attribution) beside its lesson                                                          | `feat/real-parts`            | done        |
+| 04  | "What is an FPV drone?" intro (Module 1)                                                                                                    | `feat/intro`                 | done        |
+| 05a | How it all works together, paths: control, power and video path sheets with a leader on the drawing (Module 3)                              | `feat/paths`                 | done        |
+| 05b | How it all works together, how a quad moves: virtual sticks, motor speeds, the gyro loop                                                    | `feat/moves`                 | in progress |
+| 05c | How it all works together, what if: failsafe, prop on backwards, 4S vs 6S, VTX without antenna                                              | —                            | planned     |
+| 06  | Gear you hold and wear (Module 4)                                                                                                           | —                            | planned     |
+| 07  | Compatibility checker                                                                                                                       | —                            | planned     |
 
 ## 01 — First slice (summary)
 

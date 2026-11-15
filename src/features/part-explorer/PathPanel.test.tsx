@@ -29,7 +29,7 @@ describe('PathPanel', () => {
     expect(screen.getByRole('heading', { level: 2, name: 'Control path' })).toBeInTheDocument();
     const block = screen.getByRole('group', { name: 'Title block' });
     expect(block).toHaveTextContent('ChapterHow it works together');
-    expect(block).toHaveTextContent('Sheet1 of 3');
+    expect(block).toHaveTextContent('Sheet1 of 4');
     expect(block).toHaveTextContent('FromYour radio');
     expect(block).toHaveTextContent('ToPropellers');
     expect(block).toHaveTextContent('CarriesStick commands');
@@ -143,11 +143,11 @@ describe('PathPanel', () => {
     );
   });
 
-  it('ends the set: the video path leads back to the overview', () => {
+  it('runs on from the video path to how a quad moves', () => {
     renderPath('video');
-    expect(screen.getByRole('link', { name: 'Next: Back to overview' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Next: How a quad moves · sheet 4' })).toHaveAttribute(
       'href',
-      '/',
+      '/moves',
     );
   });
 

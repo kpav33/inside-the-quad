@@ -6,7 +6,7 @@ import { ArrowIcon } from '@/shared/ui/icons';
 export function App() {
   const { route } = usePartRoute();
   const onIntro = route.kind === 'intro';
-  const onPath = route.kind === 'path';
+  const onPath = route.kind === 'path' || route.kind === 'moves';
   return (
     <div className="app">
       <header className="app-header">

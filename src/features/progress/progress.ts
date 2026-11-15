@@ -1,8 +1,7 @@
 import { isPartId } from '@/shared/domain/parts';
-import { isPathId } from '@/shared/domain/paths';
-import { NUMBERED_SHEETS, type NumberedSheet } from '@/shared/domain/sheets';
+import { isSteppedSheet, NUMBERED_SHEETS, type NumberedSheet } from '@/shared/domain/sheets';
 
-/** A sheet the learner can mark as read: a part or a path. */
+/** A sheet the learner can mark as read: a part, a path, or how a quad moves. */
 export type ReadableSheet = NumberedSheet;
 
 /**
@@ -21,7 +20,7 @@ export type StartState =
   | { kind: 'done' };
 
 function isReadableSheet(value: unknown): value is ReadableSheet {
-  return isPartId(value) || isPathId(value);
+  return isPartId(value) || isSteppedSheet(value);
 }
 
 /** Reads the stored value. Anything malformed or unknown is dropped, never thrown. */

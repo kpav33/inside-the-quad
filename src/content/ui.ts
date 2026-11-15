@@ -1,4 +1,5 @@
 import type { PartId } from '@/shared/domain/parts';
+import { MOVES_SHEET } from '@/shared/domain/moves';
 import { isPathId, type PathId } from '@/shared/domain/paths';
 import type { NumberedSheet } from '@/shared/domain/sheets';
 
@@ -74,10 +75,10 @@ export const UI = {
     /** Continuing into the paths names their chapter, since its sheets are numbered afresh. */
     continuePaths: (sheet: number, name: string) =>
       `Continue with How it works together, sheet ${sheet}: ${name}`,
-    allRead: 'Every part and path read. Open any sheet to look something up.',
+    allRead: 'Every sheet read. Open any sheet to look something up.',
     startAgain: 'Start again from sheet 1',
-    count: (parts: number, partTotal: number, paths: number, pathTotal: number) =>
-      `Parts ${parts} of ${partTotal} · Paths ${paths} of ${pathTotal}`,
+    count: (parts: number, partTotal: number, together: number, togetherTotal: number) =>
+      `Parts ${parts} of ${partTotal} · How it works ${together} of ${togetherTotal}`,
     clear: 'Clear progress',
   },
   titleBlock: {
@@ -134,6 +135,10 @@ export const UI = {
     stepAnnounce: (stop: number, total: number, name: string, text: string) =>
       `Stop ${stop} of ${total}: ${name}. ${text}`,
   },
+  moves: {
+    /** The sheet's name, as its heading and wherever another sheet refers to it. */
+    title: 'How a quad moves',
+  },
   lesson: {
     close: 'Close lesson',
     /** The sheet half of a reference to another sheet ("Battery · sheet 6"), kept on one line. */
@@ -163,7 +168,8 @@ export const UI = {
   },
 } as const;
 
-/** A numbered sheet's name: the part's label or the path's title. */
+/** A numbered sheet's name: the part's label, the path's title, or the moves sheet's title. */
 export function sheetName(sheet: NumberedSheet): string {
+  if (sheet === MOVES_SHEET) return UI.moves.title;
   return isPathId(sheet) ? UI.paths.title[sheet] : PART_LABELS[sheet];
 }

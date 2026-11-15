@@ -303,12 +303,11 @@ describe('PartExplorer', () => {
     expect(window.localStorage.getItem(READ_KEY)).toBe('["video"]');
   });
 
-  it('returns from the last path to the overview', async () => {
+  it('runs on from the last path to how a quad moves', async () => {
     window.history.replaceState(null, '', '/paths/video');
     await renderExplorer();
-    await userEvent.click(screen.getByRole('link', { name: 'Next: Back to overview' }));
-    expect(screen.queryByRole('heading', { level: 2, name: 'Video path' })).toBeNull();
-    expect(document.getElementById(OVERVIEW_FOCUS_ID)).toHaveFocus();
+    await userEvent.click(screen.getByRole('link', { name: 'Next: How a quad moves · sheet 4' }));
+    expect(window.location.pathname).toBe('/moves');
   });
 
   it.each([
@@ -438,7 +437,7 @@ describe('PartExplorer', () => {
     window.localStorage.setItem(READ_KEY, '["frame"]');
     await renderExplorer();
     expect(screen.getByRole('link', { name: 'Continue with sheet 2: Motors' })).toBeInTheDocument();
-    expect(screen.getByText('Parts 1 of 11 · Paths 0 of 3')).toBeInTheDocument();
+    expect(screen.getByText('Parts 1 of 11 · How it works 0 of 4')).toBeInTheDocument();
   });
 
   it('continues into the control path once every part is read', async () => {
@@ -449,13 +448,13 @@ describe('PartExplorer', () => {
         name: 'Continue with How it works together, sheet 1: Control path',
       }),
     ).toHaveAttribute('href', '/paths/control');
-    expect(screen.getByText('Parts 11 of 11 · Paths 0 of 3')).toBeInTheDocument();
+    expect(screen.getByText('Parts 11 of 11 · How it works 0 of 4')).toBeInTheDocument();
   });
 
   it('says when every sheet is read and offers to start again', async () => {
     window.localStorage.setItem(READ_KEY, JSON.stringify(NUMBERED_SHEETS));
     await renderExplorer();
-    expect(screen.getByText(/every part and path read/i)).toBeInTheDocument();
+    expect(screen.getByText(/every sheet read/i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Start again from sheet 1' })).toHaveAttribute(
       'href',
       '/parts/frame',
