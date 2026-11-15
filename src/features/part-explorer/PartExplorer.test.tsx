@@ -145,12 +145,11 @@ describe('PartExplorer', () => {
     expect(lessonHeading('Motors')).toHaveFocus();
   });
 
-  it('returns from the last sheet to the overview', async () => {
+  it('runs on from the last part to the control path', async () => {
     window.history.replaceState(null, '', '/parts/extras');
     await renderExplorer();
-    await userEvent.click(screen.getByRole('link', { name: 'Next: Back to overview' }));
-    expect(lessonHeading('Extras')).toBeNull();
-    expect(document.getElementById(OVERVIEW_FOCUS_ID)).toHaveFocus();
+    await userEvent.click(screen.getByRole('link', { name: 'Next: Control path · sheet 12' }));
+    expect(window.location.pathname).toBe('/paths/control');
   });
 
   it('remembers a lesson marked as read', async () => {

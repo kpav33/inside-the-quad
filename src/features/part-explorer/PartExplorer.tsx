@@ -7,6 +7,7 @@ import { PART_LABELS, UI } from '@/content/ui';
 import { DroneViewer } from '@/features/drone-viewer';
 import { useIntroRead, useReadParts } from '@/features/progress';
 import type { PartId } from '@/shared/domain/parts';
+import { isPathId } from '@/shared/domain/paths';
 import type { SheetId } from '@/shared/domain/sheets';
 import { type Page, usePartRoute } from '@/shared/routing';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
@@ -18,6 +19,7 @@ import {
   lessonTitleId,
   OVERVIEW_FOCUS_ID,
   partButtonId,
+  pathTitleId,
 } from './ids';
 import { IntroPanel } from './IntroPanel';
 import { LessonPanel } from './LessonPanel';
@@ -39,7 +41,7 @@ type FocusTarget = string | null;
 
 /** The heading of a sheet, which takes focus when the sheet opens. */
 const sheetTitleId = (sheet: SheetId) =>
-  sheet === 'intro' ? INTRO_TITLE_ID : lessonTitleId(sheet);
+  sheet === 'intro' ? INTRO_TITLE_ID : isPathId(sheet) ? pathTitleId(sheet) : lessonTitleId(sheet);
 
 /**
  * Lets the user pick a drone part in the 3D view or the part list, and shows its lesson.

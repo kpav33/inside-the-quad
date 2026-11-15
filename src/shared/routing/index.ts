@@ -7,6 +7,7 @@ export {
   pagePath,
   parseRoute,
   partPath,
+  pathSheetPath,
   type Route,
 } from './routes';
 export { type PageRoute, type PartRoute, usePartRoute } from './usePartRoute';

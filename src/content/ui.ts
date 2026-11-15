@@ -1,4 +1,5 @@
 import type { PartId } from '@/shared/domain/parts';
+import type { PathId } from '@/shared/domain/paths';
 
 /** Part names as shown in the parts list and lesson titles. */
 export const PART_LABELS: Record<PartId, string> = {
@@ -93,6 +94,13 @@ export const UI = {
     title: (title: string) => `“${title}”`,
     byAuthor: (author: string) => `by ${author}`,
     via: 'Via Wikimedia Commons.',
+  },
+  paths: {
+    /** Each path sheet's name, as its heading and wherever another sheet refers to it. */
+    title: { control: 'Control path', power: 'Power path', video: 'Video path' } satisfies Record<
+      PathId,
+      string
+    >,
   },
   lesson: {
     close: 'Close lesson',

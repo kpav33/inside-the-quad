@@ -2,8 +2,8 @@ import type { Lesson } from '@/content/lessons';
 import { PART_PHOTOS } from '@/content/photos';
 import { UI } from '@/content/ui';
 import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
-import { PART_IDS, type PartId } from '@/shared/domain/parts';
 import { partQuantity } from '@/shared/domain/quantity';
+import { NUMBERED_SHEETS, sheetNumber } from '@/shared/domain/sheets';
 import { type Page, PartLink } from '@/shared/routing';
 import { ArrowIcon } from '@/shared/ui/icons';
 
@@ -22,8 +22,6 @@ export interface LessonPanelProps {
   /** Called before a link in the sheet opens another lesson (null: the overview). */
   onFollowLink?: (page: Page) => void;
 }
-
-const sheetNumber = (part: PartId) => PART_IDS.indexOf(part) + 1;
 
 /**
  * One part's drawing sheet: its name, the title block, a real photo, the four questions, then the
@@ -51,7 +49,7 @@ export function LessonPanel({
       </header>
 
       <TitleBlock
-        sheet={UI.titleBlock.sheetOf(sheetNumber(lesson.partId), PART_IDS.length)}
+        sheet={UI.titleBlock.sheetOf(sheetNumber(lesson.partId), NUMBERED_SHEETS.length)}
         quantity={partQuantity(lesson.partId, REFERENCE_5_INCH)}
         specs={lesson.specs}
       />

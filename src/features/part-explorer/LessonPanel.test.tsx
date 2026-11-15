@@ -109,12 +109,17 @@ describe('LessonPanel', () => {
     );
   });
 
-  it('leads back to the overview from the last sheet', () => {
+  it('runs on from the last part into the control path', () => {
     renderLesson('extras');
-    expect(screen.getByRole('link', { name: 'Next: Back to overview' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Next: Control path · sheet 12' })).toHaveAttribute(
       'href',
-      '/',
+      '/paths/control',
     );
+  });
+
+  it('numbers its sheet out of the whole set of 14', () => {
+    renderLesson('frame');
+    expect(screen.getByRole('group', { name: 'Title block' })).toHaveTextContent('1 of 14');
   });
 
   it('can be closed', async () => {

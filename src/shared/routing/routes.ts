@@ -1,27 +1,36 @@
 import { PART_IDS, type PartId } from '@/shared/domain/parts';
+import { isPathId, type PathId } from '@/shared/domain/paths';
+import type { SheetId } from '@/shared/domain/sheets';
 
 export const OVERVIEW_PATH = '/';
 export const INTRO_PATH = '/intro';
 
 const PART_PREFIX = '/parts/';
+const PATH_PREFIX = '/paths/';
 
-/** A page the app can open: the intro, a part's lesson, or the overview (null). */
-export type Page = 'intro' | PartId | null;
+/** A page the app can open: a sheet (the intro, a part's lesson, a path), or the overview (null). */
+export type Page = SheetId | null;
 
-/** Where a page lives: the overview, the intro, a part's lesson, or a path the app doesn't know. */
+/** Where a page lives: the overview, the intro, a part's lesson, a path sheet, or an address the app doesn't know. */
 export type Route =
   | { kind: 'overview' }
   | { kind: 'intro' }
   | { kind: 'part'; part: PartId }
+  | { kind: 'path'; path: PathId }
   | { kind: 'unknown'; slug: string };
 
 export function partPath(part: PartId): string {
   return `${PART_PREFIX}${part}`;
 }
 
+export function pathSheetPath(path: PathId): string {
+  return `${PATH_PREFIX}${path}`;
+}
+
 export function pagePath(page: Page): string {
   if (page === null) return OVERVIEW_PATH;
-  return page === 'intro' ? INTRO_PATH : partPath(page);
+  if (page === 'intro') return INTRO_PATH;
+  return isPathId(page) ? pathSheetPath(page) : partPath(page);
 }
 
 function isPartId(value: string): value is PartId {
@@ -43,6 +52,10 @@ export function parseRoute(pathname: string): Route {
   if (pathname.startsWith(PART_PREFIX)) {
     const slug = decode(pathname.slice(PART_PREFIX.length).replace(/\/$/, ''));
     return isPartId(slug) ? { kind: 'part', part: slug } : { kind: 'unknown', slug };
+  }
+  if (pathname.startsWith(PATH_PREFIX)) {
+    const slug = decode(pathname.slice(PATH_PREFIX.length).replace(/\/$/, ''));
+    return isPathId(slug) ? { kind: 'path', path: slug } : { kind: 'unknown', slug };
   }
   return { kind: 'unknown', slug: decode(pathname) };
 }

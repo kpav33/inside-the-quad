@@ -86,6 +86,12 @@ describe('usePartRoute', () => {
     expect(window.location.pathname).toBe('/intro');
   });
 
+  it('reads a path sheet and drops its trailing slash', () => {
+    const { result } = start('/paths/control/');
+    expect(result.current.route).toEqual({ kind: 'path', path: 'control' });
+    expect(window.location.pathname).toBe('/paths/control');
+  });
+
   it('navigates to the intro', () => {
     const { result } = start('/');
     act(() => {

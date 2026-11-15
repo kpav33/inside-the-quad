@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { PART_IDS } from '@/shared/domain/parts';
 
-import { INTRO_PATH, OVERVIEW_PATH, pagePath, parseRoute, partPath } from './routes';
+import { INTRO_PATH, OVERVIEW_PATH, pagePath, parseRoute, partPath, pathSheetPath } from './routes';
 
 describe('part routes', () => {
   it.each(PART_IDS)('round-trips the path of %s', (part) => {
@@ -54,5 +54,21 @@ describe('intro route', () => {
     expect(INTRO_PATH).toBe('/intro');
     expect(pagePath(null)).toBe('/');
     expect(pagePath('vtx')).toBe('/parts/vtx');
+  });
+});
+
+describe('path routes', () => {
+  it('reads a path under /paths/, with or without a trailing slash', () => {
+    expect(parseRoute('/paths/power')).toEqual({ kind: 'path', path: 'power' });
+    expect(parseRoute('/paths/power/')).toEqual({ kind: 'path', path: 'power' });
+  });
+
+  it('treats an unknown path id as unknown', () => {
+    expect(parseRoute('/paths/wires')).toEqual({ kind: 'unknown', slug: 'wires' });
+  });
+
+  it('gives every path its address', () => {
+    expect(pagePath('video')).toBe('/paths/video');
+    expect(pathSheetPath('control')).toBe('/paths/control');
   });
 });

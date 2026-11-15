@@ -1,19 +1,19 @@
 import { PART_LABELS, UI } from '@/content/ui';
-import { PART_IDS } from '@/shared/domain/parts';
-import { type SheetId, sheetNeighbours } from '@/shared/domain/sheets';
+import { isPathId } from '@/shared/domain/paths';
+import { type SheetId, sheetNeighbours, sheetNumber } from '@/shared/domain/sheets';
 import { type Page, PartLink } from '@/shared/routing';
 import { ArrowIcon, CheckIcon } from '@/shared/ui/icons';
 
 /**
- * "Battery · sheet 6": a reference to another sheet; the sheet number never wraps apart. The intro
+ * "Battery · sheet 6": a reference to another part or path sheet; the sheet number never wraps apart. The intro
  * has no number and is named by its title.
  */
 export function SheetRef({ sheet }: { sheet: SheetId }) {
   if (sheet === 'intro') return <>{UI.intro.link}</>;
   return (
     <>
-      {PART_LABELS[sheet]}{' '}
-      <span className="nowrap">{UI.lesson.sheetNumber(PART_IDS.indexOf(sheet) + 1)}</span>
+      {isPathId(sheet) ? UI.paths.title[sheet] : PART_LABELS[sheet]}{' '}
+      <span className="nowrap">{UI.lesson.sheetNumber(sheetNumber(sheet))}</span>
     </>
   );
 }

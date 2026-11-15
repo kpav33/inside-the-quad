@@ -1,4 +1,5 @@
 import type { PartId } from '@/shared/domain/parts';
+import type { PathId } from '@/shared/domain/paths';
 
 export const LESSON_PANEL_ID = 'lesson-panel';
 
@@ -15,3 +16,8 @@ export function lessonTitleId(part: PartId): string {
 
 /** The intro sheet's heading, focused when the intro opens. */
 export const INTRO_TITLE_ID = 'intro-title';
+
+/** A path sheet's heading, focused when the path opens. */
+export function pathTitleId(path: PathId): string {
+  return `path-title-${path}`;
+}
