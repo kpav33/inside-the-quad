@@ -16,6 +16,17 @@ export function motorPinState(speeds: MotorSpeeds, index: number): 'up' | 'down'
 /** How far a balloon sits beyond its motor, away from the drone's middle. */
 const OFFSET_PX = 28;
 const GAP_PX = 4;
+const RINGS = 4;
+const DIRECTIONS: readonly [number, number][] = [
+  [0, -1],
+  [0, 1],
+  [-1, 0],
+  [1, 0],
+  [-1, -1],
+  [1, -1],
+  [-1, 1],
+  [1, 1],
+];
 
 interface Size {
   width: number;
@@ -27,7 +38,8 @@ const clamp = (value: number, low: number, high: number) =>
 
 /**
  * Where a motor's balloon is centred: beside the motor on screen, pushed outward from the drone's
- * projected middle, kept inside the field and lifted clear of any box in `avoid` (the sticks).
+ * projected middle, kept inside the field and clear of every box in `avoid` (the sticks and the
+ * balloons placed before it): when that spot is taken, the nearest free one around it.
  */
 export function placeMotorPin(
   motor: ScreenPoint,
@@ -41,19 +53,31 @@ export function placeMotorPin(
   const length = Math.hypot(dx, dy) || 1;
   const halfW = box.width / 2;
   const halfH = box.height / 2;
-  const x = clamp(motor[0] + (dx / length) * OFFSET_PX, halfW, field.width - halfW);
-  let y = clamp(motor[1] + (dy / length) * OFFSET_PX, halfH, field.height - halfH);
-  // Lift the balloon over whatever it covers until it covers nothing (or reaches the top).
-  for (let pass = 0; pass <= avoid.length; pass++) {
-    const hit = avoid.find(
+  const base: ScreenPoint = [
+    clamp(motor[0] + (dx / length) * OFFSET_PX, halfW, field.width - halfW),
+    clamp(motor[1] + (dy / length) * OFFSET_PX, halfH, field.height - halfH),
+  ];
+  const free = ([x, y]: ScreenPoint) =>
+    x - halfW >= 0 &&
+    y - halfH >= 0 &&
+    x + halfW <= field.width &&
+    y + halfH <= field.height &&
+    !avoid.some(
       (rect) =>
         x - halfW < rect.right &&
         rect.left < x + halfW &&
         y - halfH < rect.bottom &&
         rect.top < y + halfH,
     );
-    if (!hit) break;
-    y = Math.max(halfH, hit.top - GAP_PX - halfH);
+  if (free(base)) return base;
+  // Search outward in rings, nearest first: up, down, the sides, then the corners.
+  const stepX = box.width + GAP_PX;
+  const stepY = box.height + GAP_PX;
+  for (let ring = 1; ring <= RINGS; ring++) {
+    for (const [ux, uy] of DIRECTIONS) {
+      const spot: ScreenPoint = [base[0] + ux * stepX * ring, base[1] + uy * stepY * ring];
+      if (free(spot)) return spot;
+    }
   }
-  return [x, y];
+  return base;
 }

@@ -57,4 +57,18 @@ describe('placeMotorPin', () => {
       expect(overlaps).toBe(false);
     }
   });
+
+  it('finds room elsewhere when the way up is blocked at the top edge', () => {
+    const other = { left: 340, right: 400, top: 0, bottom: 24 };
+    const [x, y] = placeMotorPin([380, 6], [200, 150], box, field, [other]);
+    const mine = { left: x - 30, right: x + 30, top: y - 12, bottom: y + 12 };
+    const overlaps =
+      mine.left < other.right &&
+      other.left < mine.right &&
+      mine.top < other.bottom &&
+      other.top < mine.bottom;
+    expect(overlaps).toBe(false);
+    expect(mine.top).toBeGreaterThanOrEqual(0);
+    expect(mine.right).toBeLessThanOrEqual(field.width);
+  });
 });
