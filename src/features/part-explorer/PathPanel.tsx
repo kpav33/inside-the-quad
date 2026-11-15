@@ -1,8 +1,11 @@
+import { useEffect, useRef } from 'react';
+
 import type { PathContent, PathStop } from '@/content/paths';
 import { PART_LABELS, UI } from '@/content/ui';
 import { PATH_IDS } from '@/shared/domain/paths';
 import { chapterCount, sheetNumber } from '@/shared/domain/sheets';
 import { type Page, PartLink } from '@/shared/routing';
+import { usePrefersReducedMotion } from '@/shared/ui/usePrefersReducedMotion';
 
 import { LESSON_PANEL_ID, pathTitleId } from './ids';
 import { SheetFooter } from './SheetFooter';
@@ -60,6 +63,20 @@ export function PathPanel({
 }: PathPanelProps) {
   const t = UI.paths;
   const titleId = pathTitleId(path.id);
+  const list = useRef<HTMLOListElement>(null);
+  const reduceMotion = usePrefersReducedMotion();
+  // When the step changes on the same path (a step button, Play, a click on the drawing), bring the
+  // new stop into view if it isn't. Opening a sheet doesn't scroll: its heading takes focus.
+  const shown = useRef({ path: path.id, step });
+  useEffect(() => {
+    const before = shown.current;
+    shown.current = { path: path.id, step };
+    if (before.path !== path.id || before.step === step) return;
+    const current = list.current?.querySelector('[aria-current="step"]');
+    // Not every environment can scroll an element into view (jsdom can't).
+    if (typeof current?.scrollIntoView !== 'function') return;
+    current.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+  }, [path.id, step, reduceMotion]);
   const { stops } = path;
   const current = stops[step];
   const last = stops.length - 1;
@@ -133,7 +150,7 @@ export function PathPanel({
         )}
       </div>
 
-      <ol className="path-stops" aria-label={t.stopsLabel}>
+      <ol ref={list} className="path-stops" aria-label={t.stopsLabel}>
         {stops.map((stop, index) => (
           <li
             key={index}

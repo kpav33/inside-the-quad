@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { PATHS } from '@/content/paths';
 import type { PathId } from '@/shared/domain/paths';
@@ -131,5 +131,53 @@ describe('PathPanel', () => {
       'href',
       '/',
     );
+  });
+
+  describe('bringing the current stop into view', () => {
+    afterEach(() => {
+      vi.unstubAllGlobals();
+      vi.restoreAllMocks();
+    });
+
+    const panel = (step: number) => (
+      <PathPanel
+        path={PATHS.control}
+        step={step}
+        playing={false}
+        read={false}
+        onStep={vi.fn()}
+        onPlay={vi.fn()}
+        onStop={vi.fn()}
+        onClose={vi.fn()}
+        onToggleRead={vi.fn()}
+      />
+    );
+
+    it('scrolls the new stop into view when the step changes, not when the sheet opens', () => {
+      const scroll = vi.fn();
+      Element.prototype.scrollIntoView = scroll;
+      const { rerender } = render(panel(0));
+      expect(scroll).not.toHaveBeenCalled();
+      rerender(panel(3));
+      expect(scroll).toHaveBeenCalledOnce();
+      expect(scroll.mock.contexts[0]).toBe(stops()[3]);
+      expect(scroll).toHaveBeenCalledWith({ block: 'nearest', behavior: 'smooth' });
+    });
+
+    it('jumps instead of gliding when motion is reduced', () => {
+      vi.stubGlobal(
+        'matchMedia',
+        vi.fn(() => ({
+          matches: true,
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+        })),
+      );
+      const scroll = vi.fn();
+      Element.prototype.scrollIntoView = scroll;
+      const { rerender } = render(panel(0));
+      rerender(panel(1));
+      expect(scroll).toHaveBeenCalledWith({ block: 'nearest', behavior: 'auto' });
+    });
   });
 });

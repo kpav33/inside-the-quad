@@ -71,6 +71,17 @@ test('Back from a lesson opened at a stop returns to that stop', async ({ page }
   await expect(currentStop(page)).toContainText('Flight controller');
 });
 
+test('on a phone, each new step comes into view', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/paths/power');
+  const next = page.getByRole('button', { name: 'Next step' });
+  for (let i = 0; i < 5; i++) {
+    await next.scrollIntoViewIfNeeded();
+    await next.click();
+    await expect(currentStop(page)).toBeInViewport({ ratio: 0.9 });
+  }
+});
+
 test('reduced motion still plays the path, a stop at a time', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/paths/video');
