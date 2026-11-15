@@ -38,7 +38,7 @@ export const powerPath: PathContent = {
       parts: ['motors'],
       anchors: ['motors'],
       feeds: [],
-      text: `The motors take almost all of the power, up to ${esc.currentPerMotorA} A each at full throttle.`,
+      text: `The motors take almost all of the power. The ESC is rated for ${esc.currentPerMotorA} A per motor; how much they actually draw depends on the throttle and the props.`,
     },
     {
       name: 'Flight controller’s regulators',

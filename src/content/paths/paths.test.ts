@@ -95,6 +95,12 @@ describe('path content', () => {
     }
   });
 
+  it('never presents the ESC rating as what the motors draw', () => {
+    const motors = PATHS.power.stops[3]?.text ?? '';
+    expect(motors).not.toMatch(/\d+ A each/);
+    expect(motors).toMatch(/rated/);
+  });
+
   it('lists the parts a path passes', () => {
     expect(pathParts('video')).toEqual(new Set(['camera', 'fc', 'vtx']));
   });
