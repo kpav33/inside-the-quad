@@ -72,10 +72,17 @@ describe('path routes', () => {
     expect(parseRoute('/paths/power/3/')).toEqual({ kind: 'path', path: 'power', step: 3 });
   });
 
-  it('treats a step that is not a whole number from 1 as unknown', () => {
-    for (const slug of ['power/0', 'power/x', 'power/2.5', 'power/-1']) {
+  it('treats a step that is not a whole number as unknown', () => {
+    for (const slug of ['power/x', 'power/2.5', 'power/2/x']) {
       expect(parseRoute(`/paths/${slug}`)).toEqual({ kind: 'unknown', slug });
     }
+  });
+
+  it('reads a step below 1 as step 1, and a huge one as a large finite step', () => {
+    expect(parseRoute('/paths/power/0')).toEqual({ kind: 'path', path: 'power', step: 1 });
+    expect(parseRoute('/paths/power/-1')).toEqual({ kind: 'path', path: 'power', step: 1 });
+    const huge = parseRoute(`/paths/power/${'9'.repeat(400)}`);
+    expect(huge.kind === 'path' && Number.isFinite(huge.step) && huge.step > 100).toBe(true);
   });
 
   it('writes the step into the address, leaving out step 1', () => {

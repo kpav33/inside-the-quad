@@ -93,6 +93,20 @@ describe('usePathStep', () => {
     expect(result.current.step).toBe(1);
   });
 
+  it('does not resume playing when the learner comes back to the path', () => {
+    const { result, rerender } = start('control', 6);
+    act(() => {
+      result.current.play();
+    });
+    rerender({ path: null, stops: 0 });
+    rerender({ path: 'control', stops: 6 });
+    expect(result.current.playing).toBe(false);
+    act(() => {
+      vi.advanceTimersByTime(PLAY_INTERVAL_MS * 2);
+    });
+    expect(result.current.step).toBe(0);
+  });
+
   it('stops playing when another path opens', () => {
     const { result, rerender } = start('control', 6);
     act(() => {

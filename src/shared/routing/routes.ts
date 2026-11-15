@@ -7,6 +7,8 @@ export const INTRO_PATH = '/intro';
 
 const PART_PREFIX = '/parts/';
 const PATH_PREFIX = '/paths/';
+/** A cap for a step read from an address; far beyond any path's stops. */
+const MAX_STEP = 999;
 
 /** A page the app can open: a sheet (the intro, a part's lesson, a path), or the overview (null). */
 export type Page = SheetId | null;
@@ -54,7 +56,14 @@ export function parseRoute(pathname: string): Route {
   if (pathname.startsWith(PATH_PREFIX)) {
     const slug = decode(pathname.slice(PATH_PREFIX.length).replace(/\/$/, ''));
     const [id, step, ...rest] = slug.split('/');
-    const stepNumber = step === undefined ? 1 : /^[1-9]\d*$/.test(step) ? Number(step) : NaN;
+    // A whole-number step outside the path is kept as the nearest sensible one: below 1 is 1, and a
+    // huge one is capped (the explorer then shows the path's last stop).
+    const stepNumber =
+      step === undefined
+        ? 1
+        : /^-?\d+$/.test(step)
+          ? Math.min(Math.max(Number(step), 1), MAX_STEP)
+          : NaN;
     return isPathId(id) && rest.length === 0 && !Number.isNaN(stepNumber)
       ? { kind: 'path', path: id, step: stepNumber }
       : { kind: 'unknown', slug };

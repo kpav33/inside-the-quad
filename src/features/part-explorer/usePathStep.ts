@@ -32,7 +32,9 @@ export function usePathStep(
     path,
     on: false,
   });
-  // Play belongs to the path it started on; another path opens stopped.
+  // Play belongs to the path it started on. Leaving that path (another path, a lesson, closing the
+  // sheet) stops it for good, so coming back with browser Back never resumes it.
+  if (playing.path !== path) setPlaying({ path, on: false });
   const isPlaying = playing.on && playing.path === path;
 
   const last = Math.max(stopCount - 1, 0);
