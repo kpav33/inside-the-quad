@@ -92,8 +92,9 @@ test('on a phone, the drone and both sticks stay in view down to the last step',
   await page.setViewportSize({ width: 375, height: 667 });
   await page.goto('/moves/5');
   await page.getByRole('link', { name: /^Previous\s*:\s*Video path/ }).scrollIntoViewIfNeeded();
-  const canvas = await page.locator('canvas').boundingBox();
-  if (!canvas) throw new Error('no canvas');
+  // The drone's own area: the 3D view, above the band the sticks sit in.
+  const canvas = await page.locator('.drone-viewer').boundingBox();
+  if (!canvas) throw new Error('no drawing');
   expect(canvas.y).toBeGreaterThanOrEqual(0);
   for (const side of ['left', 'right']) {
     const pad = await page.locator(`.stick-pad[data-side="${side}"]`).boundingBox();
@@ -124,3 +125,63 @@ test('leaving mid-demo and coming back with Back raises no errors', async ({ pag
   );
   expect(errors).toEqual([]);
 });
+
+for (const height of [667, 800]) {
+  test(`at 320 × ${String(height)} with 200 % text the sticks stay apart and every step can be read`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 320, height });
+    await page.goto('/moves');
+    await page.evaluate(() => (document.documentElement.style.fontSize = '200%'));
+    await expect(page.locator('canvas')).toBeVisible();
+
+    const left = await page.locator('.stick-pad[data-side="left"]').boundingBox();
+    const right = await page.locator('.stick-pad[data-side="right"]').boundingBox();
+    if (!left || !right) throw new Error('no sticks');
+    expect(left.x + left.width).toBeLessThanOrEqual(right.x);
+
+    // Each step's text can be read below the pinned drawing: its first line can be brought into
+    // view under the drawing, and its last line onto the screen (a long paragraph may not fit at
+    // once with text this large).
+    // Where the pinned drawing ends once it is pinned (it sits at the top of the screen).
+    const pinnedBottom = () =>
+      page.evaluate(
+        () => document.querySelector('.part-explorer-field')?.getBoundingClientRect().height ?? 0,
+      );
+    const texts = page.locator('.path-stop-text');
+    for (let i = 0; i < 5; i++) {
+      const text = texts.nth(i);
+      const pinned = await pinnedBottom();
+      await text.evaluate((el, under) => {
+        window.scrollBy({ top: el.getBoundingClientRect().top - under - 4, behavior: 'instant' });
+      }, pinned);
+      const top = await text.boundingBox();
+      if (!top) throw new Error('no step text');
+      expect(top.y).toBeGreaterThanOrEqual(pinned - 1);
+      expect(top.y + 20).toBeLessThanOrEqual(height);
+      // Nothing pinned covers that first line.
+      expect(
+        await text.evaluate(
+          (el, y) => el.contains(document.elementFromPoint(el.getBoundingClientRect().left + 8, y)),
+          top.y + 10,
+        ),
+      ).toBe(true);
+      await text.evaluate((el) => {
+        window.scrollBy({
+          top: el.getBoundingClientRect().bottom - window.innerHeight + 4,
+          behavior: 'instant',
+        });
+      });
+      const bottom = await text.boundingBox();
+      if (!bottom) throw new Error('no step text');
+      expect(bottom.y + bottom.height).toBeLessThanOrEqual(height);
+      expect(bottom.y + bottom.height - 20).toBeGreaterThanOrEqual(pinned - 1);
+      expect(
+        await text.evaluate(
+          (el, y) => el.contains(document.elementFromPoint(el.getBoundingClientRect().left + 8, y)),
+          bottom.y + bottom.height - 10,
+        ),
+      ).toBe(true);
+    }
+  });
+}

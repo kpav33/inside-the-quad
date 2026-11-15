@@ -22,12 +22,17 @@ export function useStepScroll(
     const current = list.current?.querySelector<HTMLElement>('[aria-current="step"]');
     // Not every environment can scroll an element into view (jsdom can't).
     if (typeof current?.scrollIntoView !== 'function') return;
-    // Leave room for what is pinned above the steps (the step controls, and on a phone's moves
-    // sheet the drawing over them), so the step isn't tucked under it.
+    // Leave room for the step controls pinned above the steps, so the step isn't tucked under them.
+    // When the controls aren't pinned (a phone's moves sheet), the stylesheet's own scroll margin
+    // keeps the step clear of the drawing pinned there.
     const bar = controls.current;
-    const pinnedAt = bar ? parseFloat(getComputedStyle(bar).top) || 0 : 0;
-    const pinned = pinnedAt + (bar?.offsetHeight ?? 0);
-    current.style.scrollMarginTop = `${String(pinned + 8)}px`;
+    const style = bar ? getComputedStyle(bar) : null;
+    if (bar && style?.position === 'sticky') {
+      const pinned = (parseFloat(style.top) || 0) + bar.offsetHeight;
+      current.style.scrollMarginTop = `${String(pinned + 8)}px`;
+    } else {
+      current.style.removeProperty('scroll-margin-top');
+    }
     current.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
   }, [list, controls, sheet, step, reduceMotion]);
 }
