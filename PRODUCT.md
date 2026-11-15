@@ -60,6 +60,11 @@ it work, what do the numbers mean, what is it connected to.
   current passes, on the 3D drawing with a redline leader from part to part, step by step or played
   through. The step is in the address, so a lesson opened from a stop leads back to it; clicking
   the drawing picks a stop. The masthead links the chapter as "How it works together".
+- Sheet 4 of that chapter, "How a quad moves" (`/moves`): five guided steps (throttle, roll,
+  pitch, yaw, gyro loop) with two virtual sticks like a mode 2 radio, each motor's speed on the
+  drawing, and the drone turning in place like an acro quad (slowed down; never flying around).
+  Each step plays a short demo (Show me replays it; reduced motion waits for it); Gust knocks the
+  drone so the gyro loop can bring it back. On phones the drawing stays pinned above the steps.
 - Planned (see `docs/roadmap.md`): how a quad moves (virtual sticks, motor speeds, the gyro loop)
   and "what if" faults, then the gear you hold and wear, and a compatibility checker; later other
   drone sizes and types.

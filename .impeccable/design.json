@@ -435,6 +435,24 @@
       "kind": "drawing",
       "refersTo": "path-pin",
       "description": "On a path sheet: frame opened, current stop's parts open (redline), the path's other parts Connected Grey, the rest faded. A redline line over the model joins the stops: passed stretches solid at 45% opacity, the current stretch dashed and flowing to every stop it feeds, nothing ahead. Numbered balloons over the canvas at each stop reached (current filled redline); off-drone ends labelled in a sheet-filled caps box. Dashes still under reduced motion."
+    },
+    {
+      "name": "Moves Sheet",
+      "kind": "sheet",
+      "refersTo": "moves",
+      "description": "Chapter 'How it works together', sheet 4 of 4: path sheet frame, title block with Mode (Acro), Motors, Speed; step controls Previous step, Next step, Show me, Gust, Level; five numbered steps; the gyro loop step adds a wanted-vs-measured °/s table. Camera behind and above the drone. Stacked layouts pin the drawing above the steps."
+    },
+    {
+      "name": "Stick Pad",
+      "kind": "control",
+      "refersTo": "stick-pad",
+      "description": "Mode 2 gimbal in the drawing's lower corner: hairline square with centre lines and an ink-ringed thumb, caps muted axis label below. Hidden native sliders per axis; focus ring on the pad and the focused axis' line in ink. Springs back except throttle."
+    },
+    {
+      "name": "Motor Readout",
+      "kind": "drawing",
+      "refersTo": "motor-pin",
+      "description": "Pill per motor over the canvas: number cell and speed in tabular figures. Faster motors redline ring and filled number; slower muted. Keeps clear of sticks and other pills. Prop spin arrows' length shows speed; no animation of their own."
     }
   ],
   "narrative": {

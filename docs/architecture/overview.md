@@ -14,6 +14,8 @@ src/
   features/         One folder per feature; owns its components, hooks, logic and tests
     drone-model/    Procedural 3D parts (one component per part), built from a DroneSpec
     drone-viewer/   The 3D viewport: Canvas, camera fit to the outline, orbit controls (lazy loaded)
+    flight/         The moves sheet's drone without three.js: mixer, acro model, store, demos,
+                    the virtual sticks
     intro/          The intro's flat SVG drawings: the system scene and the size comparison
     part-explorer/  The open sheet (from the URL); composes the viewer, part list, lesson, intro
                     and overview
@@ -73,6 +75,17 @@ nginx/              Production server config (copied into the Docker image)
   (`drone-viewer/PathPins.tsx`). The step is in the address (`/paths/<id>/<n>`, replaced, not pushed);
   the explorer clamps it and `usePathStep` adds Play. `shared/domain/sheets.ts` splits the set into
   two chapters (parts, paths), each numbered from 1.
+- How a quad moves (05b): sheet 4 of the second chapter (`/moves/<n>`, `shared/domain/moves.ts`).
+  `features/flight` is plain TypeScript, so it stays out of the lazy 3D chunk: `mixer.ts` turns
+  throttle and per-axis effort into four motor speeds for this drone's Quad X, props-in layout;
+  `model.ts` is an acro rate controller (feed-forward, P, I) on a body with air drag, stepped in
+  fixed substeps; `store.ts` is the mutable `Flight` the sticks write, the canvas advances each
+  frame (`drone-viewer/FlightRig.tsx`) and the sheet reads; `demos.ts` holds each step's demo.
+  The 3D code imports only types from `flight` (it never imports `content/`), so the explorer
+  renders `Sticks` over the canvas inside the viewer's error boundary. The rig turns the drone
+  about its middle, `drone-model/MotorArcs.tsx` draws each prop's arc at its motor's speed, motor
+  balloons are DOM over the canvas, and the camera uses a sphere fit so any attitude fits. The
+  canvas asks for frames only until the flight settles.
 - The part list is the accessible equivalent of clicking in 3D, so the canvas is hidden from
   assistive technology and everything still works if WebGL fails.
 
