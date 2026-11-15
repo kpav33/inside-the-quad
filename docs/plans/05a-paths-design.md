@@ -176,3 +176,8 @@ decisions they contradict above:
    stop list shows "Back to Control path, step 3" until another sheet is opened.
 4. **The current step scrolls into view** when it changes (step controls, Play, a click on the
    drawing) and is not fully visible, smoothly unless motion is reduced.
+5. **A stop's name picks the step (user decision, after trying Amendment 1).** In the paths chapter
+   a stop's name is a button that makes it the current step, like Next and Previous; the lesson is
+   one quieter link below the stop's text ("Lesson: Receiver", "Lessons:" for several parts, "More
+   in What is an FPV drone?" for the off-drone ends). The step controls stay pinned at the top of
+   the sheet while the stops scroll under them, so keyboard focus stays visible (review A3).
