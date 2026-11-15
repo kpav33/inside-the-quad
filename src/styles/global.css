@@ -295,12 +295,29 @@ a {
   position: absolute;
   top: 0;
   left: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
+  /* The pin is its balloon; an end's label stands on top of it. */
+  display: grid;
   pointer-events: none;
   user-select: none;
+}
+
+/* A balloon moved off its stop keeps a hairline back to it. */
+.path-pin-tail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 1px;
+  background: var(--color-rule-strong);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+.path-pin-tail[data-state='current'] {
+  background: var(--color-accent);
+}
+
+.path-pin-tail[hidden] {
+  display: none;
 }
 
 .path-marker {
@@ -322,6 +339,11 @@ a {
   display: none;
 }
 
+/* An end not reached yet: its balloon in the muted ring, number muted. */
+.path-pin[data-state='ahead'] .path-marker {
+  color: var(--color-muted);
+}
+
 /* Only the current stop is in redline; the stops passed stay quiet. */
 .path-pin[data-state='current'] .path-marker {
   border-color: var(--color-accent);
@@ -330,6 +352,10 @@ a {
 }
 
 .path-end {
+  position: absolute;
+  bottom: calc(100% + var(--space-1));
+  left: 50%;
+  transform: translateX(-50%);
   padding: var(--space-1) var(--space-2);
   border: 1px solid var(--color-rule-strong);
   background: var(--color-sheet);

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { pinState, screenPoint } from './pins';
+import { screenPoint } from '@/features/drone-model';
+
+import { pinState } from './pins';
 
 describe('screenPoint', () => {
   const size = { width: 600, height: 400 };

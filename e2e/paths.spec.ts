@@ -87,3 +87,46 @@ for (const [width, height] of [
     });
   }
 }
+
+for (const [width, height] of [
+  [1280, 720],
+  [390, 844],
+] as const) {
+  for (const [path, { stops: count }] of Object.entries(PATHS)) {
+    test(`no ${path} balloon or label covers another at ${String(width)} px`, async ({ page }) => {
+      await page.setViewportSize({ width, height });
+      await page.goto(`/paths/${path}`);
+      for (let step = 0; step < count; step++) {
+        if (step > 0) await page.getByRole('button', { name: 'Next step' }).click();
+        // Let the view finish turning to this stop.
+        await page.waitForTimeout(900);
+        const boxes = await page
+          .locator('.path-pin:not([data-state="hidden"]) .path-marker, .path-end')
+          .evaluateAll((els) =>
+            els.map((el) => {
+              const r = el.getBoundingClientRect();
+              return {
+                text: el.textContent,
+                left: r.left,
+                right: r.right,
+                top: r.top,
+                bottom: r.bottom,
+              };
+            }),
+          );
+        boxes.forEach((a, i) => {
+          for (const b of boxes.slice(i + 1)) {
+            const covers =
+              a.left < b.right - 1 &&
+              b.left < a.right - 1 &&
+              a.top < b.bottom - 1 &&
+              b.top < a.bottom - 1;
+            expect(covers, `${path} stop ${String(step + 1)}: ${a.text} over ${b.text}`).toBe(
+              false,
+            );
+          }
+        });
+      }
+    });
+  }
+}

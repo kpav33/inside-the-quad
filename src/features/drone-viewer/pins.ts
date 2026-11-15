@@ -10,11 +10,3 @@ export function pinState(index: number, step: number, isEnd: boolean): PinState 
   if (index === step) return 'current';
   return isEnd ? 'ahead' : 'hidden';
 }
-
-/** A point in normalised view coordinates (−1 to 1, y up) as canvas pixels (y down). */
-export function screenPoint(
-  [x, y]: readonly [number, number],
-  { width, height }: { width: number; height: number },
-): [number, number] {
-  return [((x + 1) / 2) * width, ((1 - y) / 2) * height];
-}

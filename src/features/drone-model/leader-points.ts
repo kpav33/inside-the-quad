@@ -1,6 +1,7 @@
 import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
 import type { AnchorId } from '@/shared/domain/paths';
 
+import { droneOutlineMm } from './extents';
 import { anchorPoints } from './path-anchors';
 import type { Vec3 } from './rear';
 import { explodedOffsets } from './stack';
@@ -22,7 +23,12 @@ export interface Leader {
   step: number;
 }
 
-const toScene = ([x, y, z]: Vec3): Vec3 => [mm(x), mm(y), mm(z)];
+export const toScene = ([x, y, z]: Vec3): Vec3 => [mm(x), mm(y), mm(z)];
+
+/** The drone's fitted outline in scene metres, which the off-drone ends are kept clear of. */
+export function outlineScene(spec: DroneSpec): Vec3[] {
+  return droneOutlineMm(spec).map(toScene);
+}
 
 /** The scene points of a stop: every anchor's points, in metres. */
 export function stopPoints(spec: DroneSpec, stop: LeaderStop): Vec3[] {
