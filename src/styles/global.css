@@ -1114,6 +1114,17 @@ a {
   background: var(--color-ground);
 }
 
+/* The sheet column's top padding sits above the pinned bar; fill it so no stop text shows there. */
+.path-controls::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  height: var(--space-6);
+  background: var(--color-ground);
+}
+
 .lesson-footer {
   display: flex;
   flex-direction: column;
