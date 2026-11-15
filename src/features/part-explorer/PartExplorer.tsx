@@ -170,6 +170,19 @@ export function PartExplorer() {
     };
   }, [closeLesson]);
 
+  // Any link stops Play, including one to the path already open (the switcher, the masthead),
+  // which changes no address and so would not reset the path by itself.
+  const { stop: stopPlaying } = pathStep;
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      if (event.target instanceof Element && event.target.closest('a[href]')) stopPlaying();
+    };
+    document.addEventListener('click', onClick);
+    return () => {
+      document.removeEventListener('click', onClick);
+    };
+  }, [stopPlaying]);
+
   // The part under the mouse in 3D, lit in the parts list. It belongs to the sheet it was hovered
   // on: when another sheet opens, the row lets go until the mouse moves to a part again.
   const [hover, setHover] = useState<{ part: PartId; sheet: SheetId | null } | null>(null);

@@ -11,6 +11,7 @@ import { PartLink } from '@/shared/routing';
 
 import { OVERVIEW_FOCUS_ID, partButtonId } from './ids';
 import { PartExplorer } from './PartExplorer';
+import { PLAY_INTERVAL_MS } from './usePathStep';
 
 // WebGL is unavailable in jsdom: the viewer is replaced by buttons that call its props.
 const viewer = vi.hoisted(() => ({ shouldThrow: false }));
@@ -222,6 +223,33 @@ describe('PartExplorer', () => {
     await userEvent.click(screen.getByRole('link', { name: 'Next: Back to overview' }));
     expect(screen.queryByRole('heading', { level: 2, name: 'Video path' })).toBeNull();
     expect(document.getElementById(OVERVIEW_FOCUS_ID)).toHaveFocus();
+  });
+
+  it.each([
+    ['the path switcher', 'Control'],
+    ['a link elsewhere on the page', 'masthead: control path'],
+  ])('stops playing when %s leads to the open path', async (_, name) => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+      window.history.replaceState(null, '', '/paths/control');
+      render(
+        <>
+          <PartLink to="control">masthead: control path</PartLink>
+          <PartExplorer />
+        </>,
+      );
+      await screen.findByRole('button', { name: 'stub: click motors' });
+      await user.click(screen.getByRole('button', { name: 'Play the path' }));
+      await user.click(screen.getByRole('link', { name }));
+      act(() => {
+        vi.advanceTimersByTime(PLAY_INTERVAL_MS * 2);
+      });
+      expect(screen.getByRole('button', { name: 'Play the path' })).toBeInTheDocument();
+      expect(viewerState().step).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('closes a path sheet with Escape', async () => {
