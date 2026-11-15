@@ -19,7 +19,10 @@ marker and per-part greys were tried and dropped (the parts list already names p
 03c show what real parts look like). Section 03c added a real part photo to every part sheet: a detail figure under the title
 block (muted "Real part" label, the photo at most 22rem tall, a bold sentence-case caption that
 always says "One example:", and a muted credit line), from Wikimedia Commons under free licences
-only. Section 02c
+only. Section 05a added three path sheets after the parts (Control, Power, Video): the same
+sheet frame with a path switcher, step controls and numbered stops, while the drawing opens the
+frame, lights the current stop and draws a redline leader from part to part with numbered
+balloons over the canvas (see DESIGN.md: Path Sheet, Path Leader). Section 02c
 added lookup and navigation: each lesson has its own URL, a lesson footer with Mark as read and
 previous/next sheet cells, connection links set as "see sheet" references, read checks in the
 parts list, and a start/continue link on the overview. Section 04 added the intro sheet ("What is

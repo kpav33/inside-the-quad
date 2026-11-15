@@ -423,6 +423,18 @@
       "kind": "figure",
       "refersTo": "part-photo",
       "description": "Detail figure between the title block and question 1 on part sheets: sheet fill, 1px rule-strong frame, muted caps 'Real part' label, photo full width capped at 22rem tall (object-fit contain, left), caption in the reading face bold sentence case starting 'One example:', muted small credit with licence and Commons links. No redline. Not on the overview or intro."
+    },
+    {
+      "name": "Path Sheet",
+      "kind": "sheet",
+      "refersTo": "path-stops",
+      "description": "Sheets 12-14 (Control, Power, Video): lesson frame, title block with sheet number and Stops count, a framed caps path switcher (open path ink with 2px redline underline), lead, outline step controls (Previous step, Next step, Play the path / Stop), then hairline-ruled numbered stops with a balloon, caps name linked to its lesson and one or two sentences. Current balloon filled redline; passed balloons keep a redline ring; ahead muted. Lesson footer after."
+    },
+    {
+      "name": "Path Leader",
+      "kind": "drawing",
+      "refersTo": "path-pin",
+      "description": "On a path sheet: frame opened, current stop's parts open (redline), the path's other parts Connected Grey, the rest faded. A redline line over the model joins the stops: passed stretches solid at 45% opacity, the current stretch dashed and flowing to every stop it feeds, nothing ahead. Numbered balloons over the canvas at each stop reached (current filled redline); off-drone ends labelled in a sheet-filled caps box. Dashes still under reduced motion."
     }
   ],
   "narrative": {

@@ -288,6 +288,14 @@ Each lesson answers four questions, numbered 1 to 4 in muted ring balloons, head
 
 A detail figure on every part sheet, between the title block and question 1: sheet fill, a 1px rule-strong frame, 0.5rem 0.75rem padding; a muted caps "Real part" label; the photo full width with its own background, at most 22rem tall and scaled down whole (`object-fit: contain`, left-aligned); then the caption in the reading face, bold, sentence case, always starting "One example:" (a photo is never a recommendation); then the credit, muted and small: "Photo: author, licence (link). Cropped; shared under the same licence. Source: Wikimedia Commons (link)." Links use the muted underline and turn ink on hover. No redline. The image has its own width and height (no layout jump), 640 and 1280 px WebP sources and lazy loading. Not on the overview or the intro.
 
+### Path Sheet
+
+Sheets 12 to 14 (Control, Power, Video) use the lesson sheet's frame: heading and Close sheet, then a title block with the sheet number and a Stops count. Under it a path switcher: three caps links in one rule-strong frame, divided by hairlines, the open path in ink with a 2px redline underline (the current sheet). Then the lead, the step controls (outline buttons: Previous step, Next step, Play the path / Stop; disabled ones drop to rule colour and muted text), and the numbered stops: a hairline-ruled list, each stop a balloon beside its name (caps, a link to its lesson; a stop with several parts lists "Lessons:" links instead) and one or two sentences. The current stop's balloon is filled redline and its text turns ink; passed balloons keep a redline ring; stops ahead stay muted. A polite live region names each new stop. Then the usual lesson footer.
+
+### Path Leader
+
+On a path sheet the drawing opens the frame, lights the current stop's parts in the open look, keeps the path's other parts in Connected Grey and fades the rest. A redline line joins the stops in order, drawn over the model (never hidden behind a part): stretches already passed solid at 45 % opacity (`MODEL_LOOK.leaderPassedOpacity`), the stretch out of the current stop dashed (4 mm dashes) and running toward every stop it feeds (the power path fans out at the ESC and the flight controller), nothing ahead. Each stop reached carries a numbered balloon over the canvas: ground fill with a rule-strong ring, the current one filled redline. The off-drone ends (Your radio, Your goggles) carry a caps label in a sheet-filled, rule-strong box, shown from the start, placed beside the drone inside the fitted outline. With reduced motion the dashes hold still; Play still steps. The view turns to the current stop's part as on part sheets.
+
 ### Spec Table
 
 A hairline table (rule-strong top, rule between rows) with muted caps headers, caps row labels and Barlow values; stacks into blocks in narrow sheets.
@@ -302,7 +310,7 @@ The reference quad drawn as linework on carbon. With no sheet open (the overview
 
 Looks switch at once, without animation. On the Propellers sheet an ink arc with an open arrowhead over each prop shows its spin direction (props in), inside the blade tips. Hovering a part with a mouse gives its parts-list row the row hover look (never redline); touch never hovers.
 
-The camera is fitted to the drone's outline (blade tips, motors, body, battery, antennas; closed and with the stack lifted) for the canvas's shape, looking at the closed drone's middle, so the drone fills the drawing field with the lifted stack still inside it. Each view the camera turns to has its own fitted distance, eased with the turn; a resize keeps the visitor's angle and scales the distance; zoom runs from half to twice the fitted distance. The canvas renders on demand; nothing moves unless the visitor turns it or the selection changes. The viewer sits inside the drawing frame, inset 1.5rem.
+The camera is fitted to the drone's outline (blade tips, motors, body, battery, antennas; closed and with the stack lifted) for the canvas's shape, looking at the closed drone's middle, so the drone fills the drawing field with the lifted stack still inside it. Each view the camera turns to has its own fitted distance, eased with the turn; a resize keeps the visitor's angle and scales the distance; zoom runs from half to twice the fitted distance. The canvas renders on demand; nothing moves unless the visitor turns it, the selection changes, or a path leader's dashes are running. The viewer sits inside the drawing frame, inset 1.5rem.
 
 ## Do's and Don'ts
 
