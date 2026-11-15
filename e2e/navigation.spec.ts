@@ -51,6 +51,8 @@ test.describe('part addresses', () => {
 
 test.describe('sheets and progress', () => {
   test('Next walks every sheet in order and ends on the overview', async ({ page }) => {
+    // Sixteen sheets, each drawing the drone: under a full parallel run this needs more time.
+    test.slow();
     await page.goto('/');
     await page.getByRole('link', { name: 'Start with sheet 1: Frame' }).click();
     for (const name of [
