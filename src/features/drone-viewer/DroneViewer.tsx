@@ -1,14 +1,16 @@
 import { OrbitControls } from '@react-three/drei';
 import { Canvas, type ThreeEvent } from '@react-three/fiber';
+import { useMemo, useRef } from 'react';
 import { TOUCH } from 'three';
 
-import { DroneModel, type Leader } from '@/features/drone-model';
+import { DroneModel, type Leader, leaderMarkerPoints } from '@/features/drone-model';
 import { SCENE_LIGHT } from '@/shared/design/tokens';
 import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
 import type { PartId } from '@/shared/domain/parts';
 
 import { FitCamera } from './FitCamera';
 import { DEFAULT_CAMERA_POSITION } from './part-views';
+import { PathPins, ProjectPins } from './PathPins';
 import { TouchScrollPassThrough } from './TouchScrollPassThrough';
 import { TurnToPart } from './TurnToPart';
 
@@ -44,6 +46,12 @@ export default function DroneViewer({
   onPartHover,
   onBackgroundClick,
 }: DroneViewerProps) {
+  const pins = useRef<(HTMLElement | null)[]>([]);
+  const stops = leader?.stops;
+  const markerPoints = useMemo(
+    () => (stops ? leaderMarkerPoints(REFERENCE_5_INCH, stops) : []),
+    [stops],
+  );
   return (
     <div className="drone-viewer">
       <Canvas
@@ -77,7 +85,9 @@ export default function DroneViewer({
         <FitCamera />
         <TouchScrollPassThrough />
         <TurnToPart part={turnTo} />
+        {leader && <ProjectPins points={markerPoints} pins={pins} />}
       </Canvas>
+      {leader && <PathPins leader={leader} pins={pins} />}
     </div>
   );
 }

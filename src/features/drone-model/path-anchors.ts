@@ -8,8 +8,8 @@ import { motorPlacements } from './layout';
 import { type Box, escBox, rearBay, type Vec3, xt60Box } from './rear';
 import { type LiftGroup, stackLayers } from './stack';
 
-/** How far along the rear tip line, from the left, each off-drone end sits. */
-const END_ALONG = { radio: 0.3, goggles: 0.7 } as const;
+/** How far along the left tip line, from the front, each off-drone end sits. */
+const END_ALONG = { radio: 0.7, goggles: 0.4 } as const;
 
 /** The top middle of a box, raised by its lift. */
 function topOf({ centre: [x, y, z], size: [, height] }: Box, liftMm = 0): Vec3 {
@@ -17,23 +17,22 @@ function topOf({ centre: [x, y, z], size: [, height] }: Box, liftMm = 0): Vec3 {
 }
 
 /**
- * The rearmost blade-tip corners of the fitted outline, one each side (left first). Any point
- * between them stays in view, since the camera is fitted to keep every outline point in frame.
+ * The front and rear blade-tip corners on the left of the fitted outline. Any point between them
+ * stays in view, since the camera is fitted to keep every outline point in frame, and from the
+ * starting view it lies clear of the body.
  */
-export function rearTipCorners(spec: DroneSpec): [Vec3, Vec3] {
-  const outline = droneOutlineMm(spec);
-  const rearmost = (side: number) =>
-    outline
-      .filter(([x]) => Math.sign(x) === side)
-      .reduce((best, point) => (point[2] > best[2] ? point : best));
-  return [rearmost(-1), rearmost(1)];
+export function leftTipCorners(spec: DroneSpec): [Vec3, Vec3] {
+  const left = droneOutlineMm(spec).filter(([x]) => x < 0);
+  const pick = (better: (a: Vec3, b: Vec3) => boolean) =>
+    left.reduce((best, point) => (better(point, best) ? point : best));
+  return [pick((a, b) => a[2] < b[2]), pick((a, b) => a[2] > b[2])];
 }
 
-/** Where an off-drone end (the radio or goggles) is drawn: on the rear tip line. */
+/** Where an off-drone end (the radio or goggles) is drawn: beside the drone, on its left. */
 export function endPoint(spec: DroneSpec, end: 'radio' | 'goggles'): Vec3 {
-  const [left, right] = rearTipCorners(spec);
+  const [front, rear] = leftTipCorners(spec);
   const t = END_ALONG[end];
-  return [0, 1, 2].map((i) => (left[i] ?? 0) + t * ((right[i] ?? 0) - (left[i] ?? 0))) as Vec3;
+  return [0, 1, 2].map((i) => (front[i] ?? 0) + t * ((rear[i] ?? 0) - (front[i] ?? 0))) as Vec3;
 }
 
 /**

@@ -183,6 +183,54 @@ describe('PartExplorer', () => {
     expect(viewerState()).toEqual({ open: [], exploded: false, turnTo: null, step: null });
   });
 
+  it('opens a path sheet on the opened frame, at its first stop', async () => {
+    window.history.replaceState(null, '', '/paths/power');
+    await renderExplorer();
+    expect(screen.getByRole('heading', { level: 2, name: 'Power path' })).toBeInTheDocument();
+    expect(document.title).toContain('Power path');
+    expect(viewerState()).toEqual({
+      open: ['battery'],
+      exploded: true,
+      turnTo: 'battery',
+      step: 0,
+    });
+  });
+
+  it('moves the drawing along as the learner steps through a path', async () => {
+    window.history.replaceState(null, '', '/paths/power');
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Next step' }));
+    expect(viewerState()).toMatchObject({ open: ['battery', 'esc'], step: 1 });
+  });
+
+  it('leaves the view where it is at an off-drone end', async () => {
+    window.history.replaceState(null, '', '/paths/control');
+    await renderExplorer();
+    expect(viewerState()).toMatchObject({ open: [], turnTo: null, step: 0, exploded: true });
+  });
+
+  it('marks a path as read', async () => {
+    window.history.replaceState(null, '', '/paths/video');
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'Mark as read' }));
+    expect(window.localStorage.getItem(READ_KEY)).toBe('["video"]');
+  });
+
+  it('returns from the last path to the overview', async () => {
+    window.history.replaceState(null, '', '/paths/video');
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('link', { name: 'Next: Back to overview' }));
+    expect(screen.queryByRole('heading', { level: 2, name: 'Video path' })).toBeNull();
+    expect(document.getElementById(OVERVIEW_FOCUS_ID)).toHaveFocus();
+  });
+
+  it('closes a path sheet with Escape', async () => {
+    window.history.replaceState(null, '', '/paths/control');
+    await renderExplorer();
+    await userEvent.keyboard('{Escape}');
+    expect(screen.queryByRole('heading', { level: 2, name: 'Control path' })).toBeNull();
+  });
+
   it('runs on from the last part to the control path', async () => {
     window.history.replaceState(null, '', '/parts/extras');
     await renderExplorer();
@@ -438,6 +486,15 @@ describe('PartExplorer', () => {
     await screen.findByRole('button', { name: 'stub: click motors' });
     await userEvent.click(screen.getByRole('link', { name: 'outside link' }));
     expect(introHeading()).toHaveFocus();
+  });
+
+  it('keeps a path sheet working as a list when the 3D viewer fails', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    viewer.shouldThrow = true;
+    window.history.replaceState(null, '', '/paths/video');
+    render(<PartExplorer />);
+    expect(await screen.findByRole('alert')).toHaveTextContent('3D model couldn’t be loaded');
+    expect(screen.getByRole('list', { name: 'Stops' })).toBeInTheDocument();
   });
 
   it('keeps the part list and lessons working when the 3D viewer fails', async () => {

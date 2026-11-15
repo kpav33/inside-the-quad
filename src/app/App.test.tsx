@@ -31,4 +31,15 @@ describe('App', () => {
     expect(link).toHaveAttribute('aria-current', 'page');
     expect(screen.getByRole('heading', { level: 2, name: 'What is an FPV drone?' })).toHaveFocus();
   });
+
+  it('links the paths from the masthead, current on any path sheet', async () => {
+    window.history.replaceState(null, '', '/');
+    render(<App />);
+    const nav = screen.getByRole('navigation', { name: 'Sections' });
+    const link = within(nav).getByRole('link', { name: 'How it works together' });
+    expect(link).toHaveAttribute('href', '/paths/control');
+    await userEvent.click(link);
+    expect(link).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('heading', { level: 2, name: 'Control path' })).toHaveFocus();
+  });
 });

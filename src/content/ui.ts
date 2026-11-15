@@ -33,6 +33,8 @@ export const UI = {
     /** The masthead's sections, and its link to the intro. */
     navLabel: 'Sections',
     introLink: 'What is an FPV drone?',
+    /** The masthead's link to the path sheets, which opens the control path. */
+    pathsLink: 'How it works together',
     /** The browser tab's title while the intro is open. */
     introTitle: 'What is an FPV drone? · Inside the Quad',
   },
@@ -52,6 +54,7 @@ export const UI = {
   },
   explorer: {
     opened: (part: string) => `${part} lesson opened`,
+    pathOpened: (title: string) => `${title} opened`,
     hint: 'Select a part on the drone or in the parts list to see what it does and how it works.',
     introOpened: 'What is an FPV drone? opened',
     unknownPart: (slug: string) => `There’s no part called “${slug}”. Pick one from the list.`,
@@ -102,6 +105,22 @@ export const UI = {
       PathId,
       string
     >,
+    /** The path switcher's short names. */
+    short: { control: 'Control', power: 'Power', video: 'Video' } satisfies Record<PathId, string>,
+    switcherLabel: 'Paths',
+    close: 'Close sheet',
+    stopsLabel: 'Stops',
+    /** Before the lesson links of a stop with several parts. */
+    lessonsLabel: 'Lessons:',
+    previousStep: 'Previous step',
+    nextStep: 'Next step',
+    play: 'Play the path',
+    stop: 'Stop',
+    /** The off-drone ends, as labelled on the drawing. */
+    endLabel: { radio: 'Your radio', goggles: 'Your goggles' },
+    /** What a screen reader hears when the current stop changes. */
+    stepAnnounce: (stop: number, total: number, name: string, text: string) =>
+      `Stop ${stop} of ${total}: ${name}. ${text}`,
   },
   lesson: {
     close: 'Close lesson',

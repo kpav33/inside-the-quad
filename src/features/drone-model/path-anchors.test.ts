@@ -5,7 +5,7 @@ import { REFERENCE_5_INCH as spec } from '@/shared/domain/drone-spec';
 import { motorTopMm } from './dimensions';
 import { droneOutlineMm } from './extents';
 import { motorPlacements } from './layout';
-import { anchorPoints, endPoint, leaderSegments, rearTipCorners } from './path-anchors';
+import { anchorPoints, endPoint, leaderSegments, leftTipCorners } from './path-anchors';
 import { rearBay, type Vec3 } from './rear';
 import { explodedOffsets } from './stack';
 
@@ -55,28 +55,29 @@ describe('anchorPoints', () => {
 });
 
 describe('endPoint', () => {
-  const [left, right] = rearTipCorners(spec);
+  const [front, rear] = leftTipCorners(spec);
   const outline = droneOutlineMm(spec);
 
-  it('takes the rearmost blade-tip corners of the fitted outline, one each side', () => {
-    expect(outline).toContainEqual(left);
-    expect(outline).toContainEqual(right);
-    expect(left[0]).toBeLessThan(0);
-    expect(right[0]).toBeGreaterThan(0);
+  it('takes the front and rear blade-tip corners on the left of the fitted outline', () => {
+    expect(outline).toContainEqual(front);
+    expect(outline).toContainEqual(rear);
+    expect(front[0]).toBeLessThan(0);
+    expect(rear[0]).toBeLessThan(0);
+    expect(front[2]).toBeLessThan(rear[2]);
   });
 
   it.each(['radio', 'goggles'] as const)('puts the %s between them, so it stays in view', (end) => {
     const point = endPoint(spec, end);
-    const t = (point[0] - left[0]) / (right[0] - left[0]);
+    const t = (point[2] - front[2]) / (rear[2] - front[2]);
     expect(t).toBeGreaterThan(0);
     expect(t).toBeLessThan(1);
     point.forEach((value, i) => {
-      expect(value).toBeCloseTo((left[i] ?? 0) + t * ((right[i] ?? 0) - (left[i] ?? 0)));
+      expect(value).toBeCloseTo((front[i] ?? 0) + t * ((rear[i] ?? 0) - (front[i] ?? 0)));
     });
   });
 
-  it('puts the radio left of the goggles', () => {
-    expect(endPoint(spec, 'radio')[0]).toBeLessThan(endPoint(spec, 'goggles')[0]);
+  it('puts the radio nearer the rear than the goggles', () => {
+    expect(endPoint(spec, 'radio')[2]).toBeGreaterThan(endPoint(spec, 'goggles')[2]);
   });
 });
 

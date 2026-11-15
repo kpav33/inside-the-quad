@@ -20,7 +20,8 @@ import { Propeller } from './parts/Propeller';
 import { Receiver } from './parts/Receiver';
 import { Strap } from './parts/Strap';
 import { Vtx } from './parts/Vtx';
-import { type Leader, PathLeader } from './PathLeader';
+import type { Leader } from './leader-points';
+import { PathLeader } from './PathLeader';
 import { SpinArcs } from './SpinArcs';
 import { explodedOffsets } from './stack';
 

@@ -6,6 +6,7 @@ import { ArrowIcon } from '@/shared/ui/icons';
 export function App() {
   const { route } = usePartRoute();
   const onIntro = route.kind === 'intro';
+  const onPath = route.kind === 'path';
   return (
     <div className="app">
       <header className="app-header">
@@ -16,6 +17,10 @@ export function App() {
         <nav className="app-sections" aria-label={UI.app.navLabel}>
           <PartLink to="intro" className="app-section-link" current={onIntro}>
             {UI.app.introLink}
+            <ArrowIcon />
+          </PartLink>
+          <PartLink to="control" className="app-section-link" current={onPath}>
+            {UI.app.pathsLink}
             <ArrowIcon />
           </PartLink>
         </nav>

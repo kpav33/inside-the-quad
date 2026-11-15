@@ -53,7 +53,7 @@ test.describe('sheets and progress', () => {
   test('Next walks every sheet in order and ends on the overview', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('link', { name: 'Start with sheet 1: Frame' }).click();
-    for (const name of PART_NAMES) {
+    for (const name of [...PART_NAMES, 'Control path', 'Power path', 'Video path']) {
       await expect(lessonHeading(page, name)).toBeFocused();
       await page.getByRole('link', { name: /^Next/ }).click();
     }
@@ -78,7 +78,7 @@ test.describe('sheets and progress', () => {
     await page.getByRole('button', { name: 'Mark as read' }).click();
     await page.getByRole('button', { name: 'Close lesson' }).click();
     await expect(page.getByRole('link', { name: 'Continue with sheet 2: Motors' })).toBeVisible();
-    await expect(page.getByText('1 of 11 read')).toBeVisible();
+    await expect(page.getByText('1 of 14 read')).toBeVisible();
   });
 });
 

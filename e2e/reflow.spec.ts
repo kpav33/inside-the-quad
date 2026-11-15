@@ -8,6 +8,7 @@ const PAGES = [
   ...['frame', 'motors', 'props', 'esc', 'fc', 'battery', 'strap']
     .concat(['receiver', 'camera', 'vtx', 'extras'])
     .map((id) => `/parts/${id}`),
+  ...['control', 'power', 'video'].map((id) => `/paths/${id}`),
 ];
 
 const enlarge = async (page: Page) => {
