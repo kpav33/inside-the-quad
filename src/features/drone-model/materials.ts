@@ -12,7 +12,9 @@ export function partLook(
   open: ReadonlySet<PartId>,
   connected: ReadonlySet<PartId>,
 ): PartLook {
-  if (open.size === 0) return 'normal';
+  // Nothing open and nothing connected is the overview. A path at an off-drone stop opens no part
+  // but still keeps its parts drawn and fades the rest.
+  if (open.size === 0 && connected.size === 0) return 'normal';
   if (open.has(part)) return 'open';
   return connected.has(part) ? 'connected' : 'faded';
 }

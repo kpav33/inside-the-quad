@@ -35,6 +35,14 @@ describe('partLook with several parts open', () => {
   });
 });
 
+describe('partLook at an off-drone stop of a path', () => {
+  it('keeps the path drawn and fades the rest though no part is open', () => {
+    const path = open('camera', 'fc', 'vtx');
+    expect(partLook('vtx', NONE, path)).toBe('connected');
+    expect(partLook('battery', NONE, path)).toBe('faded');
+  });
+});
+
 describe('partAppearance', () => {
   it.each(PART_IDS.map((id) => [id]))('draws %s as ink linework over a dark fill', (id) => {
     expect(partAppearance(id, 'normal')).toEqual({
