@@ -24,6 +24,8 @@ export interface Flight {
   readonly idle: number;
   readonly sticks: StickInput;
   setSticks(sticks: Partial<StickInput>, by: StickSource): void;
+  /** Puts back to centre (throttle to hover) every stick a demo moved last, leaving the user's. */
+  releaseDemo(): void;
   gust(): void;
   level(): void;
   /** Called by the drawing each frame. */
@@ -66,11 +68,27 @@ export function createFlight(): Flight {
   let state = initialFlight();
   let sticks: StickInput = CENTRED;
   let gusts = 0;
+  /** Who moved each stick last, so a stopped demo lets go of its sticks and only its sticks. */
+  const movedBy: Partial<Record<keyof StickInput, StickSource>> = {};
   let disposed = false;
   const wake = listeners();
   const stepped = listeners();
   const user = listeners();
   const disposal = listeners();
+
+  function set(change: Partial<StickInput>, by: StickSource) {
+    if (disposed) return;
+    const next = { ...sticks, ...change };
+    sticks = {
+      throttle: clamp(next.throttle, 0, 1),
+      yaw: clamp(next.yaw, -1, 1),
+      pitch: clamp(next.pitch, -1, 1),
+      roll: clamp(next.roll, -1, 1),
+    };
+    for (const axis of Object.keys(change) as (keyof StickInput)[]) movedBy[axis] = by;
+    if (by === 'user') user.call();
+    wake.call();
+  }
 
   return {
     idle: IDLE,
@@ -80,17 +98,14 @@ export function createFlight(): Flight {
     get sticks() {
       return sticks;
     },
-    setSticks(change, by) {
-      if (disposed) return;
-      const next = { ...sticks, ...change };
-      sticks = {
-        throttle: clamp(next.throttle, 0, 1),
-        yaw: clamp(next.yaw, -1, 1),
-        pitch: clamp(next.pitch, -1, 1),
-        roll: clamp(next.roll, -1, 1),
-      };
-      if (by === 'user') user.call();
-      wake.call();
+    setSticks: set,
+    releaseDemo() {
+      const release: Partial<StickInput> = {};
+      for (const axis of Object.keys(movedBy) as (keyof StickInput)[]) {
+        if (movedBy[axis] === 'demo' && sticks[axis] !== CENTRED[axis])
+          release[axis] = CENTRED[axis];
+      }
+      if (Object.keys(release).length > 0) set(release, 'demo');
     },
     gust() {
       if (disposed) return;

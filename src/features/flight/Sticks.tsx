@@ -1,4 +1,4 @@
-import { type PointerEvent, useRef, useSyncExternalStore } from 'react';
+import { type PointerEvent, useEffect, useRef, useSyncExternalStore } from 'react';
 
 import { UI } from '@/content/ui';
 
@@ -140,6 +140,25 @@ function Stick({
  * radio's; the other axes spring back to centre.
  */
 export function Sticks({ flight }: { flight: Flight }) {
+  // A key released or a drag ended outside the page never reaches the sticks: when the window
+  // loses focus or the page is hidden, let the spring axes go (throttle stays, as on a radio).
+  useEffect(() => {
+    const letGo = () => {
+      const { yaw, pitch, roll } = flight.sticks;
+      if (yaw !== 0 || pitch !== 0 || roll !== 0) {
+        flight.setSticks({ yaw: 0, pitch: 0, roll: 0 }, 'user');
+      }
+    };
+    const onVisibility = () => {
+      if (document.hidden) letGo();
+    };
+    window.addEventListener('blur', letGo);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      window.removeEventListener('blur', letGo);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, [flight]);
   const sticks = useSyncExternalStore(
     (listener) => flight.onWake(listener),
     () => flight.sticks,

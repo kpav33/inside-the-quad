@@ -45,20 +45,34 @@ export function runDemo(
   running.get(flight)?.();
   const timers: ReturnType<typeof setTimeout>[] = [];
   const offs: (() => void)[] = [];
+  // Stopping part-way lets go of whatever the demo was still holding, so no stick stays pushed.
   const cancel = () => {
     for (const timer of timers) clearTimeout(timer);
     for (const off of offs) off();
     if (running.get(flight) === cancel) running.delete(flight);
+    flight.releaseDemo();
   };
-  for (const key of DEMOS[step]) {
+  const keys = DEMOS[step];
+  const lastAt = Math.max(...keys.map((key) => key.atMs));
+  for (const key of keys) {
     timers.push(
       schedule(() => {
         if (key.sticks) flight.setSticks(key.sticks, 'demo');
         if (key.gust) flight.gust();
+        // Played to the end: nothing left to stop.
+        if (key.atMs === lastAt) {
+          for (const off of offs) off();
+          if (running.get(flight) === cancel) running.delete(flight);
+        }
       }, key.atMs),
     );
   }
   offs.push(flight.onUserInput(cancel), flight.onDispose(cancel));
   running.set(flight, cancel);
   return cancel;
+}
+
+/** Stops the demo playing on this flight, if any, letting go of its sticks. */
+export function stopDemo(flight: Flight): void {
+  running.get(flight)?.();
 }

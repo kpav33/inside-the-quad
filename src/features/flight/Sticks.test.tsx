@@ -107,4 +107,15 @@ describe('Sticks', () => {
     fireEvent.pointerMove(pad, { pointerId: 1, clientX: 100, clientY: 50 });
     expect(flight.sticks.roll).toBe(0);
   });
+
+  it('springs back when the window loses focus, keeping the throttle', () => {
+    const { flight } = setup();
+    fireEvent.change(screen.getByRole('slider', { name: 'Roll' }), { target: { value: '30' } });
+    fireEvent.change(screen.getByRole('slider', { name: 'Throttle' }), {
+      target: { value: '70' },
+    });
+    fireEvent.blur(window);
+    expect(flight.sticks.roll).toBe(0);
+    expect(flight.sticks.throttle).toBeCloseTo(0.7);
+  });
 });

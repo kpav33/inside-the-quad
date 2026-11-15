@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { createFlight, type Flight, runDemo } from '@/features/flight';
+import { createFlight, type Flight, runDemo, stopDemo } from '@/features/flight';
 import { MOVE_STEP_IDS } from '@/shared/domain/moves';
 import type { SteppedSheet } from '@/shared/domain/sheets';
 import { usePrefersReducedMotion } from '@/shared/ui/usePrefersReducedMotion';
@@ -48,10 +48,19 @@ export function useMovesSheet(
   const reduced = useRef(reduceMotion);
   reduced.current = reduceMotion;
   const stepId = MOVE_STEP_IDS[step];
+  // Each step owns whatever demo plays on it, opened automatically or by Show me: leaving the
+  // step stops it.
   useEffect(() => {
-    if (!flight || !stepId || reduced.current) return;
-    return runDemo(flight, stepId);
+    if (!flight || !stepId) return;
+    if (!reduced.current) runDemo(flight, stepId);
+    return () => {
+      stopDemo(flight);
+    };
   }, [flight, stepId]);
+  // Asking for reduced motion mid-demo stops it at once; asking for motion again starts nothing.
+  useEffect(() => {
+    if (reduceMotion && flight) stopDemo(flight);
+  }, [reduceMotion, flight]);
 
   const goTo = useCallback(
     (next: number) => {

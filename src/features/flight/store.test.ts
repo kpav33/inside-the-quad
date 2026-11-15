@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { DEMOS, runDemo } from './demos';
+import { DEMOS, runDemo, stopDemo } from './demos';
 import { CENTRED } from './model';
 import { createFlight } from './store';
 
@@ -130,5 +130,41 @@ describe('runDemo', () => {
     runDemo(flight, 'pitch');
     flight.dispose();
     expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('lets go of the demo’s stick when the user takes the other stick', () => {
+    const flight = createFlight();
+    runDemo(flight, 'yaw');
+    vi.advanceTimersByTime(0);
+    expect(flight.sticks.yaw).toBe(1);
+    flight.setSticks({ roll: 0.5 }, 'user');
+    expect(flight.sticks.yaw).toBe(0);
+    expect(flight.sticks.roll).toBe(0.5);
+  });
+
+  it('lets go of the demo’s stick when cancelled or replaced mid-way', () => {
+    const flight = createFlight();
+    const cancel = runDemo(flight, 'yaw');
+    vi.advanceTimersByTime(0);
+    cancel();
+    expect(flight.sticks.yaw).toBe(0);
+    runDemo(flight, 'roll');
+    vi.advanceTimersByTime(0);
+    runDemo(flight, 'gyro');
+    expect(flight.sticks.roll).toBe(0);
+    runDemo(flight, 'throttle');
+    vi.advanceTimersByTime(0);
+    stopDemo(flight);
+    expect(flight.sticks.throttle).toBe(CENTRED.throttle);
+  });
+
+  it('leaves the user’s own throttle alone when a demo stops', () => {
+    const flight = createFlight();
+    flight.setSticks({ throttle: 0.8 }, 'user');
+    runDemo(flight, 'roll');
+    vi.advanceTimersByTime(0);
+    stopDemo(flight);
+    expect(flight.sticks.throttle).toBeCloseTo(0.8);
+    expect(flight.sticks.roll).toBe(0);
   });
 });
