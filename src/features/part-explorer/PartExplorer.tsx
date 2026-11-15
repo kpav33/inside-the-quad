@@ -6,7 +6,7 @@ import { overviewSpecs } from '@/content/overview';
 import { PART_LABELS, UI } from '@/content/ui';
 import { DroneViewer } from '@/features/drone-viewer';
 import { useIntroRead, useReadParts } from '@/features/progress';
-import type { PartId } from '@/shared/domain/parts';
+import { isInsidePart, type PartId } from '@/shared/domain/parts';
 import { isPathId } from '@/shared/domain/paths';
 import type { SheetId } from '@/shared/domain/sheets';
 import { type Page, usePartRoute } from '@/shared/routing';
@@ -181,8 +181,11 @@ export function PartExplorer() {
               <ErrorBoundary fallback={viewerFallback}>
                 <Suspense fallback={<p role="status">{UI.viewer.loading}</p>}>
                   <DroneViewer
-                    selectedPart={selectedPart}
+                    openParts={selectedPart ? new Set([selectedPart]) : NO_PARTS}
                     connectedParts={selectedPart ? connectedParts(selectedPart) : NO_PARTS}
+                    exploded={isInsidePart(selectedPart)}
+                    turnTo={selectedPart}
+                    leader={null}
                     onPartClick={onPartClick}
                     onPartHover={onPartHover}
                     onBackgroundClick={clearSelection}

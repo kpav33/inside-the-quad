@@ -44,6 +44,8 @@ export const MODEL_COLOR: Record<PartId, string> = {
 export const MODEL_LOOK = {
   connected: '#4a525a',
   fadedOpacity: 0.25,
+  /** A path leader's stretches already passed: the redline, held back. */
+  leaderPassedOpacity: 0.45,
 } as const;
 
 /** Scene lighting for the 3D drawing: a cool fill light so dark parts keep their shape. */

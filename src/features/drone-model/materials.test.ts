@@ -6,22 +6,32 @@ import { PART_IDS, type PartId } from '@/shared/domain/parts';
 import { partAppearance, partLook } from './materials';
 
 const NONE: ReadonlySet<PartId> = new Set();
+const open = (...parts: PartId[]) => new Set<PartId>(parts);
 
 describe('partLook', () => {
   it('draws every part normally when no sheet is open', () => {
-    for (const id of PART_IDS) expect(partLook(id, null, NONE)).toBe('normal');
+    for (const id of PART_IDS) expect(partLook(id, NONE, NONE)).toBe('normal');
   });
 
   it('marks the open part, its connected parts and fades the rest', () => {
     const connected = new Set<PartId>(['battery', 'motors']);
-    expect(partLook('esc', 'esc', connected)).toBe('open');
-    expect(partLook('battery', 'esc', connected)).toBe('connected');
-    expect(partLook('motors', 'esc', connected)).toBe('connected');
-    expect(partLook('camera', 'esc', connected)).toBe('faded');
+    expect(partLook('esc', open('esc'), connected)).toBe('open');
+    expect(partLook('battery', open('esc'), connected)).toBe('connected');
+    expect(partLook('motors', open('esc'), connected)).toBe('connected');
+    expect(partLook('camera', open('esc'), connected)).toBe('faded');
   });
 
   it('keeps the open part open even if the connected set names it', () => {
-    expect(partLook('esc', 'esc', new Set<PartId>(['esc']))).toBe('open');
+    expect(partLook('esc', open('esc'), new Set<PartId>(['esc']))).toBe('open');
+  });
+});
+
+describe('partLook with several parts open', () => {
+  it('opens every part of a path stop at once', () => {
+    const stop = open('receiver', 'camera', 'vtx');
+    expect(partLook('receiver', stop, NONE)).toBe('open');
+    expect(partLook('vtx', stop, NONE)).toBe('open');
+    expect(partLook('esc', stop, NONE)).toBe('faded');
   });
 });
 

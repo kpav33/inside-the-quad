@@ -20,6 +20,10 @@ vi.mock('@/features/drone-viewer/DroneViewer', () => ({
     onPartClick,
     onBackgroundClick,
     onPartHover,
+    openParts,
+    exploded,
+    turnTo,
+    leader,
   }: DroneViewerProps) {
     if (viewer.shouldThrow) throw new Error('WebGL unavailable');
     const click = (delta: number) => {
@@ -43,6 +47,14 @@ vi.mock('@/features/drone-viewer/DroneViewer', () => ({
         >
           stub: drag ending on motors
         </button>
+        <p data-testid="viewer-state">
+          {JSON.stringify({
+            open: [...openParts],
+            exploded,
+            turnTo,
+            step: leader?.step ?? null,
+          })}
+        </p>
         <button type="button" onClick={onBackgroundClick}>
           stub: background
         </button>
@@ -73,6 +85,14 @@ const introHeading = () =>
   screen.queryByRole('heading', { level: 2, name: 'What is an FPV drone?' });
 
 const lessonHeading = (name: string) => screen.queryByRole('heading', { level: 2, name });
+
+const viewerState = () =>
+  JSON.parse(screen.getByTestId('viewer-state').textContent) as {
+    open: string[];
+    exploded: boolean;
+    turnTo: string | null;
+    step: number | null;
+  };
 
 async function renderExplorer() {
   render(<PartExplorer />);
@@ -144,6 +164,23 @@ describe('PartExplorer', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Frame' }));
     await userEvent.click(screen.getByRole('link', { name: 'Next: Motors · sheet 2' }));
     expect(lessonHeading('Motors')).toHaveFocus();
+  });
+
+  it('shows a board sheet on the opened frame, turned to the board, with no leader', async () => {
+    window.history.replaceState(null, '', '/parts/esc');
+    await renderExplorer();
+    expect(viewerState()).toEqual({ open: ['esc'], exploded: true, turnTo: 'esc', step: null });
+  });
+
+  it('keeps the frame closed for a part outside it', async () => {
+    window.history.replaceState(null, '', '/parts/frame');
+    await renderExplorer();
+    expect(viewerState()).toMatchObject({ open: ['frame'], exploded: false });
+  });
+
+  it('opens nothing on the overview', async () => {
+    await renderExplorer();
+    expect(viewerState()).toEqual({ open: [], exploded: false, turnTo: null, step: null });
   });
 
   it('runs on from the last part to the control path', async () => {

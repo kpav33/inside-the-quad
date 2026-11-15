@@ -9,11 +9,11 @@ export type PartLook = 'open' | 'connected' | 'faded' | 'normal';
 
 export function partLook(
   part: PartId,
-  open: PartId | null,
+  open: ReadonlySet<PartId>,
   connected: ReadonlySet<PartId>,
 ): PartLook {
-  if (open === null) return 'normal';
-  if (part === open) return 'open';
+  if (open.size === 0) return 'normal';
+  if (open.has(part)) return 'open';
   return connected.has(part) ? 'connected' : 'faded';
 }
 

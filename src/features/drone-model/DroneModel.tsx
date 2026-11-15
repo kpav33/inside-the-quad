@@ -3,7 +3,7 @@ import type { ThreeEvent } from '@react-three/fiber';
 import { type ReactNode, useRef, useState } from 'react';
 
 import { type DroneSpec, mm } from '@/shared/domain/drone-spec';
-import { isInsidePart, type PartId } from '@/shared/domain/parts';
+import type { PartId } from '@/shared/domain/parts';
 
 import { motorTopMm, PROP_HUB_HEIGHT_MM } from './dimensions';
 import { motorPlacements } from './layout';
@@ -20,14 +20,20 @@ import { Propeller } from './parts/Propeller';
 import { Receiver } from './parts/Receiver';
 import { Strap } from './parts/Strap';
 import { Vtx } from './parts/Vtx';
+import { type Leader, PathLeader } from './PathLeader';
 import { SpinArcs } from './SpinArcs';
 import { explodedOffsets } from './stack';
 
 export interface DroneModelProps {
   spec: DroneSpec;
-  selectedPart: PartId | null;
-  /** Parts the open part connects to: drawn in grey while everything else fades. */
+  /** Parts in the open look: the open sheet's part, or every part of a path's current stop. */
+  openParts: ReadonlySet<PartId>;
+  /** Parts the open sheet connects to: drawn in grey while everything else fades. */
   connectedParts: ReadonlySet<PartId>;
+  /** Opens the frame like an exploded-view drawing, so the boards under the top plate show. */
+  exploded: boolean;
+  /** A path drawn over the model, or null. */
+  leader?: Leader | null;
   onPartClick?: (part: PartId, event: ThreeEvent<MouseEvent>) => void;
   /** Called with the part under a mouse pointer, and null when it leaves (never for touch). */
   onPartHover?: (part: PartId | null) => void;
@@ -39,8 +45,10 @@ export interface DroneModelProps {
  */
 export function DroneModel({
   spec,
-  selectedPart,
+  openParts,
   connectedParts,
+  exploded,
+  leader = null,
   onPartClick,
   onPartHover,
 }: DroneModelProps) {
@@ -55,9 +63,9 @@ export function DroneModel({
     onPartHover?.(part);
   };
 
-  const look = (part: PartId) => partLook(part, selectedPart, connectedParts);
+  const look = (part: PartId) => partLook(part, openParts, connectedParts);
   const placements = motorPlacements(spec);
-  const lift = explodedOffsets(spec, isInsidePart(selectedPart));
+  const lift = explodedOffsets(spec, exploded);
   const propCentreAboveArm = mm(motorTopMm(spec) + PROP_HUB_HEIGHT_MM / 2);
 
   const partGroup = (part: PartId, children: ReactNode) => (
@@ -83,7 +91,10 @@ export function DroneModel({
   return (
     <group>
       {/* The Propellers sheet shows which way each prop spins. Not clickable: raycasts pass. */}
-      {selectedPart === 'props' && <SpinArcs spec={spec} />}
+      {leader === null && openParts.size === 1 && openParts.has('props') && (
+        <SpinArcs spec={spec} />
+      )}
+      {leader && <PathLeader spec={spec} leader={leader} />}
       {partGroup(
         'frame',
         <Frame spec={spec} look={look('frame')} topPlateLiftMm={lift.topPlate} />,

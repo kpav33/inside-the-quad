@@ -271,6 +271,51 @@ a {
   top: 83.3%;
 }
 
+/* A path stop on the drawing: its numbered balloon, and an off-drone end's label above it. Drawn
+   over the 3D view, never in the way of a drag. */
+.path-pin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  pointer-events: none;
+  user-select: none;
+}
+
+.path-marker {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 50%;
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.path-pin[data-state='current'] .path-marker {
+  background: var(--color-accent);
+  color: var(--color-ground);
+}
+
+.path-end {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-rule-strong);
+  background: var(--color-sheet);
+  color: var(--color-ink);
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 .drawing-hint {
   position: absolute;
   right: var(--space-3);
