@@ -174,3 +174,14 @@ split.
   tilts the drone (readouts change); keyboard-only use of a stick; Level; at 375×667, scrolled
   to step 5, drone and both sticks visible together; 320 px with 200 % text has no sideways
   scroll; reduced motion.
+
+## Amendment 1 (2026-11-15, after the user tried the sheet)
+
+1. **Camera (user decision): behind and above the drone**, as a pilot sees it, replacing decision
+   8's front three-quarter view. From the front every stick reads mirrored (roll right tips the
+   drone left on screen).
+2. **Reaching the sheet (user decision: the chapter switcher).** The user found the sheet hidden
+   behind Next from the Video path. The switcher at the top of the path sheets now lists the whole
+   chapter, `Control · Power · Video · How a quad moves`, and appears on the moves sheet too, the
+   open sheet marked. Rejected: a separate masthead link (reads as its own section, crowds phones)
+   and a list on the overview (repeats its chapter count and Continue link).
