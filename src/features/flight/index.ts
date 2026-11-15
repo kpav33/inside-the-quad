@@ -19,3 +19,4 @@ export {
 export { type DemoKey, DEMOS, runDemo } from './demos';
 export { createFlight, type Flight, type StickSource } from './store';
 export { type FlightReadout, useFlightReadout } from './useFlightReadout';
+export { Sticks } from './Sticks';

@@ -138,6 +138,23 @@ export const UI = {
   moves: {
     /** The sheet's name, as its heading and wherever another sheet refers to it. */
     title: 'How a quad moves',
+    sticks: {
+      left: 'Left stick: throttle and yaw',
+      right: 'Right stick: pitch and roll',
+      throttle: 'Throttle',
+      yaw: 'Yaw',
+      pitch: 'Pitch',
+      roll: 'Roll',
+      /** A stick's value for assistive technology, e.g. "Roll 40 % right". */
+      value: (axis: string, percent: number, way: string) => `${axis} ${percent} % ${way}`,
+      throttleValue: (percent: number) => `Throttle ${percent} %`,
+      centred: (axis: string) => `${axis} centred`,
+      ways: {
+        yaw: ['left', 'right'],
+        pitch: ['back', 'forward'],
+        roll: ['left', 'right'],
+      },
+    },
   },
   lesson: {
     close: 'Close lesson',
