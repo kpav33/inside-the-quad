@@ -197,6 +197,22 @@ describe('PartExplorer', () => {
     });
   });
 
+  it('jumps to the step of a part clicked on a path sheet', async () => {
+    window.history.replaceState(null, '', '/paths/power');
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'stub: click motors' }));
+    expect(window.location.pathname).toBe('/paths/power/4');
+    expect(viewerState()).toMatchObject({ open: ['motors'], step: 3 });
+  });
+
+  it('ignores a click on a part off the path', async () => {
+    window.history.replaceState(null, '', '/paths/video');
+    await renderExplorer();
+    await userEvent.click(screen.getByRole('button', { name: 'stub: click motors' }));
+    expect(window.location.pathname).toBe('/paths/video');
+    expect(viewerState().step).toBe(0);
+  });
+
   it('opens a path at the step its address names', async () => {
     window.history.replaceState(null, '', '/paths/power/3');
     await renderExplorer();

@@ -3,7 +3,7 @@ import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 
 import { connectedParts, LESSONS } from '@/content/lessons';
 import { overviewSpecs } from '@/content/overview';
-import { type PathContent, pathParts, PATHS } from '@/content/paths';
+import { type PathContent, pathParts, PATHS, stopForPart } from '@/content/paths';
 import { PART_LABELS, sheetName, UI } from '@/content/ui';
 import type { Leader } from '@/features/drone-model';
 import { DroneViewer } from '@/features/drone-viewer';
@@ -231,6 +231,13 @@ export function PartExplorer() {
 
   const onPartClick = (part: PartId, event: ThreeEvent<MouseEvent>) => {
     if (!isDeliberateClick(event.delta)) return;
+    // On a path sheet the drawing belongs to the path: a part on it opens its stop, a part off it
+    // does nothing. Lessons are one link away in the stop list.
+    if (openPath) {
+      const stop = stopForPart(openPath.id, part);
+      if (stop !== null) pathStep.goTo(stop);
+      return;
+    }
     setReturnTo(null);
     // Clicking the part that is already open changes nothing, so there is nothing to reveal.
     revealLesson.current = part !== selectedPart ? 'choose' : null;

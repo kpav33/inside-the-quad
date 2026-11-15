@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { connectedParts } from '@/content/lessons';
 import { PATH_IDS } from '@/shared/domain/paths';
 
-import { PATHS, pathParts } from './index';
+import { PATHS, pathParts, stopForPart } from './index';
 
 const names = (path: (typeof PATH_IDS)[number]) => PATHS[path].stops.map((stop) => stop.name);
 
@@ -99,6 +99,15 @@ describe('path content', () => {
     const motors = PATHS.power.stops[3]?.text ?? '';
     expect(motors).not.toMatch(/\d+ A each/);
     expect(motors).toMatch(/rated/);
+  });
+
+  it('finds the stop a part clicked on the drawing belongs to', () => {
+    // The stop with the part alone wins over an earlier one it shares.
+    expect(stopForPart('power', 'esc')).toBe(2);
+    expect(stopForPart('power', 'battery')).toBe(0);
+    expect(stopForPart('power', 'receiver')).toBe(5);
+    expect(stopForPart('video', 'vtx')).toBe(2);
+    expect(stopForPart('control', 'camera')).toBeNull();
   });
 
   it('lists the parts a path passes', () => {
