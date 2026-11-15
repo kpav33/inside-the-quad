@@ -46,6 +46,15 @@ export const REAR_VIEW: View = {
 };
 
 /**
+ * The moves sheet's view: behind the drone and above it, a little to the right, as a pilot sees it
+ * from behind, so a stick pushed right tips the drone right on screen.
+ */
+export const MOVES_VIEW: View = {
+  azimuthRad: MathUtils.degToRad(15),
+  elevationRad: MathUtils.degToRad(24),
+};
+
+/**
  * The view that shows a part best, or null when the current view already shows it (or nothing is
  * selected), so the drone is only turned when it has to be.
  */

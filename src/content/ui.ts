@@ -138,6 +138,28 @@ export const UI = {
   moves: {
     /** The sheet's name, as its heading and wherever another sheet refers to it. */
     title: 'How a quad moves',
+    close: 'Close sheet',
+    stepsLabel: 'Steps',
+    previousStep: 'Previous step',
+    nextStep: 'Next step',
+    showMe: 'Show me',
+    gust: 'Gust',
+    level: 'Level',
+    controlsLabel: 'Step and drone controls',
+    /** Before the lesson links under a step. */
+    lessonLabel: 'More in',
+    /** The gyro loop step's table of what the flight controller compares. */
+    compare: {
+      caption: 'What the flight controller compares',
+      axis: 'Axis',
+      wanted: 'You ask for',
+      measured: 'Gyro measures',
+      rate: (degreesPerSecond: number) => `${degreesPerSecond} °/s`,
+      axes: { roll: 'Roll', pitch: 'Pitch', yaw: 'Yaw' },
+    },
+    /** What a screen reader hears when the current step changes. */
+    stepAnnounce: (step: number, total: number, name: string, text: string) =>
+      `Step ${step} of ${total}: ${name}. ${text}`,
     sticks: {
       left: 'Left stick: throttle and yaw',
       right: 'Right stick: pitch and roll',

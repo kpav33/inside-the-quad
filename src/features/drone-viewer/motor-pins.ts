@@ -43,13 +43,17 @@ export function placeMotorPin(
   const halfH = box.height / 2;
   const x = clamp(motor[0] + (dx / length) * OFFSET_PX, halfW, field.width - halfW);
   let y = clamp(motor[1] + (dy / length) * OFFSET_PX, halfH, field.height - halfH);
-  for (const rect of avoid) {
-    const overlaps =
-      x - halfW < rect.right &&
-      rect.left < x + halfW &&
-      y - halfH < rect.bottom &&
-      rect.top < y + halfH;
-    if (overlaps) y = Math.max(halfH, rect.top - GAP_PX - halfH);
+  // Lift the balloon over whatever it covers until it covers nothing (or reaches the top).
+  for (let pass = 0; pass <= avoid.length; pass++) {
+    const hit = avoid.find(
+      (rect) =>
+        x - halfW < rect.right &&
+        rect.left < x + halfW &&
+        y - halfH < rect.bottom &&
+        rect.top < y + halfH,
+    );
+    if (!hit) break;
+    y = Math.max(halfH, hit.top - GAP_PX - halfH);
   }
   return [x, y];
 }

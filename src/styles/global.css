@@ -1433,6 +1433,41 @@ a.lesson-sheet-link:hover {
   }
 }
 
+/* Stacked, on the moves sheet: the drawing and its sticks stay pinned at the top while the steps
+   scroll under them, so the drone is in view while reading and when a step's demo plays. The
+   parts list isn't needed on this sheet and stays out of the pinned area. */
+@container main (max-width: 55.9375rem) {
+  .part-explorer[data-sheet='moves'] {
+    --pinned-drawing: calc(max(46svh, 18rem) + 2 * var(--space-3));
+    /* Below the drone, a band for the sticks, so they never cover it on a narrow drawing. */
+    --stick-band: 6.25rem;
+  }
+
+  .part-explorer[data-sheet='moves'] .drawing-canvas {
+    height: max(46svh, 18rem);
+  }
+
+  .part-explorer[data-sheet='moves'] .drone-viewer {
+    height: calc(100% - var(--stick-band));
+  }
+
+  .part-explorer[data-sheet='moves'] .part-explorer-field {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding-block: var(--space-3);
+    background: var(--color-ground);
+  }
+
+  .part-explorer[data-sheet='moves'] .part-list {
+    display: none;
+  }
+
+  .part-explorer[data-sheet='moves'] .path-controls {
+    top: var(--pinned-drawing);
+  }
+}
+
 /* Wide: drawing field left, sheet column right, both filling the viewport. A container query in
    rem (not a viewport media query) so larger text falls back to the stacked layout. */
 @container main (min-width: 56rem) {
@@ -1766,4 +1801,9 @@ a.lesson-sheet-link:hover {
     align-items: flex-start;
     text-align: start;
   }
+}
+
+/* On the moves sheet the drawing is for flying: clicking a part opens nothing, so its hint goes. */
+.part-explorer[data-sheet='moves'] .drawing-hint {
+  display: none;
 }

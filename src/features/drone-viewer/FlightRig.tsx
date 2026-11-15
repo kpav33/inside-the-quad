@@ -76,6 +76,13 @@ export function FlightRig({
         height: element.pin.offsetHeight || PIN_BOX.height,
       };
       const [x, y] = placeMotorPin(motor, middle, box, size, boxes);
+      // Later balloons keep clear of this one too.
+      boxes.push({
+        left: x - box.width / 2,
+        right: x + box.width / 2,
+        top: y - box.height / 2,
+        bottom: y + box.height / 2,
+      });
       element.pin.style.transform = `translate(${String(x)}px, ${String(y)}px) translate(-50%, -50%)`;
       element.pin.dataset.state = motorPinState(state.motors, index);
       if (element.speed) {

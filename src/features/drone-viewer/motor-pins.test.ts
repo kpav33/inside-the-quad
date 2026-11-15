@@ -42,4 +42,19 @@ describe('placeMotorPin', () => {
     const [, y] = placeMotorPin([60, 220], [200, 150], box, field, [stick]);
     expect(y + box.height / 2).toBeLessThanOrEqual(stick.top);
   });
+
+  it('keeps clear of every box, even after moving out of one into another', () => {
+    const balloon = { left: 30, right: 90, top: 166, bottom: 190 };
+    const stick = { left: 0, right: 110, top: 190, bottom: 300 };
+    const [x, y] = placeMotorPin([60, 220], [200, 150], box, field, [balloon, stick]);
+    const mine = { left: x - 30, right: x + 30, top: y - 12, bottom: y + 12 };
+    for (const other of [balloon, stick]) {
+      const overlaps =
+        mine.left < other.right &&
+        other.left < mine.right &&
+        mine.top < other.bottom &&
+        other.top < mine.bottom;
+      expect(overlaps).toBe(false);
+    }
+  });
 });
