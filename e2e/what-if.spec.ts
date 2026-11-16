@@ -32,8 +32,11 @@ test('a lost link ignores the sticks, stops the motors, and Reset brings it back
 }) => {
   await page.goto('/what-if');
   await expect(status(page)).toHaveText('Link OK · 6S');
+  const hint = page.getByText('Press Try it to see it happen.');
+  await expect(hint).toBeVisible();
   await page.getByRole('button', { name: 'Try it' }).click();
   await expect(status(page)).toContainText('Link lost');
+  await expect(hint).toBeHidden();
   await holdRollRight(page);
   // The stick moves, but no motor works harder for it.
   await expect(page.getByRole('slider', { name: 'Roll' })).toHaveAttribute(

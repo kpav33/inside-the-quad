@@ -29,7 +29,7 @@ const volts = (n: number) => `${String(packVolts(n, LIPO_CELL_VOLTS.nominal))} V
  */
 export const WHAT_IF: WhatIfContent = {
   title: 'What if',
-  lead: 'Four common mistakes, and what each does to the drone. Press Try it, fly with the sticks, then Reset.',
+  lead: 'Four common mistakes, and what each does to the drone. Press Try it (on the battery step, switch to 4S), fly with the sticks, then Reset.',
   facts: [
     { label: 'Battery', value: `${String(cells)}S` },
     { label: 'Props', value: 'In' },

@@ -147,6 +147,9 @@ export const UI = {
     nextStep: 'Next step',
     tryIt: 'Try it',
     reset: 'Reset',
+    /** Under the current step until its mistake is on: how to see it. */
+    tryHint: 'Press Try it to see it happen.',
+    batteryHint: 'Switch to 4S to feel the difference.',
     /** The battery step's switch, in place of Try it. */
     batteryLabel: 'Battery',
     cells: (cells: number) => `${String(cells)}S`,

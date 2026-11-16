@@ -70,6 +70,31 @@ describe('WhatIfPanel', () => {
     expect(screen.getByRole('button', { name: '6S' })).toHaveAttribute('aria-pressed', 'true');
   });
 
+  it('tells the current step how to see its mistake, until it is on', async () => {
+    const { flight } = renderWhatIf(0);
+    if (!flight) throw new Error('no flight');
+    const hint = () =>
+      within(steps()[0] ?? document.body).queryByText('Press Try it to see it happen.');
+    expect(hint()).toBeInTheDocument();
+    expect(within(steps()[1] ?? document.body).queryByText(/Press Try it/)).toBeNull();
+    await userEvent.click(screen.getByRole('button', { name: 'Try it' }));
+    expect(hint()).toBeNull();
+    act(() => {
+      flight.reset();
+    });
+    expect(hint()).toBeInTheDocument();
+  });
+
+  it('on the battery step, says to switch to 4S, until it is switched', async () => {
+    const { flight } = renderWhatIf(2);
+    if (!flight) throw new Error('no flight');
+    const hint = () =>
+      within(steps()[2] ?? document.body).queryByText('Switch to 4S to feel the difference.');
+    expect(hint()).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: '4S' }));
+    expect(hint()).toBeNull();
+  });
+
   it('steps with Next, Previous and a mistake’s name', async () => {
     const { onStep } = renderWhatIf(1);
     await userEvent.click(screen.getByRole('button', { name: 'Next step' }));

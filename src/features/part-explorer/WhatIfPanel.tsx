@@ -68,6 +68,8 @@ export function WhatIfPanel({
   const triedOn = tried
     ? (Object.keys(tried) as (keyof Faults)[]).every((key) => faults[key] === tried[key])
     : false;
+  // Until the current step's mistake is on, a line under it says how to see it.
+  const hint = tried ? (triedOn ? null : t.tryHint) : faults.cells === 4 ? null : t.batteryHint;
 
   return (
     <section id={LESSON_PANEL_ID} className="lesson-panel" aria-labelledby={WHAT_IF_TITLE_ID}>
@@ -163,6 +165,7 @@ export function WhatIfPanel({
                 >
                   {item.name}
                 </button>
+                {index === step && hint && <p className="what-if-hint">{hint}</p>}
                 <dl className="what-if-parts">
                   <dt>{t.happens}</dt>
                   <dd className="path-stop-text">{item.happens}</dd>

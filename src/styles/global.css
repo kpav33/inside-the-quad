@@ -1359,6 +1359,13 @@ a {
   color: var(--color-ink);
 }
 
+.what-if-hint {
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  letter-spacing: 0.04em;
+  color: var(--color-ink);
+}
+
 .path-stop-lessons {
   font-size: var(--step--1);
   color: var(--color-muted);
