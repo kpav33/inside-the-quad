@@ -17,7 +17,7 @@ import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
 import type { PartId } from '@/shared/domain/parts';
 
 import { FitCamera } from './FitCamera';
-import { FlightRig, type MotorPinElement, MotorPins } from './FlightRig';
+import { FlightRig, GroundLine, type MotorPinElement, MotorPins, VtxGauge } from './FlightRig';
 import { DEFAULT_CAMERA_POSITION } from './part-views';
 import { type PinElement, PathPins, ProjectPins } from './PathPins';
 import { TouchScrollPassThrough } from './TouchScrollPassThrough';
@@ -40,6 +40,11 @@ export interface DroneViewerProps {
    * its motor speeds over the canvas, and the camera fits it at any attitude.
    */
   flight?: Flight | null;
+  /**
+   * With a flight, how far below hover the drone rests after a fall (metres, the what-if sheet's
+   * ground line), or null for no ground (the moves sheet).
+   */
+  ground?: number | null;
   onPartClick: (part: PartId, event: ThreeEvent<MouseEvent>) => void;
   /** Called with the part under the mouse, and null when the mouse leaves it. */
   onPartHover: (part: PartId | null) => void;
@@ -58,6 +63,7 @@ export default function DroneViewer({
   turnTo,
   leader,
   flight = null,
+  ground = null,
   onPartClick,
   onPartHover,
   onBackgroundClick,
@@ -82,6 +88,10 @@ export default function DroneViewer({
       };
     });
   }, []);
+  const findGauge = useCallback(
+    () => root.current?.querySelector<HTMLElement>('.vtx-gauge') ?? null,
+    [],
+  );
   const readSpeeds = useCallback(() => flight?.state.motors ?? [], [flight]);
   const outline = useMemo(() => outlineScene(REFERENCE_5_INCH), []);
   const stops = leader?.stops;
@@ -139,16 +149,20 @@ export default function DroneViewer({
         />
         {/* Fits the camera to the drone's outline, so it fills the drawing at every canvas shape;
             sets the zoom limits from that distance. */}
-        <FitCamera sphere={flight !== null} />
+        <FitCamera sphere={flight !== null} ground={flight ? ground : null} />
+        {flight && ground !== null && <GroundLine ground={ground} />}
         <TouchScrollPassThrough />
         <TurnToPart part={turnTo} />
         {leader && (
           <ProjectPins leader={leader} points={markerPoints} outline={outline} pins={pins} />
         )}
-        {flight && <FlightRig flight={flight} pose={pose} pins={motorPins} avoid={avoid} />}
+        {flight && (
+          <FlightRig flight={flight} pose={pose} pins={motorPins} gauge={findGauge} avoid={avoid} />
+        )}
       </Canvas>
       {leader && <PathPins leader={leader} pins={pins} />}
       {flight && <MotorPins pins={motorPins} />}
+      {flight && <VtxGauge />}
     </div>
   );
 }

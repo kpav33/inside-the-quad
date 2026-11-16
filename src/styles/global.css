@@ -281,6 +281,56 @@ a {
   font-weight: 700;
 }
 
+/* The what-if sheet's wrong prop: its motor marked in redline, whatever its speed. */
+.motor-pin[data-fault='true'] {
+  border-color: var(--color-accent);
+  color: var(--color-ink);
+}
+
+.motor-pin[data-fault='true'] .motor-pin-number {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-ground);
+}
+
+/* The VTX heat gauge on the what-if sheet: three hairline cells filling with ink, the last in
+   redline once the VTX is damaged. The words (Warm, Hot, Damaged) are in the status line. */
+.vtx-gauge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--color-rule-strong);
+  background: var(--color-ground);
+  pointer-events: none;
+}
+
+.vtx-gauge[hidden] {
+  display: none;
+}
+
+.vtx-gauge-segment {
+  width: 0.75rem;
+  height: 0.5rem;
+  border: 1px solid var(--color-rule-strong);
+}
+
+.vtx-gauge-segment[data-on='true'] {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+}
+
+.vtx-gauge[data-level='3'] {
+  border-color: var(--color-accent);
+}
+
+.vtx-gauge[data-level='3'] .vtx-gauge-segment {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+}
+
 /* The motors working harder for the move are in redline; the slower ones go quiet. */
 .motor-pin[data-state='up'] {
   border-color: var(--color-accent);

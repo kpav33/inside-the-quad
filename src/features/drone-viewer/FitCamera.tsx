@@ -55,22 +55,29 @@ function applyFit(
  * rescaling the camera's distance for the direction it faces. With `sphere`, the drone fits at
  * any attitude (the moves sheet).
  */
-export function FitCamera({ sphere = false }: { sphere?: boolean }) {
+export function FitCamera({
+  sphere = false,
+  ground = null,
+}: {
+  sphere?: boolean;
+  ground?: number | null;
+}) {
   const controls = useThree((state) => state.controls) as unknown as Controls | null;
   const camera = useThree((state) => state.camera);
   const invalidate = useThree((state) => state.invalidate);
-  const fit = useDroneFit(sphere);
-  const previous = useRef<{ fit: DroneFit; sphere: boolean } | null>(null);
+  const fit = useDroneFit(sphere, ground);
+  const previous = useRef<{ fit: DroneFit; mode: string } | null>(null);
 
   useLayoutEffect(() => {
     if (!controls) return;
     // Opening or leaving the moves sheet starts again from that sheet's starting view: on the
     // moves sheet, from behind and above, as a pilot sees the drone.
-    const last = previous.current?.sphere === sphere ? previous.current.fit : null;
+    const mode = `${String(sphere)}:${String(ground)}`;
+    const last = previous.current?.mode === mode ? previous.current.fit : null;
     applyFit(camera, controls, fit, last, sphere ? MOVES_VIEW : DEFAULT_VIEW);
-    previous.current = { fit, sphere };
+    previous.current = { fit, mode };
     invalidate();
-  }, [controls, camera, fit, sphere, invalidate]);
+  }, [controls, camera, fit, sphere, ground, invalidate]);
 
   return null;
 }
