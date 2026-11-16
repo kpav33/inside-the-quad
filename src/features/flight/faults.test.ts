@@ -60,7 +60,9 @@ describe('link lost (failsafe)', () => {
   });
 
   it('lands on the ground line through a long frame, never below it', () => {
-    const falling = fly(initialFlight(), {}, 2, { linkLost: true });
+    // Just disarmed: still in the air when the long frame comes.
+    const falling = fly(initialFlight(), {}, 1.05, { linkLost: true });
+    expect(falling.onGround).toBe(false);
     const s = stepFlight(falling, CENTRED, 5, { ...NO_FAULTS, linkLost: true });
     expect(s.height).toBe(GROUND_M);
   });
@@ -115,5 +117,12 @@ describe('settling with faults', () => {
     expect(isSettled(heating, CENTRED, { ...NO_FAULTS, vtxNoAntenna: true })).toBe(false);
     const landed = fly(initialFlight(), {}, 5, { linkLost: true });
     expect(isSettled(landed, CENTRED, { ...NO_FAULTS, linkLost: true })).toBe(true);
+  });
+});
+
+describe('slow frames', () => {
+  it('advance by the full time of a slow frame', () => {
+    const s = stepFlight(initialFlight(), CENTRED, 0.3, { ...NO_FAULTS, vtxNoAntenna: true });
+    expect(s.vtxHeat).toBeCloseTo(0.3 / 12, 4);
   });
 });

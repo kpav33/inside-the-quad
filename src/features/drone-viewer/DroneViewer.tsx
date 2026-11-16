@@ -22,7 +22,8 @@ import { DEFAULT_CAMERA_POSITION } from './part-views';
 import { type PinElement, PathPins, ProjectPins } from './PathPins';
 import { TouchScrollPassThrough } from './TouchScrollPassThrough';
 import { TurnToPart } from './TurnToPart';
-import { DRONE_CENTRE } from './useDroneFit';
+import { DRONE_BOTTOM, DRONE_CENTRE, DRONE_RADIUS } from './useDroneFit';
+import { groundFit } from './vtx-gauge';
 
 export interface DroneViewerProps {
   /** Parts in the open look: the open sheet's part, or every part of a path's current stop. */
@@ -157,7 +158,14 @@ export default function DroneViewer({
           <ProjectPins leader={leader} points={markerPoints} outline={outline} pins={pins} />
         )}
         {flight && (
-          <FlightRig flight={flight} pose={pose} pins={motorPins} gauge={findGauge} avoid={avoid} />
+          <FlightRig
+            flight={flight}
+            pose={pose}
+            pins={motorPins}
+            gauge={findGauge}
+            avoid={avoid}
+            floor={ground === null ? null : groundFit(DRONE_RADIUS, ground, DRONE_BOTTOM).lineY}
+          />
         )}
       </Canvas>
       {leader && <PathPins leader={leader} pins={pins} />}

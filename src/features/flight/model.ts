@@ -79,7 +79,8 @@ const AUTHORITY = MAX_MIX / MIX_SCALE;
 const HELD_MAX = Math.PI;
 
 const SUBSTEP_S = 1 / 240;
-const MAX_STEP_S = 0.1;
+/** The longest single step: a slow frame keeps its time; a longer pause (a hidden tab) is cut. */
+const MAX_STEP_S = 0.5;
 
 /** Throttle's hint of height: full throttle lifts the drone this far, zero drops it as far. */
 const RISE_M = 0.03;
@@ -244,7 +245,7 @@ function substep(state: FlightState, radio: StickInput, dt: number, faults: Faul
 }
 
 /**
- * The drone a time step later. A long step (a hidden tab, a slow phone) is cut to 0.1 s and run
+ * The drone a time step later. A long step (a hidden tab) is cut to 0.5 s and run
  * in small fixed substeps, so the model stays stable at any frame rate.
  */
 export function stepFlight(
