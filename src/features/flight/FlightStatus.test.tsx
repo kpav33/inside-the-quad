@@ -1,0 +1,32 @@
+import { act, render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+
+import { FlightStatus } from './FlightStatus';
+import { createFlight } from './store';
+
+describe('FlightStatus', () => {
+  it('shows the link and the battery', () => {
+    render(<FlightStatus flight={createFlight()} />);
+    expect(screen.getByTestId('flight-status')).toHaveTextContent('Link OK · 6S');
+  });
+
+  it('says when the link is lost and the battery is 4S, the lost link marked', () => {
+    const flight = createFlight();
+    render(<FlightStatus flight={flight} />);
+    act(() => {
+      flight.setFaults({ linkLost: true, cells: 4 });
+    });
+    expect(screen.getByTestId('flight-status')).toHaveTextContent('Link lost · 4S');
+    expect(screen.getByText('Link lost')).toHaveAttribute('data-alert', 'true');
+  });
+
+  it('names the VTX heat as it climbs, Damaged marked', () => {
+    const flight = createFlight();
+    render(<FlightStatus flight={flight} />);
+    act(() => {
+      flight.setFaults({ vtxNoAntenna: true });
+      for (let i = 0; i < 320; i++) flight.advance(0.1);
+    });
+    expect(screen.getByText('VTX: Damaged')).toHaveAttribute('data-alert', 'true');
+  });
+});

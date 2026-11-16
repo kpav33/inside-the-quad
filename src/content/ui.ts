@@ -140,6 +140,30 @@ export const UI = {
   whatIf: {
     /** The sheet's name, as its heading and wherever another sheet refers to it. */
     title: 'What if',
+    close: 'Close sheet',
+    stepsLabel: 'Mistakes',
+    controlsLabel: 'Step and drone controls',
+    previousStep: 'Previous step',
+    nextStep: 'Next step',
+    tryIt: 'Try it',
+    reset: 'Reset',
+    /** The battery step's switch, in place of Try it. */
+    batteryLabel: 'Battery',
+    cells: (cells: number) => `${String(cells)}S`,
+    /** The three parts of each step's text. */
+    happens: 'What happens',
+    why: 'Why',
+    avoid: 'How to avoid it',
+    lessonLabel: 'More in',
+    /** The status line over the drawing. */
+    status: {
+      label: 'Drone status',
+      linkOk: 'Link OK',
+      linkLost: 'Link lost',
+      vtx: { 1: 'VTX: Warm', 2: 'VTX: Hot', 3: 'VTX: Damaged' } as const,
+    },
+    stepAnnounce: (step: number, total: number, name: string) =>
+      `Mistake ${String(step)} of ${String(total)}: ${name}.`,
   },
   moves: {
     /** The sheet's name, as its heading and wherever another sheet refers to it. */

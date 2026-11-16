@@ -169,17 +169,22 @@ export function VtxGauge() {
 }
 
 /**
- * The ground line on the what-if sheet: a hairline datum across the drawing under the drone, where
- * it comes to rest after a fall. `ground` is how far below hover the drone rests (metres, < 0).
+ * The ground on the what-if sheet: a hairline square on the floor under the drone, drawn in
+ * perspective like a datum plane, where it comes to rest after a fall. `ground` is how far below
+ * hover the drone rests (metres, < 0). The square fits inside the framed sphere.
  */
 export function GroundLine({ ground }: { ground: number }) {
   const fit = groundFit(DRONE_RADIUS, ground, DRONE_BOTTOM);
   const y = DRONE_CENTRE[1] + fit.lineY;
+  const half = fit.lineHalf / Math.SQRT2;
   return (
     <Line
       points={[
-        [-fit.lineHalf, y, 0],
-        [fit.lineHalf, y, 0],
+        [-half, y, -half],
+        [half, y, -half],
+        [half, y, half],
+        [-half, y, half],
+        [-half, y, -half],
       ]}
       color={COLOR.ruleStrong}
       lineWidth={1}

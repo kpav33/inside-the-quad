@@ -51,7 +51,7 @@ export interface FlightState {
 /** How long failsafe uses safe stick values before it disarms (Betaflight's guard time). */
 export const FAILSAFE_GUARD_S = 1;
 /** The height (scene metres, from where the drone hovers) it rests at after a fall. */
-export const GROUND_M = -0.2;
+export const GROUND_M = -0.12;
 /** About how long a VTX without antenna takes to be damaged on this sheet (illustrative). */
 export const VTX_DAMAGE_S = 30;
 const VTX_HOT = 0.6;

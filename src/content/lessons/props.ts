@@ -13,7 +13,7 @@ export const propsLesson: Lesson = {
     'Each blade is angled, a bit like a screw thread. As it spins, it grabs air and pushes it down, and the air pushes the drone up.',
     'Two propellers spin clockwise and two spin counter-clockwise, with each diagonal pair spinning the same way. A spinning prop twists the drone in the opposite direction; with two each way, the twists cancel out and the drone doesn’t spin. Speeding up one pair on purpose is how the drone turns (yaw).',
     '"Props in" and "props out" describe which way the front propellers spin: inward towards the camera, or outward. Props in is the default in Betaflight, the software that runs on most freestyle drones’ flight controllers (the drone’s brain). Either works, but it must match the setting in the flight controller.',
-    'A propeller on the wrong motor, or mounted upside down, pushes air the wrong way. The drone then flips over the moment it takes off, so check every prop after changing one.',
+    'A prop made for the other direction, put on the wrong motor, pushes air up instead of down; one mounted upside down makes little thrust. Either way the drone usually flips or tumbles the moment it takes off, so check every prop after changing one.',
   ],
   specs: [
     {

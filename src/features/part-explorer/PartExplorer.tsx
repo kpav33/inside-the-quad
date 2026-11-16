@@ -16,7 +16,7 @@ import { isPathId, type PathId } from '@/shared/domain/paths';
 import type { SheetId } from '@/shared/domain/sheets';
 import { type Page, usePartRoute } from '@/shared/routing';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
-import { Sticks } from '@/features/flight';
+import { FlightStatus, GROUND_M, Sticks } from '@/features/flight';
 
 import { isDeliberateClick } from './clicks';
 import {
@@ -32,11 +32,13 @@ import {
 import { IntroPanel } from './IntroPanel';
 import { LessonPanel } from './LessonPanel';
 import { MovesPanel } from './MovesPanel';
+import { WhatIfPanel } from './WhatIfPanel';
 import { OverviewStart } from './OverviewStart';
 import { PathPanel } from './PathPanel';
 import { PartList } from './PartList';
 import { TitleBlock } from './TitleBlock';
 import { useMovesSheet } from './useMovesSheet';
+import { useWhatIfSheet } from './useWhatIfSheet';
 import { usePathStep } from './usePathStep';
 
 /** Drawing-frame zone markers, as on a technical drawing's border. */
@@ -89,8 +91,8 @@ function pathDrawing(path: PathContent, step: number): Drawing {
   };
 }
 
-/** The moves sheet's drawing: the closed drone in its plain look, flying (the flight is added). */
-const MOVES_DRAWING: Drawing = {
+/** A flight sheet's drawing: the closed drone in its plain look, flying (the flight is added). */
+const FLIGHT_DRAWING: Drawing = {
   openParts: NO_PARTS,
   connectedParts: NO_PARTS,
   exploded: false,
@@ -123,10 +125,21 @@ export function PartExplorer() {
   const openPath = route.kind === 'path' ? PATHS[route.path] : null;
   const movesOpen = route.kind === 'moves';
   const moves = useMovesSheet(movesOpen, movesOpen ? route.step - 1 : 0, replaceStep);
+  const whatIfOpen = route.kind === 'what-if';
+  const whatIf = useWhatIfSheet(whatIfOpen, whatIfOpen ? route.step - 1 : 0, replaceStep);
+  // The flight sheets: the drawing flies a drone and clicking it opens nothing.
+  const flightOpen = movesOpen || whatIfOpen;
+  const flight = movesOpen ? moves.flight : whatIfOpen ? whatIf.flight : null;
   // The sheet in the sheet column: a part's lesson, the intro, a path, how a quad moves, or none
   // (the overview).
   const openSheet: SheetId | null =
-    route.kind === 'intro' ? 'intro' : movesOpen ? MOVES_SHEET : (openPath?.id ?? selectedPart);
+    route.kind === 'intro'
+      ? 'intro'
+      : movesOpen
+        ? MOVES_SHEET
+        : whatIfOpen
+          ? WHAT_IF_SHEET
+          : (openPath?.id ?? selectedPart);
   // A path's step is in its address (from 1); one past the end shows the last stop.
   const stopCount = openPath?.stops.length ?? 0;
   const addressStep = route.kind === 'path' ? route.step - 1 : 0;
@@ -263,7 +276,7 @@ export function PartExplorer() {
 
   const onPartClick = (part: PartId, event: ThreeEvent<MouseEvent>) => {
     // On the moves sheet the drawing is for flying: a click opens nothing.
-    if (movesOpen || !isDeliberateClick(event.delta)) return;
+    if (flightOpen || !isDeliberateClick(event.delta)) return;
     // On a path sheet the drawing belongs to the path: a part on it opens its stop, a part off it
     // does nothing. Lessons are one link away in the stop list.
     if (openPath) {
@@ -280,12 +293,16 @@ export function PartExplorer() {
   // A click on the empty 3D background clears a selected part; the intro stays open, so the
   // drone can be turned while reading it.
   const clearSelection = () => {
-    if (movesOpen) return;
+    if (flightOpen) return;
     if (selectedPart) navigate(null);
   };
 
   return (
-    <div className="part-explorer" data-sheet={movesOpen ? MOVES_SHEET : undefined}>
+    <div
+      className="part-explorer"
+      data-sheet={flightOpen ? (openSheet ?? undefined) : undefined}
+      data-flight={flightOpen ? '' : undefined}
+    >
       <p className="visually-hidden" aria-live="polite" data-testid="explorer-announcer">
         {openSheet === 'intro'
           ? UI.explorer.introOpened
@@ -293,9 +310,11 @@ export function PartExplorer() {
             ? UI.explorer.pathOpened(openPath.title)
             : movesOpen
               ? UI.explorer.pathOpened(UI.moves.title)
-              : selectedPart
-                ? UI.explorer.opened(PART_LABELS[selectedPart])
-                : ''}
+              : whatIfOpen
+                ? UI.explorer.pathOpened(UI.whatIf.title)
+                : selectedPart
+                  ? UI.explorer.opened(PART_LABELS[selectedPart])
+                  : ''}
       </p>
       <div className="part-explorer-field">
         <div className="drawing-frame">
@@ -316,19 +335,21 @@ export function PartExplorer() {
               <ErrorBoundary fallback={viewerFallback}>
                 <Suspense fallback={<p role="status">{UI.viewer.loading}</p>}>
                   <DroneViewer
-                    {...(movesOpen
-                      ? MOVES_DRAWING
+                    {...(flightOpen
+                      ? FLIGHT_DRAWING
                       : openPath && currentStop
                         ? pathDrawing(openPath, pathStep.step)
                         : partDrawing(selectedPart))}
-                    flight={moves.flight}
+                    flight={flight}
+                    ground={whatIfOpen ? GROUND_M : null}
                     onPartClick={onPartClick}
                     onPartHover={onPartHover}
                     onBackgroundClick={clearSelection}
                   />
                 </Suspense>
                 {/* Inside the boundary: if the 3D view fails, the sticks go with it. */}
-                {moves.flight && <Sticks flight={moves.flight} />}
+                {flight && <Sticks flight={flight} />}
+                {whatIfOpen && flight && <FlightStatus flight={flight} />}
               </ErrorBoundary>
             </div>
             <p className="drawing-hint" aria-hidden="true">
@@ -345,7 +366,19 @@ export function PartExplorer() {
         </div>
       </div>
       <div className="part-explorer-sheet">
-        {movesOpen ? (
+        {whatIfOpen ? (
+          <WhatIfPanel
+            flight={whatIf.flight}
+            step={whatIf.step}
+            read={read.has(WHAT_IF_SHEET)}
+            onStep={whatIf.goTo}
+            onClose={closeLesson}
+            onToggleRead={() => {
+              toggleRead(WHAT_IF_SHEET);
+            }}
+            onFollowLink={followLink}
+          />
+        ) : movesOpen ? (
           <MovesPanel
             flight={moves.flight}
             step={moves.step}
