@@ -29,4 +29,27 @@ describe('FlightStatus', () => {
     });
     expect(screen.getByText('VTX: Damaged')).toHaveAttribute('data-alert', 'true');
   });
+
+  it('tells assistive technology what happens: disarmed, on the ground, heat, reset', () => {
+    const flight = createFlight();
+    render(<FlightStatus flight={flight} />);
+    const said = () => screen.getByTestId('flight-announcer').textContent;
+    act(() => {
+      flight.setFaults({ linkLost: true });
+    });
+    expect(said()).toMatch(/link lost/i);
+    act(() => {
+      for (let i = 0; i < 30; i++) flight.advance(0.1);
+    });
+    expect(said()).toMatch(/ground/i);
+    act(() => {
+      flight.reset();
+    });
+    expect(said()).toMatch(/reset/i);
+    act(() => {
+      flight.setFaults({ vtxNoAntenna: true });
+      for (let i = 0; i < 100; i++) flight.advance(0.1);
+    });
+    expect(said()).toMatch(/VTX: Hot/);
+  });
 });

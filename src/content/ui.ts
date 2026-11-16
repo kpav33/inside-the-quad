@@ -162,6 +162,15 @@ export const UI = {
       linkLost: 'Link lost',
       vtx: { 1: 'VTX: Warm', 2: 'VTX: Hot', 3: 'VTX: Damaged' } as const,
     },
+    /** What a screen reader hears as a mistake plays out. */
+    said: {
+      linkLost: 'Link lost: the sticks no longer reach the drone.',
+      wrongProp: 'A prop for the other direction is on motor 2.',
+      battery: (cells: number) => `Battery: ${String(cells)}S.`,
+      disarmed: 'The motors stopped: the drone is disarmed.',
+      onGround: 'The drone is on the ground.',
+      reset: 'Reset: the drone is back, level and armed.',
+    },
     stepAnnounce: (step: number, total: number, name: string) =>
       `Mistake ${String(step)} of ${String(total)}: ${name}.`,
   },
