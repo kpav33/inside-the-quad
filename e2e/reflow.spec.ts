@@ -11,6 +11,8 @@ const PAGES = [
   ...['control', 'power', 'video'].map((id) => `/paths/${id}`),
   '/moves',
   '/moves/5',
+  '/what-if',
+  '/what-if/4',
 ];
 
 const enlarge = async (page: Page) => {
