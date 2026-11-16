@@ -96,8 +96,8 @@ acting it out (builder check; my call).
    - `cells` (6 or 4): the motors' available top speed and the body's turning authority scale by
      cells / 6; the controller asks the same rates but can push less, so it gets there more
      slowly and may not reach full rate. Readouts show speed as a share of the 6S top speed.
-   - `vtxNoAntenna`: a heat level rising from Warm through Hot to Damaged over a few tens of
-     seconds (illustrative); nothing else changes.
+   - `vtxNoAntenna`: a heat level rising from Warm through Hot to Damaged in about 12 s on
+     this sheet (illustrative; executor's call after building); nothing else changes.
 6. **Falling:** a simple drop (gravity, capped speed) from the drone's place to a ground line drawn
    across the field below it, where it rests (keeping its attitude: upside down after a flip).
    While on the ground the drone doesn't turn; Reset lifts it back. The camera fit covers the
