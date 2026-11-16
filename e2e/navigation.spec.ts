@@ -61,6 +61,7 @@ test.describe('sheets and progress', () => {
       'Power path',
       'Video path',
       'How a quad moves',
+      'What if',
     ]) {
       await expect(lessonHeading(page, name)).toBeFocused();
       await page.getByRole('link', { name: /^(Next|End of the parts)/ }).click();
@@ -86,7 +87,7 @@ test.describe('sheets and progress', () => {
     await page.getByRole('button', { name: 'Mark as read' }).click();
     await page.getByRole('button', { name: 'Close lesson' }).click();
     await expect(page.getByRole('link', { name: 'Continue with sheet 2: Motors' })).toBeVisible();
-    await expect(page.getByText('Parts 1 of 11 · How it works 0 of 4')).toBeVisible();
+    await expect(page.getByText('Parts 1 of 11 · How it works 0 of 5')).toBeVisible();
   });
 });
 

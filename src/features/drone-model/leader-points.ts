@@ -44,3 +44,8 @@ export function stopPoints(spec: DroneSpec, stop: LeaderStop): Vec3[] {
 export function leaderMarkerPoints(spec: DroneSpec, stops: readonly LeaderStop[]): Vec3[] {
   return stops.map((stop) => stopPoints(spec, stop)[0] ?? [0, 0, 0]);
 }
+
+/** Where an anchor touches the closed drone, in scene metres (the flight sheets keep it closed). */
+export function closedAnchorPoint(spec: DroneSpec, anchor: AnchorId): Vec3 | null {
+  return anchorPoints(spec, anchor, explodedOffsets(spec, false)).map(toScene)[0] ?? null;
+}

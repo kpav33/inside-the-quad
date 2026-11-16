@@ -31,6 +31,7 @@ describe('interface text', () => {
 
   it('names the moves sheet', () => {
     expect(sheetName('moves')).toBe('How a quad moves');
+    expect(sheetName('what-if')).toBe('What if');
   });
 
   it('has no empty strings', () => {

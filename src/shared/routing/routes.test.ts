@@ -105,6 +105,21 @@ describe('path routes', () => {
   });
 });
 
+describe('the what-if sheet', () => {
+  it('reads /what-if as step 1 and /what-if/n as step n', () => {
+    expect(parseRoute('/what-if')).toEqual({ kind: 'what-if', step: 1 });
+    expect(parseRoute('/what-if/3')).toEqual({ kind: 'what-if', step: 3 });
+    expect(parseRoute('/what-if/0')).toEqual({ kind: 'what-if', step: 1 });
+    expect(parseRoute('/what-if/x').kind).toBe('unknown');
+    expect(parseRoute('/what-if/2/3').kind).toBe('unknown');
+  });
+
+  it('writes the step into the address', () => {
+    expect(steppedPath('what-if', 2)).toBe('/what-if/2');
+    expect(pagePath('what-if')).toBe('/what-if');
+  });
+});
+
 describe('the moves sheet', () => {
   it('reads /moves as step 1 and /moves/n as step n', () => {
     expect(parseRoute('/moves')).toEqual({ kind: 'moves', step: 1 });

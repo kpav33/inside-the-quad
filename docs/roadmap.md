@@ -16,8 +16,8 @@ Status: `planned` · `in progress` · `in review` · `done`.
 | 03c | Real parts: a photo of each part (CC-licensed, with attribution) beside its lesson                                                          | `feat/real-parts`            | done      |
 | 04  | "What is an FPV drone?" intro (Module 1)                                                                                                    | `feat/intro`                 | done      |
 | 05a | How it all works together, paths: control, power and video path sheets with a leader on the drawing (Module 3)                              | `feat/paths`                 | done      |
-| 05b | How it all works together, how a quad moves: virtual sticks, motor speeds, the gyro loop                                                    | `feat/moves`                 | in review |
-| 05c | How it all works together, what if: failsafe, prop on backwards, 4S vs 6S, VTX without antenna                                              | —                            | planned   |
+| 05b | How it all works together, how a quad moves: virtual sticks, motor speeds, the gyro loop                                                    | `feat/moves`                 | done      |
+| 05c | How it all works together, what if: failsafe, prop on backwards, 4S vs 6S, VTX without antenna                                              | `feat/what-if`               | in review |
 | 06  | Gear you hold and wear (Module 4)                                                                                                           | —                            | planned   |
 | 07  | Compatibility checker                                                                                                                       | —                            | planned   |
 

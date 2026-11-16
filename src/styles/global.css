@@ -281,6 +281,125 @@ a {
   font-weight: 700;
 }
 
+/* The what-if sheet's status line: link, battery and VTX heat, in caps at the drawing's top left.
+   A lost link and a damaged VTX are in redline (the current mistake). */
+.flight-status {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  pointer-events: none;
+}
+
+.flight-status [data-alert='true'] {
+  color: var(--color-accent);
+}
+
+/* The battery step's 6S / 4S switch, in place of Try it: framed like the chapter switcher. */
+.battery-switch {
+  display: inline-flex;
+  border: 1px solid var(--color-rule-strong);
+}
+
+.battery-switch-option {
+  min-height: var(--target-min);
+  min-width: var(--target-min);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-right: 1px solid var(--color-rule);
+  background: transparent;
+  font-family: var(--font-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.battery-switch-option:last-child {
+  border-right: 0;
+}
+
+.battery-switch-option:hover {
+  color: var(--color-ink);
+}
+
+.battery-switch-option[aria-pressed='true'] {
+  color: var(--color-ink);
+  box-shadow: inset 0 -2px 0 var(--color-accent);
+}
+
+/* A mistake's three parts: small caps labels over the reading text. */
+.what-if-parts {
+  margin: 0;
+}
+
+.what-if-parts dt {
+  margin-top: var(--space-2);
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.what-if-parts dd {
+  margin: 0;
+}
+
+/* The what-if sheet's wrong prop: its motor marked in redline, whatever its speed. */
+.motor-pin[data-fault='true'] {
+  border-color: var(--color-accent);
+  color: var(--color-ink);
+}
+
+.motor-pin[data-fault='true'] .motor-pin-number {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-ground);
+}
+
+/* The VTX heat gauge on the what-if sheet: three hairline cells filling with ink, the last in
+   redline once the VTX is damaged. The words (Warm, Hot, Damaged) are in the status line. */
+.vtx-gauge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  /* Redline from the moment it appears: the VTX is the current mistake. */
+  border: 1px solid var(--color-accent);
+  background: var(--color-ground);
+  pointer-events: none;
+}
+
+.vtx-gauge[hidden] {
+  display: none;
+}
+
+.vtx-gauge-segment {
+  width: 12px;
+  height: 8px;
+  border: 1px solid var(--color-rule-strong);
+}
+
+.vtx-gauge-segment[data-on='true'] {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+}
+
+.vtx-gauge[data-level='3'] .vtx-gauge-segment {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+}
+
 /* The motors working harder for the move are in redline; the slower ones go quiet. */
 .motor-pin[data-state='up'] {
   border-color: var(--color-accent);
@@ -1240,6 +1359,13 @@ a {
   color: var(--color-ink);
 }
 
+.what-if-hint {
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  letter-spacing: 0.04em;
+  color: var(--color-ink);
+}
+
 .path-stop-lessons {
   font-size: var(--step--1);
   color: var(--color-muted);
@@ -1422,31 +1548,32 @@ a.lesson-sheet-link:hover {
    scroll under them, so the drone is in view while reading and when a step's demo plays. The
    parts list isn't needed on this sheet and stays out of the pinned area. */
 @container main (max-width: 55.9375rem) {
-  .part-explorer[data-sheet='moves'] {
+  .part-explorer[data-flight] {
     /* In px and vw, not rem: with enlarged text the drawing and sticks keep their size, so the
        steps keep most of the screen to be read in. */
     --moves-canvas: max(46svh, 240px);
     --pinned-drawing: calc(var(--moves-canvas) + 2 * var(--space-3));
     --phone-stick: min(4.5rem, 24vw);
     /* Below the drone, a band for the sticks and their labels, so they never cover it. */
-    --stick-band: calc(var(--phone-stick) + 2.75rem);
+    /* In px like the sticks' small labels, so larger text never eats the drone's room. */
+    --stick-band: calc(var(--phone-stick) + 44px);
   }
 
-  .part-explorer[data-sheet='moves'] .drawing-canvas {
+  .part-explorer[data-flight] .drawing-canvas {
     height: var(--moves-canvas);
     min-height: 0;
   }
 
-  .part-explorer[data-sheet='moves'] .drone-viewer {
+  .part-explorer[data-flight] .drone-viewer {
     height: calc(100% - var(--stick-band));
   }
 
-  .part-explorer[data-sheet='moves'] .sticks {
+  .part-explorer[data-flight] .sticks {
     --stick-size: var(--phone-stick);
   }
 
   /* Both pads start just under the drone's area, level with each other whatever their labels do. */
-  .part-explorer[data-sheet='moves'] .stick {
+  .part-explorer[data-flight] .stick {
     top: calc(100% - var(--stick-band) + var(--space-2));
     bottom: auto;
     width: var(--stick-size);
@@ -1454,19 +1581,19 @@ a.lesson-sheet-link:hover {
 
   /* The pads' labels repeat the sliders' names (which grow with the text); here they stay small
      so two sticks always fit side by side under the drone. */
-  .part-explorer[data-sheet='moves'] .stick-label {
+  .part-explorer[data-flight] .stick-label {
     font-size: min(var(--step--1), 3.4vw);
   }
 
-  .part-explorer[data-sheet='moves'] .stick[data-side='left'] {
+  .part-explorer[data-flight] .stick[data-side='left'] {
     left: var(--space-2);
   }
 
-  .part-explorer[data-sheet='moves'] .stick[data-side='right'] {
+  .part-explorer[data-flight] .stick[data-side='right'] {
     right: var(--space-2);
   }
 
-  .part-explorer[data-sheet='moves'] .part-explorer-field {
+  .part-explorer[data-flight] .part-explorer-field {
     position: sticky;
     top: 0;
     z-index: 2;
@@ -1475,25 +1602,40 @@ a.lesson-sheet-link:hover {
   }
 
   /* Margins in px too, so larger text never squeezes the sticks together. */
-  .part-explorer[data-sheet='moves'] .part-explorer-viewer {
+  .part-explorer[data-flight] .part-explorer-viewer {
     inset: min(var(--space-5), 24px);
   }
 
-  .part-explorer[data-sheet='moves'] .part-list {
+  .part-explorer[data-flight] .part-list {
     display: none;
+  }
+
+  /* The drawing's own labels keep their size when the text is enlarged (the sheet's text grows),
+     so they still fit the short pinned drawing without covering one another or the drone. */
+  .part-explorer[data-flight] :is(.motor-pin, .flight-status) {
+    font-size: min(var(--step--1), 3.4vw);
+  }
+
+  .part-explorer[data-flight] .motor-pin-number {
+    width: 1.8em;
+    height: 1.8em;
+  }
+
+  .part-explorer[data-flight] .flight-status {
+    white-space: nowrap;
   }
 
   /* Only the drawing is pinned here: pinning the step controls under it too would leave no room
      to read with larger text. What takes focus or comes into view keeps clear of the drawing. */
-  .part-explorer[data-sheet='moves'] .path-controls {
+  .part-explorer[data-flight] .path-controls {
     position: static;
   }
 
-  .part-explorer[data-sheet='moves'] .path-controls::before {
+  .part-explorer[data-flight] .path-controls::before {
     display: none;
   }
 
-  .part-explorer[data-sheet='moves'] .part-explorer-sheet :is(button, a, input, h2, .path-stop) {
+  .part-explorer[data-flight] .part-explorer-sheet :is(button, a, input, h2, .path-stop) {
     scroll-margin-top: calc(var(--pinned-drawing) + var(--space-2));
   }
 }
@@ -1834,6 +1976,6 @@ a.lesson-sheet-link:hover {
 }
 
 /* On the moves sheet the drawing is for flying: clicking a part opens nothing, so its hint goes. */
-.part-explorer[data-sheet='moves'] .drawing-hint {
+.part-explorer[data-flight] .drawing-hint {
   display: none;
 }

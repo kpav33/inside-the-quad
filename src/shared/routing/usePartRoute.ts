@@ -12,7 +12,8 @@ export type PageRoute =
   | { kind: 'intro' }
   | { kind: 'part'; part: PartId }
   | { kind: 'path'; path: PathId; step: number }
-  | { kind: 'moves'; step: number };
+  | { kind: 'moves'; step: number }
+  | { kind: 'what-if'; step: number };
 
 export interface PartRoute {
   route: PageRoute;
@@ -39,8 +40,8 @@ export function usePartRoute(): PartRoute {
       ? partPath(parsed.part)
       : parsed.kind === 'path'
         ? pagePath(parsed.path, parsed.step)
-        : parsed.kind === 'moves'
-          ? pagePath('moves', parsed.step)
+        : parsed.kind === 'moves' || parsed.kind === 'what-if'
+          ? pagePath(parsed.kind, parsed.step)
           : parsed.kind === 'intro'
             ? pagePath('intro')
             : OVERVIEW_PATH;

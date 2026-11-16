@@ -38,7 +38,7 @@ describe('MovesPanel', () => {
     renderMoves();
     const block = screen.getByRole('group', { name: 'Title block' });
     expect(block).toHaveTextContent('ChapterHow it works together');
-    expect(block).toHaveTextContent('Sheet4 of 4');
+    expect(block).toHaveTextContent('Sheet4 of 5');
     expect(block).toHaveTextContent('ModeAcro');
   });
 
@@ -87,22 +87,22 @@ describe('MovesPanel', () => {
     );
   });
 
-  it('runs on from the video path and ends the set', () => {
+  it('runs on from the video path to what if', () => {
     renderMoves();
     expect(screen.getByRole('link', { name: 'Previous: Video path · sheet 3' })).toHaveAttribute(
       'href',
       '/paths/video',
     );
-    expect(screen.getByRole('link', { name: 'Next: Back to overview' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Next: What if · sheet 5' })).toHaveAttribute(
       'href',
-      '/',
+      '/what-if',
     );
   });
 
   it('offers the whole chapter in its switcher, itself marked open', () => {
     renderMoves();
     const nav = screen.getByRole('navigation', { name: 'How it works together' });
-    expect(within(nav).getAllByRole('link')).toHaveLength(4);
+    expect(within(nav).getAllByRole('link')).toHaveLength(5);
     expect(within(nav).getByRole('link', { name: 'How a quad moves' })).toHaveAttribute(
       'aria-current',
       'page',

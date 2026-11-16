@@ -1,6 +1,7 @@
 import type { PartId } from '@/shared/domain/parts';
 import { MOVES_SHEET } from '@/shared/domain/moves';
 import { isPathId, type PathId } from '@/shared/domain/paths';
+import { WHAT_IF_SHEET } from '@/shared/domain/what-if';
 import type { NumberedSheet } from '@/shared/domain/sheets';
 
 /** Part names as shown in the parts list and lesson titles. */
@@ -136,6 +137,46 @@ export const UI = {
     stepAnnounce: (stop: number, total: number, name: string, text: string) =>
       `Stop ${stop} of ${total}: ${name}. ${text}`,
   },
+  whatIf: {
+    /** The sheet's name, as its heading and wherever another sheet refers to it. */
+    title: 'What if',
+    close: 'Close sheet',
+    stepsLabel: 'Mistakes',
+    controlsLabel: 'Step and drone controls',
+    previousStep: 'Previous step',
+    nextStep: 'Next step',
+    tryIt: 'Try it',
+    reset: 'Reset',
+    /** Under the current step until its mistake is on: how to see it. */
+    tryHint: 'Press Try it to see it happen.',
+    batteryHint: 'Switch to 4S to feel the difference.',
+    /** The battery step's switch, in place of Try it. */
+    batteryLabel: 'Battery',
+    cells: (cells: number) => `${String(cells)}S`,
+    /** The three parts of each step's text. */
+    happens: 'What happens',
+    why: 'Why',
+    avoid: 'How to avoid it',
+    lessonLabel: 'More in',
+    /** The status line over the drawing. */
+    status: {
+      label: 'Drone status',
+      linkOk: 'Link OK',
+      linkLost: 'Link lost',
+      vtx: { 1: 'VTX: Warm', 2: 'VTX: Hot', 3: 'VTX: Damaged' } as const,
+    },
+    /** What a screen reader hears as a mistake plays out. */
+    said: {
+      linkLost: 'Link lost: the sticks no longer reach the drone.',
+      wrongProp: 'A prop for the other direction is on motor 2.',
+      battery: (cells: number) => `Battery: ${String(cells)}S.`,
+      disarmed: 'The motors stopped: the drone is disarmed.',
+      onGround: 'The drone is on the ground.',
+      reset: 'Reset: the drone is back, level and armed.',
+    },
+    stepAnnounce: (step: number, total: number, name: string) =>
+      `Mistake ${String(step)} of ${String(total)}: ${name}.`,
+  },
   moves: {
     /** The sheet's name, as its heading and wherever another sheet refers to it. */
     title: 'How a quad moves',
@@ -211,5 +252,6 @@ export const UI = {
 /** A numbered sheet's name: the part's label, the path's title, or the moves sheet's title. */
 export function sheetName(sheet: NumberedSheet): string {
   if (sheet === MOVES_SHEET) return UI.moves.title;
+  if (sheet === WHAT_IF_SHEET) return UI.whatIf.title;
   return isPathId(sheet) ? UI.paths.title[sheet] : PART_LABELS[sheet];
 }

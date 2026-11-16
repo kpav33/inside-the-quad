@@ -453,6 +453,24 @@
       "kind": "drawing",
       "refersTo": "motor-pin",
       "description": "Pill per motor over the canvas: number cell and speed in tabular figures. Faster motors redline ring and filled number; slower muted. Keeps clear of sticks and other pills. Prop spin arrows' length shows speed; no animation of their own."
+    },
+    {
+      "name": "What If Sheet",
+      "kind": "sheet",
+      "refersTo": "what-if",
+      "description": "Chapter 'How it works together', sheet 5 of 5: the moves sheet's frame with four mistakes, each in three parts (What happens, Why, How to avoid it) under muted caps labels; controls Previous step, Next step, Try it (disabled while on) or a framed 6S / 4S switch, Reset. One mistake at a time; nothing auto-plays; sticks live."
+    },
+    {
+      "name": "Flight Status",
+      "kind": "drawing",
+      "refersTo": "flight-status",
+      "description": "Caps status line at the what-if drawing's top left: link, battery cells, VTX heat. Lost link and Damaged in redline, the rest muted."
+    },
+    {
+      "name": "Ground and VTX Gauge",
+      "kind": "drawing",
+      "refersTo": "vtx-gauge",
+      "description": "Hairline rule-strong square on the floor under the drone (the ground a fall ends on); a three-cell gauge over the VTX filling with ink as it heats, redline at Damaged; the wrong prop's motor pill in redline."
     }
   ],
   "narrative": {

@@ -1,5 +1,5 @@
 import type { ThreeEvent } from '@react-three/fiber';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -114,6 +114,54 @@ describe('PartExplorer', () => {
     viewer.flight = null;
     window.localStorage.clear();
     vi.unstubAllGlobals();
+  });
+
+  describe('the what-if sheet', () => {
+    it('opens at the mistake in the address, flying, with the status line', async () => {
+      window.history.replaceState(null, '', '/what-if/2');
+      await renderExplorer();
+      expect(lessonHeading('What if')).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Prop on backwards' }).closest('li'),
+      ).toHaveAttribute('aria-current', 'step');
+      expect(viewerState()).toMatchObject({ open: [], exploded: false, flying: true });
+      expect(screen.getByTestId('flight-status')).toHaveTextContent('Link OK · 6S');
+      expect(screen.getByRole('slider', { name: 'Roll' })).toBeInTheDocument();
+    });
+
+    it('never carries a mistake over to the moves sheet', async () => {
+      window.history.replaceState(null, '', '/what-if/3');
+      await renderExplorer();
+      await userEvent.click(screen.getByRole('button', { name: '4S' }));
+      expect(viewer.flight?.faults.cells).toBe(4);
+      await userEvent.click(
+        within(screen.getByRole('navigation', { name: 'How it works together' })).getByRole(
+          'link',
+          { name: 'How a quad moves' },
+        ),
+      );
+      expect(lessonHeading('How a quad moves')).toBeInTheDocument();
+      expect(viewer.flight?.faults.cells).toBe(6);
+    });
+
+    it('does nothing when the drawing is clicked', async () => {
+      window.history.replaceState(null, '', '/what-if');
+      await renderExplorer();
+      await userEvent.click(screen.getByRole('button', { name: 'stub: click motors' }));
+      expect(window.location.pathname).toBe('/what-if');
+    });
+
+    it('still lists the mistakes, without sticks or status, when the 3D view fails', async () => {
+      viewer.shouldThrow = true;
+      vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      window.history.replaceState(null, '', '/what-if');
+      render(<PartExplorer />);
+      expect(
+        await screen.findByRole('button', { name: 'VTX without antenna' }),
+      ).toBeInTheDocument();
+      expect(screen.queryByRole('slider', { name: 'Roll' })).toBeNull();
+      expect(screen.queryByTestId('flight-status')).toBeNull();
+    });
   });
 
   describe('the moves sheet', () => {
@@ -543,7 +591,7 @@ describe('PartExplorer', () => {
     window.localStorage.setItem(READ_KEY, '["frame"]');
     await renderExplorer();
     expect(screen.getByRole('link', { name: 'Continue with sheet 2: Motors' })).toBeInTheDocument();
-    expect(screen.getByText('Parts 1 of 11 · How it works 0 of 4')).toBeInTheDocument();
+    expect(screen.getByText('Parts 1 of 11 · How it works 0 of 5')).toBeInTheDocument();
   });
 
   it('continues into the control path once every part is read', async () => {
@@ -554,7 +602,7 @@ describe('PartExplorer', () => {
         name: 'Continue with How it works together, sheet 1: Control path',
       }),
     ).toHaveAttribute('href', '/paths/control');
-    expect(screen.getByText('Parts 11 of 11 · How it works 0 of 4')).toBeInTheDocument();
+    expect(screen.getByText('Parts 11 of 11 · How it works 0 of 5')).toBeInTheDocument();
   });
 
   it('says when every sheet is read and offers to start again', async () => {

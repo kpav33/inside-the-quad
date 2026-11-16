@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
-import { createFlight, type Flight, runDemo, stopDemo } from '@/features/flight';
+import { type Flight, runDemo, stopDemo } from '@/features/flight';
 import { MOVE_STEP_IDS } from '@/shared/domain/moves';
 import type { SteppedSheet } from '@/shared/domain/sheets';
 import { usePrefersReducedMotion } from '@/shared/ui/usePrefersReducedMotion';
+
+import { useFlightSheet } from './useFlightSheet';
 
 export interface MovesSheet {
   /** The drone while the sheet is open; null otherwise. */
@@ -15,8 +17,6 @@ export interface MovesSheet {
   showMe: () => void;
 }
 
-const LAST = MOVE_STEP_IDS.length - 1;
-
 /**
  * The moves sheet's drone and step. The drone exists while the sheet is open and is dropped when
  * it closes; the step lives in the address (from 1). Opening a step plays its demo, unless motion
@@ -27,21 +27,13 @@ export function useMovesSheet(
   addressStep: number,
   replaceStep: (sheet: SteppedSheet, step: number) => void,
 ): MovesSheet {
-  const [flight, setFlight] = useState<Flight | null>(null);
-  useEffect(() => {
-    if (!open) return;
-    const next = createFlight();
-    setFlight(next);
-    return () => {
-      next.dispose();
-      setFlight(null);
-    };
-  }, [open]);
-
-  const step = Math.min(Math.max(addressStep, 0), LAST);
-  useEffect(() => {
-    if (open && addressStep !== step) replaceStep('moves', step + 1);
-  }, [open, addressStep, step, replaceStep]);
+  const { flight, step, goTo } = useFlightSheet(
+    'moves',
+    open,
+    addressStep,
+    MOVE_STEP_IDS.length,
+    replaceStep,
+  );
 
   // Read at the moment a step opens; switching reduced motion on mid-demo doesn't replay anything.
   const reduceMotion = usePrefersReducedMotion();
@@ -62,12 +54,6 @@ export function useMovesSheet(
     if (reduceMotion && flight) stopDemo(flight);
   }, [reduceMotion, flight]);
 
-  const goTo = useCallback(
-    (next: number) => {
-      replaceStep('moves', Math.min(Math.max(next, 0), LAST) + 1);
-    },
-    [replaceStep],
-  );
   const showMe = useCallback(() => {
     if (flight && stepId) runDemo(flight, stepId);
   }, [flight, stepId]);

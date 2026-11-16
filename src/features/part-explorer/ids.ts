@@ -24,3 +24,6 @@ export function pathTitleId(path: PathId): string {
 
 /** The moves sheet's heading, focused when it opens. */
 export const MOVES_TITLE_ID = 'moves-title';
+
+/** The what-if sheet's heading, focused when it opens. */
+export const WHAT_IF_TITLE_ID = 'what-if-title';

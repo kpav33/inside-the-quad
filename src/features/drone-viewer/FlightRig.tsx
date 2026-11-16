@@ -1,13 +1,23 @@
+import { Line } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { type RefObject, useEffect } from 'react';
+import { type RefObject, useEffect, useRef } from 'react';
 import { type Group, Quaternion, Vector3 } from 'three';
 
-import { motorPlacements, project, type Rect } from '@/features/drone-model';
+import {
+  closedAnchorPoint,
+  motorPlacements,
+  outlineScene,
+  project,
+  type Rect,
+} from '@/features/drone-model';
 import type { Flight } from '@/features/flight';
+import { COLOR } from '@/shared/design/tokens';
 import { REFERENCE_5_INCH } from '@/shared/domain/drone-spec';
 
+import { frameStep, restingLift } from './flight-frame';
 import { motorPinState, placeMotorPin } from './motor-pins';
-import { DRONE_CENTRE } from './useDroneFit';
+import { groundFit, vtxGaugeSegments } from './vtx-gauge';
+import { DRONE_BOTTOM, DRONE_CENTRE, DRONE_RADIUS } from './useDroneFit';
 
 /** The elements of one motor's balloon. */
 export interface MotorPinElement {
@@ -17,10 +27,17 @@ export interface MotorPinElement {
 
 /** A balloon's size before it can be measured. */
 const PIN_BOX = { width: 64, height: 24 };
-/** On waking from rest, the first frame's time step is kept short, so the drone never jumps. */
-const MAX_FRAME_S = 1 / 30;
 
 const MOTORS = motorPlacements(REFERENCE_5_INCH);
+const VTX = closedAnchorPoint(REFERENCE_5_INCH, 'vtx');
+/** The drone's outline about its middle, for resting a crashed drone on the floor. */
+const OUTLINE = outlineScene(REFERENCE_5_INCH).map(([x, y, z]): [number, number, number] => [
+  x - DRONE_CENTRE[0],
+  y - DRONE_CENTRE[1],
+  z - DRONE_CENTRE[2],
+]);
+/** Motor 2 (front right): the one the what-if sheet's wrong prop goes on. */
+const WRONG_PROP_MOTOR = 1;
 const centre = new Vector3(...DRONE_CENTRE);
 const attitude = new Quaternion();
 const scratch = new Vector3();
@@ -33,15 +50,24 @@ export function FlightRig({
   flight,
   pose,
   pins,
+  gauge,
   avoid,
+  floor = null,
 }: {
   flight: Flight;
   pose: RefObject<Group | null>;
   pins: RefObject<MotorPinElement[]>;
+  /** The VTX heat gauge over the canvas, if it is there. */
+  gauge: () => HTMLElement | null;
+  /** The floor's height below the hover middle (the what-if sheet), or null for none. */
+  floor?: number | null;
   /** Boxes on the canvas the balloons keep clear of (the sticks), in canvas pixels. */
   avoid: () => Rect[];
 }) {
   const invalidate = useThree((state) => state.invalidate);
+  // Whether the canvas stopped drawing after the last frame: the next frame's delta is then the
+  // whole rest, not the time the drone moved.
+  const resting = useRef(true);
   useEffect(() => {
     invalidate();
     return flight.onWake(() => {
@@ -50,17 +76,53 @@ export function FlightRig({
   }, [flight, invalidate]);
 
   useFrame(({ camera, size }, delta) => {
-    flight.advance(Math.min(delta, MAX_FRAME_S));
+    flight.advance(frameStep(delta, resting.current));
     const { state } = flight;
     attitude.set(...state.attitude);
+    // On the what-if sheet a crashed drone rests on the floor, whichever way up it landed.
+    const drawnHeight =
+      floor === null ? state.height : restingLift(OUTLINE, state.attitude, state.height, floor);
     const group = pose.current;
     if (group) {
       group.quaternion.copy(attitude);
-      group.position.set(0, state.height, 0);
+      group.position.set(0, drawnHeight, 0);
     }
 
-    const middle = project([centre.x, centre.y + state.height, centre.z], camera, size);
+    const middle = project([centre.x, centre.y + drawnHeight, centre.z], camera, size);
     const boxes = avoid();
+    // The VTX heat gauge, over the VTX while it runs without its antenna.
+    const vtxGauge = gauge();
+    if (vtxGauge && VTX) {
+      const showing = flight.faults.vtxNoAntenna || state.vtxLevel > 0;
+      vtxGauge.hidden = !showing;
+      if (showing) {
+        scratch
+          .set(...VTX)
+          .sub(centre)
+          .applyQuaternion(attitude)
+          .add(centre);
+        scratch.y += drawnHeight;
+        const [x, y] = project([scratch.x, scratch.y, scratch.z], camera, size);
+        vtxGauge.style.transform = `translate(${String(x)}px, ${String(y)}px) translate(-50%, -150%)`;
+        // The motor balloons keep clear of it (it sits above the VTX: centred, one and a half
+        // heights up).
+        const width = vtxGauge.offsetWidth;
+        const height = vtxGauge.offsetHeight;
+        boxes.push({
+          left: x - width / 2,
+          right: x + width / 2,
+          top: y - height * 1.5,
+          bottom: y - height * 0.5,
+        });
+        vtxGauge.dataset.level = String(state.vtxLevel);
+        const segments = vtxGauge.querySelectorAll<HTMLElement>('.vtx-gauge-segment');
+        vtxGaugeSegments(state.vtxLevel).forEach((on, i) => {
+          const segment = segments[i];
+          if (segment) segment.dataset.on = String(on);
+        });
+      }
+    }
+
     MOTORS.forEach(({ position }, index) => {
       const element = pins.current[index];
       if (!element?.pin) return;
@@ -69,7 +131,7 @@ export function FlightRig({
         .sub(centre)
         .applyQuaternion(attitude)
         .add(centre);
-      scratch.y += state.height;
+      scratch.y += drawnHeight;
       const motor = project([scratch.x, scratch.y, scratch.z], camera, size);
       const box = {
         width: element.pin.offsetWidth || PIN_BOX.width,
@@ -85,12 +147,14 @@ export function FlightRig({
       });
       element.pin.style.transform = `translate(${String(x)}px, ${String(y)}px) translate(-50%, -50%)`;
       element.pin.dataset.state = motorPinState(state.motors, index);
+      element.pin.dataset.fault = String(flight.faults.wrongProp && index === WRONG_PROP_MOTOR);
       if (element.speed) {
         element.speed.textContent = `${String(Math.round((state.motors[index] ?? 0) * 100))} %`;
       }
     });
 
-    if (!flight.settled()) invalidate();
+    resting.current = flight.settled();
+    if (!resting.current) invalidate();
   });
   return null;
 }
@@ -121,5 +185,40 @@ export function MotorPins({ pins }: { pins: RefObject<MotorPinElement[]> }) {
         );
       })}
     </div>
+  );
+}
+
+/** Over the canvas: the VTX heat gauge, three segments filling as it heats. Words are on the sheet. */
+export function VtxGauge() {
+  return (
+    <span className="vtx-gauge" aria-hidden="true" hidden>
+      {[0, 1, 2].map((i) => (
+        <span key={i} className="vtx-gauge-segment" />
+      ))}
+    </span>
+  );
+}
+
+/**
+ * The ground on the what-if sheet: a hairline square on the floor under the drone, drawn in
+ * perspective like a datum plane, where it comes to rest after a fall. `ground` is how far below
+ * hover the drone rests (metres, < 0). The square fits inside the framed sphere.
+ */
+export function GroundLine({ ground }: { ground: number }) {
+  const fit = groundFit(DRONE_RADIUS, ground, DRONE_BOTTOM);
+  const y = DRONE_CENTRE[1] + fit.lineY;
+  const half = fit.lineHalf / Math.SQRT2;
+  return (
+    <Line
+      points={[
+        [-half, y, -half],
+        [half, y, -half],
+        [half, y, half],
+        [-half, y, half],
+        [-half, y, -half],
+      ]}
+      color={COLOR.ruleStrong}
+      lineWidth={1}
+    />
   );
 }

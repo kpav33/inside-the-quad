@@ -50,4 +50,12 @@ describe('App', () => {
     const link = within(nav).getByRole('link', { name: 'How it works together' });
     expect(link).toHaveAttribute('aria-current', 'page');
   });
+
+  it('marks How it works together current on the what-if sheet', () => {
+    window.history.replaceState(null, '', '/what-if');
+    render(<App />);
+    const nav = screen.getByRole('navigation', { name: 'Sections' });
+    const link = within(nav).getByRole('link', { name: 'How it works together' });
+    expect(link).toHaveAttribute('aria-current', 'page');
+  });
 });

@@ -71,4 +71,25 @@ describe('placeMotorPin', () => {
     expect(mine.top).toBeGreaterThanOrEqual(0);
     expect(mine.right).toBeLessThanOrEqual(field.width);
   });
+
+  it('when nothing is free, takes the spot that covers least', () => {
+    // A field the balloon fills from top to bottom: the left half taken, a thin strip on the right.
+    const narrow = { width: 120, height: 24 };
+    const left = { left: 0, right: 60, top: 0, bottom: 24 };
+    const strip = { left: 60, right: 120, top: 0, bottom: 4 };
+    const [x, y] = placeMotorPin([40, 12], [40, 30], { width: 60, height: 24 }, narrow, [
+      left,
+      strip,
+    ]);
+    const mine = { left: x - 30, right: x + 30, top: y - 12, bottom: y + 12 };
+    const cover = [left, strip].reduce(
+      (sum, r) =>
+        sum +
+        Math.max(0, Math.min(mine.right, r.right) - Math.max(mine.left, r.left)) *
+          Math.max(0, Math.min(mine.bottom, r.bottom) - Math.max(mine.top, r.top)),
+      0,
+    );
+    // The right half covers only the strip (60 × 4); staying put would cover 1,240 px².
+    expect(cover).toBeLessThanOrEqual(240);
+  });
 });

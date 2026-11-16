@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DEMOS, runDemo, stopDemo } from './demos';
+import { NO_FAULTS } from './faults';
 import { CENTRED } from './model';
 import { createFlight } from './store';
 
@@ -62,6 +63,54 @@ describe('createFlight', () => {
     flight.gust();
     expect(wake).not.toHaveBeenCalled();
     expect(flight.sticks.roll).toBe(0);
+  });
+});
+
+describe('faults in the store', () => {
+  it('reads back faults and wakes the drawing', () => {
+    const flight = createFlight();
+    const wake = vi.fn();
+    flight.onWake(wake);
+    expect(flight.faults).toEqual(NO_FAULTS);
+    flight.setFaults({ cells: 4 });
+    expect(flight.faults.cells).toBe(4);
+    expect(wake).toHaveBeenCalledTimes(1);
+  });
+
+  it('acts on the faults as it advances', () => {
+    const flight = createFlight();
+    flight.setFaults({ linkLost: true });
+    for (let i = 0; i < 30; i++) flight.advance(0.05);
+    expect(flight.state.armed).toBe(false);
+  });
+
+  it('resets from anything: level, armed, no faults, a cool VTX, sticks centred', () => {
+    const flight = createFlight();
+    flight.setSticks({ roll: 1, throttle: 0.9 }, 'user');
+    flight.setFaults({ linkLost: true, vtxNoAntenna: true, cells: 4 });
+    for (let i = 0; i < 400; i++) flight.advance(0.1);
+    expect(flight.state.onGround).toBe(true);
+    expect(flight.state.vtxLevel).toBe(3);
+    const wake = vi.fn();
+    flight.onWake(wake);
+    flight.reset();
+    expect(flight.faults).toEqual(NO_FAULTS);
+    expect(flight.sticks).toEqual(CENTRED);
+    expect(flight.state).toMatchObject({
+      attitude: [0, 0, 0, 1],
+      armed: true,
+      onGround: false,
+      vtxLevel: 0,
+      height: 0,
+    });
+    expect(wake).toHaveBeenCalled();
+  });
+
+  it('ignores faults once disposed', () => {
+    const flight = createFlight();
+    flight.dispose();
+    flight.setFaults({ cells: 4 });
+    expect(flight.faults.cells).toBe(6);
   });
 });
 
