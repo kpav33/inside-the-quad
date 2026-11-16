@@ -25,7 +25,7 @@ describe('FlightStatus', () => {
     render(<FlightStatus flight={flight} />);
     act(() => {
       flight.setFaults({ vtxNoAntenna: true });
-      for (let i = 0; i < 320; i++) flight.advance(0.1);
+      for (let i = 0; i < 140; i++) flight.advance(0.1);
     });
     expect(screen.getByText('VTX: Damaged')).toHaveAttribute('data-alert', 'true');
   });

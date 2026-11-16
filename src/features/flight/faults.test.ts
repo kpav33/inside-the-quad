@@ -101,9 +101,9 @@ describe('a VTX without its antenna', () => {
   it('heats through Warm and Hot to Damaged', () => {
     const on = { vtxNoAntenna: true };
     expect(fly(initialFlight(), {}, 1, on).vtxLevel).toBe(1);
-    expect(fly(initialFlight(), {}, 20, on).vtxLevel).toBe(2);
-    expect(fly(initialFlight(), {}, 31, on).vtxLevel).toBe(3);
-    expect(fly(initialFlight(), {}, 31).vtxLevel).toBe(0);
+    expect(fly(initialFlight(), {}, 8, on).vtxLevel).toBe(2);
+    expect(fly(initialFlight(), {}, 13, on).vtxLevel).toBe(3);
+    expect(fly(initialFlight(), {}, 13).vtxLevel).toBe(0);
   });
 });
 

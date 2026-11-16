@@ -20,8 +20,13 @@ export interface MotorPinElement {
 
 /** A balloon's size before it can be measured. */
 const PIN_BOX = { width: 64, height: 24 };
-/** On waking from rest, the first frame's time step is kept short, so the drone never jumps. */
-const MAX_FRAME_S = 1 / 30;
+/**
+ * A frame longer than this is the first after a rest (the canvas draws on demand), not a slow
+ * device: it is stepped as one short frame so the drone never jumps. Slower frames below it are
+ * stepped in real time, so a slow phone still heats the VTX at the sheet's pace.
+ */
+const WAKE_GAP_S = 0.25;
+const WAKE_STEP_S = 1 / 60;
 
 const MOTORS = motorPlacements(REFERENCE_5_INCH);
 const VTX = closedAnchorPoint(REFERENCE_5_INCH, 'vtx');
@@ -59,7 +64,7 @@ export function FlightRig({
   }, [flight, invalidate]);
 
   useFrame(({ camera, size }, delta) => {
-    flight.advance(Math.min(delta, MAX_FRAME_S));
+    flight.advance(delta > WAKE_GAP_S ? WAKE_STEP_S : delta);
     const { state } = flight;
     attitude.set(...state.attitude);
     const group = pose.current;

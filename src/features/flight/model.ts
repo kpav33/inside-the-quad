@@ -53,7 +53,7 @@ export const FAILSAFE_GUARD_S = 1;
 /** The height (scene metres, from where the drone hovers) it rests at after a fall. */
 export const GROUND_M = -0.12;
 /** About how long a VTX without antenna takes to be damaged on this sheet (illustrative). */
-export const VTX_DAMAGE_S = 30;
+export const VTX_DAMAGE_S = 12;
 const VTX_HOT = 0.6;
 /** A slowed-down fall, like the slowed-down turns, so the drop can be watched (m/s², m/s). */
 const GRAVITY = 2;
