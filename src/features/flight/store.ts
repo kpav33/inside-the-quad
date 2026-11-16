@@ -1,3 +1,4 @@
+import { type Faults, NO_FAULTS } from './faults';
 import { IDLE } from './mixer';
 import {
   CENTRED,
@@ -26,6 +27,11 @@ export interface Flight {
   setSticks(sticks: Partial<StickInput>, by: StickSource): void;
   /** Puts back to centre (throttle to hover) every stick a demo moved last, leaving the user's. */
   releaseDemo(): void;
+  /** The mistakes being acted out (the what-if sheet); all off on the moves sheet. */
+  readonly faults: Faults;
+  setFaults(change: Partial<Faults>): void;
+  /** Starts over: level, at hover, armed, no faults, sticks centred, any demo stopped. */
+  reset(): void;
   gust(): void;
   level(): void;
   /** Called by the drawing each frame. */
@@ -68,8 +74,9 @@ export function createFlight(): Flight {
   let state = initialFlight();
   let sticks: StickInput = CENTRED;
   let gusts = 0;
+  let faults: Faults = NO_FAULTS;
   /** Who moved each stick last, so a stopped demo lets go of its sticks and only its sticks. */
-  const movedBy: Partial<Record<keyof StickInput, StickSource>> = {};
+  let movedBy: Partial<Record<keyof StickInput, StickSource>> = {};
   let disposed = false;
   const wake = listeners();
   const stepped = listeners();
@@ -118,13 +125,31 @@ export function createFlight(): Flight {
       state = level(state);
       wake.call();
     },
+    get faults() {
+      return faults;
+    },
+    setFaults(change) {
+      if (disposed) return;
+      faults = { ...faults, ...change };
+      wake.call();
+    },
+    reset() {
+      if (disposed) return;
+      state = initialFlight();
+      faults = NO_FAULTS;
+      sticks = CENTRED;
+      movedBy = {};
+      // As if the user took the sticks: a running demo stops.
+      user.call();
+      wake.call();
+    },
     advance(dtS) {
       if (disposed) return;
-      state = stepFlight(state, sticks, dtS);
+      state = stepFlight(state, sticks, dtS, faults);
       stepped.call();
     },
     settled() {
-      return isSettled(state, sticks);
+      return isSettled(state, sticks, faults);
     },
     onWake: wake.add,
     subscribe: stepped.add,
