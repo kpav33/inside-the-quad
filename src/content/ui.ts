@@ -1,6 +1,7 @@
 import type { PartId } from '@/shared/domain/parts';
 import { MOVES_SHEET } from '@/shared/domain/moves';
 import { isPathId, type PathId } from '@/shared/domain/paths';
+import { WHAT_IF_SHEET } from '@/shared/domain/what-if';
 import type { NumberedSheet } from '@/shared/domain/sheets';
 
 /** Part names as shown in the parts list and lesson titles. */
@@ -136,6 +137,10 @@ export const UI = {
     stepAnnounce: (stop: number, total: number, name: string, text: string) =>
       `Stop ${stop} of ${total}: ${name}. ${text}`,
   },
+  whatIf: {
+    /** The sheet's name, as its heading and wherever another sheet refers to it. */
+    title: 'What if',
+  },
   moves: {
     /** The sheet's name, as its heading and wherever another sheet refers to it. */
     title: 'How a quad moves',
@@ -211,5 +216,6 @@ export const UI = {
 /** A numbered sheet's name: the part's label, the path's title, or the moves sheet's title. */
 export function sheetName(sheet: NumberedSheet): string {
   if (sheet === MOVES_SHEET) return UI.moves.title;
+  if (sheet === WHAT_IF_SHEET) return UI.whatIf.title;
   return isPathId(sheet) ? UI.paths.title[sheet] : PART_LABELS[sheet];
 }

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { PART_IDS } from './parts';
 import { MOVES_SHEET } from './moves';
+import { WHAT_IF_SHEET } from './what-if';
 import { PATH_IDS } from './paths';
 import {
   chapterCount,
@@ -14,7 +15,7 @@ import {
 
 describe('sheets', () => {
   it('puts the intro before the parts, in teaching order', () => {
-    expect(SHEET_IDS).toEqual(['intro', ...PART_IDS, ...PATH_IDS, MOVES_SHEET]);
+    expect(SHEET_IDS).toEqual(['intro', ...PART_IDS, ...PATH_IDS, MOVES_SHEET, WHAT_IF_SHEET]);
     expect(new Set(SHEET_IDS).size).toBe(SHEET_IDS.length);
     expect((PART_IDS as readonly string[]).includes('intro')).toBe(false);
   });
@@ -33,11 +34,12 @@ describe('sheets', () => {
 
   it('runs on from the video path into how a quad moves, which ends the set', () => {
     expect(sheetNeighbours('video')).toEqual({ previous: 'power', next: 'moves' });
-    expect(sheetNeighbours('moves')).toEqual({ previous: 'video', next: null });
+    expect(sheetNeighbours('moves')).toEqual({ previous: 'video', next: 'what-if' });
+    expect(sheetNeighbours('what-if')).toEqual({ previous: 'moves', next: null });
   });
 
   it('reads the parts, then the paths and how a quad moves', () => {
-    expect(NUMBERED_SHEETS).toHaveLength(15);
+    expect(NUMBERED_SHEETS).toHaveLength(16);
   });
 
   it('splits the set into two chapters, each numbered from 1', () => {
@@ -48,9 +50,10 @@ describe('sheets', () => {
     expect(sheetNumber('control')).toBe(1);
     expect(sheetNumber('video')).toBe(3);
     expect(chapterCount('extras')).toBe(11);
-    expect(chapterCount('power')).toBe(4);
+    expect(chapterCount('power')).toBe(5);
+    expect(sheetNumber('what-if')).toBe(5);
     expect(chapterOf('moves')).toBe('paths');
     expect(sheetNumber('moves')).toBe(4);
-    expect(chapterCount('moves')).toBe(4);
+    expect(chapterCount('moves')).toBe(5);
   });
 });

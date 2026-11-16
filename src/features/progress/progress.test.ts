@@ -22,8 +22,8 @@ describe('parseReadSheets', () => {
     expect(parseReadSheets('["frame","power","nope",3]')).toEqual(set('frame', 'power'));
   });
 
-  it('keeps how a quad moves', () => {
-    expect(parseReadSheets('["moves","fc"]')).toEqual(set('moves', 'fc'));
+  it('keeps how a quad moves and what if', () => {
+    expect(parseReadSheets('["moves","fc","what-if"]')).toEqual(set('moves', 'fc', 'what-if'));
   });
 
   it('reads progress stored before the paths existed', () => {

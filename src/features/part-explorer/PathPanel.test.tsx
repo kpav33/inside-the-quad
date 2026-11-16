@@ -29,7 +29,7 @@ describe('PathPanel', () => {
     expect(screen.getByRole('heading', { level: 2, name: 'Control path' })).toBeInTheDocument();
     const block = screen.getByRole('group', { name: 'Title block' });
     expect(block).toHaveTextContent('ChapterHow it works together');
-    expect(block).toHaveTextContent('Sheet1 of 4');
+    expect(block).toHaveTextContent('Sheet1 of 5');
     expect(block).toHaveTextContent('FromYour radio');
     expect(block).toHaveTextContent('ToPropellers');
     expect(block).toHaveTextContent('CarriesStick commands');
@@ -137,6 +137,7 @@ describe('PathPanel', () => {
       'Power',
       'Video',
       'How a quad moves',
+      'What if',
     ]);
     expect(within(nav).getByRole('link', { name: 'How a quad moves' })).toHaveAttribute(
       'href',

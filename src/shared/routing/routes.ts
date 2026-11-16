@@ -1,5 +1,6 @@
 import { isPartId, type PartId } from '@/shared/domain/parts';
 import { MOVES_SHEET } from '@/shared/domain/moves';
+import { WHAT_IF_SHEET } from '@/shared/domain/what-if';
 import { isPathId, type PathId } from '@/shared/domain/paths';
 import type { SheetId, SteppedSheet } from '@/shared/domain/sheets';
 
@@ -8,7 +9,8 @@ export const INTRO_PATH = '/intro';
 
 const PART_PREFIX = '/parts/';
 const PATH_PREFIX = '/paths/';
-const MOVES_PATH = `/${MOVES_SHEET}`;
+/** The flight sheets, each at its own top-level address with an optional step. */
+const FLIGHT_SHEETS = [MOVES_SHEET, WHAT_IF_SHEET] as const;
 /** A cap for a step read from an address; far beyond any path's stops. */
 const MAX_STEP = 999;
 
@@ -22,6 +24,7 @@ export type Route =
   | { kind: 'part'; part: PartId }
   | { kind: 'path'; path: PathId; step: number }
   | { kind: 'moves'; step: number }
+  | { kind: 'what-if'; step: number }
   | { kind: 'unknown'; slug: string };
 
 export function partPath(part: PartId): string {
@@ -30,7 +33,7 @@ export function partPath(part: PartId): string {
 
 /** A stepped sheet's address at a step (from 1); step 1 is the sheet's own address. */
 export function steppedPath(sheet: SteppedSheet, step = 1): string {
-  const base = sheet === MOVES_SHEET ? MOVES_PATH : `${PATH_PREFIX}${sheet}`;
+  const base = isPathId(sheet) ? `${PATH_PREFIX}${sheet}` : `/${sheet}`;
   return step > 1 ? `${base}/${String(step)}` : base;
 }
 
@@ -43,7 +46,9 @@ export function pathSheetPath(path: PathId, step = 1): string {
 export function pagePath(page: Page, step?: number): string {
   if (page === null) return OVERVIEW_PATH;
   if (page === 'intro') return INTRO_PATH;
-  if (page === MOVES_SHEET || isPathId(page)) return steppedPath(page, step);
+  if (page === MOVES_SHEET || page === WHAT_IF_SHEET || isPathId(page)) {
+    return steppedPath(page, step);
+  }
   return partPath(page);
 }
 
@@ -81,12 +86,13 @@ export function parseRoute(pathname: string): Route {
       ? { kind: 'path', path: id, step: stepNumber }
       : { kind: 'unknown', slug };
   }
-  if (pathname === MOVES_PATH || pathname.startsWith(`${MOVES_PATH}/`)) {
+  for (const sheet of FLIGHT_SHEETS) {
+    if (pathname !== `/${sheet}` && !pathname.startsWith(`/${sheet}/`)) continue;
     const slug = decode(pathname.slice(1).replace(/\/$/, ''));
     const [, step, ...rest] = slug.split('/');
     const stepNumber = readStep(step);
     return rest.length === 0 && !Number.isNaN(stepNumber)
-      ? { kind: 'moves', step: stepNumber }
+      ? { kind: sheet, step: stepNumber }
       : { kind: 'unknown', slug };
   }
   return { kind: 'unknown', slug: decode(pathname) };

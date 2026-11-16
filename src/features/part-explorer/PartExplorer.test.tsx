@@ -543,7 +543,7 @@ describe('PartExplorer', () => {
     window.localStorage.setItem(READ_KEY, '["frame"]');
     await renderExplorer();
     expect(screen.getByRole('link', { name: 'Continue with sheet 2: Motors' })).toBeInTheDocument();
-    expect(screen.getByText('Parts 1 of 11 · How it works 0 of 4')).toBeInTheDocument();
+    expect(screen.getByText('Parts 1 of 11 · How it works 0 of 5')).toBeInTheDocument();
   });
 
   it('continues into the control path once every part is read', async () => {
@@ -554,7 +554,7 @@ describe('PartExplorer', () => {
         name: 'Continue with How it works together, sheet 1: Control path',
       }),
     ).toHaveAttribute('href', '/paths/control');
-    expect(screen.getByText('Parts 11 of 11 · How it works 0 of 4')).toBeInTheDocument();
+    expect(screen.getByText('Parts 11 of 11 · How it works 0 of 5')).toBeInTheDocument();
   });
 
   it('says when every sheet is read and offers to start again', async () => {

@@ -11,6 +11,7 @@ import type { DroneViewerProps } from '@/features/drone-viewer/DroneViewer';
 import { useIntroRead, useReadParts } from '@/features/progress';
 import { isInsidePart, isPartId, type PartId } from '@/shared/domain/parts';
 import { MOVES_SHEET } from '@/shared/domain/moves';
+import { WHAT_IF_SHEET } from '@/shared/domain/what-if';
 import { isPathId, type PathId } from '@/shared/domain/paths';
 import type { SheetId } from '@/shared/domain/sheets';
 import { type Page, usePartRoute } from '@/shared/routing';
@@ -22,6 +23,7 @@ import {
   INTRO_TITLE_ID,
   LESSON_PANEL_ID,
   MOVES_TITLE_ID,
+  WHAT_IF_TITLE_ID,
   lessonTitleId,
   OVERVIEW_FOCUS_ID,
   partButtonId,
@@ -105,9 +107,11 @@ const sheetTitleId = (sheet: SheetId) =>
     ? INTRO_TITLE_ID
     : sheet === MOVES_SHEET
       ? MOVES_TITLE_ID
-      : isPathId(sheet)
-        ? pathTitleId(sheet)
-        : lessonTitleId(sheet);
+      : sheet === WHAT_IF_SHEET
+        ? WHAT_IF_TITLE_ID
+        : isPathId(sheet)
+          ? pathTitleId(sheet)
+          : lessonTitleId(sheet);
 
 /**
  * Lets the user pick a drone part in the 3D view or the part list, and shows its lesson.

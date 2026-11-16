@@ -1,22 +1,23 @@
 import { MOVES_SHEET, type MovesSheet } from './moves';
 import { PART_IDS, type PartId } from './parts';
 import { isPathId, PATH_IDS, type PathId } from './paths';
+import { WHAT_IF_SHEET, type WhatIfSheet } from './what-if';
 
 /** A sheet of the drawing set: the intro, one per part, one per path, then how a quad moves. */
-export type SheetId = 'intro' | PartId | PathId | MovesSheet;
+export type SheetId = 'intro' | PartId | PathId | MovesSheet | WhatIfSheet;
 
 /** A sheet with a number: every sheet but the intro. */
-export type NumberedSheet = PartId | PathId | MovesSheet;
+export type NumberedSheet = PartId | PathId | MovesSheet | WhatIfSheet;
 
-/** A sheet walked through in steps, the step kept in its address: a path, or how a quad moves. */
-export type SteppedSheet = PathId | MovesSheet;
+/** A sheet walked through in steps, the step kept in its address: a path, moves or what if. */
+export type SteppedSheet = PathId | MovesSheet | WhatIfSheet;
 
 export function isSteppedSheet(value: unknown): value is SteppedSheet {
-  return isPathId(value) || value === MOVES_SHEET;
+  return isPathId(value) || value === MOVES_SHEET || value === WHAT_IF_SHEET;
 }
 
-/** The sheets of "How it works together": the three paths, then how a quad moves. */
-const TOGETHER_SHEETS: readonly NumberedSheet[] = [...PATH_IDS, MOVES_SHEET];
+/** The sheets of "How it works together": the three paths, how a quad moves, then what if. */
+const TOGETHER_SHEETS: readonly NumberedSheet[] = [...PATH_IDS, MOVES_SHEET, WHAT_IF_SHEET];
 
 /** The numbered sheets in reading order: the parts, then how it works together. */
 export const NUMBERED_SHEETS: readonly NumberedSheet[] = [...PART_IDS, ...TOGETHER_SHEETS];
