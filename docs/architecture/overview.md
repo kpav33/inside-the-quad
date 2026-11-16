@@ -75,6 +75,15 @@ nginx/              Production server config (copied into the Docker image)
   (`drone-viewer/PathPins.tsx`). The step is in the address (`/paths/<id>/<n>`, replaced, not pushed);
   the explorer clamps it and `usePathStep` adds Play. `shared/domain/sheets.ts` splits the set into
   two chapters (parts, paths), each numbered from 1.
+- What if (05c): sheet 5 of the second chapter (`/what-if/<n>`, `shared/domain/what-if.ts`). The
+  mistakes are `Faults` in `features/flight` (`faults.ts`), acted out by the same model: a lost
+  link swaps in safe stick values, then disarms; a wrong prop on motor 2 pushes its corner down
+  while the controller's turning effort is capped by what the motors can do (`AUTHORITY`, × cells
+  / 6 on 4S), so it runs out of motor and the drone flips; a disarmed or flipped drone falls to
+  `GROUND_M` and rests; the VTX heat climbs on the sheet's clock. The store carries the faults and
+  `reset()`. The viewer takes the ground depth as a prop (3D code still imports only types from
+  `flight`), draws the ground square and the VTX gauge, and marks the faulty motor; the explorer
+  adds `FlightStatus` and `WhatIfPanel`. `useFlightSheet` gives each flight sheet its own drone.
 - How a quad moves (05b): sheet 4 of the second chapter (`/moves/<n>`, `shared/domain/moves.ts`).
   `features/flight` is plain TypeScript, so it stays out of the lazy 3D chunk: `mixer.ts` turns
   throttle and per-axis effort into four motor speeds for this drone's Quad X, props-in layout;

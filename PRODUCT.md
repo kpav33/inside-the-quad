@@ -60,6 +60,9 @@ it work, what do the numbers mean, what is it connected to.
   current passes, on the 3D drawing with a redline leader from part to part, step by step or played
   through. The step is in the address, so a lesson opened from a stop leads back to it; clicking
   the drawing picks a stop. The masthead links the chapter as "How it works together".
+- Sheet 5 of that chapter, "What if" (`/what-if`): four common mistakes acted out on the drawing
+  with live sticks (a lost link and failsafe, a prop on backwards, a 4S pack on this 6S drone, a
+  VTX without its antenna), each saying what happens, why, and how to avoid it; Try it, Reset.
 - Sheet 4 of that chapter, "How a quad moves" (`/moves`): five guided steps (throttle, roll,
   pitch, yaw, gyro loop) with two virtual sticks like a mode 2 radio, each motor's speed on the
   drawing, and the drone turning in place like an acro quad (slowed down; never flying around).
