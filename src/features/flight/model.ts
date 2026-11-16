@@ -1,3 +1,4 @@
+import { type Faults, NO_FAULTS } from './faults';
 import { type Axes, mixMotors, type MotorSpeeds } from './mixer';
 
 export type { Axes, MotorSpeeds } from './mixer';
@@ -33,7 +34,32 @@ export interface FlightState {
   /** How far throttle has lifted (+) or dropped (−) the drone, scene metres. */
   height: number;
   motors: MotorSpeeds;
+  /** Armed: the motors run. Failsafe and a crash disarm it; only a reset arms it again. */
+  armed: boolean;
+  /** Seconds since the link was lost; 0 while it is fine. */
+  linkLostS: number;
+  /** How fast the drone is falling, m/s down; 0 unless it is falling. */
+  fallSpeed: number;
+  /** Down on the ground line after a fall. */
+  onGround: boolean;
+  /** How hot a VTX without antenna has run: 0 cool, 1 and over damaged. */
+  vtxHeat: number;
+  /** The VTX heat in words: none, Warm, Hot, Damaged. */
+  vtxLevel: 0 | 1 | 2 | 3;
 }
+
+/** How long failsafe uses safe stick values before it disarms (Betaflight's guard time). */
+export const FAILSAFE_GUARD_S = 1;
+/** The height (scene metres, from where the drone hovers) it rests at after a fall. */
+export const GROUND_M = -0.2;
+/** About how long a VTX without antenna takes to be damaged on this sheet (illustrative). */
+export const VTX_DAMAGE_S = 30;
+const VTX_HOT = 0.6;
+/** A slowed-down fall, like the slowed-down turns, so the drop can be watched (m/s², m/s). */
+const GRAVITY = 2;
+const MAX_FALL_SPEED = 1;
+/** How hard the wrong prop's corner pushes the body over, per unit of motor 2's speed. */
+const PROP_TORQUE = 15;
 
 const MAX_RATE = (MAX_RATE_DPS * Math.PI) / 180;
 const AXES = ['roll', 'pitch', 'yaw'] as const;
@@ -48,6 +74,8 @@ const FEED_FORWARD = DRAG;
 /** Turning effort (rad/s²) to motor-speed difference. */
 const MIX_SCALE = 0.02;
 const MAX_MIX = 0.25;
+/** The most turning effort the motors can give on 6S: what the mix can still add or take away. */
+const AUTHORITY = MAX_MIX / MIX_SCALE;
 const HELD_MAX = Math.PI;
 
 const SUBSTEP_S = 1 / 240;
@@ -109,36 +137,109 @@ export function initialFlight(): FlightState {
     held: ZERO,
     height: 0,
     motors: mixMotors(HOVER_THROTTLE, ZERO),
+    armed: true,
+    linkLostS: 0,
+    fallSpeed: 0,
+    onGround: false,
+    vtxHeat: 0,
+    vtxLevel: 0,
   };
 }
 
-function substep(state: FlightState, sticks: StickInput, dt: number): FlightState {
+const STOPPED: MotorSpeeds = [0, 0, 0, 0];
+
+/** The sticks the flight controller acts on: during failsafe, safe values instead of the radio's. */
+function effectiveSticks(sticks: StickInput, faults: Faults): StickInput {
+  return faults.linkLost ? { ...CENTRED, throttle: 0 } : sticks;
+}
+
+function vtxLevelOf(heat: number): FlightState['vtxLevel'] {
+  if (heat >= 1) return 3;
+  if (heat >= VTX_HOT) return 2;
+  return heat > 0 ? 1 : 0;
+}
+
+function substep(state: FlightState, radio: StickInput, dt: number, faults: Faults): FlightState {
+  const vtxHeat = faults.vtxNoAntenna ? state.vtxHeat + dt / VTX_DAMAGE_S : state.vtxHeat;
+  const linkLostS = faults.linkLost ? state.linkLostS + dt : 0;
+  const heat = { vtxHeat, vtxLevel: vtxLevelOf(vtxHeat), linkLostS };
+  if (state.onGround) return { ...state, ...heat };
+
+  // Failsafe: after the guard time the drone is disarmed for good (until a reset).
+  const armed = state.armed && !(faults.linkLost && linkLostS >= FAILSAFE_GUARD_S);
+  const sticks = effectiveSticks(radio, faults);
+  const share = faults.cells / 6;
+  const authority = AUTHORITY * share;
   const rate = { ...state.rate };
   const wanted = { ...ZERO };
   const held = { ...state.held };
   const effort = { ...ZERO };
   for (const axis of AXES) {
+    if (!armed) {
+      held[axis] = 0;
+      continue;
+    }
     const stick = clamp(sticks[axis], -1, 1);
     wanted[axis] = stick * MAX_RATE;
     const error = wanted[axis] - rate[axis];
     // The angle to hold is wherever the drone is when the stick comes back to centre; while the
     // stick is off centre nothing is held (Betaflight's "I term relax").
     held[axis] = stick === 0 ? clamp(held[axis] + error * dt, -HELD_MAX, HELD_MAX) : 0;
-    effort[axis] = KP * error + KI * held[axis] + FEED_FORWARD * wanted[axis];
-    rate[axis] += (effort[axis] - DRAG * rate[axis]) * dt;
+    // The motors can only do so much: on a smaller battery, less.
+    effort[axis] = clamp(
+      KP * error + KI * held[axis] + FEED_FORWARD * wanted[axis],
+      -authority,
+      authority,
+    );
+  }
+  const motors: MotorSpeeds = armed
+    ? (mixMotors(sticks.throttle, {
+        roll: effort.roll * MIX_SCALE,
+        pitch: effort.pitch * MIX_SCALE,
+        yaw: effort.yaw * MIX_SCALE,
+      }).map((speed) => speed * share) as unknown as MotorSpeeds)
+    : STOPPED;
+  // A prop made for the other direction pushes its corner (front right) down instead of up: the
+  // body rolls right and pitches forward, harder the faster motor 2 spins.
+  const push = faults.wrongProp ? 2 * PROP_TORQUE * motors[1] : 0;
+  const torque = { roll: effort.roll + push, pitch: effort.pitch + push, yaw: effort.yaw };
+  for (const axis of AXES) rate[axis] += (torque[axis] - DRAG * rate[axis]) * dt;
+  const attitude = normalise(multiply(state.attitude, turn(rate, dt)));
+
+  // Disarmed, or tipped over by the wrong prop (its thrust no longer holds it up), the drone falls.
+  // A healthy drone rolled upside down on purpose doesn't: this sheet never flies it around.
+  // Once falling, it keeps falling until it lands: a tumbling drone doesn't catch itself.
+  const tipped = faults.wrongProp && rotatePoint(attitude, [0, 1, 0])[1] < 0;
+  if (!armed || tipped || state.fallSpeed > 0) {
+    const fallSpeed = Math.min(state.fallSpeed + GRAVITY * dt, MAX_FALL_SPEED);
+    const height = Math.max(GROUND_M, state.height - fallSpeed * dt);
+    const onGround = height <= GROUND_M;
+    return {
+      ...state,
+      ...heat,
+      attitude,
+      rate: onGround ? ZERO : rate,
+      wanted,
+      held,
+      height,
+      motors: onGround ? STOPPED : motors,
+      armed: armed && !onGround,
+      fallSpeed: onGround ? 0 : fallSpeed,
+      onGround,
+    };
   }
   const target = (clamp(sticks.throttle, 0, 1) - HOVER_THROTTLE) * 2 * RISE_M;
   return {
-    attitude: normalise(multiply(state.attitude, turn(rate, dt))),
+    ...state,
+    ...heat,
+    attitude,
     rate,
     wanted,
     held,
     height: state.height + (target - state.height) * Math.min(1, RISE_EASE * dt),
-    motors: mixMotors(sticks.throttle, {
-      roll: clamp(effort.roll * MIX_SCALE, -MAX_MIX, MAX_MIX),
-      pitch: clamp(effort.pitch * MIX_SCALE, -MAX_MIX, MAX_MIX),
-      yaw: clamp(effort.yaw * MIX_SCALE, -MAX_MIX, MAX_MIX),
-    }),
+    motors,
+    armed,
+    fallSpeed: 0,
   };
 }
 
@@ -146,11 +247,16 @@ function substep(state: FlightState, sticks: StickInput, dt: number): FlightStat
  * The drone a time step later. A long step (a hidden tab, a slow phone) is cut to 0.1 s and run
  * in small fixed substeps, so the model stays stable at any frame rate.
  */
-export function stepFlight(state: FlightState, sticks: StickInput, dtS: number): FlightState {
+export function stepFlight(
+  state: FlightState,
+  sticks: StickInput,
+  dtS: number,
+  faults: Faults = NO_FAULTS,
+): FlightState {
   const dt = clamp(dtS, 0, MAX_STEP_S);
   const steps = Math.ceil(dt / SUBSTEP_S);
   let next = state;
-  for (let i = 0; i < steps; i++) next = substep(next, sticks, dt / steps);
+  for (let i = 0; i < steps; i++) next = substep(next, sticks, dt / steps, faults);
   return next;
 }
 
@@ -183,8 +289,19 @@ const STILL_RATE = (0.2 * Math.PI) / 180;
 const STILL_HELD = 1e-3;
 const STILL_HEIGHT = 1e-4;
 
-/** Nothing left to move: sticks centred, rotation stopped, the held angle reached, height eased. */
-export function isSettled(state: FlightState, sticks: StickInput): boolean {
+/**
+ * Nothing left to move: on the ground, or sticks centred, rotation stopped, the held angle reached,
+ * height eased; and no VTX still heating.
+ */
+export function isSettled(
+  state: FlightState,
+  radio: StickInput,
+  faults: Faults = NO_FAULTS,
+): boolean {
+  if (faults.vtxNoAntenna && state.vtxLevel < 3) return false;
+  if (state.onGround) return true;
+  if (!state.armed || state.fallSpeed > 0) return false;
+  const sticks = effectiveSticks(radio, faults);
   const target = (clamp(sticks.throttle, 0, 1) - HOVER_THROTTLE) * 2 * RISE_M;
   return (
     AXES.every(
