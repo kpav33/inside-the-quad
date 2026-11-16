@@ -57,27 +57,40 @@ export function placeMotorPin(
     clamp(motor[0] + (dx / length) * OFFSET_PX, halfW, field.width - halfW),
     clamp(motor[1] + (dy / length) * OFFSET_PX, halfH, field.height - halfH),
   ];
-  const free = ([x, y]: ScreenPoint) =>
-    x - halfW >= 0 &&
-    y - halfH >= 0 &&
-    x + halfW <= field.width &&
-    y + halfH <= field.height &&
-    !avoid.some(
-      (rect) =>
-        x - halfW < rect.right &&
-        rect.left < x + halfW &&
-        y - halfH < rect.bottom &&
-        rect.top < y + halfH,
+  const inField = ([x, y]: ScreenPoint) =>
+    x - halfW >= 0 && y - halfH >= 0 && x + halfW <= field.width && y + halfH <= field.height;
+  /** How much of the boxes a balloon here would cover, in px². */
+  const covered = ([x, y]: ScreenPoint) =>
+    avoid.reduce(
+      (sum, rect) =>
+        sum +
+        Math.max(0, Math.min(x + halfW, rect.right) - Math.max(x - halfW, rect.left)) *
+          Math.max(0, Math.min(y + halfH, rect.bottom) - Math.max(y - halfH, rect.top)),
+      0,
     );
-  if (free(base)) return base;
-  // Search outward in rings, nearest first: up, down, the sides, then the corners.
+  // Search outward in rings, nearest first: up, down, the sides, then the corners. The first spot
+  // that covers nothing wins; in a drawing too small for that, the one that covers least.
+  let best = base;
+  let least = covered(base);
+  if (least === 0) return base;
   const stepX = box.width + GAP_PX;
   const stepY = box.height + GAP_PX;
   for (let ring = 1; ring <= RINGS; ring++) {
     for (const [ux, uy] of DIRECTIONS) {
-      const spot: ScreenPoint = [base[0] + ux * stepX * ring, base[1] + uy * stepY * ring];
-      if (free(spot)) return spot;
+      for (const share of [0.5, 1]) {
+        const spot: ScreenPoint = [
+          clamp(base[0] + ux * stepX * ring * share, halfW, field.width - halfW),
+          clamp(base[1] + uy * stepY * ring * share, halfH, field.height - halfH),
+        ];
+        if (!inField(spot)) continue;
+        const cover = covered(spot);
+        if (cover === 0) return spot;
+        if (cover < least) {
+          best = spot;
+          least = cover;
+        }
+      }
     }
   }
-  return base;
+  return best;
 }

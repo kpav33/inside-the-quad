@@ -133,3 +133,46 @@ test('leaving mid-fall and coming back with Back raises no errors', async ({ pag
   await expect(status(page)).toHaveText('Link OK · 6S');
   expect(errors).toEqual([]);
 });
+
+test('at 320 × 667 with 200 % text the drawing’s labels don’t cover one another', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 667 });
+  await page.goto('/what-if/4');
+  await page.evaluate(() => (document.documentElement.style.fontSize = '200%'));
+  await page.getByRole('button', { name: 'Try it' }).click();
+  await expect(page.locator('.vtx-gauge')).toBeVisible();
+  await page.waitForTimeout(500);
+  const boxes = await page.evaluate(() =>
+    [...document.querySelectorAll('.motor-pin, .flight-status, .vtx-gauge')].map((el) => {
+      const r = el.getBoundingClientRect();
+      return { name: el.className, left: r.left, right: r.right, top: r.top, bottom: r.bottom };
+    }),
+  );
+  const overlaps: string[] = [];
+  boxes.forEach((a, i) => {
+    for (const b of boxes.slice(i + 1)) {
+      const x = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+      const y = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+      if (x > 1 && y > 1) overlaps.push(`${a.name} × ${b.name}`);
+    }
+  });
+  expect(overlaps).toEqual([]);
+});
+
+test('the VTX is marked as the current mistake from the moment it is tried', async ({ page }) => {
+  await page.goto('/what-if/4');
+  await page.getByRole('button', { name: 'Try it' }).click();
+  const gauge = page.locator('.vtx-gauge');
+  await expect(gauge).toHaveAttribute('data-level', '1');
+  const [border, accent] = await gauge.evaluate((el) => [
+    getComputedStyle(el).borderTopColor,
+    getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim(),
+  ]);
+  const hex = (rgb: string) =>
+    `#${(rgb.match(/\d+/g) ?? [])
+      .slice(0, 3)
+      .map((n) => Number(n).toString(16).padStart(2, '0'))
+      .join('')}`;
+  expect(hex(border)).toBe(accent.toLowerCase());
+});
