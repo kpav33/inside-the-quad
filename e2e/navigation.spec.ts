@@ -51,7 +51,7 @@ test.describe('part addresses', () => {
 
 test.describe('sheets and progress', () => {
   test('Next walks every sheet in order and ends on the overview', async ({ page }) => {
-    // Sixteen sheets, each drawing the drone: under a full parallel run this needs more time.
+    // Nineteen sheets, most drawing the drone: under a full parallel run this needs more time.
     test.slow();
     await page.goto('/');
     await page.getByRole('link', { name: 'Start with sheet 1: Frame' }).click();
@@ -62,9 +62,12 @@ test.describe('sheets and progress', () => {
       'Video path',
       'How a quad moves',
       'What if',
+      'Radio',
+      'Goggles',
+      'Charger',
     ]) {
       await expect(lessonHeading(page, name)).toBeFocused();
-      await page.getByRole('link', { name: /^(Next|End of the parts)/ }).click();
+      await page.getByRole('link', { name: /^(Next|End of )/ }).click();
     }
     await expect(page).toHaveURL(/\/$/);
     await expect(page.locator('#overview-start')).toBeFocused();
@@ -87,7 +90,7 @@ test.describe('sheets and progress', () => {
     await page.getByRole('button', { name: 'Mark as read' }).click();
     await page.getByRole('button', { name: 'Close lesson' }).click();
     await expect(page.getByRole('link', { name: 'Continue with sheet 2: Motors' })).toBeVisible();
-    await expect(page.getByText('Parts 1 of 11 · How it works 0 of 5')).toBeVisible();
+    await expect(page.getByText('Parts 1 of 11 · How it works 0 of 5 · Gear 0 of 3')).toBeVisible();
   });
 });
 
