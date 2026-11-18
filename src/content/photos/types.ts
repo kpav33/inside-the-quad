@@ -16,8 +16,8 @@ export interface PhotoCredit {
   licence: Licence;
   /** The licence's deed; public domain has none. */
   licenceUrl?: string;
-  /** The photo's page on Wikimedia Commons. */
-  sourceUrl: string;
+  /** The photo's page on Wikimedia Commons; left out for the app's own photos. */
+  sourceUrl?: string;
   /** Cropped photos are adaptations, shared under the same licence. */
   cropped: boolean;
 }

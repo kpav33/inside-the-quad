@@ -99,14 +99,13 @@
     "height": 937
   },
   "radio": {
-    "title": "TBS Tango II",
-    "author": "SokilFPV",
-    "licence": "CC BY 4.0",
-    "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:TBS_Tango_II.jpg",
+    "title": "RadioMaster Pocket",
+    "author": "Inside the Quad",
+    "licence": "CC0",
+    "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
     "cropped": true,
     "width": 1280,
-    "height": 1474
+    "height": 1716
   },
   "receiver": {
     "title": "TBS Crossfire Nano receiver (XF nano)",

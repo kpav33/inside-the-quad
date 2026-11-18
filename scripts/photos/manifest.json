@@ -112,15 +112,16 @@
   },
   {
     "part": "radio",
-    "title": "File:TBS Tango II.jpg",
-    "licence": "CC BY 4.0",
+    "own": "radiomaster-pocket.jpg",
+    "title": "RadioMaster Pocket",
+    "licence": "CC0",
     "crop": {
-      "left": 940,
-      "top": 60,
-      "width": 2640,
-      "height": 3040
+      "left": 170,
+      "top": 300,
+      "width": 2700,
+      "height": 3620
     },
-    "note": "The radio alone: its T antenna, screen and both gimbals, without the shop behind it."
+    "note": "The app's own photo: a RadioMaster Pocket, an entry-level EdgeTX radio. Metadata stripped; cropped to the radio."
   },
   {
     "part": "goggles",

@@ -84,7 +84,8 @@ nginx/              Production server config (copied into the Docker image)
   imports three.js. The explorer renders `GearDrawing` in the drawing field instead of mounting the
   lazy 3D viewer (its chunk is still preloaded with the app, as on every sheet), and `GearPanel` in the sheet column; `useGearSheet` keeps the switches and the
   highlighted part, starting afresh when a gear sheet opens. Gear photos use the 03c pipeline
-  (`scripts/photos/manifest.json`, keyed by part or gear id).
+  (`scripts/photos/manifest.json`, keyed by part or gear id); an `own` entry reads the app's own
+  photo from `scripts/photos/own/` (committed without metadata) and credits it to the app, CC0.
 - What if (05c): sheet 5 of the second chapter (`/what-if/<n>`, `shared/domain/what-if.ts`). The
   mistakes are `Faults` in `features/flight` (`faults.ts`), acted out by the same model: a lost
   link swaps in safe stick values, then disarms; a wrong prop on motor 2 pushes its corner down

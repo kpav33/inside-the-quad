@@ -113,7 +113,7 @@ const TEXT: Record<PhotoId, { alt: string; caption: string }> = {
       'One example: a buzzer on a small board, wired to the flight controller. GPS modules and LEDs are other extras.',
   },
   radio: {
-    alt: 'A white handheld radio with a T-shaped antenna on top, a small screen between two stick gimbals, and purple stick ends.',
+    alt: 'A dark see-through handheld radio on a wooden table: a T-shaped antenna folded up on top, a small screen between two stick gimbals, switches on the top edge, and buttons below.',
     caption:
       'One example: a compact radio with its antenna up, a screen between the gimbals and switches along the top. Yours may look different.',
   },
@@ -149,7 +149,7 @@ export const PART_PHOTOS = Object.fromEntries(
         author: credit.author,
         licence: asLicence(credit.licence),
         ...('licenceUrl' in credit ? { licenceUrl: credit.licenceUrl } : {}),
-        sourceUrl: credit.sourceUrl,
+        ...('sourceUrl' in credit ? { sourceUrl: credit.sourceUrl } : {}),
         cropped: credit.cropped,
       },
     };

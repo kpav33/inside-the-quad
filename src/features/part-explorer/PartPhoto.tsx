@@ -37,10 +37,18 @@ export function PartPhoto({
         <span className="part-photo-caption">{photo.caption}</span>
         <span className="part-photo-credit">
           {text.by}{' '}
-          <a href={sourceUrl} rel="noreferrer">
-            {text.title(title)}
-          </a>{' '}
-          {text.byAuthor(author)},{' '}
+          {sourceUrl ? (
+            <>
+              <a href={sourceUrl} rel="noreferrer">
+                {text.title(title)}
+              </a>{' '}
+              {text.byAuthor(author)}
+            </>
+          ) : (
+            // The app's own photo: no page elsewhere to link, credited by name.
+            author
+          )}
+          ,{' '}
           {licenceUrl ? (
             <a href={licenceUrl} rel="noreferrer">
               {licence}
@@ -48,7 +56,8 @@ export function PartPhoto({
           ) : (
             licence
           )}
-          .{cropped ? ` ${text.cropped(licence.includes('SA'))}` : ''} {text.via}
+          .{cropped ? ` ${text.cropped(licence.includes('SA'))}` : ''}
+          {sourceUrl ? ` ${text.via}` : ''}
         </span>
       </figcaption>
     </figure>

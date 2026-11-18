@@ -1,6 +1,7 @@
 // Fetches the real part photos from Wikimedia Commons, checks their licences, crops and resizes
-// them, and writes WebP files plus their credits. Run by hand when the manifest changes
-// (`pnpm photos:fetch`); never in CI. Outputs are committed.
+// them, and writes WebP files plus their credits. The app's own photos (`own` in the manifest) come
+// from `own/` instead, stripped of their metadata, and are credited to the app. Run by hand when
+// the manifest changes (`pnpm photos:fetch`); never in CI. Outputs are committed.
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -20,6 +21,9 @@ const ALLOWED = ['CC BY 3.0', 'CC BY 4.0', 'CC BY-SA 3.0', 'CC BY-SA 4.0', 'CC0'
 const WIDTHS = [640, 1280];
 const QUALITY = 70;
 const USER_AGENT = 'inside-the-quad-photo-fetch/1.0 (educational project)';
+/** Who the app's own photos are credited to, and their licence. */
+const OWN_AUTHOR = 'Inside the Quad';
+const OWN_LICENCES = { CC0: 'https://creativecommons.org/publicdomain/zero/1.0/' };
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -43,7 +47,7 @@ const plain = (html = '') =>
     .trim();
 
 const manifest = JSON.parse(await readFile(join(here, 'manifest.json'), 'utf8'));
-const titles = [...new Set(manifest.map((entry) => entry.title))];
+const titles = [...new Set(manifest.filter((entry) => !entry.own).map((entry) => entry.title))];
 
 const query = new URLSearchParams({
   action: 'query',
@@ -62,8 +66,42 @@ await mkdir(cacheDir, { recursive: true });
 await mkdir(assetsDir, { recursive: true });
 await mkdir(dirname(creditsFile), { recursive: true });
 
+/** Writes a photo's two WebP widths (no metadata kept) and returns the larger one's size. */
+async function writeSizes(part, source, crop) {
+  const sourceWidth = crop?.width ?? (await sharp(source).metadata()).width;
+  let image = sharp(source).rotate();
+  if (crop) image = image.extract(crop);
+  let largest = null;
+  for (const width of WIDTHS) {
+    const { data, info: out } = await image
+      .clone()
+      .resize({ width: Math.min(width, sourceWidth), withoutEnlargement: true })
+      .webp({ quality: QUALITY })
+      .toBuffer({ resolveWithObject: true });
+    await writeFile(join(assetsDir, `${part}-${width}.webp`), data);
+    largest = out;
+  }
+  return largest;
+}
+
 const credits = {};
 for (const entry of manifest) {
+  if (entry.own) {
+    const licenceUrl = OWN_LICENCES[entry.licence];
+    if (!licenceUrl) throw new Error(`${entry.part}: own photos are ${Object.keys(OWN_LICENCES)}`);
+    const largest = await writeSizes(entry.part, join(here, 'own', entry.own), entry.crop);
+    credits[entry.part] = {
+      title: entry.title,
+      author: OWN_AUTHOR,
+      licence: entry.licence,
+      licenceUrl,
+      cropped: Boolean(entry.crop),
+      width: largest.width,
+      height: largest.height,
+    };
+    console.log(`${entry.part}: own photo, ${entry.licence}, ${largest.width}×${largest.height}`);
+    continue;
+  }
   const page = byTitle.get(entry.title);
   const info = page?.imageinfo?.[0];
   if (!info) throw new Error(`No such file on Commons: ${entry.title}`);
@@ -86,21 +124,7 @@ for (const entry of manifest) {
     await writeFile(original, Buffer.from(await (await get(info.url)).arrayBuffer()));
     await sleep(10_000);
   }
-  const crop = entry.crop;
-  const sourceWidth = crop?.width ?? info.width;
-
-  let image = sharp(original);
-  if (crop) image = image.extract(crop);
-  let largest = null;
-  for (const width of WIDTHS) {
-    const { data, info: out } = await image
-      .clone()
-      .resize({ width: Math.min(width, sourceWidth), withoutEnlargement: true })
-      .webp({ quality: QUALITY })
-      .toBuffer({ resolveWithObject: true });
-    await writeFile(join(assetsDir, `${entry.part}-${width}.webp`), data);
-    largest = out;
-  }
+  const largest = await writeSizes(entry.part, original, entry.crop);
 
   credits[entry.part] = {
     title: displayTitle(page.title),
