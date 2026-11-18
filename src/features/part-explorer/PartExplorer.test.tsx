@@ -116,6 +116,31 @@ describe('PartExplorer', () => {
     vi.unstubAllGlobals();
   });
 
+  describe('the gear sheets', () => {
+    it('opens the radio with its flat drawing, never the 3D view', async () => {
+      window.history.replaceState(null, '', '/gear/radio');
+      render(<PartExplorer />);
+      await screen.findByRole('heading', { level: 2, name: 'Radio' });
+      expect(document.querySelector('.gear-drawing')).toHaveAttribute('data-gear', 'radio');
+      expect(screen.queryByTestId('viewer-state')).toBeNull();
+      expect(screen.queryByText('Loading the 3D drawing…')).toBeNull();
+    });
+
+    it('starts the radio afresh after another gear sheet', async () => {
+      window.history.replaceState(null, '', '/gear/radio');
+      render(<PartExplorer />);
+      await userEvent.click(await screen.findByRole('button', { name: 'Armed' }));
+      const gearNav = () => screen.getByRole('navigation', { name: 'The gear you hold and wear' });
+      await userEvent.click(within(gearNav()).getByRole('link', { name: 'Goggles' }));
+      expect(screen.getByRole('heading', { level: 2, name: 'Goggles' })).toHaveFocus();
+      await userEvent.click(within(gearNav()).getByRole('link', { name: 'Radio' }));
+      expect(screen.getByRole('button', { name: 'Disarmed' })).toHaveAttribute(
+        'aria-pressed',
+        'true',
+      );
+    });
+  });
+
   describe('the what-if sheet', () => {
     it('opens at the mistake in the address, flying, with the status line', async () => {
       window.history.replaceState(null, '', '/what-if/2');
@@ -591,7 +616,9 @@ describe('PartExplorer', () => {
     window.localStorage.setItem(READ_KEY, '["frame"]');
     await renderExplorer();
     expect(screen.getByRole('link', { name: 'Continue with sheet 2: Motors' })).toBeInTheDocument();
-    expect(screen.getByText('Parts 1 of 11 · How it works 0 of 5')).toBeInTheDocument();
+    expect(
+      screen.getByText('Parts 1 of 11 · How it works 0 of 5 · Gear 0 of 3'),
+    ).toBeInTheDocument();
   });
 
   it('continues into the control path once every part is read', async () => {
@@ -602,7 +629,9 @@ describe('PartExplorer', () => {
         name: 'Continue with How it works together, sheet 1: Control path',
       }),
     ).toHaveAttribute('href', '/paths/control');
-    expect(screen.getByText('Parts 11 of 11 · How it works 0 of 5')).toBeInTheDocument();
+    expect(
+      screen.getByText('Parts 11 of 11 · How it works 0 of 5 · Gear 0 of 3'),
+    ).toBeInTheDocument();
   });
 
   it('says when every sheet is read and offers to start again', async () => {

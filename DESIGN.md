@@ -202,7 +202,7 @@ The ramp is a fixed rem scale at ratio 1.2 (0.833, 1, 1.2, 1.44, 1.728, 2.488rem
 
 Spacing is a 7-step scale (0.25, 0.5, 0.75, 1, 1.5, 2, 3rem); touch targets are at least 2.75rem, parts-list rows 3rem.
 
-**Wide (when the main area is at least 56rem wide, a container query, so enlarged text falls back to the stacked layout):** a two-column grid filling the viewport under a thin masthead: the drawing field on the left (flexible) and the sheet column on the right (20 to 36rem, and at most 44 % of the width so mid-size windows keep a two-column parts list), which scrolls on its own with a stable gutter. The drawing frame fills the field as a grid: the canvas (zone markers 1 to 4 along its top, A to C down its left edge, drawing hint at its lower right) fills the space above, and the parts list sits in its own row across the bottom.
+**Wide (when the main area is at least 56rem wide, a container query, so enlarged text falls back to the stacked layout):** a two-column grid filling the viewport under a thin masthead (one row: wordmark, tagline and the three section links, What is an FPV drone?, How it works together and The gear; below 62rem the tagline gives way so the row holds; when the links wrap on a phone, their rows are spaced so their tap targets never overlap): the drawing field on the left (flexible) and the sheet column on the right (20 to 36rem, and at most 44 % of the width so mid-size windows keep a two-column parts list), which scrolls on its own with a stable gutter. The drawing frame fills the field as a grid: the canvas (zone markers 1 to 4 along its top, A to C down its left edge, drawing hint at its lower right) fills the space above, and the parts list sits in its own row across the bottom.
 
 **Narrow:** a single scrolling column: masthead, a drawing frame of 40svh (min 15rem), the parts list full width, then the sheet. One finger scrolls the page over the drawing; two fingers turn it. The hint text switches to touch wording under `(hover: none) and (pointer: coarse)`.
 
@@ -286,7 +286,7 @@ Each lesson answers four questions, numbered 1 to 4 in muted ring balloons, head
 
 ### Real Part Photo
 
-A detail figure on every part sheet, between the title block and question 1: sheet fill, a 1px rule-strong frame, 0.5rem 0.75rem padding; a muted caps "Real part" label; the photo full width with its own background, at most 22rem tall and scaled down whole (`object-fit: contain`, left-aligned); then the caption in the reading face, bold, sentence case, always starting "One example:" (a photo is never a recommendation); then the credit, muted and small: "Photo: author, licence (link). Cropped; shared under the same licence. Source: Wikimedia Commons (link)." Links use the muted underline and turn ink on hover. No redline. The image has its own width and height (no layout jump), 640 and 1280 px WebP sources and lazy loading. Not on the overview or the intro.
+A detail figure on every part sheet, between the title block and question 1: sheet fill, a 1px rule-strong frame, 0.5rem 0.75rem padding; a muted caps "Real part" label; the photo full width with its own background, at most 22rem tall and scaled down whole (`object-fit: contain`, left-aligned); then the caption in the reading face, bold, sentence case, always starting "One example:" (a photo is never a recommendation); then the credit, muted and small: "Photo: author, licence (link). Cropped; shared under the same licence. Source: Wikimedia Commons (link)." The app's own photos (the radio) read "Photo: Inside the Quad, CC0 (link)." with no source. Links use the muted underline and turn ink on hover. No redline. The image has its own width and height (no layout jump), 640 and 1280 px WebP sources and lazy loading. Not on the overview or the intro.
 
 ### Path Sheet
 
@@ -311,6 +311,14 @@ Sheet 5 of How it works together ("5 of 5"), the moves sheet's frame and pinned 
 ### Flight Status
 
 On the what-if sheet, a caps status line at the drawing's top left: "Link OK · 6S", then "Link lost", "4S", "VTX: Warm / Hot / Damaged" as they happen. A lost link and a damaged VTX are in redline (the current mistake); the rest muted.
+
+### Gear Sheet
+
+The third chapter, "The gear you hold and wear" (`/gear/radio`, `/gear/goggles`, `/gear/charger`, sheets 1–3), reached by Next from What if, the masthead's "The gear" link, the ends of the control and video paths, and the intro's radio and goggles. Each sheet is a lesson sheet: title block (chapter, sheet, key numbers), the chapter switcher, a real photo labelled "Real gear", and the four numbered questions. Under question 1, a **Try it** box (sheet fill, rule hairline) holds the sheet's switches, framed like the battery switch (the pressed option in ink with a redline underline): the radio's arm switch (Disarmed / Armed) and mode switch (Acro / Angle); the goggles' Analog / Digital; the charger's Charge / Storage. A line under them says what that setting does and is announced politely. Under question 2, "On the drawing" lists each drawn part as a caps underlined name over its muted note; pointing at, focusing or tapping a name lights its part. Switches and highlight start afresh each time a sheet opens.
+
+### Gear Drawing
+
+On a gear sheet the drawing field shows a flat front view of the gear in place of the 3D drone (no 3D canvas is drawn). Hairline ink outlines (rule-strong for the bodies, muted for detail), each part named by a caps label on a muted leader ending in a dot. The highlighted part, its leader and label turn redline, the only redline on the drawing. The drawing answers the switches: the radio's levers lean the other way, the goggles' screens show a simple view ahead or "No signal", the charger's six cell bars fill to 4.2 V or settle at 3.8 V (muted fill, scaled from 3.3 V) with the pack's voltage on its screen. Changes are instant, not animated. Hidden from assistive technology: the sheet says it all in words. On phones the drawing is pinned above the sheet like the flight sheets' (no stick band) with a narrow margin, and below 30rem of viewport its labels are drawn larger (at least 11 px at 320 px, the screens' words at least 10 px); like the zone markers there, they keep that size when the text is enlarged. Bottom labels sit on two staggered rows so they never meet; "No signal" takes two lines on its small screen.
 
 ### Ground and VTX Gauge
 

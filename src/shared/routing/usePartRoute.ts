@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useSyncExternalStore } from 'react';
 
+import type { GearId } from '@/shared/domain/gear';
 import type { PartId } from '@/shared/domain/parts';
 import type { PathId } from '@/shared/domain/paths';
 import type { SteppedSheet } from '@/shared/domain/sheets';
@@ -13,7 +14,8 @@ export type PageRoute =
   | { kind: 'part'; part: PartId }
   | { kind: 'path'; path: PathId; step: number }
   | { kind: 'moves'; step: number }
-  | { kind: 'what-if'; step: number };
+  | { kind: 'what-if'; step: number }
+  | { kind: 'gear'; gear: GearId };
 
 export interface PartRoute {
   route: PageRoute;
@@ -42,9 +44,11 @@ export function usePartRoute(): PartRoute {
         ? pagePath(parsed.path, parsed.step)
         : parsed.kind === 'moves' || parsed.kind === 'what-if'
           ? pagePath(parsed.kind, parsed.step)
-          : parsed.kind === 'intro'
-            ? pagePath('intro')
-            : OVERVIEW_PATH;
+          : parsed.kind === 'gear'
+            ? pagePath(parsed.gear)
+            : parsed.kind === 'intro'
+              ? pagePath('intro')
+              : OVERVIEW_PATH;
   useEffect(() => {
     if (unknown !== null) replacePath(OVERVIEW_PATH, unknown);
     else if (snapshot.path !== canonical) replacePath(canonical);

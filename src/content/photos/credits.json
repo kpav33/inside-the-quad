@@ -19,6 +19,16 @@
     "width": 1280,
     "height": 1168
   },
+  "charger": {
+    "title": "ISDT SC-608 front",
+    "author": "Lucasbosch",
+    "licence": "CC BY-SA 3.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:ISDT_SC-608_front.jpg",
+    "cropped": false,
+    "width": 1280,
+    "height": 841
+  },
   "esc": {
     "title": "Esc2",
     "author": "1sfoerster",
@@ -58,6 +68,16 @@
     "width": 1280,
     "height": 819
   },
+  "goggles": {
+    "title": "REN 6045",
+    "author": "Slakteriitis",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:REN_6045.jpg",
+    "cropped": true,
+    "width": 1280,
+    "height": 1280
+  },
   "motors": {
     "title": "Xlabs Shrike-200 V2 5″ FPV quad with components collage",
     "author": "Lucasbosch",
@@ -77,6 +97,15 @@
     "cropped": true,
     "width": 1280,
     "height": 937
+  },
+  "radio": {
+    "title": "RadioMaster Pocket",
+    "author": "Inside the Quad",
+    "licence": "CC0",
+    "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "cropped": true,
+    "width": 1280,
+    "height": 1661
   },
   "receiver": {
     "title": "TBS Crossfire Nano receiver (XF nano)",

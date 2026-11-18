@@ -7,6 +7,7 @@ export function App() {
   const { route } = usePartRoute();
   const onIntro = route.kind === 'intro';
   const onPath = route.kind === 'path' || route.kind === 'moves' || route.kind === 'what-if';
+  const onGear = route.kind === 'gear';
   return (
     <div className="app">
       <header className="app-header">
@@ -21,6 +22,10 @@ export function App() {
           </PartLink>
           <PartLink to="control" className="app-section-link" current={onPath}>
             {UI.app.pathsLink}
+            <ArrowIcon />
+          </PartLink>
+          <PartLink to="radio" className="app-section-link" current={onGear}>
+            {UI.app.gearLink}
             <ArrowIcon />
           </PartLink>
         </nav>

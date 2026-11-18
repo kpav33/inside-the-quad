@@ -1,21 +1,25 @@
 import { describe, expect, it } from 'vitest';
 
+import { GEAR_IDS, type GearId } from '@/shared/domain/gear';
 import { PART_IDS, type PartId } from '@/shared/domain/parts';
 
 import manifest from '../../../scripts/photos/manifest.json';
 
 import { LICENCES, PART_PHOTOS } from './index';
 
-const croppedInManifest = new Set<PartId>(
-  manifest.filter((entry) => 'crop' in entry).map((entry) => entry.part as PartId),
+/** Every sheet with a photo: the parts, then the gear. */
+const PHOTO_IDS: readonly (PartId | GearId)[] = [...PART_IDS, ...GEAR_IDS];
+
+const croppedInManifest = new Set<PartId | GearId>(
+  manifest.filter((entry) => 'crop' in entry).map((entry) => entry.part as PartId | GearId),
 );
 
 describe('PART_PHOTOS', () => {
-  it('has one photo for every part', () => {
-    expect(Object.keys(PART_PHOTOS).sort()).toEqual([...PART_IDS].sort());
+  it('has one photo for every part and every piece of gear', () => {
+    expect(Object.keys(PART_PHOTOS).sort()).toEqual([...PHOTO_IDS].sort());
   });
 
-  describe.each(PART_IDS.map((id) => [id]))('%s', (id) => {
+  describe.each(PHOTO_IDS.map((id) => [id]))('%s', (id) => {
     const photo = PART_PHOTOS[id];
 
     it('describes the picture, separately from its caption', () => {
@@ -34,11 +38,16 @@ describe('PART_PHOTOS', () => {
       // The title the author supplied on Commons, without "File:" or the extension.
       expect(title.trim()).not.toBe('');
       expect(title).not.toMatch(/^File:|\.(jpe?g|png|webp)$/i);
-      expect(decodeURIComponent(sourceUrl).replace(/_/g, ' ')).toContain(title);
       expect(LICENCES).toContain(licence);
       if (licence === 'Public domain') expect(licenceUrl).toBeUndefined();
       else expect(licenceUrl).toMatch(/^https:\/\//);
-      expect(sourceUrl.startsWith('https://commons.wikimedia.org/wiki/File:')).toBe(true);
+      if (sourceUrl === undefined) {
+        // The app's own photos have no page elsewhere; they are credited to the app.
+        expect(author).toBe('Inside the Quad');
+      } else {
+        expect(decodeURIComponent(sourceUrl).replace(/_/g, ' ')).toContain(title);
+        expect(sourceUrl.startsWith('https://commons.wikimedia.org/wiki/File:')).toBe(true);
+      }
     });
 
     it('notes a crop exactly when the photo was cropped', () => {
@@ -52,6 +61,16 @@ describe('PART_PHOTOS', () => {
       expect(photo.srcLarge).toMatch(/\.webp$/);
       expect(photo.src).not.toBe(photo.srcLarge);
     });
+  });
+
+  it('shows the app’s own photo of a RadioMaster Pocket on the radio sheet, free of conditions', () => {
+    expect(PART_PHOTOS.radio.credit).toMatchObject({
+      title: 'RadioMaster Pocket',
+      author: 'Inside the Quad',
+      licence: 'CC0',
+      licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+    });
+    expect(PART_PHOTOS.radio.credit.sourceUrl).toBeUndefined();
   });
 
   it('says how the ESC example differs from the reference build', () => {

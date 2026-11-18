@@ -68,9 +68,12 @@ it work, what do the numbers mean, what is it connected to.
   drawing, and the drone turning in place like an acro quad (slowed down; never flying around).
   Each step plays a short demo (Show me replays it; reduced motion waits for it); Gust knocks the
   drone so the gyro loop can bring it back. On phones the drawing stays pinned above the steps.
-- Planned (see `docs/roadmap.md`): how a quad moves (virtual sticks, motor speeds, the gyro loop)
-  and "what if" faults, then the gear you hold and wear, and a compatibility checker; later other
-  drone sizes and types.
+- A third chapter, "The gear you hold and wear" (`/gear/radio`, `/gear/goggles`,
+  `/gear/charger`): a flat labelled drawing of each in the drawing field, the four questions, a
+  real photo, and one thing to try (arm and mode switches on the radio, analog or digital goggles
+  against this drone's analog VTX, Charge or Storage across the pack's six cells). The masthead
+  links it as "The gear"; the paths' radio and goggles ends and the intro lead there too.
+- Planned (see `docs/roadmap.md`): a compatibility checker; later other drone sizes and types.
 - Content source of truth: `docs/product/scope.md`. Product recommendations, Betaflight tuning and
   flight training are out of scope.
 - Terminology: "5-inch", "quad", "FC", "ESC", "VTX", "props in/out", "KV", "S" (battery cells).

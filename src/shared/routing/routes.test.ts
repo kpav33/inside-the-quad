@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { PART_IDS } from '@/shared/domain/parts';
 
 import {
+  gearPath,
   INTRO_PATH,
   OVERVIEW_PATH,
   pagePath,
@@ -140,5 +141,23 @@ describe('the moves sheet', () => {
     expect(steppedPath('power', 2)).toBe('/paths/power/2');
     expect(pagePath('moves')).toBe('/moves');
     expect(pagePath('moves', 3)).toBe('/moves/3');
+  });
+});
+
+describe('gear routes', () => {
+  it('reads a gear sheet under /gear/, with or without a trailing slash', () => {
+    expect(parseRoute('/gear/radio')).toEqual({ kind: 'gear', gear: 'radio' });
+    expect(parseRoute('/gear/radio/')).toEqual({ kind: 'gear', gear: 'radio' });
+  });
+
+  it('treats /gear alone, an unknown id or extra segments as unknown', () => {
+    for (const path of ['/gear', '/gear/', '/gear/drone', '/gear/radio/2']) {
+      expect(parseRoute(path).kind).toBe('unknown');
+    }
+  });
+
+  it('gives each gear sheet its address', () => {
+    expect(pagePath('charger')).toBe('/gear/charger');
+    expect(gearPath('goggles')).toBe('/gear/goggles');
   });
 });

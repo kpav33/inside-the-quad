@@ -70,10 +70,9 @@ export function OverviewStart({ read, introRead, onFollowLink, onClear }: Overvi
     state.kind === 'start'
       ? startSheet1
       : state.kind === 'continue'
-        ? (chapterOf(target) === 'paths' ? t.continuePaths : t.continue)(
-            sheetNumber(target),
-            sheetName(target),
-          )
+        ? chapterOf(target) === 'parts'
+          ? t.continue(sheetNumber(target), sheetName(target))
+          : t.continueIn(UI.chapters[chapterOf(target)], sheetNumber(target), sheetName(target))
         : t.startAgain;
 
   return (
@@ -96,6 +95,8 @@ export function OverviewStart({ read, introRead, onFollowLink, onClear }: Overvi
               CHAPTER_SHEETS.parts.length,
               countRead(read, 'paths'),
               CHAPTER_SHEETS.paths.length,
+              countRead(read, 'gear'),
+              CHAPTER_SHEETS.gear.length,
             )}
           </span>
         )}

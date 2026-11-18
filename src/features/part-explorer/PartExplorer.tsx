@@ -7,11 +7,13 @@ import { type PathContent, pathParts, PATHS, stopForPart } from '@/content/paths
 import { PART_LABELS, sheetName, UI } from '@/content/ui';
 import type { Leader } from '@/features/drone-model';
 import { DroneViewer } from '@/features/drone-viewer';
+import { GearDrawing } from '@/features/gear';
 import type { DroneViewerProps } from '@/features/drone-viewer/DroneViewer';
 import { useIntroRead, useReadParts } from '@/features/progress';
 import { isInsidePart, isPartId, type PartId } from '@/shared/domain/parts';
 import { MOVES_SHEET } from '@/shared/domain/moves';
 import { WHAT_IF_SHEET } from '@/shared/domain/what-if';
+import { isGearId } from '@/shared/domain/gear';
 import { isPathId, type PathId } from '@/shared/domain/paths';
 import type { SheetId } from '@/shared/domain/sheets';
 import { type Page, usePartRoute } from '@/shared/routing';
@@ -20,6 +22,7 @@ import { FlightStatus, GROUND_M, Sticks } from '@/features/flight';
 
 import { isDeliberateClick } from './clicks';
 import {
+  gearTitleId,
   INTRO_TITLE_ID,
   LESSON_PANEL_ID,
   MOVES_TITLE_ID,
@@ -29,6 +32,7 @@ import {
   partButtonId,
   pathTitleId,
 } from './ids';
+import { GearPanel } from './GearPanel';
 import { IntroPanel } from './IntroPanel';
 import { LessonPanel } from './LessonPanel';
 import { MovesPanel } from './MovesPanel';
@@ -37,6 +41,7 @@ import { OverviewStart } from './OverviewStart';
 import { PathPanel } from './PathPanel';
 import { PartList } from './PartList';
 import { TitleBlock } from './TitleBlock';
+import { useGearSheet } from './useGearSheet';
 import { useMovesSheet } from './useMovesSheet';
 import { useWhatIfSheet } from './useWhatIfSheet';
 import { usePathStep } from './usePathStep';
@@ -113,7 +118,9 @@ const sheetTitleId = (sheet: SheetId) =>
         ? WHAT_IF_TITLE_ID
         : isPathId(sheet)
           ? pathTitleId(sheet)
-          : lessonTitleId(sheet);
+          : isGearId(sheet)
+            ? gearTitleId(sheet)
+            : lessonTitleId(sheet);
 
 /**
  * Lets the user pick a drone part in the 3D view or the part list, and shows its lesson.
@@ -130,6 +137,9 @@ export function PartExplorer() {
   // The flight sheets: the drawing flies a drone and clicking it opens nothing.
   const flightOpen = movesOpen || whatIfOpen;
   const flight = movesOpen ? moves.flight : whatIfOpen ? whatIf.flight : null;
+  // A gear sheet: a flat drawing of the gear in place of the 3D drone.
+  const openGear = route.kind === 'gear' ? route.gear : null;
+  const gear = useGearSheet(openGear);
   // The sheet in the sheet column: a part's lesson, the intro, a path, how a quad moves, or none
   // (the overview).
   const openSheet: SheetId | null =
@@ -139,7 +149,7 @@ export function PartExplorer() {
         ? MOVES_SHEET
         : whatIfOpen
           ? WHAT_IF_SHEET
-          : (openPath?.id ?? selectedPart);
+          : (openGear ?? openPath?.id ?? selectedPart);
   // A path's step is in its address (from 1); one past the end shows the last stop.
   const stopCount = openPath?.stops.length ?? 0;
   const addressStep = route.kind === 'path' ? route.step - 1 : 0;
@@ -302,19 +312,22 @@ export function PartExplorer() {
       className="part-explorer"
       data-sheet={flightOpen ? (openSheet ?? undefined) : undefined}
       data-flight={flightOpen ? '' : undefined}
+      data-gear={openGear ?? undefined}
     >
       <p className="visually-hidden" aria-live="polite" data-testid="explorer-announcer">
         {openSheet === 'intro'
           ? UI.explorer.introOpened
-          : openPath
-            ? UI.explorer.pathOpened(openPath.title)
-            : movesOpen
-              ? UI.explorer.pathOpened(UI.moves.title)
-              : whatIfOpen
-                ? UI.explorer.pathOpened(UI.whatIf.title)
-                : selectedPart
-                  ? UI.explorer.opened(PART_LABELS[selectedPart])
-                  : ''}
+          : openGear
+            ? UI.explorer.pathOpened(UI.gear.title[openGear])
+            : openPath
+              ? UI.explorer.pathOpened(openPath.title)
+              : movesOpen
+                ? UI.explorer.pathOpened(UI.moves.title)
+                : whatIfOpen
+                  ? UI.explorer.pathOpened(UI.whatIf.title)
+                  : selectedPart
+                    ? UI.explorer.opened(PART_LABELS[selectedPart])
+                    : ''}
       </p>
       <div className="part-explorer-field">
         <div className="drawing-frame">
@@ -332,25 +345,33 @@ export function PartExplorer() {
               ))}
             </div>
             <div className="part-explorer-viewer">
-              <ErrorBoundary fallback={viewerFallback}>
-                <Suspense fallback={<p role="status">{UI.viewer.loading}</p>}>
-                  <DroneViewer
-                    {...(flightOpen
-                      ? FLIGHT_DRAWING
-                      : openPath && currentStop
-                        ? pathDrawing(openPath, pathStep.step)
-                        : partDrawing(selectedPart))}
-                    flight={flight}
-                    ground={whatIfOpen ? GROUND_M : null}
-                    onPartClick={onPartClick}
-                    onPartHover={onPartHover}
-                    onBackgroundClick={clearSelection}
-                  />
-                </Suspense>
-                {/* Inside the boundary: if the 3D view fails, the sticks go with it. */}
-                {flight && <Sticks flight={flight} />}
-                {whatIfOpen && flight && <FlightStatus flight={flight} />}
-              </ErrorBoundary>
+              {openGear && gear.state ? (
+                <GearDrawing
+                  state={gear.state}
+                  highlight={gear.highlight}
+                  onHighlight={gear.setHighlight}
+                />
+              ) : (
+                <ErrorBoundary fallback={viewerFallback}>
+                  <Suspense fallback={<p role="status">{UI.viewer.loading}</p>}>
+                    <DroneViewer
+                      {...(flightOpen
+                        ? FLIGHT_DRAWING
+                        : openPath && currentStop
+                          ? pathDrawing(openPath, pathStep.step)
+                          : partDrawing(selectedPart))}
+                      flight={flight}
+                      ground={whatIfOpen ? GROUND_M : null}
+                      onPartClick={onPartClick}
+                      onPartHover={onPartHover}
+                      onBackgroundClick={clearSelection}
+                    />
+                  </Suspense>
+                  {/* Inside the boundary: if the 3D view fails, the sticks go with it. */}
+                  {flight && <Sticks flight={flight} />}
+                  {whatIfOpen && flight && <FlightStatus flight={flight} />}
+                </ErrorBoundary>
+              )}
             </div>
             <p className="drawing-hint" aria-hidden="true">
               <span className="drawing-hint-pointer">{UI.viewer.dragHint}</span>
@@ -366,7 +387,21 @@ export function PartExplorer() {
         </div>
       </div>
       <div className="part-explorer-sheet">
-        {whatIfOpen ? (
+        {openGear && gear.state ? (
+          <GearPanel
+            gear={openGear}
+            state={gear.state}
+            onChange={gear.setState}
+            highlight={gear.highlight}
+            onHighlight={gear.setHighlight}
+            read={read.has(openGear)}
+            onClose={closeLesson}
+            onToggleRead={() => {
+              toggleRead(openGear);
+            }}
+            onFollowLink={followLink}
+          />
+        ) : whatIfOpen ? (
           <WhatIfPanel
             flight={whatIf.flight}
             step={whatIf.step}

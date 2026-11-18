@@ -172,6 +172,9 @@ The centerpiece. Three animated "paths" through the 3D drone:
 
 ## Module 4 — The gear you hold and wear
 
+Built in **06** as a third chapter: one sheet each for the radio, goggles and charger, a flat
+labelled drawing and one thing to try on each. Module 4 is complete.
+
 - **Radio transmitter:** two sticks (gimbals), mode 2 layout (left = throttle + yaw, right = pitch + roll), switches (arm, flight mode), ELRS module inside, EdgeTX firmware
 - **Goggles:** a video receiver plus screens; analog vs digital must match the drone's VTX
 - **Charger:** balance charging, storage mode, why a good charger matters

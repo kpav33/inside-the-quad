@@ -57,4 +57,26 @@ describe('PartPhoto', () => {
     expect(screen.getByText(/Public domain/)).toBeInTheDocument();
     expect(screen.getByText(/1sfoerster/)).not.toHaveTextContent(/cropped/i);
   });
+
+  it('credits the app’s own photo by name and licence, with no source page or Commons', () => {
+    const { sourceUrl: _unused, ...credit } = photo.credit;
+    render(
+      <PartPhoto
+        photo={{
+          ...photo,
+          credit: {
+            ...credit,
+            title: 'RadioMaster Pocket',
+            author: 'Inside the Quad',
+            licence: 'CC0',
+            licenceUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+          },
+        }}
+      />,
+    );
+    const line = screen.getByText(/Inside the Quad/);
+    expect(line).toHaveTextContent('Photo: Inside the Quad, CC0.');
+    expect(line).not.toHaveTextContent(/Wikimedia|by Inside/);
+    expect(screen.getAllByRole('link').map((link) => link.textContent)).toEqual(['CC0']);
+  });
 });

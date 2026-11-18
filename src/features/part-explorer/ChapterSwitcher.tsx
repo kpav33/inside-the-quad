@@ -1,6 +1,6 @@
 import { sheetName, UI } from '@/content/ui';
 import { isPathId } from '@/shared/domain/paths';
-import { CHAPTER_SHEETS, type NumberedSheet } from '@/shared/domain/sheets';
+import { CHAPTER_SHEETS, chapterOf, type NumberedSheet } from '@/shared/domain/sheets';
 import { type Page, PartLink } from '@/shared/routing';
 
 /** A sheet's name in the switcher: a path's short name, else its full name. */
@@ -9,8 +9,8 @@ function shortName(sheet: NumberedSheet): string {
 }
 
 /**
- * Every sheet of How it works together, the open one marked: the three paths and How a quad moves,
- * so each is one step away from any of the others.
+ * Every sheet of the open sheet's chapter, the open one marked (How it works together, or the
+ * gear), so each is one step away from any of the others.
  */
 export function ChapterSwitcher({
   open,
@@ -19,9 +19,10 @@ export function ChapterSwitcher({
   open: NumberedSheet;
   onFollowLink?: ((page: Page) => void) | undefined;
 }) {
+  const chapter = chapterOf(open);
   return (
-    <nav className="path-switcher" aria-label={UI.paths.switcherLabel}>
-      {CHAPTER_SHEETS.paths.map((sheet) => (
+    <nav className="path-switcher" aria-label={UI.chapters[chapter]}>
+      {CHAPTER_SHEETS[chapter].map((sheet) => (
         <PartLink
           key={sheet}
           to={sheet}

@@ -108,12 +108,24 @@ a {
   font-size: var(--step--1);
 }
 
-/* The masthead's sections: for now one link, to the intro. It sits at the right and takes its own
-   line when the masthead wraps. */
+/* Where the explorer fills the screen but the title, tagline and three section links don't fit one
+   row, the tagline gives way so the masthead never grows a second row and pushes the page into
+   scrolling. Narrower, stacked layouts scroll anyway and keep it. */
+@media (min-width: 56rem) and (max-width: 61.9375rem) {
+  .app-header p {
+    display: none;
+  }
+}
+
+/* The masthead's sections: the intro, How it works together and the gear. They sit at the right
+   and take their own line when the masthead wraps. */
 .app-sections {
   display: flex;
   flex-wrap: wrap;
   column-gap: var(--space-5);
+  /* Each link's tap target reaches a --space-3 into the space above and below it (see below), so
+     wrapped rows are spaced by twice that and never overlap. */
+  row-gap: calc(2 * var(--space-3));
   margin-left: auto;
 }
 
@@ -332,6 +344,100 @@ a {
 .battery-switch-option[aria-pressed='true'] {
   color: var(--color-ink);
   box-shadow: inset 0 -2px 0 var(--color-accent);
+}
+
+/* A gear sheet's one thing to try: a small caps label, its switches, and what they do. */
+.gear-try {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  border: 1px solid var(--color-rule);
+  background: var(--color-sheet);
+}
+
+.gear-try-label,
+.gear-parts-heading {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.gear-try-switches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* With large text a switch's options wrap onto a second row instead of widening the sheet. */
+.gear-try .battery-switch {
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.gear-says {
+  margin: 0;
+}
+
+/* The drawing's parts: each name lights its part on the drawing. */
+.gear-parts-heading {
+  margin-top: var(--space-4);
+}
+
+.gear-parts-hint {
+  margin: var(--space-1) 0 0;
+  font-size: var(--step--1);
+  color: var(--color-muted);
+}
+
+.gear-parts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Each name over its note. */
+.gear-parts li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.gear-part-name {
+  align-self: flex-start;
+}
+
+.gear-part-name {
+  min-height: var(--target-min);
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--font-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-color: var(--color-rule-strong);
+  text-underline-offset: 0.2em;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.gear-part-name[aria-pressed='true'] {
+  color: var(--color-accent);
+  text-decoration-color: var(--color-accent);
+}
+
+.gear-part-note {
+  color: var(--color-muted);
 }
 
 /* A mistake's three parts: small caps labels over the reading text. */
@@ -1548,7 +1654,8 @@ a.lesson-sheet-link:hover {
    scroll under them, so the drone is in view while reading and when a step's demo plays. The
    parts list isn't needed on this sheet and stays out of the pinned area. */
 @container main (max-width: 55.9375rem) {
-  .part-explorer[data-flight] {
+  .part-explorer[data-flight],
+  .part-explorer[data-gear] {
     /* In px and vw, not rem: with enlarged text the drawing and sticks keep their size, so the
        steps keep most of the screen to be read in. */
     --moves-canvas: max(46svh, 240px);
@@ -1559,7 +1666,8 @@ a.lesson-sheet-link:hover {
     --stick-band: calc(var(--phone-stick) + 44px);
   }
 
-  .part-explorer[data-flight] .drawing-canvas {
+  .part-explorer[data-flight] .drawing-canvas,
+  .part-explorer[data-gear] .drawing-canvas {
     height: var(--moves-canvas);
     min-height: 0;
   }
@@ -1593,7 +1701,8 @@ a.lesson-sheet-link:hover {
     right: var(--space-2);
   }
 
-  .part-explorer[data-flight] .part-explorer-field {
+  .part-explorer[data-flight] .part-explorer-field,
+  .part-explorer[data-gear] .part-explorer-field {
     position: sticky;
     top: 0;
     z-index: 2;
@@ -1602,11 +1711,25 @@ a.lesson-sheet-link:hover {
   }
 
   /* Margins in px too, so larger text never squeezes the sticks together. */
-  .part-explorer[data-flight] .part-explorer-viewer {
+  .part-explorer[data-flight] .part-explorer-viewer,
+  .part-explorer[data-gear] .part-explorer-viewer {
     inset: min(var(--space-5), 24px);
   }
 
-  .part-explorer[data-flight] .part-list {
+  /* A gear drawing has no sticks to keep clear of: its margin is just enough for the zone
+     markers, so the drawing (and its labels) are as large as the phone allows. */
+  .part-explorer[data-gear] .part-explorer-viewer {
+    inset: min(var(--space-3), 12px);
+  }
+
+  /* The zone markers keep their size with enlarged text, like the drawing's labels, so they stay
+     in that narrow margin and never run into a label. */
+  .part-explorer[data-gear] .drawing-zones {
+    font-size: min(var(--step--1), 3.4vw);
+  }
+
+  .part-explorer[data-flight] .part-list,
+  .part-explorer[data-gear] .part-list {
     display: none;
   }
 
@@ -1635,7 +1758,8 @@ a.lesson-sheet-link:hover {
     display: none;
   }
 
-  .part-explorer[data-flight] .part-explorer-sheet :is(button, a, input, h2, .path-stop) {
+  .part-explorer[data-flight] .part-explorer-sheet :is(button, a, input, h2, .path-stop),
+  .part-explorer[data-gear] .part-explorer-sheet :is(button, a, input, h2, .path-stop) {
     scroll-margin-top: calc(var(--pinned-drawing) + var(--space-2));
   }
 }
@@ -1714,6 +1838,97 @@ a.lesson-sheet-link:hover {
   flex-direction: column;
   gap: var(--space-4);
   margin: 0;
+}
+
+/* A gear sheet's flat drawing, in the drawing field in place of the 3D drone (DESIGN.md: Gear
+   Drawing). Hairlines at any scale; the highlighted part, its leader and label in redline. */
+.gear-drawing {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gear-drawing * {
+  vector-effect: non-scaling-stroke;
+}
+
+.gear-drawing text {
+  fill: var(--color-ink);
+  stroke: none;
+  font-family: var(--font-label);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gear-body {
+  stroke: var(--color-rule-strong);
+}
+
+.gear-faint {
+  stroke: var(--color-muted);
+}
+
+.gear-part {
+  cursor: pointer;
+}
+
+/* A transparent fill makes a part's inside clickable, not just its outline. */
+.gear-part rect,
+.gear-part circle,
+.gear-part path {
+  fill: transparent;
+}
+
+.gear-leader {
+  stroke: var(--color-muted);
+}
+
+.gear-part .gear-leader-dot {
+  fill: var(--color-muted);
+  stroke: none;
+}
+
+.gear-drawing .gear-screen-text {
+  fill: var(--color-muted);
+  font-size: 10px;
+}
+
+.gear-part .gear-cell-fill {
+  fill: var(--color-muted);
+  stroke: none;
+}
+
+.gear-part[data-highlight='true'],
+.gear-part[data-highlight='true'] .gear-leader {
+  stroke: var(--color-accent);
+}
+
+.gear-part[data-highlight='true'] text,
+.gear-part[data-highlight='true'] .gear-leader-dot {
+  fill: var(--color-accent);
+}
+
+.gear-part[data-highlight='true'] .gear-screen-text {
+  fill: var(--color-muted);
+}
+
+/* A narrow drawing scales its labels down with it: on a phone they are drawn larger, so they stay
+   readable at the drawing's size. */
+@media (max-width: 30rem) {
+  .gear-drawing text {
+    font-size: 18px;
+  }
+
+  .gear-drawing .gear-screen-text {
+    font-size: 16px;
+  }
 }
 
 .intro-drawing {
@@ -1976,6 +2191,7 @@ a.lesson-sheet-link:hover {
 }
 
 /* On the moves sheet the drawing is for flying: clicking a part opens nothing, so its hint goes. */
-.part-explorer[data-flight] .drawing-hint {
+.part-explorer[data-flight] .drawing-hint,
+.part-explorer[data-gear] .drawing-hint {
   display: none;
 }

@@ -1,6 +1,9 @@
 import { type PointerEvent, useState } from 'react';
 
 import { INTRO, type SceneDeviceId, type SceneLinkId } from '@/content/intro';
+import { UI } from '@/content/ui';
+import { isGearId } from '@/shared/domain/gear';
+import { type Page, PartLink } from '@/shared/routing';
 
 type Point = readonly [x: number, y: number];
 
@@ -23,7 +26,12 @@ function arrowHead(from: Point, to: Point, size = 9): string {
  * links between them. The list under it carries the same facts for everyone, and its buttons
  * highlight a device and its links in the drawing.
  */
-export function SystemScene() {
+export function SystemScene({
+  onFollowLink,
+}: {
+  /** Called before a link in the list opens another sheet. */
+  onFollowLink?: ((page: Page) => void) | undefined;
+} = {}) {
   const { scene } = INTRO;
   const [selected, setSelected] = useState<SceneDeviceId | null>(null);
   const [hovered, setHovered] = useState<SceneDeviceId | null>(null);
@@ -144,6 +152,14 @@ export function SystemScene() {
                   .map((id) => `${scene.links[id].label}: ${scene.links[id].detail}`)
                   .join(' · ')}
               </span>
+              {isGearId(device.id) && (
+                <>
+                  {' '}
+                  <PartLink to={device.id} className="lesson-link" onFollow={onFollowLink}>
+                    {UI.gear.moreIn(UI.gear.title[device.id])}
+                  </PartLink>
+                </>
+              )}
             </p>
           </li>
         ))}

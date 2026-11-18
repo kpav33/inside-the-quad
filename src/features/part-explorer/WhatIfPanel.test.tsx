@@ -103,14 +103,15 @@ describe('WhatIfPanel', () => {
     expect(onStep).toHaveBeenLastCalledWith(3);
   });
 
-  it('runs on from How a quad moves and ends the set', () => {
+  it('runs on from How a quad moves into the gear', () => {
     renderWhatIf();
     expect(
       screen.getByRole('link', { name: 'Previous: How a quad moves · sheet 4' }),
     ).toHaveAttribute('href', '/moves');
-    expect(screen.getByRole('link', { name: 'Next: Back to overview' })).toHaveAttribute(
-      'href',
-      '/',
-    );
+    expect(
+      screen.getByRole('link', {
+        name: 'End of How it works together: The gear you hold and wear, sheet 1: Radio',
+      }),
+    ).toHaveAttribute('href', '/gear/radio');
   });
 });

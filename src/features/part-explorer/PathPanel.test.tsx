@@ -68,7 +68,7 @@ describe('PathPanel', () => {
     );
   });
 
-  it('keeps each lesson one quieter link away, and the radio background in the intro', () => {
+  it('keeps each lesson one quieter link away, and the radio on its gear sheet', () => {
     renderPath('control');
     const fc = stops()[2];
     if (!fc) throw new Error('no stop 3');
@@ -79,9 +79,19 @@ describe('PathPanel', () => {
     );
     const radio = stops()[0];
     if (!radio) throw new Error('no stop 1');
-    expect(within(radio).getByRole('link', { name: 'What is an FPV drone?' })).toHaveAttribute(
+    expect(within(radio).getByRole('link', { name: 'Radio' })).toHaveAttribute(
       'href',
-      '/intro',
+      '/gear/radio',
+    );
+  });
+
+  it('ends the video path at the goggles’ gear sheet', () => {
+    renderPath('video');
+    const goggles = stops().at(-1);
+    if (!goggles) throw new Error('no last stop');
+    expect(within(goggles).getByRole('link', { name: 'Goggles' })).toHaveAttribute(
+      'href',
+      '/gear/goggles',
     );
   });
 

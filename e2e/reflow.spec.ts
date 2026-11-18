@@ -13,6 +13,7 @@ const PAGES = [
   '/moves/5',
   '/what-if',
   '/what-if/4',
+  ...['radio', 'goggles', 'charger'].map((id) => `/gear/${id}`),
 ];
 
 const enlarge = async (page: Page) => {
@@ -21,7 +22,7 @@ const enlarge = async (page: Page) => {
 
 /** Sideways page scroll, and any element in the sheet wider than its box (a table frame may scroll). */
 async function overflow(page: Page) {
-  await expect(page.locator('canvas')).toBeVisible();
+  await expect(page.locator('canvas, .gear-drawing').first()).toBeVisible();
   await expect
     .poll(() => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth))
     .toBeLessThanOrEqual(0)
@@ -48,7 +49,8 @@ for (const width of [320, 390]) {
       const problems: string[] = [];
       for (const path of PAGES) {
         await page.goto(path);
-        await expect(page.locator('canvas')).toBeVisible();
+        // Every sheet draws the 3D drone, but a gear sheet draws its gear flat.
+        await expect(page.locator('canvas, .gear-drawing').first()).toBeVisible();
         await apply(page);
         const found = await overflow(page);
         if (found.page > 0 || found.elements.length > 0) {
