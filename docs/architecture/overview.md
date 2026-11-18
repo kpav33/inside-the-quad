@@ -81,8 +81,8 @@ nginx/              Production server config (copied into the Docker image)
   Gear copy is typed data in `content/gear/` (the four questions, the drawn parts, what each switch
   setting does), with numbers from the drone spec and `lipo.ts`. `features/gear` draws the three
   flat SVGs from plain props (`GearState`: the switches) and holds the charger maths; it never
-  imports three.js. The explorer renders `GearDrawing` in the drawing field instead of the lazy
-  3D viewer, and `GearPanel` in the sheet column; `useGearSheet` keeps the switches and the
+  imports three.js. The explorer renders `GearDrawing` in the drawing field instead of mounting the
+  lazy 3D viewer (its chunk is still preloaded with the app, as on every sheet), and `GearPanel` in the sheet column; `useGearSheet` keeps the switches and the
   highlighted part, starting afresh when a gear sheet opens. Gear photos use the 03c pipeline
   (`scripts/photos/manifest.json`, keyed by part or gear id).
 - What if (05c): sheet 5 of the second chapter (`/what-if/<n>`, `shared/domain/what-if.ts`). The
