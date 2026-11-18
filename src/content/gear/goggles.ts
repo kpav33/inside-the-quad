@@ -11,9 +11,9 @@ export const gogglesLesson: GearLesson<GogglesPartId> = {
   whatItDoes:
     'Goggles show you the drone’s live video right in front of your eyes, so you fly as if you were sitting in it.',
   howItWorks: [
-    'Inside is a video receiver, tuned to the same channel as the drone’s VTX (video transmitter), and a small screen for each eye, with lenses that let your eyes focus on them up close.',
+    'Inside is a video receiver, tuned to the same channel as the drone’s VTX (video transmitter), and screens behind lenses that let your eyes focus on them up close. Slim goggles, like the ones drawn here, have a small screen for each eye; box goggles have one larger screen that both eyes share.',
     `Analog goggles pick up ${camera.signal} video on ${String(vtx.frequencyGhz)} GHz. The drone in this app sends ${camera.signal} video, so analog goggles show its picture. It arrives with almost no delay, but it is fuzzy, and it breaks up into static at the edge of range.`,
-    'Digital systems send a sharp HD picture, coded in their own way. Each one only talks to its own matched VTX and camera, so analog goggles can’t show it, and digital goggles only show analog video if they have an analog receiver built in. Goggles and drone must use the same system.',
+    'Digital systems send a sharp HD picture, coded in their own way, and each one only talks to its own matched VTX and camera, so analog goggles can’t show it. Digital goggles can show analog video only through an analog receiver: built in on some, a plug-in receiver module on others, or a separate receiver wired to a video input. Whatever the goggles, the receiver in use must match the drone’s VTX.',
     `The antennas must match the VTX’s too: this drone’s is ${vtx.antennaPolarization}. Many goggles carry two, one that hears all round and one aimed forward that reaches further.`,
   ],
   specs: [
@@ -51,7 +51,11 @@ export const gogglesLesson: GearLesson<GogglesPartId> = {
     },
   ],
   parts: [
-    { id: 'screens', label: 'Screens', note: 'One small screen for each eye, behind a lens.' },
+    {
+      id: 'screens',
+      label: 'Screens',
+      note: 'Here one small screen for each eye, behind a lens; box goggles have one shared screen.',
+    },
     {
       id: 'video-receiver',
       label: 'Video receiver',
@@ -66,5 +70,5 @@ export const gogglesLesson: GearLesson<GogglesPartId> = {
 export function gogglesSays(system: VideoSystem): string {
   return system === 'analog'
     ? `Analog goggles: the picture comes through. They match this drone’s ${camera.signal} VTX.`
-    : `Digital goggles: no signal. They can’t read this drone’s ${camera.signal} video: the two systems send pictures differently.`;
+    : `Digital goggles with no analog receiver: no signal. Their digital receiver can’t read this drone’s ${camera.signal} video: the two systems send pictures differently.`;
 }

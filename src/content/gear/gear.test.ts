@@ -81,6 +81,23 @@ describe('gear copy', () => {
     expect(gogglesSays('digital')).toMatch(/no signal/i);
   });
 
+  it('says how digital goggles can still show analog video, and qualifies no signal', () => {
+    const text = allText(GEAR.goggles);
+    // Built in, a plug-in module, or a video input: any of them lets digital goggles show analog.
+    expect(text).toMatch(/built in/i);
+    expect(text).toMatch(/module/i);
+    expect(text).toMatch(/video input/i);
+    expect(text).not.toMatch(/only show analog video if they have an analog receiver built in/i);
+    // The try-it result is about goggles with no analog receiver, not every digital pair.
+    expect(gogglesSays('digital')).toMatch(/no analog receiver/i);
+  });
+
+  it('does not claim every pair of goggles has a screen for each eye', () => {
+    const text = allText(GEAR.goggles);
+    expect(text).toMatch(/box goggles/i);
+    expect(text).toMatch(/one (larger )?(shared )?screen/i);
+  });
+
   it('gives the charger’s pack and cell voltages from the spec', () => {
     const cells = REFERENCE_5_INCH.motor.batteryCells;
     const full = packVolts(cells, LIPO_CELL_VOLTS.full);
