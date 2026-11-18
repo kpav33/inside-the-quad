@@ -1716,6 +1716,85 @@ a.lesson-sheet-link:hover {
   margin: 0;
 }
 
+/* A gear sheet's flat drawing, in the drawing field in place of the 3D drone (DESIGN.md: Gear
+   Drawing). Hairlines at any scale; the highlighted part, its leader and label in redline. */
+.gear-drawing {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gear-drawing * {
+  vector-effect: non-scaling-stroke;
+}
+
+.gear-drawing text {
+  fill: var(--color-ink);
+  stroke: none;
+  font-family: var(--font-label);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gear-body {
+  stroke: var(--color-rule-strong);
+}
+
+.gear-faint {
+  stroke: var(--color-muted);
+}
+
+.gear-part {
+  cursor: pointer;
+}
+
+/* A transparent fill makes a part's inside clickable, not just its outline. */
+.gear-part rect,
+.gear-part circle,
+.gear-part path {
+  fill: transparent;
+}
+
+.gear-leader {
+  stroke: var(--color-muted);
+}
+
+.gear-part .gear-leader-dot {
+  fill: var(--color-muted);
+  stroke: none;
+}
+
+.gear-drawing .gear-screen-text {
+  fill: var(--color-muted);
+  font-size: 10px;
+}
+
+.gear-part .gear-cell-fill {
+  fill: var(--color-muted);
+  stroke: none;
+}
+
+.gear-part[data-highlight='true'],
+.gear-part[data-highlight='true'] .gear-leader {
+  stroke: var(--color-accent);
+}
+
+.gear-part[data-highlight='true'] text,
+.gear-part[data-highlight='true'] .gear-leader-dot {
+  fill: var(--color-accent);
+}
+
+.gear-part[data-highlight='true'] .gear-screen-text {
+  fill: var(--color-muted);
+}
+
 .intro-drawing {
   display: block;
   width: 100%;
