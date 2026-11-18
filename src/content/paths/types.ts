@@ -7,7 +7,7 @@ export interface PathStop {
   name: string;
   /** Parts lit at this step, each linked to its lesson; empty for an off-drone end. */
   parts: readonly PartId[];
-  /** An off-drone end (the radio or goggles); its name links to the intro sheet. */
+  /** An off-drone end (the radio or goggles); it links to that gear sheet. */
   end?: 'radio' | 'goggles';
   /** Where the path's leader touches this stop on the drawing. */
   anchors: readonly AnchorId[];

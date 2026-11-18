@@ -26,7 +26,7 @@ export interface PathPanelProps {
   onFollowLink?: (page: Page) => void;
 }
 
-/** Under a stop's text: its lesson (or lessons), or for an off-drone end, the intro. */
+/** Under a stop's text: its lesson (or lessons), or for an off-drone end, its gear sheet. */
 function StopLessons({
   stop,
   onFollowLink,
@@ -39,8 +39,8 @@ function StopLessons({
     return (
       <p className="path-stop-lessons">
         {t.endMoreLabel}{' '}
-        <PartLink to="intro" className="lesson-link" onFollow={onFollowLink}>
-          {UI.intro.link}
+        <PartLink to={stop.end} className="lesson-link" onFollow={onFollowLink}>
+          {UI.gear.title[stop.end]}
         </PartLink>
       </p>
     );

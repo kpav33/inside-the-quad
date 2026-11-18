@@ -90,4 +90,18 @@ describe('SystemScene', () => {
     }
     expect(screen.getAllByText(/ExpressLRS · 2.4 GHz/).length).toBeGreaterThan(0);
   });
+
+  it('leads from the radio and goggles to their gear sheets', () => {
+    renderScene();
+    const list = screen.getByRole('list', { name: INTRO.scene.label });
+    expect(within(list).getByRole('link', { name: 'More in Radio' })).toHaveAttribute(
+      'href',
+      '/gear/radio',
+    );
+    expect(within(list).getByRole('link', { name: 'More in Goggles' })).toHaveAttribute(
+      'href',
+      '/gear/goggles',
+    );
+    expect(within(list).getAllByRole('link')).toHaveLength(2);
+  });
 });

@@ -138,6 +138,8 @@ export const UI = {
     /** The list of the drawing's parts; each name highlights its part. */
     partsHeading: 'On the drawing',
     partsHint: 'Point at a name to find it on the drawing.',
+    /** A link to a gear sheet from outside its chapter (the intro's devices). */
+    moreIn: (name: string) => `More in ${name}`,
   },
   paths: {
     /** Each path sheet's name, as its heading and wherever another sheet refers to it. */

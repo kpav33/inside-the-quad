@@ -39,7 +39,7 @@ export function IntroPanel({ read, onClose, onToggleRead, onFollowLink }: IntroP
       </Question>
       <Question number={2} heading={system.heading}>
         {paragraphs(system)}
-        <SystemScene />
+        <SystemScene onFollowLink={onFollowLink} />
       </Question>
       <Question number={3} heading={sizes.heading}>
         {paragraphs(sizes)}
