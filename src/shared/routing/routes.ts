@@ -1,3 +1,4 @@
+import { type GearId, isGearId } from '@/shared/domain/gear';
 import { isPartId, type PartId } from '@/shared/domain/parts';
 import { MOVES_SHEET } from '@/shared/domain/moves';
 import { WHAT_IF_SHEET } from '@/shared/domain/what-if';
@@ -9,6 +10,7 @@ export const INTRO_PATH = '/intro';
 
 const PART_PREFIX = '/parts/';
 const PATH_PREFIX = '/paths/';
+const GEAR_PREFIX = '/gear/';
 /** The flight sheets, each at its own top-level address with an optional step. */
 const FLIGHT_SHEETS = [MOVES_SHEET, WHAT_IF_SHEET] as const;
 /** A cap for a step read from an address; far beyond any path's stops. */
@@ -25,10 +27,16 @@ export type Route =
   | { kind: 'path'; path: PathId; step: number }
   | { kind: 'moves'; step: number }
   | { kind: 'what-if'; step: number }
+  | { kind: 'gear'; gear: GearId }
   | { kind: 'unknown'; slug: string };
 
 export function partPath(part: PartId): string {
   return `${PART_PREFIX}${part}`;
+}
+
+/** A gear sheet's address. */
+export function gearPath(gear: GearId): string {
+  return `${GEAR_PREFIX}${gear}`;
 }
 
 /** A stepped sheet's address at a step (from 1); step 1 is the sheet's own address. */
@@ -49,6 +57,7 @@ export function pagePath(page: Page, step?: number): string {
   if (page === MOVES_SHEET || page === WHAT_IF_SHEET || isPathId(page)) {
     return steppedPath(page, step);
   }
+  if (isGearId(page)) return gearPath(page);
   return partPath(page);
 }
 
@@ -85,6 +94,10 @@ export function parseRoute(pathname: string): Route {
     return isPathId(id) && rest.length === 0 && !Number.isNaN(stepNumber)
       ? { kind: 'path', path: id, step: stepNumber }
       : { kind: 'unknown', slug };
+  }
+  if (pathname.startsWith(GEAR_PREFIX)) {
+    const slug = decode(pathname.slice(GEAR_PREFIX.length).replace(/\/$/, ''));
+    return isGearId(slug) ? { kind: 'gear', gear: slug } : { kind: 'unknown', slug };
   }
   for (const sheet of FLIGHT_SHEETS) {
     if (pathname !== `/${sheet}` && !pathname.startsWith(`/${sheet}/`)) continue;

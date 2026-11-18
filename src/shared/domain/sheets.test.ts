@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
+import { GEAR_IDS } from './gear';
 import { PART_IDS } from './parts';
 import { MOVES_SHEET } from './moves';
 import { WHAT_IF_SHEET } from './what-if';
 import { PATH_IDS } from './paths';
 import {
+  CHAPTER_SHEETS,
   chapterCount,
   chapterOf,
   NUMBERED_SHEETS,
@@ -15,7 +17,14 @@ import {
 
 describe('sheets', () => {
   it('puts the intro before the parts, in teaching order', () => {
-    expect(SHEET_IDS).toEqual(['intro', ...PART_IDS, ...PATH_IDS, MOVES_SHEET, WHAT_IF_SHEET]);
+    expect(SHEET_IDS).toEqual([
+      'intro',
+      ...PART_IDS,
+      ...PATH_IDS,
+      MOVES_SHEET,
+      WHAT_IF_SHEET,
+      ...GEAR_IDS,
+    ]);
     expect(new Set(SHEET_IDS).size).toBe(SHEET_IDS.length);
     expect((PART_IDS as readonly string[]).includes('intro')).toBe(false);
   });
@@ -35,11 +44,20 @@ describe('sheets', () => {
   it('runs on from the video path into how a quad moves, which ends the set', () => {
     expect(sheetNeighbours('video')).toEqual({ previous: 'power', next: 'moves' });
     expect(sheetNeighbours('moves')).toEqual({ previous: 'video', next: 'what-if' });
-    expect(sheetNeighbours('what-if')).toEqual({ previous: 'moves', next: null });
+    expect(sheetNeighbours('what-if')).toEqual({ previous: 'moves', next: 'radio' });
   });
 
   it('reads the parts, then the paths and how a quad moves', () => {
-    expect(NUMBERED_SHEETS).toHaveLength(16);
+    expect(NUMBERED_SHEETS).toHaveLength(19);
+  });
+
+  it('ends with the gear chapter: radio, goggles, charger', () => {
+    expect(CHAPTER_SHEETS.gear).toEqual(['radio', 'goggles', 'charger']);
+    expect(sheetNeighbours('radio')).toEqual({ previous: 'what-if', next: 'goggles' });
+    expect(sheetNeighbours('charger')).toEqual({ previous: 'goggles', next: null });
+    expect(chapterOf('radio')).toBe('gear');
+    expect(sheetNumber('goggles')).toBe(2);
+    expect(chapterCount('charger')).toBe(3);
   });
 
   it('splits the set into two chapters, each numbered from 1', () => {

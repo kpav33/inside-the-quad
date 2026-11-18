@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { PART_IDS } from '@/shared/domain/parts';
+import { GEAR_IDS, type GearId } from '@/shared/domain/gear';
 import { NUMBERED_SHEETS } from '@/shared/domain/sheets';
 
 import {
@@ -14,6 +15,11 @@ import {
 const set = (...sheets: ReadableSheet[]) => new Set<ReadableSheet>(sheets);
 
 describe('parseReadSheets', () => {
+  it('keeps gear sheets, and reads a list saved before them', () => {
+    expect(parseReadSheets('["frame","radio"]')).toEqual(new Set(['frame', 'radio']));
+    expect(parseReadSheets('["frame","control"]')).toEqual(new Set(['frame', 'control']));
+  });
+
   it.each([null, 'nope', '{}', '[1]', '"vtx"'])('reads %j as nothing read', (raw) => {
     expect(parseReadSheets(raw).size).toBe(0);
   });
@@ -64,6 +70,12 @@ describe('where to start', () => {
   it('continues into the paths once every part is read', () => {
     expect(firstUnread(set(...PART_IDS))).toBe('control');
     expect(startState(set(...PART_IDS), true)).toEqual({ kind: 'continue', sheet: 'control' });
+  });
+
+  it('continues into the gear once every part and stepped sheet is read', () => {
+    const allButGear = NUMBERED_SHEETS.filter((sheet) => !GEAR_IDS.includes(sheet as GearId));
+    expect(firstUnread(set(...allButGear))).toBe('radio');
+    expect(startState(set(...allButGear), true)).toEqual({ kind: 'continue', sheet: 'radio' });
   });
 
   it('is done when every sheet is read', () => {

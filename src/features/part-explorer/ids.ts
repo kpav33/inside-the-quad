@@ -1,3 +1,4 @@
+import type { GearId } from '@/shared/domain/gear';
 import type { PartId } from '@/shared/domain/parts';
 import type { PathId } from '@/shared/domain/paths';
 
@@ -27,3 +28,8 @@ export const MOVES_TITLE_ID = 'moves-title';
 
 /** The what-if sheet's heading, focused when it opens. */
 export const WHAT_IF_TITLE_ID = 'what-if-title';
+
+/** A gear sheet's heading, focused when it opens. */
+export function gearTitleId(gear: GearId): string {
+  return `gear-title-${gear}`;
+}

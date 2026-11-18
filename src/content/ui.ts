@@ -1,3 +1,4 @@
+import { type GearId, isGearId } from '@/shared/domain/gear';
 import type { PartId } from '@/shared/domain/parts';
 import { MOVES_SHEET } from '@/shared/domain/moves';
 import { isPathId, type PathId } from '@/shared/domain/paths';
@@ -37,6 +38,7 @@ export const UI = {
     introLink: 'What is an FPV drone?',
     /** The masthead's link to the path sheets, which opens the control path. */
     pathsLink: 'How it works together',
+    gearLink: 'The gear',
     /** The browser tab's title while the intro is open. */
     introTitle: 'What is an FPV drone? · Inside the Quad',
   },
@@ -73,13 +75,20 @@ export const UI = {
     knowBasics: 'Already know the basics?',
     start: (part: string) => `Start with sheet 1: ${part}`,
     continue: (sheet: number, name: string) => `Continue with sheet ${sheet}: ${name}`,
-    /** Continuing into the paths names their chapter, since its sheets are numbered afresh. */
-    continuePaths: (sheet: number, name: string) =>
-      `Continue with How it works together, sheet ${sheet}: ${name}`,
+    /** Continuing past the parts names the chapter, since its sheets are numbered afresh. */
+    continueIn: (chapter: string, sheet: number, name: string) =>
+      `Continue with ${chapter}, sheet ${sheet}: ${name}`,
     allRead: 'Every sheet read. Open any sheet to look something up.',
     startAgain: 'Start again from sheet 1',
-    count: (parts: number, partTotal: number, together: number, togetherTotal: number) =>
-      `Parts ${parts} of ${partTotal} · How it works ${together} of ${togetherTotal}`,
+    count: (
+      parts: number,
+      partTotal: number,
+      together: number,
+      togetherTotal: number,
+      gear: number,
+      gearTotal: number,
+    ) =>
+      `Parts ${parts} of ${partTotal} · How it works ${together} of ${togetherTotal} · Gear ${gear} of ${gearTotal}`,
     clear: 'Clear progress',
   },
   titleBlock: {
@@ -106,7 +115,18 @@ export const UI = {
     byAuthor: (author: string) => `by ${author}`,
     via: 'Via Wikimedia Commons.',
   },
-  chapters: { parts: 'The parts', paths: 'How it works together' },
+  chapters: {
+    parts: 'The parts',
+    paths: 'How it works together',
+    gear: 'The gear you hold and wear',
+  },
+  gear: {
+    /** Each gear sheet's name, as its heading and wherever another sheet refers to it. */
+    title: { radio: 'Radio', goggles: 'Goggles', charger: 'Charger' } satisfies Record<
+      GearId,
+      string
+    >,
+  },
   paths: {
     /** Each path sheet's name, as its heading and wherever another sheet refers to it. */
     title: { control: 'Control path', power: 'Power path', video: 'Video path' } satisfies Record<
@@ -226,15 +246,23 @@ export const UI = {
     sheetNumber: (sheet: number) => `· sheet ${sheet}`,
     footerLabel: 'Sheets',
     previous: 'Previous',
-    /** The footer link out of the last part, into the paths chapter. */
-    endOfParts: 'End of the parts',
+    /** The footer link out of a chapter's last sheet, into the next chapter. */
+    endOf: {
+      parts: 'End of the parts',
+      paths: 'End of How it works together',
+      gear: 'End of the gear',
+    },
     /** A lesson opened from a path's stop: the way back to that step. */
     backToPath: (title: string, step: number) => `Back to ${title}, step ${String(step)}`,
-    /** The footer link back from the first path into the parts chapter. */
-    backToParts: 'Back to the parts',
-    /** A path named from outside its chapter. */
-    pathInChapter: (sheet: number, title: string) =>
-      `How it works together, sheet ${sheet}: ${title}`,
+    /** The footer link back from a chapter's first sheet into the chapter before. */
+    backTo: {
+      parts: 'Back to the parts',
+      paths: 'Back to How it works together',
+      gear: 'Back to the gear',
+    },
+    /** A sheet named from outside its chapter, since each chapter numbers its sheets from 1. */
+    sheetInChapter: (chapter: string, sheet: number, title: string) =>
+      `${chapter}, sheet ${sheet}: ${title}`,
     next: 'Next',
     backToOverview: 'Back to overview',
     markRead: 'Mark as read',
@@ -253,5 +281,6 @@ export const UI = {
 export function sheetName(sheet: NumberedSheet): string {
   if (sheet === MOVES_SHEET) return UI.moves.title;
   if (sheet === WHAT_IF_SHEET) return UI.whatIf.title;
+  if (isGearId(sheet)) return UI.gear.title[sheet];
   return isPathId(sheet) ? UI.paths.title[sheet] : PART_LABELS[sheet];
 }

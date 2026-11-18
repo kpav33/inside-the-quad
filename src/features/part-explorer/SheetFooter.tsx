@@ -1,23 +1,37 @@
 import { sheetName, UI } from '@/content/ui';
-import { chapterOf, type SheetId, sheetNeighbours, sheetNumber } from '@/shared/domain/sheets';
+import {
+  type Chapter,
+  chapterOf,
+  type SheetId,
+  sheetNeighbours,
+  sheetNumber,
+} from '@/shared/domain/sheets';
 import { type Page, PartLink } from '@/shared/routing';
 import { ArrowIcon, CheckIcon } from '@/shared/ui/icons';
 
-/** True when moving from one sheet to the other crosses from one chapter into the other. */
+const CHAPTER_ORDER: readonly Chapter[] = ['parts', 'paths', 'gear'];
+
+/** True when moving from one sheet to the other crosses from one chapter into another. */
 function crossesChapter(from: SheetId, to: SheetId | null): boolean {
   if (from === 'intro' || to === null || to === 'intro') return false;
   return chapterOf(from) !== chapterOf(to);
 }
 
 /**
- * "Battery · sheet 6": a reference to another sheet; the sheet number never wraps apart. A path
- * named from the parts chapter carries its chapter ("How it works together, sheet 1: Control
- * path"), since its number counts from 1 again. The intro has no number and is named by its title.
+ * "Battery · sheet 6": a reference to another sheet; the sheet number never wraps apart. A sheet
+ * named from an earlier chapter carries its own chapter ("How it works together, sheet 1: Control
+ * path"), since its number counts from 1 again; going back, the footer label names the chapter.
+ * The intro has no number and is named by its title.
  */
 export function SheetRef({ sheet, from }: { sheet: SheetId; from?: SheetId }) {
   if (sheet === 'intro') return <>{UI.intro.link}</>;
-  if (from !== undefined && crossesChapter(from, sheet) && chapterOf(sheet) === 'paths') {
-    return <>{UI.lesson.pathInChapter(sheetNumber(sheet), sheetName(sheet))}</>;
+  if (from !== undefined && from !== 'intro' && crossesChapter(from, sheet)) {
+    const into = chapterOf(sheet);
+    if (CHAPTER_ORDER.indexOf(into) > CHAPTER_ORDER.indexOf(chapterOf(from))) {
+      return (
+        <>{UI.lesson.sheetInChapter(UI.chapters[into], sheetNumber(sheet), sheetName(sheet))}</>
+      );
+    }
   }
   return (
     <>
@@ -64,7 +78,9 @@ export function SheetFooter({ sheet, read, onToggleRead, onFollowLink }: SheetFo
           <PartLink to={previous} className="lesson-sheet-link" onFollow={onFollowLink}>
             <span className="lesson-sheet-label">
               <ArrowIcon back />
-              {backAcross ? UI.lesson.backToParts : UI.lesson.previous}
+              {backAcross && previous !== 'intro'
+                ? UI.lesson.backTo[chapterOf(previous)]
+                : UI.lesson.previous}
               <span className="visually-hidden">:</span>
             </span>{' '}
             <span className="lesson-sheet-target">
@@ -76,7 +92,7 @@ export function SheetFooter({ sheet, read, onToggleRead, onFollowLink }: SheetFo
         )}
         <PartLink to={next} className="lesson-sheet-link lesson-sheet-next" onFollow={onFollowLink}>
           <span className="lesson-sheet-label">
-            {onAcross ? UI.lesson.endOfParts : UI.lesson.next}
+            {onAcross && sheet !== 'intro' ? UI.lesson.endOf[chapterOf(sheet)] : UI.lesson.next}
             <span className="visually-hidden">:</span>
             <ArrowIcon />
           </span>{' '}
