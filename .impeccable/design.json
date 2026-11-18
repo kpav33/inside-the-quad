@@ -471,6 +471,18 @@
       "kind": "drawing",
       "refersTo": "vtx-gauge",
       "description": "Hairline rule-strong square on the floor under the drone (the ground a fall ends on); a three-cell gauge over the VTX filling with ink as it heats, redline at Damaged; the wrong prop's motor pill in redline."
+    },
+    {
+      "name": "Gear Sheet",
+      "kind": "sheet",
+      "refersTo": "gear",
+      "description": "Chapter 'The gear you hold and wear', sheets 1-3 (radio, goggles, charger): lesson sheet frame with title block, chapter switcher, 'Real gear' photo and the four questions; a Try it box (sheet fill, hairline) with framed switches like the battery switch and a line saying what the setting does; 'On the drawing' lists caps underlined part names over muted notes, each lighting its part. Starts afresh each visit."
+    },
+    {
+      "name": "Gear Drawing",
+      "kind": "drawing",
+      "refersTo": "gear-drawing",
+      "description": "Flat front view in the drawing field instead of the 3D drone: hairline ink, rule-strong bodies, caps labels on muted leaders ending in dots; the highlighted part, leader and label in redline. Answers the switches (radio levers, goggles picture or No signal, six cell bars at 4.2 or 3.8 V). No animation. Pinned on phones; labels larger below 30rem."
     }
   ],
   "narrative": {
