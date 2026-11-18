@@ -108,8 +108,17 @@ a {
   font-size: var(--step--1);
 }
 
-/* The masthead's sections: for now one link, to the intro. It sits at the right and takes its own
-   line when the masthead wraps. */
+/* Where the explorer fills the screen but the title, tagline and three section links don't fit one
+   row, the tagline gives way so the masthead never grows a second row and pushes the page into
+   scrolling. Narrower, stacked layouts scroll anyway and keep it. */
+@media (min-width: 56rem) and (max-width: 61.9375rem) {
+  .app-header p {
+    display: none;
+  }
+}
+
+/* The masthead's sections: the intro, How it works together and the gear. They sit at the right
+   and take their own line when the masthead wraps. */
 .app-sections {
   display: flex;
   flex-wrap: wrap;
@@ -360,6 +369,12 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
+}
+
+/* With large text a switch's options wrap onto a second row instead of widening the sheet. */
+.gear-try .battery-switch {
+  flex-wrap: wrap;
+  max-width: 100%;
 }
 
 .gear-says {

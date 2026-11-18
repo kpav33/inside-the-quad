@@ -19,8 +19,13 @@ export const gogglesLesson: GearLesson<GogglesPartId> = {
   specs: [
     {
       label: 'Video',
-      value: `${camera.signal === 'analog' ? 'Analog' : 'Digital'} · ${String(vtx.frequencyGhz)} GHz`,
-      meaning: 'The kind of video and its frequency. It must match the drone’s VTX.',
+      value: camera.signal === 'analog' ? 'Analog' : 'Digital',
+      meaning: 'The kind of video. It must match the drone’s VTX.',
+    },
+    {
+      label: 'Frequency',
+      value: `${String(vtx.frequencyGhz)} GHz`,
+      meaning: 'The radio band the video comes on, the same as the VTX’s.',
     },
     {
       label: 'Channels',

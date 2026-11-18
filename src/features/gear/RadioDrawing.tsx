@@ -46,8 +46,8 @@ export function RadioDrawing({
       <DrawnPart
         id="antenna"
         label={label('antenna')}
-        anchor={[204, 66]}
-        labelAt={[232, 44]}
+        anchor={[204, 56]}
+        labelAt={[232, 30]}
         {...shared}
       >
         <rect x="198" y="40" width="12" height="72" rx="5" />

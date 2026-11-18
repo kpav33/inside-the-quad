@@ -23,10 +23,14 @@ export const radioLesson: GearLesson<RadioPartId> = {
         'Left stick: throttle and yaw. Right stick: pitch and roll. The usual layout; the other modes swap the sticks around.',
     },
     {
-      label: 'Link',
-      value: `${receiver.system} · ${String(receiver.frequencyGhz)} GHz`,
-      meaning:
-        'The radio control system and its frequency. The drone’s receiver must use the same.',
+      label: 'System',
+      value: receiver.system,
+      meaning: 'The radio control system. The drone’s receiver must use the same one.',
+    },
+    {
+      label: 'Frequency',
+      value: `${String(receiver.frequencyGhz)} GHz`,
+      meaning: 'The radio frequency the link uses, the same as the receiver’s.',
     },
     {
       label: 'Firmware',
