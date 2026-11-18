@@ -116,9 +116,9 @@
     "title": "RadioMaster Pocket",
     "licence": "CC0",
     "crop": {
-      "left": 170,
+      "left": 80,
       "top": 300,
-      "width": 2700,
+      "width": 2790,
       "height": 3620
     },
     "note": "The app's own photo: a RadioMaster Pocket, an entry-level EdgeTX radio. Metadata stripped; cropped to the radio."
