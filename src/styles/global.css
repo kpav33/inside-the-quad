@@ -334,6 +334,94 @@ a {
   box-shadow: inset 0 -2px 0 var(--color-accent);
 }
 
+/* A gear sheet's one thing to try: a small caps label, its switches, and what they do. */
+.gear-try {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  border: 1px solid var(--color-rule);
+  background: var(--color-sheet);
+}
+
+.gear-try-label,
+.gear-parts-heading {
+  margin: 0;
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.gear-try-switches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.gear-says {
+  margin: 0;
+}
+
+/* The drawing's parts: each name lights its part on the drawing. */
+.gear-parts-heading {
+  margin-top: var(--space-4);
+}
+
+.gear-parts-hint {
+  margin: var(--space-1) 0 0;
+  font-size: var(--step--1);
+  color: var(--color-muted);
+}
+
+.gear-parts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Each name over its note. */
+.gear-parts li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.gear-part-name {
+  align-self: flex-start;
+}
+
+.gear-part-name {
+  min-height: var(--target-min);
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--font-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-color: var(--color-rule-strong);
+  text-underline-offset: 0.2em;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.gear-part-name[aria-pressed='true'] {
+  color: var(--color-accent);
+  text-decoration-color: var(--color-accent);
+}
+
+.gear-part-note {
+  color: var(--color-muted);
+}
+
 /* A mistake's three parts: small caps labels over the reading text. */
 .what-if-parts {
   margin: 0;
@@ -1548,7 +1636,8 @@ a.lesson-sheet-link:hover {
    scroll under them, so the drone is in view while reading and when a step's demo plays. The
    parts list isn't needed on this sheet and stays out of the pinned area. */
 @container main (max-width: 55.9375rem) {
-  .part-explorer[data-flight] {
+  .part-explorer[data-flight],
+  .part-explorer[data-gear] {
     /* In px and vw, not rem: with enlarged text the drawing and sticks keep their size, so the
        steps keep most of the screen to be read in. */
     --moves-canvas: max(46svh, 240px);
@@ -1559,7 +1648,8 @@ a.lesson-sheet-link:hover {
     --stick-band: calc(var(--phone-stick) + 44px);
   }
 
-  .part-explorer[data-flight] .drawing-canvas {
+  .part-explorer[data-flight] .drawing-canvas,
+  .part-explorer[data-gear] .drawing-canvas {
     height: var(--moves-canvas);
     min-height: 0;
   }
@@ -1593,7 +1683,8 @@ a.lesson-sheet-link:hover {
     right: var(--space-2);
   }
 
-  .part-explorer[data-flight] .part-explorer-field {
+  .part-explorer[data-flight] .part-explorer-field,
+  .part-explorer[data-gear] .part-explorer-field {
     position: sticky;
     top: 0;
     z-index: 2;
@@ -1602,11 +1693,13 @@ a.lesson-sheet-link:hover {
   }
 
   /* Margins in px too, so larger text never squeezes the sticks together. */
-  .part-explorer[data-flight] .part-explorer-viewer {
+  .part-explorer[data-flight] .part-explorer-viewer,
+  .part-explorer[data-gear] .part-explorer-viewer {
     inset: min(var(--space-5), 24px);
   }
 
-  .part-explorer[data-flight] .part-list {
+  .part-explorer[data-flight] .part-list,
+  .part-explorer[data-gear] .part-list {
     display: none;
   }
 
@@ -1635,7 +1728,8 @@ a.lesson-sheet-link:hover {
     display: none;
   }
 
-  .part-explorer[data-flight] .part-explorer-sheet :is(button, a, input, h2, .path-stop) {
+  .part-explorer[data-flight] .part-explorer-sheet :is(button, a, input, h2, .path-stop),
+  .part-explorer[data-gear] .part-explorer-sheet :is(button, a, input, h2, .path-stop) {
     scroll-margin-top: calc(var(--pinned-drawing) + var(--space-2));
   }
 }
@@ -1793,6 +1887,18 @@ a.lesson-sheet-link:hover {
 
 .gear-part[data-highlight='true'] .gear-screen-text {
   fill: var(--color-muted);
+}
+
+/* A narrow drawing scales its labels down with it: on a phone they are drawn larger, so they stay
+   readable at the drawing's size. */
+@media (max-width: 30rem) {
+  .gear-drawing text {
+    font-size: 16px;
+  }
+
+  .gear-drawing .gear-screen-text {
+    font-size: 13px;
+  }
 }
 
 .intro-drawing {
@@ -2055,6 +2161,7 @@ a.lesson-sheet-link:hover {
 }
 
 /* On the moves sheet the drawing is for flying: clicking a part opens nothing, so its hint goes. */
-.part-explorer[data-flight] .drawing-hint {
+.part-explorer[data-flight] .drawing-hint,
+.part-explorer[data-gear] .drawing-hint {
   display: none;
 }

@@ -63,9 +63,9 @@ export function GogglesDrawing({
       <DrawnPart
         id="video-receiver"
         label={label('video-receiver')}
-        anchor={[236, 100]}
-        labelAt={[376, 74]}
-        align="end"
+        anchor={[200, 96]}
+        labelAt={[200, 30]}
+        align="middle"
         {...shared}
       >
         <rect x="170" y="96" width="60" height="20" rx="3" />

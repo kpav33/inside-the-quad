@@ -87,10 +87,12 @@ describe('gear copy', () => {
     const storage = packVolts(cells, LIPO_CELL_VOLTS.storage);
     expect(full).toBe(25.2);
     expect(storage).toBe(22.8);
-    expect(chargerSays('charge')).toContain(`${String(full)} V`);
-    expect(chargerSays('charge')).toContain(`${String(LIPO_CELL_VOLTS.full)} V`);
-    expect(chargerSays('storage')).toContain(`${String(storage)} V`);
-    expect(chargerSays('storage')).toContain(`${String(LIPO_CELL_VOLTS.storage)} V`);
+    // The unit stays with its number: a no-break space between them.
+    const v = (value: number) => `${String(value)}\u00a0V`;
+    expect(chargerSays('charge')).toContain(v(full));
+    expect(chargerSays('charge')).toContain(v(LIPO_CELL_VOLTS.full));
+    expect(chargerSays('storage')).toContain(v(storage));
+    expect(chargerSays('storage')).toContain(v(LIPO_CELL_VOLTS.storage));
   });
 
   it('names no brands and no prices', () => {

@@ -126,6 +126,18 @@ export const UI = {
       GearId,
       string
     >,
+    close: 'Close sheet',
+    /** The sheet's one thing to try, over its switches. */
+    tryLabel: 'Try it',
+    arm: { label: 'Arm switch', off: 'Disarmed', on: 'Armed' },
+    modeLabel: 'Mode switch',
+    videoLabel: 'Goggles’ video',
+    video: { analog: 'Analog', digital: 'Digital' },
+    chargerLabel: 'Charger mode',
+    chargerMode: { charge: 'Charge', storage: 'Storage' },
+    /** The list of the drawing's parts; each name highlights its part. */
+    partsHeading: 'On the drawing',
+    partsHint: 'Point at a name to find it on the drawing.',
   },
   paths: {
     /** Each path sheet's name, as its heading and wherever another sheet refers to it. */

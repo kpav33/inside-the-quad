@@ -5,7 +5,8 @@ import type { ChargerMode, ChargerPartId, GearLesson } from './types';
 
 const cells = REFERENCE_5_INCH.motor.batteryCells;
 const { capacityMah } = REFERENCE_5_INCH.battery;
-const volts = (value: number) => `${String(value)} V`;
+/** A voltage, its unit never wrapped onto a line of its own. */
+const volts = (value: number) => `${String(value)}\u00a0V`;
 const full = packVolts(cells, LIPO_CELL_VOLTS.full);
 const storage = packVolts(cells, LIPO_CELL_VOLTS.storage);
 /** A gentle charge current: 1C, the pack's capacity in amps. */

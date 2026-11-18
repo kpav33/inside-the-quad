@@ -47,7 +47,7 @@ export function ChargerDrawing({
         id="balance-port"
         label={label('balance-port')}
         anchor={[160, 196]}
-        labelAt={[160, 284]}
+        labelAt={[200, 284]}
         align="middle"
         {...shared}
       >
