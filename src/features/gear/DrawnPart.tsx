@@ -52,7 +52,7 @@ export function DrawnPart({
         x1={anchor[0]}
         y1={anchor[1]}
         x2={labelAt[0]}
-        y2={labelAt[1] + (below ? -12 : 4)}
+        y2={labelAt[1] + (below ? -16 : 4)}
       />
       <circle className="gear-leader-dot" cx={anchor[0]} cy={anchor[1]} r="2" />
       <text x={labelAt[0]} y={labelAt[1] + (below ? 0 : -2)} textAnchor={align}>

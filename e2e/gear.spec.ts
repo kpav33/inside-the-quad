@@ -104,9 +104,22 @@ for (const id of ['radio', 'goggles', 'charger']) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
       320,
     );
-    // The drawing's labels never cover one another.
+    // The drawing's own words are big enough to read: labels at least 11 px, the screens' words
+    // (No signal, Storage and the pack's voltage) at least 10 px.
+    const result = { radio: null, goggles: 'Digital', charger: 'Storage' }[id];
+    if (result) await page.getByRole('button', { name: result, exact: true }).click();
+    const sizes = await page.evaluate(() =>
+      [...document.querySelectorAll<SVGTextElement>('.gear-drawing text')].map((el) => ({
+        screen: el.classList.contains('gear-screen-text'),
+        px: (el.getScreenCTM()?.a ?? 0) * Number.parseFloat(getComputedStyle(el).fontSize),
+      })),
+    );
+    for (const { screen, px } of sizes) expect(px).toBeGreaterThanOrEqual(screen ? 10 : 11);
+    // The drawing's labels never cover one another, nor the frame's zone markers.
     const labels = await page.evaluate(() =>
-      [...document.querySelectorAll('.gear-drawing text:not(.gear-screen-text)')].map((el) => {
+      [
+        ...document.querySelectorAll('.gear-drawing text:not(.gear-screen-text), .drawing-zone'),
+      ].map((el) => {
         const r = el.getBoundingClientRect();
         return { left: r.left, right: r.right, top: r.top, bottom: r.bottom };
       }),
@@ -115,8 +128,37 @@ for (const id of ['radio', 'goggles', 'charger']) {
       for (const b of labels.slice(i + 1)) {
         const x = Math.min(a.right, b.right) - Math.max(a.left, b.left);
         const y = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
-        expect(x > 1 && y > 1).toBe(false);
+        // At least 2 px apart, so no two read as one.
+        expect(x > -2 && y > -2).toBe(false);
       }
     });
   });
 }
+
+test('at 320 px with 200 % text the masthead’s three section links stay apart', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 667 });
+  await page.goto('/');
+  await page.evaluate(() => (document.documentElement.style.fontSize = '200%'));
+  const nav = page.getByRole('navigation', { name: 'Sections' });
+  const boxes = await nav.getByRole('link').evaluateAll((links) =>
+    links.map((link) => {
+      const r = link.getBoundingClientRect();
+      return { top: r.top, bottom: r.bottom, left: r.left, right: r.right };
+    }),
+  );
+  boxes.forEach((a, i) => {
+    for (const b of boxes.slice(i + 1)) {
+      const x = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+      const y = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+      expect(x > 0 && y > 0).toBe(false);
+    }
+  });
+  // A tap on the middle of How it works together opens that chapter.
+  const together = nav.getByRole('link', { name: 'How it works together' });
+  await together.click({
+    position: { x: 20, y: ((await together.boundingBox())?.height ?? 0) / 2 },
+  });
+  await expect(page).toHaveURL(/\/paths\/control$/);
+});

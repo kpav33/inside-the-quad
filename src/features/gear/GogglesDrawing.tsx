@@ -1,7 +1,12 @@
 import { GEAR, type GogglesPartId } from '@/content/gear';
+import { UI } from '@/content/ui';
 
 import { DrawnPart } from './DrawnPart';
 import type { GearState } from './gear-state';
+
+/** "No signal", split for the screen's two lines. */
+const [first = '', ...rest] = UI.gear.noSignal.split(' ');
+const noSignal = [first, rest.join(' ')] as const;
 
 const label = (id: GogglesPartId) => GEAR.goggles.parts.find((part) => part.id === id)?.label ?? id;
 
@@ -16,8 +21,12 @@ function Screen({ x, picture }: { x: number; picture: boolean }) {
           <polyline points={`${x + 26},162 ${x + 26},146 ${x + 50},146 ${x + 50},160`} />
         </g>
       ) : (
-        <text className="gear-screen-text" x={x + 38} y="161" textAnchor="middle">
-          No signal
+        // On two lines, so the words fit the small screen at any size.
+        <text className="gear-screen-text" x={x + 38} y="153" textAnchor="middle">
+          <tspan>{`${noSignal[0]} `}</tspan>
+          <tspan x={x + 38} dy="1.1em">
+            {noSignal[1]}
+          </tspan>
         </text>
       )}
     </g>
@@ -63,8 +72,8 @@ export function GogglesDrawing({
       <DrawnPart
         id="video-receiver"
         label={label('video-receiver')}
-        anchor={[200, 96]}
-        labelAt={[200, 30]}
+        anchor={[222, 96]}
+        labelAt={[236, 30]}
         align="middle"
         {...shared}
       >

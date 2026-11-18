@@ -47,7 +47,7 @@ export function ChargerDrawing({
         id="balance-port"
         label={label('balance-port')}
         anchor={[160, 196]}
-        labelAt={[200, 284]}
+        labelAt={[210, 294]}
         align="middle"
         {...shared}
       >
@@ -57,7 +57,7 @@ export function ChargerDrawing({
         id="main-lead"
         label={label('main-lead')}
         anchor={[70, 240]}
-        labelAt={[24, 284]}
+        labelAt={[24, 268]}
         {...shared}
       >
         <polyline points="70,212 70,248 252,248 252,220" />
@@ -75,7 +75,7 @@ export function ChargerDrawing({
         id="cells"
         label={label('cells')}
         anchor={[barsRight - 7, 206]}
-        labelAt={[376, 284]}
+        labelAt={[376, 268]}
         align="end"
         {...shared}
       >

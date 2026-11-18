@@ -123,6 +123,9 @@ a {
   display: flex;
   flex-wrap: wrap;
   column-gap: var(--space-5);
+  /* Each link's tap target reaches a --space-3 into the space above and below it (see below), so
+     wrapped rows are spaced by twice that and never overlap. */
+  row-gap: calc(2 * var(--space-3));
   margin-left: auto;
 }
 
@@ -1713,6 +1716,18 @@ a.lesson-sheet-link:hover {
     inset: min(var(--space-5), 24px);
   }
 
+  /* A gear drawing has no sticks to keep clear of: its margin is just enough for the zone
+     markers, so the drawing (and its labels) are as large as the phone allows. */
+  .part-explorer[data-gear] .part-explorer-viewer {
+    inset: min(var(--space-3), 12px);
+  }
+
+  /* The zone markers keep their size with enlarged text, like the drawing's labels, so they stay
+     in that narrow margin and never run into a label. */
+  .part-explorer[data-gear] .drawing-zones {
+    font-size: min(var(--step--1), 3.4vw);
+  }
+
   .part-explorer[data-flight] .part-list,
   .part-explorer[data-gear] .part-list {
     display: none;
@@ -1908,11 +1923,11 @@ a.lesson-sheet-link:hover {
    readable at the drawing's size. */
 @media (max-width: 30rem) {
   .gear-drawing text {
-    font-size: 16px;
+    font-size: 18px;
   }
 
   .gear-drawing .gear-screen-text {
-    font-size: 13px;
+    font-size: 16px;
   }
 }
 

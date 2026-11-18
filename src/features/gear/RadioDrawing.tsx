@@ -75,7 +75,7 @@ export function RadioDrawing({
         id="screen"
         label={label('screen')}
         anchor={[200, 146]}
-        labelAt={[200, 284]}
+        labelAt={[200, 294]}
         align="middle"
         {...shared}
       >
@@ -85,7 +85,7 @@ export function RadioDrawing({
         id="left-stick"
         label={label('left-stick')}
         anchor={[130, 206]}
-        labelAt={[24, 284]}
+        labelAt={[24, 268]}
         {...shared}
       >
         <Gimbal cx={130} />
@@ -94,7 +94,7 @@ export function RadioDrawing({
         id="right-stick"
         label={label('right-stick')}
         anchor={[270, 206]}
-        labelAt={[376, 284]}
+        labelAt={[376, 268]}
         align="end"
         {...shared}
       >

@@ -139,6 +139,8 @@ export const UI = {
     /** The list of the drawing's parts; each name highlights its part. */
     partsHeading: 'On the drawing',
     partsHint: 'Point at a name to find it on the drawing.',
+    /** On the goggles' screens when they can't read the drone's video. */
+    noSignal: 'No signal',
     /** A link to a gear sheet from outside its chapter (the intro's devices). */
     moreIn: (name: string) => `More in ${name}`,
   },
