@@ -118,14 +118,14 @@ const TEXT: Record<PhotoId, { alt: string; caption: string }> = {
       'One example: a compact radio with its antenna up, a screen between the gimbals and switches along the top. Yours may look different.',
   },
   goggles: {
-    alt: 'White box-style FPV goggles with a black foam face pad, lying on a table, a receiver module fitted at the side.',
+    alt: 'Slim white FPV goggles on a pilot’s face, the strap printed FAT SHARK, a receiver module on the side whose small screen reads F1 5740, and a stubby antenna.',
     caption:
-      'One example: box goggles with a plug-in video receiver module. Digital goggles look much the same from outside.',
+      'One example: slim goggles with a plug-in video receiver module, its screen showing the channel it is tuned to. Yours may look different.',
   },
   charger: {
-    alt: 'A silver hobby charger seen end-on: red and black output sockets, and a row of white balance ports labelled from 2 to 6 cells, with a charging lead in front.',
+    alt: 'A small black charger with a colour screen and a dial, a balance port marked 2–6S and a yellow XT60 socket marked BAT on its side.',
     caption:
-      'One example: a charger’s main output sockets and its balance ports, one for each cell count. Yours may look different.',
+      'One example: a small charger with its balance port (2–6S) and its XT60 main socket side by side. Yours may look different.',
   },
 };
 

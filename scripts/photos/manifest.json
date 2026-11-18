@@ -124,20 +124,20 @@
   },
   {
     "part": "goggles",
-    "title": "File:FPV Brille mit Diversity Modul.jpg",
+    "title": "File:REN 6045.jpg",
     "licence": "CC BY-SA 4.0",
     "crop": {
-      "left": 750,
-      "top": 500,
-      "width": 3500,
-      "height": 2190
+      "left": 812,
+      "top": 1250,
+      "width": 2500,
+      "height": 2500
     },
-    "note": "Box goggles with a diversity receiver module on top, without the bench clutter."
+    "note": "Fat Shark goggles on a pilot at a race: the plug-in receiver module shows its channel (F1, 5740 MHz). Cropped to the goggles."
   },
   {
     "part": "charger",
-    "title": "File:Charger Battery.JPG",
+    "title": "File:ISDT SC-608 front.jpg",
     "licence": "CC BY-SA 3.0",
-    "note": "A hobby charger's end: the main output sockets and balance ports labelled by cell count."
+    "note": "A small, common charger: the balance port (2-6S) and the XT60 main socket (BAT) side by side."
   }
 ]

@@ -20,14 +20,14 @@
     "height": 1168
   },
   "charger": {
-    "title": "Charger Battery",
-    "author": "KundaliniZero",
+    "title": "ISDT SC-608 front",
+    "author": "Lucasbosch",
     "licence": "CC BY-SA 3.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Charger_Battery.JPG",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:ISDT_SC-608_front.jpg",
     "cropped": false,
     "width": 1280,
-    "height": 853
+    "height": 841
   },
   "esc": {
     "title": "Esc2",
@@ -69,14 +69,14 @@
     "height": 819
   },
   "goggles": {
-    "title": "FPV Brille mit Diversity Modul",
-    "author": "Clicklabs",
+    "title": "REN 6045",
+    "author": "Slakteriitis",
     "licence": "CC BY-SA 4.0",
     "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-    "sourceUrl": "https://commons.wikimedia.org/wiki/File:FPV_Brille_mit_Diversity_Modul.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:REN_6045.jpg",
     "cropped": true,
     "width": 1280,
-    "height": 801
+    "height": 1280
   },
   "motors": {
     "title": "Xlabs Shrike-200 V2 5″ FPV quad with components collage",
