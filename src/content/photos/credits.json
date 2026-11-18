@@ -19,6 +19,16 @@
     "width": 1280,
     "height": 1168
   },
+  "charger": {
+    "title": "Charger Battery",
+    "author": "KundaliniZero",
+    "licence": "CC BY-SA 3.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Charger_Battery.JPG",
+    "cropped": false,
+    "width": 1280,
+    "height": 853
+  },
   "esc": {
     "title": "Esc2",
     "author": "1sfoerster",
@@ -58,6 +68,16 @@
     "width": 1280,
     "height": 819
   },
+  "goggles": {
+    "title": "FPV Brille mit Diversity Modul",
+    "author": "Clicklabs",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:FPV_Brille_mit_Diversity_Modul.jpg",
+    "cropped": true,
+    "width": 1280,
+    "height": 801
+  },
   "motors": {
     "title": "Xlabs Shrike-200 V2 5″ FPV quad with components collage",
     "author": "Lucasbosch",
@@ -77,6 +97,16 @@
     "cropped": true,
     "width": 1280,
     "height": 937
+  },
+  "radio": {
+    "title": "TBS Tango II",
+    "author": "SokilFPV",
+    "licence": "CC BY 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:TBS_Tango_II.jpg",
+    "cropped": true,
+    "width": 1280,
+    "height": 1474
   },
   "receiver": {
     "title": "TBS Crossfire Nano receiver (XF nano)",

@@ -103,4 +103,13 @@ describe('GearPanel', () => {
     fireEvent.mouseLeave(name);
     expect(onHighlight).toHaveBeenLastCalledWith(null);
   });
+
+  it('shows a real, credited photo of the gear as one example', () => {
+    renderGear('charger');
+    const figure = screen.getByRole('figure');
+    expect(figure).toHaveTextContent('Real gear');
+    expect(within(figure).getByRole('img')).toHaveAccessibleName(/charger/i);
+    expect(figure).toHaveTextContent(/One example: /);
+    expect(within(figure).getByRole('link', { name: /CC BY-SA 3.0/ })).toBeInTheDocument();
+  });
 });

@@ -8,13 +8,20 @@ const SIZES = '(min-width: 56rem) 36rem, 100vw';
  * A real photo of the part, under the title block: one example, captioned as such, with the credit
  * its licence asks for.
  */
-export function PartPhoto({ photo }: { photo: Photo }) {
+export function PartPhoto({
+  photo,
+  label = UI.photo.label,
+}: {
+  photo: Photo;
+  /** Over the photo: "Real part", or on a gear sheet "Real gear". */
+  label?: string;
+}) {
   const { title, author, licence, licenceUrl, sourceUrl, cropped } = photo.credit;
   const text = UI.photo;
   return (
     <figure className="part-photo">
       <p className="part-photo-label" aria-hidden="true">
-        {text.label}
+        {label}
       </p>
       <img
         src={photo.src}

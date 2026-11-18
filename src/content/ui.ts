@@ -106,6 +106,7 @@ export const UI = {
   /** The real part photo on each lesson sheet. */
   photo: {
     label: 'Real part',
+    gearLabel: 'Real gear',
     by: 'Photo:',
     /** Said after a cropped photo: share-alike licences carry over to the crop. */
     cropped: (shareAlike: boolean) =>

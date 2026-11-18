@@ -109,5 +109,35 @@
       "height": 1350
     },
     "note": "The buzzer board only; the components photo was too small to crop the GPS."
+  },
+  {
+    "part": "radio",
+    "title": "File:TBS Tango II.jpg",
+    "licence": "CC BY 4.0",
+    "crop": {
+      "left": 940,
+      "top": 60,
+      "width": 2640,
+      "height": 3040
+    },
+    "note": "The radio alone: its T antenna, screen and both gimbals, without the shop behind it."
+  },
+  {
+    "part": "goggles",
+    "title": "File:FPV Brille mit Diversity Modul.jpg",
+    "licence": "CC BY-SA 4.0",
+    "crop": {
+      "left": 750,
+      "top": 500,
+      "width": 3500,
+      "height": 2190
+    },
+    "note": "Box goggles with a diversity receiver module on top, without the bench clutter."
+  },
+  {
+    "part": "charger",
+    "title": "File:Charger Battery.JPG",
+    "licence": "CC BY-SA 3.0",
+    "note": "A hobby charger's end: the main output sockets and balance ports labelled by cell count."
   }
 ]

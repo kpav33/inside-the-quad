@@ -1,4 +1,5 @@
 import { chargerSays, GEAR, gogglesSays, RADIO_MODES, radioSays } from '@/content/gear';
+import { PART_PHOTOS } from '@/content/photos';
 import { UI } from '@/content/ui';
 import type { GearState } from '@/features/gear';
 import type { GearId } from '@/shared/domain/gear';
@@ -8,6 +9,7 @@ import { ArrowIcon } from '@/shared/ui/icons';
 
 import { ChapterSwitcher } from './ChapterSwitcher';
 import { gearTitleId, LESSON_PANEL_ID } from './ids';
+import { PartPhoto } from './PartPhoto';
 import { Question } from './Question';
 import { SheetFooter, SheetRef } from './SheetFooter';
 import { TitleBlock } from './TitleBlock';
@@ -174,6 +176,8 @@ export function GearPanel({
       />
 
       <ChapterSwitcher open={gear} onFollowLink={onFollowLink} />
+
+      <PartPhoto photo={PART_PHOTOS[gear]} label={UI.photo.gearLabel} />
 
       <Question number={1} heading={UI.lesson.questions[0]}>
         <p className="lesson-lead">{lesson.whatItDoes}</p>

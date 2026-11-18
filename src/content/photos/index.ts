@@ -1,8 +1,11 @@
+import type { GearId } from '@/shared/domain/gear';
 import type { PartId } from '@/shared/domain/parts';
 
 import batteryLarge from '@/assets/photos/battery-1280.webp';
 import battery from '@/assets/photos/battery-640.webp';
 import cameraLarge from '@/assets/photos/camera-1280.webp';
+import chargerLarge from '@/assets/photos/charger-1280.webp';
+import charger from '@/assets/photos/charger-640.webp';
 import camera from '@/assets/photos/camera-640.webp';
 import escLarge from '@/assets/photos/esc-1280.webp';
 import esc from '@/assets/photos/esc-640.webp';
@@ -10,11 +13,15 @@ import extrasLarge from '@/assets/photos/extras-1280.webp';
 import extras from '@/assets/photos/extras-640.webp';
 import fcLarge from '@/assets/photos/fc-1280.webp';
 import fc from '@/assets/photos/fc-640.webp';
+import gogglesLarge from '@/assets/photos/goggles-1280.webp';
+import goggles from '@/assets/photos/goggles-640.webp';
 import frameLarge from '@/assets/photos/frame-1280.webp';
 import frame from '@/assets/photos/frame-640.webp';
 import motorsLarge from '@/assets/photos/motors-1280.webp';
 import motors from '@/assets/photos/motors-640.webp';
 import propsLarge from '@/assets/photos/props-1280.webp';
+import radioLarge from '@/assets/photos/radio-1280.webp';
+import radio from '@/assets/photos/radio-640.webp';
 import props from '@/assets/photos/props-640.webp';
 import receiverLarge from '@/assets/photos/receiver-1280.webp';
 import receiver from '@/assets/photos/receiver-640.webp';
@@ -29,7 +36,10 @@ import { type Licence, LICENCES, type PartPhoto } from './types';
 export { LICENCES };
 export type { Licence, PartPhoto, PhotoCredit } from './types';
 
-const FILES: Record<PartId, { src: string; srcLarge: string }> = {
+/** A sheet with a real photo: every part, and every piece of gear. */
+type PhotoId = PartId | GearId;
+
+const FILES: Record<PhotoId, { src: string; srcLarge: string }> = {
   frame: { src: frame, srcLarge: frameLarge },
   motors: { src: motors, srcLarge: motorsLarge },
   props: { src: props, srcLarge: propsLarge },
@@ -41,10 +51,13 @@ const FILES: Record<PartId, { src: string; srcLarge: string }> = {
   camera: { src: camera, srcLarge: cameraLarge },
   vtx: { src: vtx, srcLarge: vtxLarge },
   extras: { src: extras, srcLarge: extrasLarge },
+  radio: { src: radio, srcLarge: radioLarge },
+  goggles: { src: goggles, srcLarge: gogglesLarge },
+  charger: { src: charger, srcLarge: chargerLarge },
 };
 
 /** What each photo shows (alt) and how we present it (caption, always one example). */
-const TEXT: Record<PartId, { alt: string; caption: string }> = {
+const TEXT: Record<PhotoId, { alt: string; caption: string }> = {
   frame: {
     alt: 'A bare carbon-fibre quad frame on a workbench, with a motor on each arm and a camera cage in the middle.',
     caption:
@@ -99,6 +112,21 @@ const TEXT: Record<PartId, { alt: string; caption: string }> = {
     caption:
       'One example: a buzzer on a small board, wired to the flight controller. GPS modules and LEDs are other extras.',
   },
+  radio: {
+    alt: 'A white handheld radio with a T-shaped antenna on top, a small screen between two stick gimbals, and purple stick ends.',
+    caption:
+      'One example: a compact radio with its antenna up, a screen between the gimbals and switches along the top. Yours may look different.',
+  },
+  goggles: {
+    alt: 'White box-style FPV goggles with a black foam face pad, lying on a table, a receiver module fitted at the side.',
+    caption:
+      'One example: box goggles with a plug-in video receiver module. Digital goggles look much the same from outside.',
+  },
+  charger: {
+    alt: 'A silver hobby charger seen end-on: red and black output sockets, and a row of white balance ports labelled from 2 to 6 cells, with a charging lead in front.',
+    caption:
+      'One example: a charger’s main output sockets and its balance ports, one for each cell count. Yours may look different.',
+  },
 };
 
 function asLicence(value: string): Licence {
@@ -109,7 +137,7 @@ function asLicence(value: string): Licence {
 
 /** One real photo per part, credited (see `scripts/photos/` for where they come from). */
 export const PART_PHOTOS = Object.fromEntries(
-  (Object.keys(FILES) as PartId[]).map((id) => {
+  (Object.keys(FILES) as PhotoId[]).map((id) => {
     const credit = credits[id];
     const photo: PartPhoto = {
       ...FILES[id],
@@ -127,4 +155,4 @@ export const PART_PHOTOS = Object.fromEntries(
     };
     return [id, photo];
   }),
-) as Record<PartId, PartPhoto>;
+) as Record<PhotoId, PartPhoto>;

@@ -1,21 +1,25 @@
 import { describe, expect, it } from 'vitest';
 
+import { GEAR_IDS, type GearId } from '@/shared/domain/gear';
 import { PART_IDS, type PartId } from '@/shared/domain/parts';
 
 import manifest from '../../../scripts/photos/manifest.json';
 
 import { LICENCES, PART_PHOTOS } from './index';
 
-const croppedInManifest = new Set<PartId>(
-  manifest.filter((entry) => 'crop' in entry).map((entry) => entry.part as PartId),
+/** Every sheet with a photo: the parts, then the gear. */
+const PHOTO_IDS: readonly (PartId | GearId)[] = [...PART_IDS, ...GEAR_IDS];
+
+const croppedInManifest = new Set<PartId | GearId>(
+  manifest.filter((entry) => 'crop' in entry).map((entry) => entry.part as PartId | GearId),
 );
 
 describe('PART_PHOTOS', () => {
-  it('has one photo for every part', () => {
-    expect(Object.keys(PART_PHOTOS).sort()).toEqual([...PART_IDS].sort());
+  it('has one photo for every part and every piece of gear', () => {
+    expect(Object.keys(PART_PHOTOS).sort()).toEqual([...PHOTO_IDS].sort());
   });
 
-  describe.each(PART_IDS.map((id) => [id]))('%s', (id) => {
+  describe.each(PHOTO_IDS.map((id) => [id]))('%s', (id) => {
     const photo = PART_PHOTOS[id];
 
     it('describes the picture, separately from its caption', () => {
