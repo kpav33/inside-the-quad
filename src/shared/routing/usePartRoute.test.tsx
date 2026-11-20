@@ -117,3 +117,16 @@ describe('usePartRoute', () => {
     expect(window.location.pathname).toBe('/intro');
   });
 });
+
+describe('usePartRoute on Check a build', () => {
+  it('reads /check and keeps its query when dropping the trailing slash', () => {
+    const { result } = start('/check/?kv=2400');
+    expect(result.current.route).toEqual({ kind: 'check' });
+    expect(window.location.pathname + window.location.search).toBe('/check?kv=2400');
+  });
+
+  it('drops a query from an address the app replaces with the overview', () => {
+    start('/nowhere?kv=2400');
+    expect(window.location.pathname + window.location.search).toBe('/');
+  });
+});

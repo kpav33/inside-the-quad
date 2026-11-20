@@ -32,6 +32,15 @@ describe('App', () => {
     expect(screen.getByRole('heading', { level: 2, name: 'What is an FPV drone?' })).toHaveFocus();
   });
 
+  it('links Check a build from the masthead, current on the sheet, keeping no query', () => {
+    window.history.replaceState(null, '', '/check?camera=21');
+    render(<App />);
+    const nav = screen.getByRole('navigation', { name: 'Sections' });
+    const link = within(nav).getByRole('link', { name: 'Check a build' });
+    expect(link).toHaveAttribute('href', '/check');
+    expect(link).toHaveAttribute('aria-current', 'page');
+  });
+
   it('links the paths from the masthead, current on any path sheet', async () => {
     window.history.replaceState(null, '', '/');
     render(<App />);

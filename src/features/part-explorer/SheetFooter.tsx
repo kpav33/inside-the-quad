@@ -9,7 +9,7 @@ import {
 import { type Page, PartLink } from '@/shared/routing';
 import { ArrowIcon, CheckIcon } from '@/shared/ui/icons';
 
-const CHAPTER_ORDER: readonly Chapter[] = ['parts', 'paths', 'gear'];
+const CHAPTER_ORDER: readonly Chapter[] = ['parts', 'paths', 'gear', 'build'];
 
 /** True when moving from one sheet to the other crosses from one chapter into another. */
 function crossesChapter(from: SheetId, to: SheetId | null): boolean {

@@ -108,16 +108,16 @@ a {
   font-size: var(--step--1);
 }
 
-/* Where the explorer fills the screen but the title, tagline and three section links don't fit one
-   row, the tagline gives way so the masthead never grows a second row and pushes the page into
-   scrolling. Narrower, stacked layouts scroll anyway and keep it. */
-@media (min-width: 56rem) and (max-width: 61.9375rem) {
+/* Where the explorer fills the screen but the title, tagline and four section links don't fit one
+   row (about 1083 px), the tagline gives way so the masthead never grows a second row and pushes
+   the page into scrolling. Narrower, stacked layouts scroll anyway and keep it. */
+@media (min-width: 56rem) and (max-width: 67.9375rem) {
   .app-header p {
     display: none;
   }
 }
 
-/* The masthead's sections: the intro, How it works together and the gear. They sit at the right
+/* The masthead's sections: the intro, How it works together, the gear and Check a build. They sit at the right
    and take their own line when the masthead wraps. */
 .app-sections {
   display: flex;

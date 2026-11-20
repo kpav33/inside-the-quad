@@ -15,7 +15,8 @@ export type PageRoute =
   | { kind: 'path'; path: PathId; step: number }
   | { kind: 'moves'; step: number }
   | { kind: 'what-if'; step: number }
-  | { kind: 'gear'; gear: GearId };
+  | { kind: 'gear'; gear: GearId }
+  | { kind: 'check' };
 
 export interface PartRoute {
   route: PageRoute;
@@ -46,13 +47,14 @@ export function usePartRoute(): PartRoute {
           ? pagePath(parsed.kind, parsed.step)
           : parsed.kind === 'gear'
             ? pagePath(parsed.gear)
-            : parsed.kind === 'intro'
-              ? pagePath('intro')
+            : parsed.kind === 'intro' || parsed.kind === 'check'
+              ? pagePath(parsed.kind)
               : OVERVIEW_PATH;
   useEffect(() => {
     if (unknown !== null) replacePath(OVERVIEW_PATH, unknown);
-    else if (snapshot.path !== canonical) replacePath(canonical);
-  }, [unknown, canonical, snapshot.path]);
+    // The query stays: Check a build keeps its build there.
+    else if (snapshot.path !== canonical) replacePath(canonical, null, snapshot.search);
+  }, [unknown, canonical, snapshot.path, snapshot.search]);
 
   const navigate = useCallback((page: Page) => {
     navigateTo(pagePath(page));

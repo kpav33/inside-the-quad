@@ -97,6 +97,8 @@ export function OverviewStart({ read, introRead, onFollowLink, onClear }: Overvi
               CHAPTER_SHEETS.paths.length,
               countRead(read, 'gear'),
               CHAPTER_SHEETS.gear.length,
+              countRead(read, 'build'),
+              CHAPTER_SHEETS.build.length,
             )}
           </span>
         )}

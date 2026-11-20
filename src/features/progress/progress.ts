@@ -1,3 +1,4 @@
+import { CHECK_SHEET } from '@/shared/domain/check';
 import { isGearId } from '@/shared/domain/gear';
 import { isPartId } from '@/shared/domain/parts';
 import { isSteppedSheet, NUMBERED_SHEETS, type NumberedSheet } from '@/shared/domain/sheets';
@@ -21,7 +22,7 @@ export type StartState =
   | { kind: 'done' };
 
 function isReadableSheet(value: unknown): value is ReadableSheet {
-  return isPartId(value) || isSteppedSheet(value) || isGearId(value);
+  return isPartId(value) || isSteppedSheet(value) || isGearId(value) || value === CHECK_SHEET;
 }
 
 /** Reads the stored value. Anything malformed or unknown is dropped, never thrown. */

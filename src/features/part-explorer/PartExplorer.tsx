@@ -14,6 +14,7 @@ import { isInsidePart, isPartId, type PartId } from '@/shared/domain/parts';
 import { MOVES_SHEET } from '@/shared/domain/moves';
 import { WHAT_IF_SHEET } from '@/shared/domain/what-if';
 import { isGearId } from '@/shared/domain/gear';
+import { CHECK_SHEET } from '@/shared/domain/check';
 import { isPathId, type PathId } from '@/shared/domain/paths';
 import type { SheetId } from '@/shared/domain/sheets';
 import { type Page, usePartRoute } from '@/shared/routing';
@@ -27,6 +28,7 @@ import {
   LESSON_PANEL_ID,
   MOVES_TITLE_ID,
   WHAT_IF_TITLE_ID,
+  CHECK_TITLE_ID,
   lessonTitleId,
   OVERVIEW_FOCUS_ID,
   partButtonId,
@@ -120,7 +122,9 @@ const sheetTitleId = (sheet: SheetId) =>
           ? pathTitleId(sheet)
           : isGearId(sheet)
             ? gearTitleId(sheet)
-            : lessonTitleId(sheet);
+            : sheet === CHECK_SHEET
+              ? CHECK_TITLE_ID
+              : lessonTitleId(sheet);
 
 /**
  * Lets the user pick a drone part in the 3D view or the part list, and shows its lesson.
@@ -142,14 +146,17 @@ export function PartExplorer() {
   const gear = useGearSheet(openGear);
   // The sheet in the sheet column: a part's lesson, the intro, a path, how a quad moves, or none
   // (the overview).
+  const checkOpen = route.kind === 'check';
   const openSheet: SheetId | null =
     route.kind === 'intro'
       ? 'intro'
-      : movesOpen
-        ? MOVES_SHEET
-        : whatIfOpen
-          ? WHAT_IF_SHEET
-          : (openGear ?? openPath?.id ?? selectedPart);
+      : checkOpen
+        ? CHECK_SHEET
+        : movesOpen
+          ? MOVES_SHEET
+          : whatIfOpen
+            ? WHAT_IF_SHEET
+            : (openGear ?? openPath?.id ?? selectedPart);
   // A path's step is in its address (from 1); one past the end shows the last stop.
   const stopCount = openPath?.stops.length ?? 0;
   const addressStep = route.kind === 'path' ? route.step - 1 : 0;

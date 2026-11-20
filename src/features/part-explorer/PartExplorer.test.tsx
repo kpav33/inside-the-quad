@@ -617,7 +617,7 @@ describe('PartExplorer', () => {
     await renderExplorer();
     expect(screen.getByRole('link', { name: 'Continue with sheet 2: Motors' })).toBeInTheDocument();
     expect(
-      screen.getByText('Parts 1 of 11 · How it works 0 of 5 · Gear 0 of 3'),
+      screen.getByText('Parts 1 of 11 · How it works 0 of 5 · Gear 0 of 3 · Build 0 of 1'),
     ).toBeInTheDocument();
   });
 
@@ -630,7 +630,7 @@ describe('PartExplorer', () => {
       }),
     ).toHaveAttribute('href', '/paths/control');
     expect(
-      screen.getByText('Parts 11 of 11 · How it works 0 of 5 · Gear 0 of 3'),
+      screen.getByText('Parts 11 of 11 · How it works 0 of 5 · Gear 0 of 3 · Build 0 of 1'),
     ).toBeInTheDocument();
   });
 

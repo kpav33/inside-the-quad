@@ -24,8 +24,17 @@ describe('SheetFooter across chapters', () => {
     ).toHaveAttribute('href', '/what-if');
   });
 
-  it('ends the set at the charger with the overview', () => {
+  it('leaves the charger for Plan a build', () => {
     renderFooter('charger');
+    expect(
+      screen.getByRole('link', {
+        name: 'End of the gear: Plan a build, sheet 1: Check a build',
+      }),
+    ).toHaveAttribute('href', '/check');
+  });
+
+  it('ends the set at Check a build with the overview', () => {
+    renderFooter('check');
     expect(screen.getByRole('link', { name: 'Next: Back to overview' })).toHaveAttribute(
       'href',
       '/',

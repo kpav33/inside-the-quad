@@ -24,6 +24,7 @@ describe('sheets', () => {
       MOVES_SHEET,
       WHAT_IF_SHEET,
       ...GEAR_IDS,
+      'check',
     ]);
     expect(new Set(SHEET_IDS).size).toBe(SHEET_IDS.length);
     expect((PART_IDS as readonly string[]).includes('intro')).toBe(false);
@@ -48,16 +49,24 @@ describe('sheets', () => {
   });
 
   it('reads the parts, then the paths and how a quad moves', () => {
-    expect(NUMBERED_SHEETS).toHaveLength(19);
+    expect(NUMBERED_SHEETS).toHaveLength(20);
   });
 
   it('ends with the gear chapter: radio, goggles, charger', () => {
     expect(CHAPTER_SHEETS.gear).toEqual(['radio', 'goggles', 'charger']);
     expect(sheetNeighbours('radio')).toEqual({ previous: 'what-if', next: 'goggles' });
-    expect(sheetNeighbours('charger')).toEqual({ previous: 'goggles', next: null });
+    expect(sheetNeighbours('charger')).toEqual({ previous: 'goggles', next: 'check' });
     expect(chapterOf('radio')).toBe('gear');
     expect(sheetNumber('goggles')).toBe(2);
     expect(chapterCount('charger')).toBe(3);
+  });
+
+  it('ends with Plan a build: one sheet, Check a build', () => {
+    expect(CHAPTER_SHEETS.build).toEqual(['check']);
+    expect(sheetNeighbours('check')).toEqual({ previous: 'charger', next: null });
+    expect(chapterOf('check')).toBe('build');
+    expect(sheetNumber('check')).toBe(1);
+    expect(chapterCount('check')).toBe(1);
   });
 
   it('splits the set into two chapters, each numbered from 1', () => {
