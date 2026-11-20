@@ -183,7 +183,8 @@ labelled drawing and one thing to try on each. Module 4 is complete.
 
 ## Compatibility checker (section 07: Check a build)
 
-Built from the specs already covered in Module 2 (done: the Check a build sheet, `/check`):
+Built from the specs already covered in Module 2 (done: the Check a build sheet, `/check`, held
+back from the first release behind `VITE_FEATURE_CHECKER`):
 
 - Stack mounting size: FC/ESC vs frame (30.5 / 25.5 / 20 mm)
 - Camera width vs frame (28 / 21 / 19 / 14 mm)

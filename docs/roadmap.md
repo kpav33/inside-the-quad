@@ -19,7 +19,7 @@ Status: `planned` · `in progress` · `in review` · `done`.
 | 05b | How it all works together, how a quad moves: virtual sticks, motor speeds, the gyro loop                                                    | `feat/moves`                 | done      |
 | 05c | How it all works together, what if: failsafe, prop on backwards, 4S vs 6S, VTX without antenna                                              | `feat/what-if`               | done      |
 | 06  | Gear you hold and wear (Module 4)                                                                                                           | `feat/gear`                  | done      |
-| 07  | Compatibility checker: Check a build, seven checks on a planned build's numbers                                                             | `feat/checker`               | in review |
+| 07  | Compatibility checker: Check a build, seven checks on a planned build's numbers (held back from release 1, off by default)                  | `feat/checker`               | in review |
 
 ## 01 — First slice (summary)
 

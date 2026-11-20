@@ -43,6 +43,10 @@ nginx/              Production server config (copied into the Docker image)
   `shared/domain/sheets.ts` orders the sheets (the intro, then the parts) for previous/next. The 3D view, the part list and
   the links in a lesson all navigate, so Back and Forward retrace the learner's steps. Links are
   real `<a href>` elements (`PartLink`), so they also open in a new tab.
+- `shared/features.ts` switches features that are built but held back from the release. Each is
+  read from a `VITE_FEATURE_*` variable at build time and is off unless set to `true`; off, its
+  sheets leave the reading order, its address is unknown and its links are not drawn. Check a
+  build (`VITE_FEATURE_CHECKER`) is the first.
 - Check a build (`/check`) keeps its build in the query string: `shared/routing/build-query.ts`
   reads it (unknown or malformed values fall back to the reference) and writes only the fields
   that differ, replacing the history entry so Back leaves the sheet. `shared/domain/build-check.ts`
