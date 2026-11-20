@@ -1,5 +1,5 @@
 import type { ThreeEvent } from '@react-three/fiber';
-import { act, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -803,6 +803,49 @@ describe('PartExplorer', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('3D model couldn’t be loaded');
     await userEvent.click(screen.getByRole('button', { name: 'Frame' }));
     expect(lessonHeading('Frame')).toBeInTheDocument();
+  });
+});
+
+describe('Check a build', () => {
+  afterEach(() => {
+    window.localStorage.clear();
+  });
+
+  const result = (name: string) => {
+    const item = screen
+      .getAllByRole('listitem')
+      .find((li) => li.querySelector('.check-result-name')?.textContent === name);
+    if (!item) throw new Error(`no result ${name}`);
+    return item;
+  };
+
+  it('reads the build from the address and lights a result’s parts only while pointed at', async () => {
+    window.history.replaceState(null, '', '/check?camera=21');
+    await renderExplorer();
+    expect(lessonHeading('Check a build')).toBeInTheDocument();
+    expect(result('Camera width')).toHaveTextContent('Doesn’t fit');
+    expect(viewerState().open).toEqual([]);
+    fireEvent.mouseEnter(result('Camera width'));
+    expect(viewerState().open).toEqual(['frame', 'camera']);
+    fireEvent.mouseLeave(result('Camera width'));
+    expect(viewerState().open).toEqual([]);
+  });
+
+  it('writes a pick to the address and Reset clears it', async () => {
+    window.history.replaceState(null, '', '/check');
+    await renderExplorer();
+    const battery = screen.getByRole('group', { name: 'Battery' });
+    await userEvent.selectOptions(within(battery).getByLabelText('Cells'), '4S');
+    expect(window.location.search).toBe('?cells=4');
+    expect(result('Motor KV')).toHaveTextContent('Check this');
+    const kv = screen.getByRole('textbox', { name: 'KV' });
+    await userEvent.clear(kv);
+    await userEvent.type(kv, 'abc');
+    expect(result('Motor KV')).toHaveTextContent(/Enter the motors’ KV/);
+    await userEvent.click(screen.getByRole('button', { name: /Reset/ }));
+    expect(window.location.search).toBe('');
+    expect(kv).toHaveValue('1950');
+    expect(screen.getByText('7 fit')).toBeInTheDocument();
   });
 });
 

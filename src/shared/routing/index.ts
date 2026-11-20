@@ -11,4 +11,6 @@ export {
   type Route,
   steppedPath,
 } from './routes';
-export { type PageRoute, type PartRoute, usePartRoute } from './usePartRoute';
+export { buildSearch, parseBuild } from './build-query';
+export { replaceSearch } from './history';
+export { type PageRoute, type PartRoute, usePartRoute, useSearch } from './usePartRoute';

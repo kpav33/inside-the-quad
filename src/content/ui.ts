@@ -137,9 +137,8 @@ export const UI = {
       [`${fits} fit`, fails > 0 ? `${fails} doesn’t` : '', check > 0 ? `${check} to check` : '']
         .filter(Boolean)
         .join(' · '),
-    lessonLink: (lesson: string) => `${lesson} lesson`,
+    close: 'Close sheet',
     reset: 'Reset to this app’s drone',
-    opened: 'Check a build opened',
   },
   gear: {
     /** Each gear sheet's name, as its heading and wherever another sheet refers to it. */

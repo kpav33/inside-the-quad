@@ -72,3 +72,8 @@ export function usePartRoute(): PartRoute {
     replaceStep,
   };
 }
+
+/** The address's query string (`?…` or `''`), kept up to date. */
+export function useSearch(): string {
+  return useSyncExternalStore(subscribe, getSnapshot).search;
+}

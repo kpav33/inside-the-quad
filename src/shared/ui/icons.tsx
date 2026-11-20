@@ -35,6 +35,25 @@ export function ArrowIcon({ back = false, ...props }: IconProps & { back?: boole
   );
 }
 
+/** "Check this": an exclamation mark in a ring. */
+export function CautionIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <circle cx="8" cy="8" r="6.25" />
+      <path d="M8 4.5v4.5M8 11v0.75" />
+    </Icon>
+  );
+}
+
+/** "Doesn't fit": a cross. */
+export function CrossIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3.5 3.5l9 9M12.5 3.5l-9 9" />
+    </Icon>
+  );
+}
+
 export function CheckIcon(props: IconProps) {
   return (
     <Icon {...props}>

@@ -2195,3 +2195,164 @@ a.lesson-sheet-link:hover {
 .part-explorer[data-gear] .drawing-hint {
   display: none;
 }
+
+/* Check a build: the results as ruled rows (status, then the check, why, and its lesson), then
+   the parts as small groups of labelled pick lists. Only Doesn't fit is in redline. */
+.check-results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.check-summary {
+  margin: 0;
+  font-family: var(--font-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.check-result-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-rule-strong);
+}
+
+.check-result {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  padding: var(--space-3) var(--space-2);
+  border-bottom: 1px solid var(--color-rule);
+  transition: background-color var(--duration) var(--ease-out);
+}
+
+/* The row pointed at, whose parts the drawing lights. */
+.check-result:hover,
+.check-result:focus-within {
+  background: var(--color-sheet);
+}
+
+.check-result-status {
+  display: inline-flex;
+  flex: 0 0 8.5rem;
+  align-self: flex-start;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.check-result[data-status='check'] .check-result-status {
+  color: var(--color-ink);
+}
+
+.check-result[data-status='fails'] .check-result-status {
+  color: var(--color-accent);
+}
+
+.check-result-body {
+  display: flex;
+  flex: 1 1 14rem;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.check-result-name {
+  font-family: var(--font-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.check-result-reason {
+  overflow-wrap: break-word;
+}
+
+.check-parts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+  gap: var(--space-4);
+}
+
+.check-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-rule);
+}
+
+.check-group legend {
+  padding: 0 var(--space-1);
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.check-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.check-select,
+.check-input {
+  width: 100%;
+  min-height: var(--target-min);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-rule-strong);
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  transition: border-color var(--duration) var(--ease-out);
+}
+
+/* A select never widens the sheet; the word choices (video kinds) are radio buttons instead, so
+   "Digital with an analog receiver" wraps rather than being cut short. */
+.check-select {
+  text-overflow: ellipsis;
+}
+
+.check-choice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target-min);
+  cursor: pointer;
+}
+
+.check-choice input {
+  flex: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin: 0;
+  accent-color: var(--color-ink);
+}
+
+.check-select:hover,
+.check-input:hover {
+  border-color: var(--color-ink);
+}
+
+.check-hint {
+  font-size: var(--step--1);
+  color: var(--color-muted);
+}
+
+.check-reset {
+  align-self: flex-start;
+  margin-top: var(--space-4);
+}
