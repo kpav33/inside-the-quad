@@ -43,6 +43,11 @@ nginx/              Production server config (copied into the Docker image)
   `shared/domain/sheets.ts` orders the sheets (the intro, then the parts) for previous/next. The 3D view, the part list and
   the links in a lesson all navigate, so Back and Forward retrace the learner's steps. Links are
   real `<a href>` elements (`PartLink`), so they also open in a new tab.
+- Check a build (`/check`) keeps its build in the query string: `shared/routing/build-query.ts`
+  reads it (unknown or malformed values fall back to the reference) and writes only the fields
+  that differ, replacing the history entry so Back leaves the sheet. `shared/domain/build-check.ts`
+  runs the seven checks as plain functions (statuses and reason keys); `content/checker.ts` turns
+  them into words.
 - `features/progress` keeps the parts marked as read, and separately the intro, in `localStorage`
   (versioned keys; blocked storage just means nothing is saved). The parts list ticks parts, and
   the overview offers the intro to a newcomer, then sheet 1, the first unread sheet, or a fresh

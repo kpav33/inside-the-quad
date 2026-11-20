@@ -18,8 +18,8 @@ Status: `planned` · `in progress` · `in review` · `done`.
 | 05a | How it all works together, paths: control, power and video path sheets with a leader on the drawing (Module 3)                              | `feat/paths`                 | done      |
 | 05b | How it all works together, how a quad moves: virtual sticks, motor speeds, the gyro loop                                                    | `feat/moves`                 | done      |
 | 05c | How it all works together, what if: failsafe, prop on backwards, 4S vs 6S, VTX without antenna                                              | `feat/what-if`               | done      |
-| 06  | Gear you hold and wear (Module 4)                                                                                                           | `feat/gear`                  | in review |
-| 07  | Compatibility checker                                                                                                                       | —                            | planned   |
+| 06  | Gear you hold and wear (Module 4)                                                                                                           | `feat/gear`                  | done      |
+| 07  | Compatibility checker: Check a build, seven checks on a planned build's numbers                                                             | `feat/checker`               | in review |
 
 ## 01 — First slice (summary)
 

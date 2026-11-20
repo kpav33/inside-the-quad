@@ -483,6 +483,18 @@
       "kind": "drawing",
       "refersTo": "gear-drawing",
       "description": "Flat front view in the drawing field instead of the 3D drone: hairline ink, rule-strong bodies, caps labels on muted leaders ending in dots; the highlighted part, leader and label in redline. Answers the switches (radio levers, goggles picture or No signal, six cell bars at 4.2 or 3.8 V). No animation. Pinned on phones; labels larger below 30rem."
+    },
+    {
+      "name": "Check a Build Sheet",
+      "kind": "sheet",
+      "refersTo": "check",
+      "description": "Chapter 'Plan a build', sheet 1 of 1: title block, lead, question 1 Results (caps summary, ruled rows: drawn status mark + caps word — Fits muted, Check this ink, Doesn't fit redline — then caps check name, why with numbers, lesson sheet reference; pointing at a row fills it with sheet tone and opens its parts on the 3D drawing), question 2 Your parts (hairline fieldsets per part, native selects with ground fill, typed KV with hint, radio choices for video kinds), outline Reset, footer."
+    },
+    {
+      "name": "Status Marks",
+      "kind": "icon",
+      "refersTo": "check-result-icon",
+      "description": "16 px drawn icons in the line weight beside the status word: tick, ringed exclamation mark, cross. Never colour alone."
     }
   ],
   "narrative": {

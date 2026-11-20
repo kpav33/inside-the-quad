@@ -181,15 +181,16 @@ labelled drawing and one thing to try on each. Module 4 is complete.
 
 ---
 
-## Later: compatibility checker
+## Compatibility checker (section 07: Check a build)
 
-Built from the specs already covered in Module 2:
+Built from the specs already covered in Module 2 (done: the Check a build sheet, `/check`):
 
 - Stack mounting size: FC/ESC vs frame (30.5 / 25.5 / 20 mm)
 - Camera width vs frame (28 / 21 / 19 / 14 mm)
 - Motor mount vs frame arms (16 mm on 5")
 - Prop size vs frame size
-- Voltage: battery "S" vs ESC, FC, VTX, camera ratings
+- Voltage: battery "S" vs ESC and FC ratings (the camera and VTX run from the FC's regulated
+  power, so the battery's voltage never reaches them)
 - Motor KV vs battery voltage
 - Video system: VTX vs goggles
 

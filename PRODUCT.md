@@ -73,7 +73,11 @@ it work, what do the numbers mean, what is it connected to.
   real photo, and one thing to try (arm and mode switches on the radio, analog or digital goggles
   against this drone's analog VTX, Charge or Storage across the pack's six cells). The masthead
   links it as "The gear"; the paths' radio and goggles ends and the intro lead there too.
-- Planned (see `docs/roadmap.md`): a compatibility checker; later other drone sizes and types.
+- A fourth chapter, "Plan a build", with one sheet, Check a build (`/check`): a beginner picks
+  their parts' numbers from pick lists (KV typed) and seven checks say Fits, Check this or
+  Doesn't fit, each with why and a link to the lesson behind it. The build lives in the address,
+  so it survives a reload and can be shared. Linked from the masthead and Next from the Charger.
+- Planned (see `docs/roadmap.md`): later other drone sizes and types.
 - Content source of truth: `docs/product/scope.md`. Product recommendations, Betaflight tuning and
   flight training are out of scope.
 - Terminology: "5-inch", "quad", "FC", "ESC", "VTX", "props in/out", "KV", "S" (battery cells).
