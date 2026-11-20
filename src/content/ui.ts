@@ -120,6 +120,22 @@ export const UI = {
     parts: 'The parts',
     paths: 'How it works together',
     gear: 'The gear you hold and wear',
+    build: 'Plan a build',
+  },
+  checker: {
+    /** The sheet's heading, and its name wherever another sheet refers to it. */
+    title: 'Check a build',
+    resultsHeading: 'Results',
+    partsHeading: 'Your parts',
+    status: { fits: 'Fits', check: 'Check this', fails: 'Doesn’t fit' },
+    /** The summary line over the results, e.g. "6 fit · 1 doesn’t · 1 to check". */
+    summary: ({ fits, check, fails }: { fits: number; check: number; fails: number }) =>
+      [`${fits} fit`, fails > 0 ? `${fails} doesn’t` : '', check > 0 ? `${check} to check` : '']
+        .filter(Boolean)
+        .join(' · '),
+    lessonLink: (lesson: string) => `${lesson} lesson`,
+    reset: 'Reset to this app’s drone',
+    opened: 'Check a build opened',
   },
   gear: {
     /** Each gear sheet's name, as its heading and wherever another sheet refers to it. */
