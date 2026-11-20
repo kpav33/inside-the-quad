@@ -189,9 +189,9 @@ Built from the specs already covered in Module 2 (done: the Check a build sheet,
 - Camera width vs frame (28 / 21 / 19 / 14 mm)
 - Motor mount vs frame arms (16 mm on 5")
 - Prop size vs frame size
-- Voltage: battery "S" vs ESC and FC ratings (the camera and VTX run from the FC's regulated
-  power, so the battery's voltage never reaches them)
-- Motor KV vs battery voltage
+- Voltage: battery "S" vs ESC and FC ratings (how the camera and VTX are powered varies by
+  build, so the sheet tells the reader to check what they need)
+- Motor KV vs battery voltage, for 5" props
 - Video system: VTX vs goggles
 
 ---
