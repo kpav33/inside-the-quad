@@ -2312,7 +2312,8 @@ a.lesson-sheet-link:hover {
   width: 100%;
   min-height: var(--target-min);
   padding: 0 var(--space-2);
-  border: 1px solid var(--color-rule-strong);
+  /* Muted, not a rule: a field's edge must stand out at 3:1 even when empty (WCAG 1.4.11). */
+  border: 1px solid var(--color-muted);
   background: var(--color-ground);
   color: var(--color-ink);
   font: inherit;

@@ -93,3 +93,31 @@ test('at 320 × 667 with 200 % text the sheet has no sideways scroll', async ({ 
     .poll(() => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth))
     .toBeLessThanOrEqual(0);
 });
+
+test('the KV field and pick lists show their edges at rest, at 3:1 or more', async ({ page }) => {
+  // Review 07, finding 3 (WCAG 1.4.11): an empty, unfocused field must still be seen.
+  await page.goto('/check');
+  const kv = page.getByRole('textbox', { name: 'KV' });
+  await kv.fill('');
+  await page.getByRole('heading', { level: 2, name: 'Check a build' }).focus();
+  const ratios = await page.evaluate(() => {
+    const rgb = (value: string) => (value.match(/\d+/g) ?? []).slice(0, 3).map(Number);
+    const luminance = (value: string) => {
+      const [r, g, b] = rgb(value).map((c) => {
+        const v = c / 255;
+        return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+      });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const ratio = (a: string, b: string) => {
+      const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+      return (hi + 0.05) / (lo + 0.05);
+    };
+    const ground = getComputedStyle(document.body).backgroundColor;
+    return [...document.querySelectorAll('.check-input, .check-select')].map((el) =>
+      ratio(getComputedStyle(el).borderTopColor, ground),
+    );
+  });
+  expect(ratios.length).toBeGreaterThan(0);
+  for (const value of ratios) expect(value).toBeGreaterThanOrEqual(3);
+});
