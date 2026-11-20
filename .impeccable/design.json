@@ -488,7 +488,7 @@
       "name": "Check a Build Sheet",
       "kind": "sheet",
       "refersTo": "check",
-      "description": "Chapter 'Plan a build', sheet 1 of 1: title block, lead, question 1 Results (caps summary, ruled rows: drawn status mark + caps word — Fits muted, Check this ink, Doesn't fit redline — then caps check name, why with numbers, lesson sheet reference; pointing at a row fills it with sheet tone and opens its parts on the 3D drawing), question 2 Your parts (hairline fieldsets per part, native selects with ground fill, typed KV with hint, radio choices for video kinds), outline Reset, footer."
+      "description": "Chapter 'Plan a build', sheet 1 of 1: title block, lead, question 1 Your parts (live caps summary with a 'See the results' link, hairline fieldsets per part, native selects with a muted edge, typed KV with hint, radio choices for video kinds, outline Reset), question 2 Results (ruled rows: drawn status mark + caps word — Fits muted, Check this ink, Doesn't fit redline — then caps check name, why with numbers, lesson sheet reference; pointing at a row fills it with sheet tone and opens its parts on the 3D drawing), footer."
     },
     {
       "name": "Status Marks",

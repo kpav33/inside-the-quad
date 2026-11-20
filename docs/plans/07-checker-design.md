@@ -98,14 +98,16 @@ Lights = the parts lit. Three facts from the lessons shape the checks:
 - **Logic** is plain TypeScript in `src/shared/domain/build-check.ts` (types `Build`, `CheckResult`,
   `checkBuild(build): CheckResult[]`, `REFERENCE_BUILD` from the spec), with the reasons' words in
   `src/content/checker.ts`. The query string ↔ `Build` codec lives in the routing layer.
-- **Sheet layout:** title block, chapter, a short lead ("Pick your parts' numbers from their
-  shop pages…"), the summary line, the results (each a row with its status word and why), then
-  the parts list grouped by part, then Reset and the footer. Results come before the parts so the
-  answer is in view; on phones the parts follow.
+- **Sheet layout** (changed after review at the user's request): title block, chapter, a short lead
+  ("Pick your parts' numbers from their shop pages…"), then **1 Your parts** (a live summary line,
+  "5 fit · 1 doesn't · 1 to check", with a "See the results" link that moves focus to the
+  results, then the parts list grouped by part and Reset), then **2 Results** (each a row with its
+  status word and why), then the footer. Parts come first, the order a form is read in; the live
+  summary over them shows each pick's effect even when the results are off screen.
 - **Address:** `/check?frame=5&stack=30.5&…`; only fields that differ from the reference are
   written, replaced (not pushed) on each change, so Back leaves the sheet instead of undoing picks.
 - **Status words** are text plus a small mark (✓ / ✕ / !) drawn as SVG icons, not colour alone.
-  Results announce politely when they change.
+  The summary line announces politely when it changes.
 - **Read marks:** the sheet can be marked as read like any sheet; the overview counts it.
 
 ## What's left to the builder
