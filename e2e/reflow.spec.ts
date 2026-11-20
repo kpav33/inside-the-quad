@@ -14,6 +14,8 @@ const PAGES = [
   '/what-if',
   '/what-if/4',
   ...['radio', 'goggles', 'charger'].map((id) => `/gear/${id}`),
+  '/check',
+  '/check?camera=21&kv=2400&goggles=digital-analog',
 ];
 
 const enlarge = async (page: Page) => {
