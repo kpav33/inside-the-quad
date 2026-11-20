@@ -1,5 +1,6 @@
 import { expect, type Page, test } from '@playwright/test';
 
+import { CHECKER } from './features';
 import { PART_NAMES } from './parts';
 import { stretchText } from './stretch';
 
@@ -65,7 +66,7 @@ test.describe('sheets and progress', () => {
       'Radio',
       'Goggles',
       'Charger',
-      'Check a build',
+      ...(CHECKER ? ['Check a build'] : []),
     ]) {
       await expect(lessonHeading(page, name)).toBeFocused();
       await page.getByRole('link', { name: /^(Next|End of )/ }).click();
@@ -92,7 +93,9 @@ test.describe('sheets and progress', () => {
     await page.getByRole('button', { name: 'Close lesson' }).click();
     await expect(page.getByRole('link', { name: 'Continue with sheet 2: Motors' })).toBeVisible();
     await expect(
-      page.getByText('Parts 1 of 11 · How it works 0 of 5 · Gear 0 of 3 · Build 0 of 1'),
+      page.getByText(
+        `Parts 1 of 11 · How it works 0 of 5 · Gear 0 of 3${CHECKER ? ' · Build 0 of 1' : ''}`,
+      ),
     ).toBeVisible();
   });
 });

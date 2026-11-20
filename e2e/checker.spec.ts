@@ -1,5 +1,9 @@
 import { expect, type Page, test } from '@playwright/test';
 
+import { CHECKER } from './features';
+
+test.skip(!CHECKER, 'Check a build is switched off in this build (VITE_FEATURE_CHECKER)');
+
 const heading = (page: Page) => page.getByRole('heading', { level: 2, name: 'Check a build' });
 const result = (page: Page, name: string) =>
   page
