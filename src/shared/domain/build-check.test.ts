@@ -136,8 +136,15 @@ describe('checkBuild', () => {
     expectResult({ kv: 1600 }, 'kv', 'check', 'kv-outside-6s');
     expectResult({ kv: 2400 }, 'kv', 'fails', 'kv-too-high-6s');
     expectResult({ cells: 3, kv: 2500 }, 'kv', 'check', 'kv-other-cells');
-    expectResult({ frameSizeIn: 7, kv: 1300 }, 'kv', 'check', 'kv-other-size');
-    expectResult({ frameSizeIn: 7, kv: 2600 }, 'kv', 'check', 'kv-other-size');
+    expectResult({ frameSizeIn: 7, propIn: 7, kv: 1300 }, 'kv', 'check', 'kv-other-size');
+    expectResult({ frameSizeIn: 7, propIn: 7, kv: 2600 }, 'kv', 'check', 'kv-other-size');
+  });
+
+  it('kv: judges the lesson bands only on 5" props, whatever the frame', () => {
+    // Review 07, finding 2: small props take high-KV motors on 6S; the lessons don't cover them.
+    expectResult({ propIn: 3, kv: 2900 }, 'kv', 'check', 'kv-other-size');
+    expectResult({ propIn: 4, kv: 2400 }, 'kv', 'check', 'kv-other-size');
+    expectResult({ frameSizeIn: 7, propIn: 5, kv: 1950 }, 'kv', 'fits', 'kv-6s');
     expectResult({ kv: null }, 'kv', 'check', 'kv-missing');
   });
 

@@ -28,7 +28,7 @@ const CASES: Partial<Build>[] = [
   { kv: 2100 },
   { kv: 2400 },
   { cells: 3, kv: 2500 },
-  { frameSizeIn: 7, kv: 1300 },
+  { frameSizeIn: 7, propIn: 7, kv: 1300 },
   { kv: null },
   { goggles: 'digital-analog' },
   { goggles: 'digital' },
@@ -88,10 +88,21 @@ describe('checker copy', () => {
     expect(reasonFor({ kv: 2400 }, 'kv')).toContain('2400 KV');
   });
 
-  it('explains why the camera and VTX are not in the voltage check', () => {
-    expect(reasonFor({}, 'voltage')).toMatch(
-      /camera and VTX run from the flight controller’s regulated power/,
-    );
+  it('scopes the voltage check to the ESC and FC, and says to check the camera and VTX', () => {
+    // Review 07, finding 1: how the camera and VTX are powered isn't an input, so it isn't checked.
+    const text = reasonFor({}, 'voltage');
+    expect(text).toMatch(/ESC’s 3–6S and the FC’s 3–6S/);
+    expect(text).toMatch(/Check what your camera and VTX need/);
+    expect(text).toMatch(/some builds power the VTX straight from the battery/);
+    expect(text).not.toMatch(/battery doesn’t reach them/);
+  });
+
+  it('ties the high-KV warning to 5″ props, not to every KV', () => {
+    // Review 07, finding 2.
+    const text = reasonFor({ kv: 2400 }, 'kv');
+    expect(text).toContain('5″ props');
+    expect(text).not.toMatch(/motors are made for 4S/);
+    expect(reasonFor({ propIn: 3, kv: 2900 }, 'kv')).toContain('3″ props');
   });
 
   it('says digital video must be one system, without naming brands', () => {

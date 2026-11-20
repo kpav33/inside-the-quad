@@ -141,7 +141,7 @@ export function checkReason(result: CheckResult, b: Build): string {
     'props-larger': () =>
       `${inches(b.propIn)} props are too big for a ${inches(b.frameSizeIn)} frame: the blades would hit each other or the frame.`,
     'voltage-ok': () =>
-      `A ${cells} battery is within the ESC’s ${cellRange(b.escCells)} and the FC’s ${cellRange(b.fcCells)} ratings. The camera and VTX run from the flight controller’s regulated power, so the battery doesn’t reach them.`,
+      `A ${cells} battery is within the ESC’s ${cellRange(b.escCells)} and the FC’s ${cellRange(b.fcCells)} ratings. Check what your camera and VTX need too: on this app’s drone they run from the flight controller’s regulated power, but some builds power the VTX straight from the battery.`,
     'esc-cells': () =>
       `The ESC is rated for ${cellRange(b.escCells)}, not a ${cells} battery: it can burn out.`,
     'fc-cells': () =>
@@ -150,17 +150,17 @@ export function checkReason(result: CheckResult, b: Build): string {
       `The ESC (${cellRange(b.escCells)}) and the FC (${cellRange(b.fcCells)}) aren’t rated for a ${cells} battery: they can burn out.`,
     'kv-missing': () => 'Enter the motors’ KV, a whole number from 500 to 5000, to check it.',
     'kv-other-size': () =>
-      `The lessons give KV numbers for 5″ quads only: ${bands}. Check ${kv} with the motor maker for a ${inches(b.frameSizeIn)} frame.`,
-    'kv-6s': () => `${kv} suits 6S on a 5″ quad (${kv6Low}–${kv6High} KV).`,
-    'kv-4s': () => `${kv} suits 4S on a 5″ quad (${kv4Low}–${kv4High} KV).`,
+      `The lessons give KV numbers for 5″ props only: ${bands}. Check ${kv} with the motor maker for ${inches(b.propIn)} props.`,
+    'kv-6s': () => `${kv} suits 6S with 5″ props (${kv6Low}–${kv6High} KV).`,
+    'kv-4s': () => `${kv} suits 4S with 5″ props (${kv4Low}–${kv4High} KV).`,
     'kv-too-high-6s': () =>
-      `${kv} motors are made for 4S. On 6S they spin too fast, draw too much current and overheat.`,
+      `With 5″ props, ${kv4Low} KV and up is for 4S. On 6S, ${kv} motors swinging 5″ props spin too fast, draw too much current and overheat.`,
     'kv-outside-6s': () =>
-      `${kv} is outside the usual ${kv6Low}–${kv6High} KV for 6S on a 5″ quad. Check it with the motor maker.`,
+      `${kv} is outside the usual ${kv6Low}–${kv6High} KV for 6S with 5″ props. Check it with the motor maker.`,
     'kv-outside-4s': () =>
-      `${kv} is outside the usual ${kv4Low}–${kv4High} KV for 4S on a 5″ quad. Check it with the motor maker.`,
+      `${kv} is outside the usual ${kv4Low}–${kv4High} KV for 4S with 5″ props. Check it with the motor maker.`,
     'kv-other-cells': () =>
-      `The lessons give 5″ KV numbers for 4S and 6S only: ${bands}. Check ${kv} on ${cells} with the motor maker.`,
+      `The lessons give KV numbers for 5″ props on 4S and 6S only: ${bands}. Check ${kv} on ${cells} with the motor maker.`,
     'analog-analog': () => 'Analog goggles show the analog VTX’s video.',
     'analog-receiver': () => 'The goggles’ analog receiver shows the analog VTX’s video.',
     'analog-to-digital': () =>

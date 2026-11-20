@@ -98,7 +98,10 @@ export const CHECK_IDS: readonly CheckId[] = [
   'video',
 ];
 
-/** KV bands the motors lesson gives for a 5" quad, by cell count. */
+/**
+ * KV bands the motors lesson gives for a 5" quad, by cell count. They hold for 5" props: smaller
+ * props take higher-KV motors, so on other props the lessons can't judge the KV.
+ */
 export const KV_BANDS_5_INCH = { 6: [1750, 1950], 4: [2400, 2700] } as const;
 
 const within = (value: number, [min, max]: readonly [number, number]) =>
@@ -141,7 +144,7 @@ function voltage(b: Build): Verdict {
 
 function kv(b: Build): Verdict {
   if (b.kv === null) return { status: 'check', reason: 'kv-missing' };
-  if (b.frameSizeIn !== 5) return { status: 'check', reason: 'kv-other-size' };
+  if (b.propIn !== 5) return { status: 'check', reason: 'kv-other-size' };
   if (b.cells === 6) {
     if (within(b.kv, KV_BANDS_5_INCH[6])) return { status: 'fits', reason: 'kv-6s' };
     if (b.kv >= KV_BANDS_5_INCH[4][0]) return { status: 'fails', reason: 'kv-too-high-6s' };
