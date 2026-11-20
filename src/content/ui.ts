@@ -82,17 +82,14 @@ export const UI = {
       `Continue with ${chapter}, sheet ${sheet}: ${name}`,
     allRead: 'Every sheet read. Open any sheet to look something up.',
     startAgain: 'Start again from sheet 1',
-    count: (
-      parts: number,
-      partTotal: number,
-      together: number,
-      togetherTotal: number,
-      gear: number,
-      gearTotal: number,
-      build: number,
-      buildTotal: number,
-    ) =>
-      `Parts ${parts} of ${partTotal} · How it works ${together} of ${togetherTotal} · Gear ${gear} of ${gearTotal} · Build ${build} of ${buildTotal}`,
+    /** Read sheets per chapter; a chapter with no sheets (one held back) is left out. */
+    count: (chapters: readonly { label: string; read: number; total: number }[]) =>
+      chapters
+        .filter(({ total }) => total > 0)
+        .map(({ label, read, total }) => `${label} ${read} of ${total}`)
+        .join(' · '),
+    /** The chapters' names in the overview count. */
+    countLabel: { parts: 'Parts', paths: 'How it works', gear: 'Gear', build: 'Build' },
     clear: 'Clear progress',
   },
   titleBlock: {

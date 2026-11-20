@@ -1,5 +1,6 @@
 import { UI } from '@/content/ui';
 import { PartExplorer } from '@/features/part-explorer';
+import { FEATURES } from '@/shared/features';
 import { PartLink, usePartRoute } from '@/shared/routing';
 import { ArrowIcon } from '@/shared/ui/icons';
 
@@ -11,7 +12,8 @@ export function App() {
   const onCheck = route.kind === 'check';
   return (
     <div className="app">
-      <header className="app-header">
+      {/* The section count sets where the tagline gives way (global.css). */}
+      <header className="app-header" data-sections={FEATURES.checker ? 4 : 3}>
         <h1>
           {UI.app.titleLead} <span className="accent">{UI.app.titleAccent}</span>
         </h1>
@@ -29,10 +31,12 @@ export function App() {
             {UI.app.gearLink}
             <ArrowIcon />
           </PartLink>
-          <PartLink to="check" className="app-section-link" current={onCheck}>
-            {UI.app.checkLink}
-            <ArrowIcon />
-          </PartLink>
+          {FEATURES.checker && (
+            <PartLink to="check" className="app-section-link" current={onCheck}>
+              {UI.app.checkLink}
+              <ArrowIcon />
+            </PartLink>
+          )}
         </nav>
       </header>
       <main className="app-main">

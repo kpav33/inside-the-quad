@@ -9,6 +9,8 @@ import { ArrowIcon } from '@/shared/ui/icons';
 
 import { OVERVIEW_FOCUS_ID } from './ids';
 
+const CHAPTER_ORDER: readonly Chapter[] = ['parts', 'paths', 'gear', 'build'];
+
 export interface OverviewStartProps {
   read: ReadonlySet<ReadableSheet>;
   introRead: boolean;
@@ -91,14 +93,11 @@ export function OverviewStart({ read, introRead, onFollowLink, onClear }: Overvi
         {read.size > 0 && (
           <span>
             {t.count(
-              countRead(read, 'parts'),
-              CHAPTER_SHEETS.parts.length,
-              countRead(read, 'paths'),
-              CHAPTER_SHEETS.paths.length,
-              countRead(read, 'gear'),
-              CHAPTER_SHEETS.gear.length,
-              countRead(read, 'build'),
-              CHAPTER_SHEETS.build.length,
+              CHAPTER_ORDER.map((chapter) => ({
+                label: t.countLabel[chapter],
+                read: countRead(read, chapter),
+                total: CHAPTER_SHEETS[chapter].length,
+              })),
             )}
           </span>
         )}

@@ -1,3 +1,5 @@
+import { FEATURES } from '@/shared/features';
+
 import { CHECK_SHEET, type CheckSheet } from './check';
 import { GEAR_IDS, type GearId, isGearId } from './gear';
 import { MOVES_SHEET, type MovesSheet } from './moves';
@@ -24,13 +26,16 @@ export function isSteppedSheet(value: unknown): value is SteppedSheet {
 /** The sheets of "How it works together": the three paths, how a quad moves, then what if. */
 const TOGETHER_SHEETS: readonly NumberedSheet[] = [...PATH_IDS, MOVES_SHEET, WHAT_IF_SHEET];
 
+/** Plan a build: Check a build, while that feature is on (see `shared/features.ts`). */
+const BUILD_SHEETS: readonly NumberedSheet[] = FEATURES.checker ? [CHECK_SHEET] : [];
+
 /** The numbered sheets in reading order: the parts, how it works together, the gear, then the
  * build check. */
 export const NUMBERED_SHEETS: readonly NumberedSheet[] = [
   ...PART_IDS,
   ...TOGETHER_SHEETS,
   ...GEAR_IDS,
-  CHECK_SHEET,
+  ...BUILD_SHEETS,
 ];
 
 /** The sheets in reading order: the intro before sheet 1. */
@@ -46,7 +51,7 @@ export const CHAPTER_SHEETS: Record<Chapter, readonly NumberedSheet[]> = {
   parts: PART_IDS,
   paths: TOGETHER_SHEETS,
   gear: GEAR_IDS,
-  build: [CHECK_SHEET],
+  build: BUILD_SHEETS,
 };
 
 export function chapterOf(sheet: NumberedSheet): Chapter {

@@ -108,11 +108,19 @@ a {
   font-size: var(--step--1);
 }
 
-/* Where the explorer fills the screen but the title, tagline and four section links don't fit one
-   row (about 1083 px), the tagline gives way so the masthead never grows a second row and pushes
-   the page into scrolling. Narrower, stacked layouts scroll anyway and keep it. */
-@media (min-width: 56rem) and (max-width: 67.9375rem) {
+/* Where the explorer fills the screen but the title, tagline and section links don't fit one
+   row (three links: below 62rem; four, with Check a build on: about 1083 px), the tagline gives
+   way so the masthead never grows a second row and pushes the page into scrolling. Narrower,
+   stacked layouts scroll anyway and keep it. */
+@media (min-width: 56rem) and (max-width: 61.9375rem) {
   .app-header p {
+    display: none;
+  }
+}
+
+/* With Check a build on, the fourth link needs the row up to about 1083 px. */
+@media (min-width: 56rem) and (max-width: 67.9375rem) {
+  .app-header[data-sections='4'] p {
     display: none;
   }
 }

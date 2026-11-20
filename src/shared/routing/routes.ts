@@ -1,4 +1,5 @@
 import { CHECK_SHEET } from '@/shared/domain/check';
+import { FEATURES } from '@/shared/features';
 import { type GearId, isGearId } from '@/shared/domain/gear';
 import { isPartId, type PartId } from '@/shared/domain/parts';
 import { MOVES_SHEET } from '@/shared/domain/moves';
@@ -87,7 +88,9 @@ function decode(value: string): string {
 export function parseRoute(pathname: string): Route {
   if (pathname === '' || pathname === OVERVIEW_PATH) return { kind: 'overview' };
   if (pathname === INTRO_PATH || pathname === `${INTRO_PATH}/`) return { kind: 'intro' };
-  if (pathname === CHECK_PATH || pathname === `${CHECK_PATH}/`) return { kind: 'check' };
+  if (FEATURES.checker && (pathname === CHECK_PATH || pathname === `${CHECK_PATH}/`)) {
+    return { kind: 'check' };
+  }
   if (pathname.startsWith(PART_PREFIX)) {
     const slug = decode(pathname.slice(PART_PREFIX.length).replace(/\/$/, ''));
     return isPartId(slug) ? { kind: 'part', part: slug } : { kind: 'unknown', slug };
