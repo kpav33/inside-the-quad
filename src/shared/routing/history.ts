@@ -3,6 +3,8 @@ export type NavigationCause = 'load' | 'push' | 'pop';
 
 export interface HistorySnapshot {
   path: string;
+  /** The query string, `?…` or `''`; only Check a build keeps its state there. */
+  search: string;
   cause: NavigationCause;
   /** A path the app replaced because it didn't know it, kept until the next navigation. */
   replacedSlug: string | null;
@@ -19,7 +21,12 @@ function update(next: HistorySnapshot) {
 }
 
 const onPopState = () => {
-  update({ path: window.location.pathname, cause: 'pop', replacedSlug: null });
+  update({
+    path: window.location.pathname,
+    search: window.location.search,
+    cause: 'pop',
+    replacedSlug: null,
+  });
 };
 
 /** Subscribes to the app's own navigations and to Back/Forward. */
@@ -34,9 +41,11 @@ export function subscribe(listener: () => void): () => void {
 
 /** The current address. The same object until something changes, as useSyncExternalStore needs. */
 export function getSnapshot(): HistorySnapshot {
-  const path = window.location.pathname;
+  const { pathname: path, search } = window.location;
   // The address can change without this module (the first read, or a test resetting it).
-  if (snapshot?.path !== path) snapshot = { path, cause: 'load', replacedSlug: null };
+  if (snapshot?.path !== path || snapshot.search !== search) {
+    snapshot = { path, search, cause: 'load', replacedSlug: null };
+  }
   return snapshot;
 }
 
@@ -44,16 +53,25 @@ export function getSnapshot(): HistorySnapshot {
 export function navigateTo(path: string): void {
   if (window.location.pathname === path) return;
   window.history.pushState(null, '', path);
-  update({ path, cause: 'push', replacedSlug: null });
+  update({ path, search: '', cause: 'push', replacedSlug: null });
 }
 
 /**
  * Replaces the current address without a new history entry: an unknown address (remembering its
- * slug for the notice) or another spelling of a known one.
+ * slug for the notice) or another spelling of a known one. `search` is the query to keep.
  */
-export function replacePath(path: string, replacedSlug: string | null = null): void {
-  window.history.replaceState(null, '', path);
-  update({ path, cause: getSnapshot().cause, replacedSlug });
+export function replacePath(path: string, replacedSlug: string | null = null, search = ''): void {
+  const { cause } = getSnapshot();
+  window.history.replaceState(null, '', path + search);
+  update({ path, search, cause, replacedSlug });
+}
+
+/** Replaces the query string on the current page, adding no history entry. */
+export function replaceSearch(search: string): void {
+  if (window.location.search === search) return;
+  const { path, cause, replacedSlug } = getSnapshot();
+  window.history.replaceState(null, '', path + search);
+  update({ path, search, cause, replacedSlug });
 }
 
 /** True for a click the app should handle; modified and non-primary clicks belong to the browser. */

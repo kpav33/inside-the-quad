@@ -1,3 +1,4 @@
+import { CHECK_SHEET } from '@/shared/domain/check';
 import { type GearId, isGearId } from '@/shared/domain/gear';
 import type { PartId } from '@/shared/domain/parts';
 import { MOVES_SHEET } from '@/shared/domain/moves';
@@ -39,6 +40,7 @@ export const UI = {
     /** The masthead's link to the path sheets, which opens the control path. */
     pathsLink: 'How it works together',
     gearLink: 'The gear',
+    checkLink: 'Check a build',
     /** The browser tab's title while the intro is open. */
     introTitle: 'What is an FPV drone? · Inside the Quad',
   },
@@ -80,15 +82,14 @@ export const UI = {
       `Continue with ${chapter}, sheet ${sheet}: ${name}`,
     allRead: 'Every sheet read. Open any sheet to look something up.',
     startAgain: 'Start again from sheet 1',
-    count: (
-      parts: number,
-      partTotal: number,
-      together: number,
-      togetherTotal: number,
-      gear: number,
-      gearTotal: number,
-    ) =>
-      `Parts ${parts} of ${partTotal} · How it works ${together} of ${togetherTotal} · Gear ${gear} of ${gearTotal}`,
+    /** Read sheets per chapter; a chapter with no sheets (one held back) is left out. */
+    count: (chapters: readonly { label: string; read: number; total: number }[]) =>
+      chapters
+        .filter(({ total }) => total > 0)
+        .map(({ label, read, total }) => `${label} ${read} of ${total}`)
+        .join(' · '),
+    /** The chapters' names in the overview count. */
+    countLabel: { parts: 'Parts', paths: 'How it works', gear: 'Gear', build: 'Build' },
     clear: 'Clear progress',
   },
   titleBlock: {
@@ -120,6 +121,23 @@ export const UI = {
     parts: 'The parts',
     paths: 'How it works together',
     gear: 'The gear you hold and wear',
+    build: 'Plan a build',
+  },
+  checker: {
+    /** The sheet's heading, and its name wherever another sheet refers to it. */
+    title: 'Check a build',
+    resultsHeading: 'Results',
+    partsHeading: 'Your parts',
+    status: { fits: 'Fits', check: 'Check this', fails: 'Doesn’t fit' },
+    /** The summary line over the results, e.g. "6 fit · 1 doesn’t · 1 to check". */
+    summary: ({ fits, check, fails }: { fits: number; check: number; fails: number }) =>
+      [`${fits} fit`, fails > 0 ? `${fails} doesn’t` : '', check > 0 ? `${check} to check` : '']
+        .filter(Boolean)
+        .join(' · '),
+    close: 'Close sheet',
+    reset: 'Reset to this app’s drone',
+    /** Beside the summary over the parts: the way down to the results. */
+    seeResults: 'See the results',
   },
   gear: {
     /** Each gear sheet's name, as its heading and wherever another sheet refers to it. */
@@ -268,6 +286,7 @@ export const UI = {
       parts: 'End of the parts',
       paths: 'End of How it works together',
       gear: 'End of the gear',
+      build: 'End of Plan a build',
     },
     /** A lesson opened from a path's stop: the way back to that step. */
     backToPath: (title: string, step: number) => `Back to ${title}, step ${String(step)}`,
@@ -276,6 +295,7 @@ export const UI = {
       parts: 'Back to the parts',
       paths: 'Back to How it works together',
       gear: 'Back to the gear',
+      build: 'Back to Plan a build',
     },
     /** A sheet named from outside its chapter, since each chapter numbers its sheets from 1. */
     sheetInChapter: (chapter: string, sheet: number, title: string) =>
@@ -296,6 +316,7 @@ export const UI = {
 
 /** A numbered sheet's name: the part's label, the path's title, or the moves sheet's title. */
 export function sheetName(sheet: NumberedSheet): string {
+  if (sheet === CHECK_SHEET) return UI.checker.title;
   if (sheet === MOVES_SHEET) return UI.moves.title;
   if (sheet === WHAT_IF_SHEET) return UI.whatIf.title;
   if (isGearId(sheet)) return UI.gear.title[sheet];

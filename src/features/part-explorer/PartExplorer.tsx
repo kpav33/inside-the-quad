@@ -14,6 +14,7 @@ import { isInsidePart, isPartId, type PartId } from '@/shared/domain/parts';
 import { MOVES_SHEET } from '@/shared/domain/moves';
 import { WHAT_IF_SHEET } from '@/shared/domain/what-if';
 import { isGearId } from '@/shared/domain/gear';
+import { CHECK_SHEET } from '@/shared/domain/check';
 import { isPathId, type PathId } from '@/shared/domain/paths';
 import type { SheetId } from '@/shared/domain/sheets';
 import { type Page, usePartRoute } from '@/shared/routing';
@@ -27,11 +28,13 @@ import {
   LESSON_PANEL_ID,
   MOVES_TITLE_ID,
   WHAT_IF_TITLE_ID,
+  CHECK_TITLE_ID,
   lessonTitleId,
   OVERVIEW_FOCUS_ID,
   partButtonId,
   pathTitleId,
 } from './ids';
+import { CheckPanel } from './CheckPanel';
 import { GearPanel } from './GearPanel';
 import { IntroPanel } from './IntroPanel';
 import { LessonPanel } from './LessonPanel';
@@ -41,6 +44,7 @@ import { OverviewStart } from './OverviewStart';
 import { PathPanel } from './PathPanel';
 import { PartList } from './PartList';
 import { TitleBlock } from './TitleBlock';
+import { useBuild } from './useBuild';
 import { useGearSheet } from './useGearSheet';
 import { useMovesSheet } from './useMovesSheet';
 import { useWhatIfSheet } from './useWhatIfSheet';
@@ -67,6 +71,20 @@ function partDrawing(part: PartId | null): Drawing {
     connectedParts: part ? connectedParts(part) : NO_PARTS,
     exploded: isInsidePart(part),
     turnTo: part,
+    leader: null,
+  };
+}
+
+/**
+ * The drawing for Check a build: the parts of the result pointed at open, the rest faded; the view
+ * stays where the reader left it.
+ */
+function checkDrawing(parts: readonly PartId[] | null): Drawing {
+  return {
+    openParts: parts ? new Set(parts) : NO_PARTS,
+    connectedParts: NO_PARTS,
+    exploded: parts?.some((part) => isInsidePart(part)) ?? false,
+    turnTo: null,
     leader: null,
   };
 }
@@ -120,7 +138,9 @@ const sheetTitleId = (sheet: SheetId) =>
           ? pathTitleId(sheet)
           : isGearId(sheet)
             ? gearTitleId(sheet)
-            : lessonTitleId(sheet);
+            : sheet === CHECK_SHEET
+              ? CHECK_TITLE_ID
+              : lessonTitleId(sheet);
 
 /**
  * Lets the user pick a drone part in the 3D view or the part list, and shows its lesson.
@@ -137,19 +157,26 @@ export function PartExplorer() {
   // The flight sheets: the drawing flies a drone and clicking it opens nothing.
   const flightOpen = movesOpen || whatIfOpen;
   const flight = movesOpen ? moves.flight : whatIfOpen ? whatIf.flight : null;
+  const checkOpen = route.kind === 'check';
   // A gear sheet: a flat drawing of the gear in place of the 3D drone.
   const openGear = route.kind === 'gear' ? route.gear : null;
   const gear = useGearSheet(openGear);
+  // Check a build: the build is in the address; the parts of the result pointed at are lit.
+  const build = useBuild(checkOpen);
+  const [checkParts, setCheckParts] = useState<readonly PartId[] | null>(null);
+  if (!checkOpen && checkParts !== null) setCheckParts(null);
   // The sheet in the sheet column: a part's lesson, the intro, a path, how a quad moves, or none
   // (the overview).
   const openSheet: SheetId | null =
     route.kind === 'intro'
       ? 'intro'
-      : movesOpen
-        ? MOVES_SHEET
-        : whatIfOpen
-          ? WHAT_IF_SHEET
-          : (openGear ?? openPath?.id ?? selectedPart);
+      : checkOpen
+        ? CHECK_SHEET
+        : movesOpen
+          ? MOVES_SHEET
+          : whatIfOpen
+            ? WHAT_IF_SHEET
+            : (openGear ?? openPath?.id ?? selectedPart);
   // A path's step is in its address (from 1); one past the end shows the last stop.
   const stopCount = openPath?.stops.length ?? 0;
   const addressStep = route.kind === 'path' ? route.step - 1 : 0;
@@ -317,17 +344,19 @@ export function PartExplorer() {
       <p className="visually-hidden" aria-live="polite" data-testid="explorer-announcer">
         {openSheet === 'intro'
           ? UI.explorer.introOpened
-          : openGear
-            ? UI.explorer.pathOpened(UI.gear.title[openGear])
-            : openPath
-              ? UI.explorer.pathOpened(openPath.title)
-              : movesOpen
-                ? UI.explorer.pathOpened(UI.moves.title)
-                : whatIfOpen
-                  ? UI.explorer.pathOpened(UI.whatIf.title)
-                  : selectedPart
-                    ? UI.explorer.opened(PART_LABELS[selectedPart])
-                    : ''}
+          : checkOpen
+            ? UI.explorer.pathOpened(UI.checker.title)
+            : openGear
+              ? UI.explorer.pathOpened(UI.gear.title[openGear])
+              : openPath
+                ? UI.explorer.pathOpened(openPath.title)
+                : movesOpen
+                  ? UI.explorer.pathOpened(UI.moves.title)
+                  : whatIfOpen
+                    ? UI.explorer.pathOpened(UI.whatIf.title)
+                    : selectedPart
+                      ? UI.explorer.opened(PART_LABELS[selectedPart])
+                      : ''}
       </p>
       <div className="part-explorer-field">
         <div className="drawing-frame">
@@ -359,7 +388,9 @@ export function PartExplorer() {
                         ? FLIGHT_DRAWING
                         : openPath && currentStop
                           ? pathDrawing(openPath, pathStep.step)
-                          : partDrawing(selectedPart))}
+                          : checkOpen
+                            ? checkDrawing(checkParts)
+                            : partDrawing(selectedPart))}
                       flight={flight}
                       ground={whatIfOpen ? GROUND_M : null}
                       onPartClick={onPartClick}
@@ -398,6 +429,19 @@ export function PartExplorer() {
             onClose={closeLesson}
             onToggleRead={() => {
               toggleRead(openGear);
+            }}
+            onFollowLink={followLink}
+          />
+        ) : checkOpen ? (
+          <CheckPanel
+            build={build.build}
+            onChange={build.set}
+            onReset={build.reset}
+            onHighlight={setCheckParts}
+            read={read.has(CHECK_SHEET)}
+            onClose={closeLesson}
+            onToggleRead={() => {
+              toggleRead(CHECK_SHEET);
             }}
             onFollowLink={followLink}
           />

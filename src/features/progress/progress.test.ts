@@ -78,6 +78,12 @@ describe('where to start', () => {
     expect(startState(set(...allButGear), true)).toEqual({ kind: 'continue', sheet: 'radio' });
   });
 
+  it('continues into Check a build once all else is read, and is done only with it read', () => {
+    const allButCheck = NUMBERED_SHEETS.filter((sheet) => sheet !== 'check');
+    expect(startState(set(...allButCheck), true)).toEqual({ kind: 'continue', sheet: 'check' });
+    expect(parseReadSheets('["check"]')).toEqual(new Set(['check']));
+  });
+
   it('is done when every sheet is read', () => {
     expect(firstUnread(set(...NUMBERED_SHEETS))).toBeNull();
     expect(startState(set(...NUMBERED_SHEETS), true)).toEqual({ kind: 'done' });

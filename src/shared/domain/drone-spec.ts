@@ -52,6 +52,8 @@ export interface DroneSpec {
     /** Capacitor on the battery pads: capacitance and voltage rating. */
     capacitorUf: number;
     capacitorV: number;
+    /** Battery sizes it is rated for, in cells: [fewest, most]. */
+    batteryCells: readonly [min: number, max: number];
   };
   fc: {
     /** Processor generation, e.g. "F7". */
@@ -63,6 +65,8 @@ export interface DroneSpec {
     becVolts: number[];
     /** Board width (square). */
     boardSizeMm: number;
+    /** Battery sizes it is rated for, in cells: [fewest, most]. */
+    batteryCells: readonly [min: number, max: number];
   };
   battery: {
     capacityMah: number;
@@ -153,6 +157,7 @@ export const REFERENCE_5_INCH: DroneSpec = {
     boardSizeMm: 41,
     capacitorUf: 1000,
     capacitorV: 35,
+    batteryCells: [3, 6],
   },
   fc: {
     processor: 'F7',
@@ -160,6 +165,7 @@ export const REFERENCE_5_INCH: DroneSpec = {
     uarts: 6,
     becVolts: [5, 10],
     boardSizeMm: 36,
+    batteryCells: [3, 6],
   },
   battery: {
     capacityMah: 1100,

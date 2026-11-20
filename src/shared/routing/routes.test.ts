@@ -144,6 +144,18 @@ describe('the moves sheet', () => {
   });
 });
 
+describe('the check route', () => {
+  it('reads /check, with or without a trailing slash', () => {
+    expect(parseRoute('/check')).toEqual({ kind: 'check' });
+    expect(parseRoute('/check/')).toEqual({ kind: 'check' });
+    expect(pagePath('check')).toBe('/check');
+  });
+
+  it('treats extra segments as unknown', () => {
+    expect(parseRoute('/check/x')).toEqual({ kind: 'unknown', slug: '/check/x' });
+  });
+});
+
 describe('gear routes', () => {
   it('reads a gear sheet under /gear/, with or without a trailing slash', () => {
     expect(parseRoute('/gear/radio')).toEqual({ kind: 'gear', gear: 'radio' });

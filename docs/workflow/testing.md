@@ -19,6 +19,17 @@
   docker stop itq
   ```
 
+- **Held-back features** (built, switched off in the release; `src/shared/features.ts`) are
+  tested both ways. Unit tests run with them on (`vite.config.ts`), and `src/app/checker-off.test.tsx`
+  covers the release with Check a build off. In e2e, `e2e/features.ts` reads the same variable:
+  the release build runs `e2e/held-back.spec.ts`, and a build with it on runs its own specs. CI
+  runs the image (off), then `e2e/checker.spec.ts` on a build switched on. Locally, stop any
+  running preview first (a reused server keeps its old build):
+
+  ```sh
+  VITE_FEATURE_CHECKER=true pnpm test:e2e
+  ```
+
 - The smoke test fails on any page or console error, which includes Content-Security-Policy
   violations. If a new feature needs a looser CSP, change `nginx/security-headers.conf`
   deliberately and say why in the commit body.

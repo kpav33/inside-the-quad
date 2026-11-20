@@ -57,6 +57,12 @@ jobs:
         run: pnpm test:e2e
         env:
           E2E_BASE_URL: http://localhost:8080
+      # Check a build is held back from the release (src/shared/features.ts), so the image has it
+      # off. Build it switched on and run its own tests, so the held-back code keeps working.
+      - name: Run the held-back Check a build tests (switched on)
+        run: pnpm exec playwright test e2e/checker.spec.ts
+        env:
+          VITE_FEATURE_CHECKER: 'true'
       - uses: actions/upload-artifact@v7
         if: failure()
         with:

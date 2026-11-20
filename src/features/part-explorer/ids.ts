@@ -29,6 +29,9 @@ export const MOVES_TITLE_ID = 'moves-title';
 /** The what-if sheet's heading, focused when it opens. */
 export const WHAT_IF_TITLE_ID = 'what-if-title';
 
+/** The Check a build sheet's heading, focused when it opens. */
+export const CHECK_TITLE_ID = 'check-title';
+
 /** A gear sheet's heading, focused when it opens. */
 export function gearTitleId(gear: GearId): string {
   return `gear-title-${gear}`;

@@ -20,6 +20,8 @@ export function ChapterSwitcher({
   onFollowLink?: ((page: Page) => void) | undefined;
 }) {
   const chapter = chapterOf(open);
+  // A chapter of one sheet (Plan a build) has nothing to switch to.
+  if (CHAPTER_SHEETS[chapter].length < 2) return null;
   return (
     <nav className="path-switcher" aria-label={UI.chapters[chapter]}>
       {CHAPTER_SHEETS[chapter].map((sheet) => (

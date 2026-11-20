@@ -46,6 +46,13 @@ describe('drone spec', () => {
     expect(battery).toMatchObject({ capacityMah: 1100, cRating: 100, connector: 'XT60' });
   });
 
+  it('rates the ESC and flight controller for 3–6S, which covers the battery', () => {
+    const { esc, fc, motor } = REFERENCE_5_INCH;
+    expect(esc.batteryCells).toEqual([3, 6]);
+    expect(fc.batteryCells).toEqual([3, 6]);
+    expect(motor.batteryCells).toBeLessThanOrEqual(esc.batteryCells[1]);
+  });
+
   it('rates the capacitor above a full battery', () => {
     const { esc, motor } = REFERENCE_5_INCH;
     expect(esc.capacitorV).toBeGreaterThan(packVolts(motor.batteryCells, LIPO_CELL_VOLTS.full));

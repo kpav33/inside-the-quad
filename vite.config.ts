@@ -18,6 +18,8 @@ export default defineConfig({
     environment: 'jsdom',
     restoreMocks: true,
     setupFiles: ['./src/test/setup.ts'],
+    // Features held back from the release are on in tests; checker-off.test.tsx covers them off.
+    env: { VITE_FEATURE_CHECKER: 'true' },
     include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.mjs'],
     // Only tokens.css is processed, so its test can read the raw file.
     css: { include: [/tokens\.css/] },

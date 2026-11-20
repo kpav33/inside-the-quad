@@ -1,5 +1,6 @@
 import { expect, type Page, test } from '@playwright/test';
 
+import { CHECKER } from './features';
 import { stretchText } from './stretch';
 
 const PAGES = [
@@ -14,6 +15,7 @@ const PAGES = [
   '/what-if',
   '/what-if/4',
   ...['radio', 'goggles', 'charger'].map((id) => `/gear/${id}`),
+  ...(CHECKER ? ['/check', '/check?camera=21&kv=2400&goggles=digital-analog'] : []),
 ];
 
 const enlarge = async (page: Page) => {

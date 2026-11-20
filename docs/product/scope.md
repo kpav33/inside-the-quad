@@ -181,16 +181,18 @@ labelled drawing and one thing to try on each. Module 4 is complete.
 
 ---
 
-## Later: compatibility checker
+## Compatibility checker (section 07: Check a build)
 
-Built from the specs already covered in Module 2:
+Built from the specs already covered in Module 2 (done: the Check a build sheet, `/check`, held
+back from the first release behind `VITE_FEATURE_CHECKER`):
 
 - Stack mounting size: FC/ESC vs frame (30.5 / 25.5 / 20 mm)
 - Camera width vs frame (28 / 21 / 19 / 14 mm)
 - Motor mount vs frame arms (16 mm on 5")
 - Prop size vs frame size
-- Voltage: battery "S" vs ESC, FC, VTX, camera ratings
-- Motor KV vs battery voltage
+- Voltage: battery "S" vs ESC and FC ratings (how the camera and VTX are powered varies by
+  build, so the sheet tells the reader to check what they need)
+- Motor KV vs battery voltage, for 5" props
 - Video system: VTX vs goggles
 
 ---

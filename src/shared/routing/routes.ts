@@ -1,3 +1,5 @@
+import { CHECK_SHEET } from '@/shared/domain/check';
+import { FEATURES } from '@/shared/features';
 import { type GearId, isGearId } from '@/shared/domain/gear';
 import { isPartId, type PartId } from '@/shared/domain/parts';
 import { MOVES_SHEET } from '@/shared/domain/moves';
@@ -7,6 +9,7 @@ import type { SheetId, SteppedSheet } from '@/shared/domain/sheets';
 
 export const OVERVIEW_PATH = '/';
 export const INTRO_PATH = '/intro';
+export const CHECK_PATH = `/${CHECK_SHEET}`;
 
 const PART_PREFIX = '/parts/';
 const PATH_PREFIX = '/paths/';
@@ -28,6 +31,7 @@ export type Route =
   | { kind: 'moves'; step: number }
   | { kind: 'what-if'; step: number }
   | { kind: 'gear'; gear: GearId }
+  | { kind: 'check' }
   | { kind: 'unknown'; slug: string };
 
 export function partPath(part: PartId): string {
@@ -54,6 +58,7 @@ export function pathSheetPath(path: PathId, step = 1): string {
 export function pagePath(page: Page, step?: number): string {
   if (page === null) return OVERVIEW_PATH;
   if (page === 'intro') return INTRO_PATH;
+  if (page === CHECK_SHEET) return CHECK_PATH;
   if (page === MOVES_SHEET || page === WHAT_IF_SHEET || isPathId(page)) {
     return steppedPath(page, step);
   }
@@ -83,6 +88,9 @@ function decode(value: string): string {
 export function parseRoute(pathname: string): Route {
   if (pathname === '' || pathname === OVERVIEW_PATH) return { kind: 'overview' };
   if (pathname === INTRO_PATH || pathname === `${INTRO_PATH}/`) return { kind: 'intro' };
+  if (FEATURES.checker && (pathname === CHECK_PATH || pathname === `${CHECK_PATH}/`)) {
+    return { kind: 'check' };
+  }
   if (pathname.startsWith(PART_PREFIX)) {
     const slug = decode(pathname.slice(PART_PREFIX.length).replace(/\/$/, ''));
     return isPartId(slug) ? { kind: 'part', part: slug } : { kind: 'unknown', slug };
