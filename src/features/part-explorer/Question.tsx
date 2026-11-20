@@ -9,7 +9,7 @@ export function Question({
 }: {
   number: number;
   heading: string;
-  /** The heading's id, for a list or group inside that it names. */
+  /** The heading's id, for a list or group inside that it names, or to move focus to it. */
   headingId?: string;
   children: ReactNode;
 }) {
@@ -19,7 +19,9 @@ export function Question({
         {number}
       </span>
       <div className="lesson-question-body">
-        <h3 id={headingId}>{heading}</h3>
+        <h3 id={headingId} tabIndex={headingId === undefined ? undefined : -1}>
+          {heading}
+        </h3>
         {children}
       </div>
     </section>

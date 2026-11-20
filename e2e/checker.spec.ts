@@ -121,3 +121,16 @@ test('the KV field and pick lists show their edges at rest, at 3:1 or more', asy
   expect(ratios.length).toBeGreaterThan(0);
   for (const value of ratios) expect(value).toBeGreaterThanOrEqual(3);
 });
+
+test('the summary over the parts answers each pick, and leads down to the results', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/check');
+  await group(page, 'Camera').getByLabel('Width').selectOption({ label: '21 mm' });
+  await expect(page.getByTestId('check-summary')).toHaveText('6 fit · 1 doesn’t');
+  await page.getByRole('button', { name: 'See the results' }).click();
+  const results = page.getByRole('heading', { level: 3, name: 'Results' });
+  await expect(results).toBeFocused();
+  await expect(results).toBeInViewport();
+});

@@ -14,6 +14,7 @@ import type { PartId } from '@/shared/domain/parts';
 import { chapterCount, sheetNumber } from '@/shared/domain/sheets';
 import { type Page, PartLink } from '@/shared/routing';
 import { ArrowIcon, CautionIcon, CheckIcon, CrossIcon } from '@/shared/ui/icons';
+import { usePrefersReducedMotion } from '@/shared/ui/usePrefersReducedMotion';
 
 import { CHECK_TITLE_ID, LESSON_PANEL_ID } from './ids';
 import { Question } from './Question';
@@ -173,9 +174,9 @@ function PickField({
 }
 
 /**
- * Check a build: title block, a lead, the summary and the seven results (each with its status,
- * why and the lesson behind it), then the parts and their numbers, Reset and the footer. Pointing
- * at a result lights its parts on the drawing.
+ * Check a build: title block, a lead, then the parts and their numbers under a live summary of the
+ * results, Reset, the seven results (each with its status, why and the lesson behind it) and the
+ * footer. Pointing at a result lights its parts on the drawing.
  */
 export function CheckPanel({
   build,
@@ -191,6 +192,17 @@ export function CheckPanel({
   const counts = { fits: 0, check: 0, fails: 0 };
   for (const result of results) counts[result.status] += 1;
   const resultsHeadingId = useId();
+  // The summary's link: move focus to the results' heading and bring it into view.
+  const reduceMotion = usePrefersReducedMotion();
+  const showResults = () => {
+    const heading = document.getElementById(resultsHeadingId);
+    if (!heading) return;
+    heading.focus({ preventScroll: true });
+    // Not every environment can scroll (jsdom has no scrollIntoView).
+    if ('scrollIntoView' in heading) {
+      heading.scrollIntoView({ block: 'start', behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+  };
 
   return (
     <section
@@ -214,9 +226,57 @@ export function CheckPanel({
 
       <p className="lesson-lead">{CHECKER.lead}</p>
 
-      <Question number={1} heading={t.resultsHeading} headingId={resultsHeadingId}>
-        <div className="check-results" aria-live="polite" data-testid="check-results">
-          <p className="check-summary">{t.summary(counts)}</p>
+      <Question number={1} heading={t.partsHeading}>
+        <p className="check-summary-line">
+          <span className="check-summary" aria-live="polite" data-testid="check-summary">
+            {t.summary(counts)}
+          </span>{' '}
+          <button type="button" className="lesson-link check-summary-link" onClick={showResults}>
+            {t.seeResults}
+            <ArrowIcon />
+          </button>
+        </p>
+        <div className="check-parts">
+          {CHECKER.groups.map((group) => (
+            <fieldset key={group.heading} className="check-group">
+              <legend>{group.heading}</legend>
+              {group.fields.map(({ field, label }) =>
+                field === 'kv' ? (
+                  <KvField
+                    key={field}
+                    kv={build.kv}
+                    onChange={(kv) => {
+                      onChange({ kv });
+                    }}
+                  />
+                ) : CHOICE_FIELDS.includes(field) ? (
+                  <ChoiceField
+                    key={field}
+                    field={field}
+                    label={label}
+                    build={build}
+                    onChange={onChange}
+                  />
+                ) : (
+                  <PickField
+                    key={field}
+                    field={field}
+                    label={label}
+                    build={build}
+                    onChange={onChange}
+                  />
+                ),
+              )}
+            </fieldset>
+          ))}
+        </div>
+        <button type="button" className="button-outline check-reset" onClick={onReset}>
+          {t.reset}
+        </button>
+      </Question>
+
+      <Question number={2} heading={t.resultsHeading} headingId={resultsHeadingId}>
+        <div className="check-results">
           <ul className="check-result-list" aria-labelledby={resultsHeadingId}>
             {results.map((result) => {
               const Icon = STATUS_ICONS[result.status];
@@ -261,46 +321,6 @@ export function CheckPanel({
             })}
           </ul>
         </div>
-      </Question>
-
-      <Question number={2} heading={t.partsHeading}>
-        <div className="check-parts">
-          {CHECKER.groups.map((group) => (
-            <fieldset key={group.heading} className="check-group">
-              <legend>{group.heading}</legend>
-              {group.fields.map(({ field, label }) =>
-                field === 'kv' ? (
-                  <KvField
-                    key={field}
-                    kv={build.kv}
-                    onChange={(kv) => {
-                      onChange({ kv });
-                    }}
-                  />
-                ) : CHOICE_FIELDS.includes(field) ? (
-                  <ChoiceField
-                    key={field}
-                    field={field}
-                    label={label}
-                    build={build}
-                    onChange={onChange}
-                  />
-                ) : (
-                  <PickField
-                    key={field}
-                    field={field}
-                    label={label}
-                    build={build}
-                    onChange={onChange}
-                  />
-                ),
-              )}
-            </fieldset>
-          ))}
-        </div>
-        <button type="button" className="button-outline check-reset" onClick={onReset}>
-          {t.reset}
-        </button>
       </Question>
 
       <SheetFooter

@@ -139,6 +139,8 @@ export const UI = {
         .join(' · '),
     close: 'Close sheet',
     reset: 'Reset to this app’s drone',
+    /** Beside the summary over the parts: the way down to the results. */
+    seeResults: 'See the results',
   },
   gear: {
     /** Each gear sheet's name, as its heading and wherever another sheet refers to it. */

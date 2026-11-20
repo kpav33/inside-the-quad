@@ -52,9 +52,28 @@ describe('CheckPanel', () => {
     expect(screen.getByText('7 fit')).toBeInTheDocument();
   });
 
-  it('announces the results politely when they change', () => {
+  it('asks for the parts first, then gives the results', () => {
     renderPanel();
-    expect(screen.getByTestId('check-results')).toHaveAttribute('aria-live', 'polite');
+    expect(
+      screen.getAllByRole('heading', { level: 3 }).map((heading) => heading.textContent),
+    ).toEqual(['Your parts', 'Results']);
+  });
+
+  it('keeps a live summary above the parts, announced politely when it changes', () => {
+    renderPanel();
+    const summary = screen.getByTestId('check-summary');
+    expect(summary).toHaveAttribute('aria-live', 'polite');
+    expect(summary).toHaveTextContent('7 fit');
+    const parts = screen.getByRole('heading', { level: 3, name: 'Your parts' });
+    const camera = screen.getByRole('group', { name: 'Camera' });
+    expect(parts.compareDocumentPosition(summary) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(summary.compareDocumentPosition(camera) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('takes the reader from the summary to the results', async () => {
+    renderPanel();
+    await userEvent.click(screen.getByRole('button', { name: 'See the results' }));
+    expect(screen.getByRole('heading', { level: 3, name: 'Results' })).toHaveFocus();
   });
 
   it('reports a pick as a change to the build', async () => {

@@ -2204,6 +2204,31 @@ a.lesson-sheet-link:hover {
   gap: var(--space-3);
 }
 
+/* Over the parts: how the build stands now, and the way down to the results. */
+.check-summary-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-4);
+  margin: 0 0 var(--space-4);
+}
+
+.check-summary-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target-min);
+  color: inherit;
+  font-family: var(--font-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.check-summary-link .icon {
+  color: var(--color-muted);
+}
+
 .check-summary {
   margin: 0;
   font-family: var(--font-label);
