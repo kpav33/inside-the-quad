@@ -19,18 +19,19 @@ is connecting the outside services (Coolify, Bunny, the domain) and testing on r
    It supersedes nothing in ADR 0003 (the image stays) but adds the CDN; 0003 gets a pointer. A
    deploy runbook (`docs/deploy.md`) lists the steps the owner does by hand: the Coolify app,
    the build setting, the pull zone and its limits, the domain, GoatCounter.
-2. **Visit counts.** `src/shared/analytics.ts`, following the owner's kajsegradi integration:
-   GoatCounter site `insidethequad`, the script from `https://gc.zgo.at/count.js` with
-   `no_onload`, the app counting each new path itself (path only, never the query; the same path
-   twice counts once), counts made before the script loads held and sent when it does. Only in
-   a production build and never on a local address (`localhost`, `127.0.0.1`, `[::1]`), so dev,
-   preview and the e2e runs neither load the script nor count.
-   - CSP: `script-src` adds `https://gc.zgo.at`; `img-src` and `connect-src` add
-     `https://insidethequad.goatcounter.com`.
+2. **Visit counts.** `src/app/analytics.ts`, after the owner's kajsegradi integration but
+   without GoatCounter's script (the review found it sends the query and full referrer, and uses
+   localStorage): the app sends each count itself to `https://insidethequad.goatcounter.com/count`,
+   by beacon or image. A count carries the counted path (never the query; a stepped sheet without
+   its step; the same page twice counts once), the screen size, and on a visit's first page the
+   origin of another site the visitor came from. Only in a production build and never on a local
+   address (`localhost`, `127.0.0.1`, `[::1]`), so dev, preview and the e2e runs never count.
+   - CSP: `img-src` and `connect-src` add `https://insidethequad.goatcounter.com`.
    - The overview says, in one plain line: visits are counted with GoatCounter, without cookies.
-   - Tests: unit tests for the counter, the local-address rule and the loader; an e2e that maps
-     a non-local host name to the server, stubs the script and checks the paths counted; the
-     Docker run checks the CSP lets the script run.
+   - Tests: unit tests for the counted path, the count address, the referrer and the sender; an
+     e2e that maps a non-local host name to the server and catches the count requests (paths,
+     Back/Forward, unknown addresses, no query); against the Docker image that also proves the
+     CSP lets them through.
 3. **Link previews and icons (review M3).** A Vite plugin adds Open Graph and Twitter tags to
    `index.html`: title, description and type always; `og:url`, `og:image` and
    `twitter:card=summary_large_image` only when `VITE_SITE_URL` is set, with absolute URLs.

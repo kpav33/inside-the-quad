@@ -250,3 +250,20 @@ Additional checked conclusions:
   query-free requests. Existing accessibility/reflow tests pass; this review did not certify
   real-device behavior or perform an independent screen-reader audit. MIT scope and the
   README's separate treatment of photos/fonts/packages are consistent on inspection.
+
+## Resolutions
+
+Fixed on the branch after the review; each claim was checked first (the live `count.js` sends
+`q: location.search` and the full `document.referrer`, and reads and writes `localStorage`;
+Bunny's billing and custom-hostname docs say what I2 and I3 say).
+
+| Finding | Resolution                                                                                                                                                                                                                                                                                  |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| I1      | Fixed. GoatCounter's script is gone; the app sends counts itself (`countUrl`, `sendCount`): path, screen size, and only another site's origin as referrer. `script-src` no longer allows `gc.zgo.at`. Unit tests on the address; e2e asserts each count's keys are exactly `p`, `rnd`, `s`. |
+| I2      | Fixed. ADR 0005 and `docs/deploy.md` say prepaid isn't a hard cap: negative balance, the continuing minimum, the four-day disable; the bandwidth limit is what caps traffic.                                                                                                                |
+| I3      | Fixed. `docs/deploy.md` gives the two supported setups: Bunny DNS with CNAME flattening, or `www.` with a redirect; then certificate, `VITE_SITE_URL`, redeploy, purge.                                                                                                                     |
+| M1      | Fixed by I1: no script, so no storage access and no `#toggle-goatcounter`. A unit test checks the sender touches no storage.                                                                                                                                                                |
+| M2      | Fixed by I1: counts carry no title, so none can be stale. The dashboard shows paths, which name the sheet.                                                                                                                                                                                  |
+| M3      | Fixed. `og:url` is the site's root when `VITE_SITE_URL` is set (one page serves every address); tested both ways.                                                                                                                                                                           |
+| M4      | Fixed. The e2e catches the real count requests and covers Back/Forward and an unknown address. Against the Docker image with the count address removed from `connect-src` and `img-src`, the three counting tests fail; with the real CSP they pass.                                        |
+| N1      | Fixed. `share-images.mjs` reads the palette from `tokens.css`; the regenerated images are byte-identical.                                                                                                                                                                                   |
