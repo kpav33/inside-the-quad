@@ -29,8 +29,16 @@ describe('PartPhoto', () => {
     expect(image).toHaveAttribute('width', '1024');
     expect(image).toHaveAttribute('height', '320');
     expect(image).toHaveAttribute('loading', 'lazy');
+    // Deferred 03c #3: each file is described by its real width, not the name's 1280.
     expect(image.getAttribute('srcset')).toBe(
-      '/assets/esc-640.webp 640w, /assets/esc-1280.webp 1280w',
+      '/assets/esc-640.webp 640w, /assets/esc-1280.webp 1024w',
+    );
+  });
+
+  it('describes a photo narrower than 640 px by its own width', () => {
+    render(<PartPhoto photo={{ ...photo, width: 600, height: 300 }} />);
+    expect(screen.getByRole('img', { name: photo.alt }).getAttribute('srcset')).toBe(
+      '/assets/esc-640.webp 600w, /assets/esc-1280.webp 600w',
     );
   });
 

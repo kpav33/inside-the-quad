@@ -2,6 +2,9 @@ import type { PartPhoto as Photo } from '@/content/photos';
 import { UI } from '@/content/ui';
 
 /** Images fill the sheet column up to its widest (36rem) and the full width on narrow screens. */
+/** The small file's width; the large one is the photo's own width, at most 1280. */
+const SMALL_WIDTH = 640;
+
 const SIZES = '(min-width: 56rem) 36rem, 100vw';
 
 /**
@@ -25,7 +28,7 @@ export function PartPhoto({
       </p>
       <img
         src={photo.src}
-        srcSet={`${photo.src} 640w, ${photo.srcLarge} 1280w`}
+        srcSet={`${photo.src} ${Math.min(SMALL_WIDTH, photo.width)}w, ${photo.srcLarge} ${photo.width}w`}
         sizes={SIZES}
         width={photo.width}
         height={photo.height}
