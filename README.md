@@ -29,6 +29,12 @@ pnpm dev        # http://localhost:5173
 
 First e2e run: `pnpm exec playwright install chromium`.
 
+## Licence
+
+The code is under the [MIT licence](LICENSE). That covers this repository's own code and
+text. It doesn't cover the photos (below), or the fonts and packages the app bundles, which keep
+their own licences (listed in `third-party-licenses.txt` in every build).
+
 ## Photos
 
 The real part photos in `src/assets/photos/` are third-party works from Wikimedia Commons under
