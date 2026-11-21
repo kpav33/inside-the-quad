@@ -286,3 +286,46 @@ test('at 320 × 667 with 200 % text, a step taken from the controls keeps them i
     await expect(next).toBeInViewport();
   }
 });
+
+test('the leader stops flowing a few seconds after a step, and while Play is stopped', async ({
+  page,
+}) => {
+  // Fix check (WCAG 2.2.2): after Stop the dashes kept moving, with no way to pause them.
+  test.slow();
+  await page.addInitScript(() => {
+    const counted = window as unknown as { draws: number };
+    counted.draws = 0;
+    for (const proto of [WebGLRenderingContext.prototype, WebGL2RenderingContext.prototype]) {
+      for (const name of ['drawArrays', 'drawElements'] as const) {
+        // eslint-disable-next-line @typescript-eslint/unbound-method -- re-bound with apply below
+        const original = proto[name] as (...args: unknown[]) => void;
+        (proto as unknown as Record<string, unknown>)[name] = function (
+          this: unknown,
+          ...args: unknown[]
+        ) {
+          counted.draws += 1;
+          original.apply(this, args);
+        };
+      }
+    }
+  });
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/paths/control');
+  await expect(page.locator('canvas')).toBeVisible();
+  const draws = () => page.evaluate(() => (window as unknown as { draws: number }).draws);
+  const drawsOver = async (ms: number) => {
+    const before = await draws();
+    await page.waitForTimeout(ms);
+    return (await draws()) - before;
+  };
+  // Just opened: the dashes show the way, then hold still.
+  expect(await drawsOver(600)).toBeGreaterThan(0);
+  await page.waitForTimeout(5000);
+  expect(await drawsOver(1000)).toBe(0);
+  // Playing, they flow; Stop pauses them.
+  await page.getByRole('button', { name: 'Play the path' }).click();
+  expect(await drawsOver(600)).toBeGreaterThan(0);
+  await page.getByRole('button', { name: 'Stop' }).click();
+  await page.waitForTimeout(5500);
+  expect(await drawsOver(1000)).toBe(0);
+});

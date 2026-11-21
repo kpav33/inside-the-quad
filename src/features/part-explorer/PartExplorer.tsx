@@ -93,11 +93,12 @@ function checkDrawing(parts: readonly PartId[] | null): Drawing {
  * The drawing for a path at a stop: the stop's parts open, the rest of the path grey, the frame
  * opened (every path passes a board under the top plate), the view turned to the stop's part.
  */
-function pathDrawing(path: PathContent, step: number): Drawing {
+function pathDrawing(path: PathContent, step: number, playing: boolean): Drawing {
   const open = new Set(path.stops[step]?.parts ?? []);
   const rest = new Set([...pathParts(path.id)].filter((part) => !open.has(part)));
   const leader: Leader = {
     step,
+    playing,
     stops: path.stops.map((stop, index) => ({
       anchors: stop.anchors,
       feeds: stop.feeds,
@@ -387,7 +388,7 @@ export function PartExplorer() {
                       {...(flightOpen
                         ? FLIGHT_DRAWING
                         : openPath && currentStop
-                          ? pathDrawing(openPath, pathStep.step)
+                          ? pathDrawing(openPath, pathStep.step, pathStep.playing)
                           : checkOpen
                             ? checkDrawing(checkParts)
                             : partDrawing(selectedPart))}

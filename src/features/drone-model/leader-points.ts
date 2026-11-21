@@ -21,6 +21,8 @@ export interface LeaderStop {
 export interface Leader {
   stops: readonly LeaderStop[];
   step: number;
+  /** The path is playing: its dashes keep flowing until Stop. */
+  playing?: boolean;
 }
 
 export const toScene = ([x, y, z]: Vec3): Vec3 => [mm(x), mm(y), mm(z)];

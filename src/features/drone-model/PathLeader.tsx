@@ -1,13 +1,13 @@
 import { Line } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { COLOR, MODEL_LOOK } from '@/shared/design/tokens';
 import type { DroneSpec } from '@/shared/domain/drone-spec';
 import { useOnScreen } from '@/shared/ui/useOnScreen';
 import { usePrefersReducedMotion } from '@/shared/ui/usePrefersReducedMotion';
 
-import { dashOffset, LEADER_DASH_M } from './leader-motion';
+import { dashesFlow, dashOffset, FLOW_BURST_MS, LEADER_DASH_M } from './leader-motion';
 import { type Leader, type LeaderStop, outlineScene, stopPoints } from './leader-points';
 import { leaderSegments } from './path-anchors';
 import type { Vec3 } from './rear';
@@ -47,9 +47,9 @@ interface LineHandle {
 }
 
 /**
- * One line of the leader. A dashed line's dashes run toward its end unless motion is reduced or
- * the drawing can't be seen (`flowing` false: scrolled away, or the page hidden), so an unseen
- * canvas asks for no frames. A line to an off-drone end follows that end, which sits beside the
+ * One line of the leader. A dashed line's dashes run toward its end while `flowing` (see
+ * `dashesFlow`: while playing or just after a step, never unseen or with reduced motion), so a
+ * still or unseen drawing asks for no frames. A line to an off-drone end follows that end, which sits beside the
  * drone on screen whatever the view (see `endOnScreen`).
  */
 function LeaderLine({
@@ -115,14 +115,31 @@ function LeaderLine({
  * The numbered balloons are drawn by the viewer over the canvas (see `leaderMarkerPoints`).
  */
 export function PathLeader({ spec, leader }: { spec: DroneSpec; leader: Leader }) {
-  const { stops, step } = leader;
+  const { stops, step, playing = false } = leader;
   const outline = useMemo(() => outlineScene(spec), [spec]);
   const passed = useMemo(
     () => stops.slice(0, step).flatMap((_, index) => outOf(spec, stops, index)),
     [spec, stops, step],
   );
   const current = useMemo(() => outOf(spec, stops, step), [spec, stops, step]);
-  const flowing = useOnScreen(useThree((state) => state.gl.domElement));
+  const onScreen = useOnScreen(useThree((state) => state.gl.domElement));
+  const reduceMotion = usePrefersReducedMotion();
+  // The step whose few seconds of flowing are over; a new step flows again.
+  const [stillStep, setStillStep] = useState<number | null>(null);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setStillStep(step);
+    }, FLOW_BURST_MS);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [step]);
+  const flowing = dashesFlow({
+    playing,
+    sinceStepMs: stillStep === step ? FLOW_BURST_MS : 0,
+    onScreen,
+    reduceMotion,
+  });
 
   return (
     <group>
