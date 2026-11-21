@@ -12,8 +12,8 @@ export const extrasLesson: Lesson = {
   whatItDoes:
     'The extras are small add-ons: a GPS that knows where the drone is, a buzzer that helps you find it after a crash, and LEDs that make it easier to see.',
   howItWorks: [
-    `The GPS module listens to satellites from several systems (${systems}) and works out the drone’s position, speed and height. It shows speed and distance in your goggles and enables GPS Rescue: if the radio signal is lost, the drone can fly back home on its own instead of dropping.`,
-    'GPS Rescue only works once the GPS has found enough satellites, which can take a minute or two after power-up, so wait before taking off if you rely on it.',
+    `The GPS module listens to satellites from several systems (${systems}) and works out the drone’s position, speed and height. It shows speed and distance in your goggles and makes GPS Rescue possible: once it has been set up and tested in the flight controller, the drone can fly back home on its own if the radio signal is lost, instead of dropping.`,
+    'It also needs the GPS to have found enough satellites and fixed the home position before take-off, which can take a minute or two after power-up, so wait for it before you take off.',
     'The buzzer is a tiny beeper. After a crash in long grass, you switch it on from your radio, or it starts by itself when the drone loses the radio signal, and you follow the sound. Some buzzers have their own small battery, so they keep beeping even if the main battery was thrown off.',
     `The LEDs are addressable: the flight controller (the drone’s brain) sets each one’s colour, so they can show a colour per pilot, flash a warning or just look good. They make the drone easier to see against the sky. This drone has ${extras.ledCount} of them, in two strips on the rear arms.`,
   ],

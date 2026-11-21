@@ -195,3 +195,45 @@ for (const height of [667, 800]) {
     }
   });
 }
+
+test('the stick pads show their edge and centre lines at 3:1 or more', async ({ page }) => {
+  // Release review M6 (WCAG 1.4.11): the travel edge and centre lines were 1.74:1.
+  await page.goto('/moves');
+  await expect(page.locator('.stick-pad').first()).toBeVisible();
+  const ratios = await page.evaluate(() => {
+    const channels = (value: string) => (value.match(/\d+(\.\d+)?/g) ?? []).slice(0, 3).map(Number);
+    const luminance = (value: string) => {
+      const [r, g, b] = channels(value).map((c) => {
+        const v = c / 255;
+        return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+      });
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const ratio = (a: string, b: string) => {
+      const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+      return (hi + 0.05) / (lo + 0.05);
+    };
+    const ground = getComputedStyle(document.body).backgroundColor;
+    const pad = document.querySelector('.stick-pad');
+    const cross = document.querySelector('.stick-cross');
+    if (!pad || !cross) return [];
+    const crossColour = /rgba?\([^)]*\)/.exec(getComputedStyle(cross).backgroundImage)?.[0] ?? '';
+    return [ratio(getComputedStyle(pad).borderTopColor, ground), ratio(crossColour, ground)];
+  });
+  expect(ratios).toHaveLength(2);
+  for (const value of ratios) expect(value).toBeGreaterThanOrEqual(3);
+});
+
+test('on a phone, a step taken from the controls keeps them in view', async ({ page }) => {
+  // Fix check: scrolling to the new step carried the focused button off screen.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/moves');
+  const next = page.getByRole('button', { name: 'Next step' });
+  for (let press = 0; press < 3; press += 1) {
+    await next.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(400);
+    await expect(next).toBeFocused();
+    await expect(next).toBeInViewport();
+  }
+});

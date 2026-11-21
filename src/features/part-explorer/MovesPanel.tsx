@@ -11,6 +11,7 @@ import { ChapterSwitcher } from './ChapterSwitcher';
 import { LESSON_PANEL_ID, MOVES_TITLE_ID } from './ids';
 import { SheetFooter } from './SheetFooter';
 import { TitleBlock } from './TitleBlock';
+import { usePinnedWhileShort } from './usePinnedWhileShort';
 import { useStepScroll } from './useStepScroll';
 
 export interface MovesPanelProps {
@@ -73,6 +74,7 @@ export function MovesPanel({
   const list = useRef<HTMLOListElement>(null);
   const controls = useRef<HTMLDivElement>(null);
   useStepScroll(list, controls, MOVES_SHEET, step);
+  const pinned = usePinnedWhileShort(controls);
   const readout = useFlightReadout(flight);
   const last = MOVE_STEP_IDS.length - 1;
   const currentId = MOVE_STEP_IDS[step];
@@ -99,7 +101,13 @@ export function MovesPanel({
 
       <p className="lesson-lead path-lead">{MOVES.lead}</p>
 
-      <div ref={controls} className="path-controls" role="group" aria-label={t.controlsLabel}>
+      <div
+        ref={controls}
+        data-unpinned={pinned ? undefined : ''}
+        className="path-controls"
+        role="group"
+        aria-label={t.controlsLabel}
+      >
         <button
           type="button"
           className="button-outline"

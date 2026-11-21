@@ -638,7 +638,7 @@ describe('PartExplorer', () => {
     window.localStorage.setItem(READ_KEY, JSON.stringify(NUMBERED_SHEETS));
     await renderExplorer();
     expect(screen.getByText(/every sheet read/i)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Start again from sheet 1' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Read again from sheet 1' })).toHaveAttribute(
       'href',
       '/parts/frame',
     );

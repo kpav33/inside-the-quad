@@ -14,7 +14,7 @@ export const receiverLesson: Lesson = {
     'Before first use, the receiver is bound (paired) to your radio, so it only listens to yours. Binding is done once, usually with a shared bind phrase.',
     `It talks to the flight controller (the drone’s brain) over one of its UARTs (serial ports), using a protocol called ${receiver.protocol}.`,
     'The link works both ways. Telemetry sends information back to your radio, such as battery voltage and signal quality, so you can read it on the radio’s screen or hear a warning.',
-    'If the signal is lost, the flight controller goes into failsafe: on a normal freestyle drone the motors stop and it drops, so it can’t fly away. With a GPS fitted, it can fly back home instead (GPS Rescue).',
+    'If the signal is lost, the flight controller goes into failsafe: on a normal freestyle drone the motors stop and it drops, so it can’t fly away. With a GPS fitted, a flight controller feature called GPS Rescue can make it fly back home instead, but only once that has been set up and tested, and the GPS has fixed the home position before take-off.',
     'Antenna placement matters: carbon fibre blocks radio signals and motors make electrical noise, so the antenna is mounted out at the back, away from both.',
   ],
   specs: [

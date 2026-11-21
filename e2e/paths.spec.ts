@@ -196,3 +196,136 @@ for (const [width, height] of [
     });
   }
 }
+
+for (const path of ['control', 'power', 'video']) {
+  test(`at 320 × 667 with 200 % text, Tab never hides a ${path} stop's link under the step controls`, async ({
+    page,
+  }) => {
+    // Release review I1 (WCAG 2.4.11): the pinned controls covered the focused link.
+    await page.setViewportSize({ width: 320, height: 667 });
+    await page.goto(`/paths/${path}`);
+    await page.evaluate(() => (document.documentElement.style.fontSize = '200%'));
+    await page.getByRole('heading', { level: 2 }).first().focus();
+    let checked = 0;
+    for (let press = 0; press < 80; press += 1) {
+      await page.keyboard.press('Tab');
+      const hidden = await page.evaluate(() => {
+        const focused = document.activeElement;
+        if (!(focused instanceof HTMLElement) || !focused.closest('.path-stop-lessons'))
+          return null;
+        // A link that wraps has its box's centre between its lines; test its first line.
+        const box = Array.from(focused.getClientRects()).at(0) ?? focused.getBoundingClientRect();
+        const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+        return hit === null || !focused.contains(hit) ? focused.textContent : '';
+      });
+      if (hidden === null) continue;
+      checked += 1;
+      expect(hidden, 'a focused lesson link is covered').toBe('');
+    }
+    expect(checked).toBeGreaterThan(0);
+  });
+}
+
+test('a phone path sheet stops drawing while the drawing is scrolled off screen', async ({
+  page,
+}) => {
+  // Release review I3: the leader's flowing dashes kept redrawing an offscreen canvas.
+  await page.addInitScript(() => {
+    const counted = window as unknown as { draws: number };
+    counted.draws = 0;
+    for (const proto of [WebGLRenderingContext.prototype, WebGL2RenderingContext.prototype]) {
+      for (const name of ['drawArrays', 'drawElements'] as const) {
+        // eslint-disable-next-line @typescript-eslint/unbound-method -- re-bound with apply below
+        const original = proto[name] as (...args: unknown[]) => void;
+        (proto as unknown as Record<string, unknown>)[name] = function (
+          this: unknown,
+          ...args: unknown[]
+        ) {
+          counted.draws += 1;
+          original.apply(this, args);
+        };
+      }
+    }
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/paths/control');
+  const canvas = page.locator('canvas');
+  await expect(canvas).toBeVisible();
+  const draws = () => page.evaluate(() => (window as unknown as { draws: number }).draws);
+  // On screen, the dashes flow.
+  await canvas.scrollIntoViewIfNeeded();
+  const before = await draws();
+  await page.waitForTimeout(600);
+  expect(await draws()).toBeGreaterThan(before);
+  // Scrolled away, nothing is drawn.
+  await page.evaluate(() => {
+    const box = document.querySelector('canvas')?.getBoundingClientRect();
+    window.scrollBy(0, (box?.bottom ?? 0) + 50);
+  });
+  // Let the frames already asked for finish.
+  await page.waitForTimeout(800);
+  const offscreen = await draws();
+  await page.waitForTimeout(1000);
+  expect(await draws()).toBe(offscreen);
+});
+
+test('at 320 × 667 with 200 % text, a step taken from the controls keeps them in view', async ({
+  page,
+}) => {
+  // Fix check: with the controls unpinned, scrolling to the new stop carried the focused Next
+  // step button off screen.
+  await page.setViewportSize({ width: 320, height: 667 });
+  await page.goto('/paths/control');
+  await page.evaluate(() => (document.documentElement.style.fontSize = '200%'));
+  const next = page.getByRole('button', { name: 'Next step' });
+  for (let press = 0; press < 4; press += 1) {
+    await next.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(400);
+    await expect(next).toBeFocused();
+    await expect(next).toBeInViewport();
+  }
+});
+
+test('the leader stops flowing a few seconds after a step, and while Play is stopped', async ({
+  page,
+}) => {
+  // Fix check (WCAG 2.2.2): after Stop the dashes kept moving, with no way to pause them.
+  test.slow();
+  await page.addInitScript(() => {
+    const counted = window as unknown as { draws: number };
+    counted.draws = 0;
+    for (const proto of [WebGLRenderingContext.prototype, WebGL2RenderingContext.prototype]) {
+      for (const name of ['drawArrays', 'drawElements'] as const) {
+        // eslint-disable-next-line @typescript-eslint/unbound-method -- re-bound with apply below
+        const original = proto[name] as (...args: unknown[]) => void;
+        (proto as unknown as Record<string, unknown>)[name] = function (
+          this: unknown,
+          ...args: unknown[]
+        ) {
+          counted.draws += 1;
+          original.apply(this, args);
+        };
+      }
+    }
+  });
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/paths/control');
+  await expect(page.locator('canvas')).toBeVisible();
+  const draws = () => page.evaluate(() => (window as unknown as { draws: number }).draws);
+  const drawsOver = async (ms: number) => {
+    const before = await draws();
+    await page.waitForTimeout(ms);
+    return (await draws()) - before;
+  };
+  // Just opened: the dashes show the way, then hold still.
+  expect(await drawsOver(600)).toBeGreaterThan(0);
+  await page.waitForTimeout(5000);
+  expect(await drawsOver(1000)).toBe(0);
+  // Playing, they flow; Stop pauses them.
+  await page.getByRole('button', { name: 'Play the path' }).click();
+  expect(await drawsOver(600)).toBeGreaterThan(0);
+  await page.getByRole('button', { name: 'Stop' }).click();
+  await page.waitForTimeout(5500);
+  expect(await drawsOver(1000)).toBe(0);
+});

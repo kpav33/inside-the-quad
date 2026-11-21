@@ -162,3 +162,19 @@ test('at 320 px with 200 % text the masthead’s three section links stay apart'
   });
   await expect(page).toHaveURL(/\/paths\/control$/);
 });
+
+test('a gear sheet opened directly does not download the 3D viewer', async ({ page }) => {
+  // Deferred 06 #4: about 264 kB gzip of three.js loaded for a sheet that draws no drone.
+  const requested: string[] = [];
+  page.on('request', (request) => requested.push(request.url()));
+  await page.goto('/gear/goggles');
+  await expect(page.locator('.gear-drawing')).toBeVisible();
+  await page.waitForLoadState('networkidle');
+  expect(requested.filter((url) => url.includes('DroneViewer'))).toEqual([]);
+  // The drone still loads as soon as a sheet draws it.
+  await page
+    .getByRole('navigation', { name: 'Sections' })
+    .getByRole('link', { name: 'How it works together' })
+    .click();
+  await expect(page.locator('canvas')).toBeVisible();
+});

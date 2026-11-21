@@ -52,14 +52,14 @@ export const INTRO: IntroContent = {
       heading: 'FPV vs camera drones',
       paragraphs: [
         'FPV stands for first-person view. A camera on the drone sends live video to goggles you wear, so you see what the drone sees, as if you were sitting in it.',
-        'Camera drones, such as the DJI Mini or Mavic, fly themselves: let go of the sticks and they stop and hover in place. An FPV drone is flown by hand. Let go and it keeps the angle you left it at instead of holding still. That makes it harder to learn, and much more free: it can flip, roll and dive anywhere you can steer it.',
+        'Camera drones, such as the DJI Mini or Mavic, fly themselves: let go of the sticks and they stop and hover in place. An FPV drone is flown by hand, usually in acro mode, the way most FPV pilots fly: let go and it keeps the angle you left it at instead of holding still. That makes it harder to learn, and much more free: it can flip, roll and dive anywhere you can steer it.',
       ],
     },
     {
       heading: 'The whole system',
       paragraphs: [
         'Flying FPV takes three devices: the radio in your hands, the drone, and the goggles on your head. Between them run two wireless links.',
-        `Control goes up: the radio sends your stick moves to the drone. Video comes down: the drone sends its live picture to the goggles. On the drone in this app, control uses ExpressLRS on ${receiver.frequencyGhz} GHz and the video is ${camera.signal} on ${vtx.frequencyGhz} GHz (GHz, gigahertz, names the radio frequency each link uses).`,
+        `Control goes up: the radio sends your stick moves to the drone. Video comes down: the drone sends its live picture to the goggles. On the drone in this app, control uses ExpressLRS, a radio control system, on ${receiver.frequencyGhz} GHz, and the video is ${camera.signal} (the older, simpler kind of video: fuzzier than digital HD, but with almost no delay) on ${vtx.frequencyGhz} GHz. GHz, gigahertz, names the radio frequency each link uses.`,
       ],
     },
     {

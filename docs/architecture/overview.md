@@ -91,7 +91,8 @@ nginx/              Production server config (copied into the Docker image)
   setting does), with numbers from the drone spec and `lipo.ts`. `features/gear` draws the three
   flat SVGs from plain props (`GearState`: the switches) and holds the charger maths; it never
   imports three.js. The explorer renders `GearDrawing` in the drawing field instead of mounting the
-  lazy 3D viewer (its chunk is still preloaded with the app, as on every sheet), and `GearPanel` in the sheet column; `useGearSheet` keeps the switches and the
+  lazy 3D viewer (its chunk downloads the first time a sheet draws the drone, so a gear sheet
+  opened directly never loads it), and `GearPanel` in the sheet column; `useGearSheet` keeps the switches and the
   highlighted part, starting afresh when a gear sheet opens. Gear photos use the 03c pipeline
   (`scripts/photos/manifest.json`, keyed by part or gear id); an `own` entry reads the app's own
   photo from `scripts/photos/own/` (committed without metadata) and credits it to the app, CC0.

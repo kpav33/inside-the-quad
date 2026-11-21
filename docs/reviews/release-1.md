@@ -1,0 +1,255 @@
+# Review: release 1 (whole app)
+
+**HEAD:** `637d86bd4153add44e7001e064245e6cc978946b` · **Branch:** `main` · **Date:** 2026-11-21
+
+## Summary
+
+**Verdict: ready after fixes.**
+
+The app works as a coherent learning experience. Desktop and 390 px phone walks reached every sheet in order and returned to the overview. Next/Previous, chapter boundaries, heading focus, saved progress and progress clearing worked. The reference numbers agree across the sheets: motor size/KV, mounting patterns, battery voltages, charge current, control/video frequencies and antenna polarization.
+
+Five Important findings should be fixed before release: obscured keyboard focus with enlarged text, missing third-party licence notices, continuous rendering of an offscreen canvas, vocabulary introduced before its explanation, and incomplete GPS Rescue prerequisites.
+
+The checker is off for a fresh release visitor: three masthead links, no checker links or empty layout space, counts of **11 parts / 5 together / 3 gear**, Charger returning to the overview, and `/check` treated as unknown. One Minor issue remains with stored checker progress.
+
+No repository source, configuration or documentation was changed. The working tree remains clean. Evidence, scripts and screenshots are under `/tmp/codex-review-release`.
+
+## Checks
+
+All Node/pnpm commands used the requested nvm prefix.
+
+| Check                                                                      | Result                                                                                                                                                                                                          |
+| -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm check`                                                               | **Passed:** typecheck, lint, formatting; **821 tests in 79 files**. Existing jsdom navigation and three.js CommonJS warnings were non-failing.                                                                  |
+| `pnpm build --outDir /tmp/codex-review-release/dist`                       | **Passed.** Build output stayed outside the repository.                                                                                                                                                         |
+| Production preview                                                         | Reviewed the built release with `pnpm preview --outDir /tmp/codex-review-release/dist`.                                                                                                                         |
+| `pnpm test:e2e --output=/tmp/codex-review-release/e2e-results --workers=2` | **157 passed, 15 skipped:** ten checker tests and five nginx-only tests.                                                                                                                                        |
+| Complete reading walk                                                      | Pointer and separate keyboard-only walks at **1440 × 900** and **390 × 844**: overview → intro → eleven parts → five together sheets → three gear sheets → overview.                                            |
+| Navigation and progress                                                    | Correct destination-heading focus; Back/Forward focus; chapter crossings; all-read state; reload persistence; Clear progress returning focus to Start.                                                          |
+| Enlarged text                                                              | All release routes inspected at **320 × 667, 200% root text**. No horizontal page overflow. Found obscured path-link focus, described below.                                                                    |
+| Accessibility automation                                                   | Axe-core 4.10.3 on 21 routes at desktop and enlarged-phone sizes. Its sole reported violation—the intro’s scrolling table—was a **false positive in this Chromium**: Tab reached it and ArrowRight scrolled it. |
+| Accessibility inspection                                                   | Checked headings, landmarks, names/states, live regions, keyboard traversal and computed text colours. No text-contrast failure found in the tested states.                                                     |
+| Reduced motion                                                             | Live preference changes stopped path rendering; selection turns/lifts became immediate; restoring motion restored animation.                                                                                    |
+| WebGL failure                                                              | Chromium launched with WebGL disabled. Reading and navigation survived; simulation-only controls remained misleadingly enabled.                                                                                 |
+| Phone performance                                                          | Chromium **158.0.8127.18**, 390 px, DPR 3; two cold runs per entry route with **4× CPU slowdown, 1.6 Mbps download, 150 ms latency**.                                                                           |
+| Static hosting                                                             | Read Dockerfile, nginx routing, caching, CSP and security-header configuration. **No Docker execution or nginx runtime verification.**                                                                          |
+| Attribution/assets                                                         | Inspected all fourteen photo records and rendered credits, image dimensions, font licences and generated distribution files.                                                                                    |
+| Design detector                                                            | Ran on app composition and CSS. Advisories concerned documented SVG drawing units and balloon shapes; no additional release defect established.                                                                 |
+| Repository integrity                                                       | Final `git diff --exit-code` passed; HEAD unchanged. Review preview stopped.                                                                                                                                    |
+
+Performance measurements:
+
+| Measurement                   | Observed result                                                                                                     |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Entry JavaScript              | **365.02 kB raw / 115.00 kB gzip**                                                                                  |
+| 3D viewer chunk               | **987.77 kB raw / 264.27 kB gzip**                                                                                  |
+| CSS                           | **38.23 kB raw / 6.75 kB gzip**                                                                                     |
+| Throttled overview            | First contentful paint **1.29–1.30 s**; first WebGL draw **3.91–3.94 s**                                            |
+| Throttled intro               | First contentful paint **1.32–1.36 s**; first WebGL draw **3.81–3.82 s**                                            |
+| Throttled goggles page        | First contentful paint **1.34 s**; nevertheless downloads the viewer                                                |
+| Settled overview / VTX lesson | **Zero additional WebGL draws** during three-second samples                                                         |
+| Idle Control path             | **6,264 draw calls** in approximately three seconds; continues when offscreen                                       |
+| Photos                        | Lazy, local WebP assets; **1.57 MB for all 28 variants combined**; largest individual file approximately **197 kB** |
+
+The viewer is a separate chunk, but its import starts **before first contentful paint**, rather than waiting for later interaction. Normal reading walks produced no page errors. The production viewer logs a `THREE.Clock` deprecation warning; screenshot probes also produced driver readback warnings.
+
+## Findings
+
+### Critical
+
+None established.
+
+### Important
+
+**I1. Sticky path controls completely hide keyboard focus at enlarged phone text.**
+
+**Location:** `src/styles/global.css:1490`, `src/features/part-explorer/useStepScroll.ts:25`.
+
+At 320 × 667 with 200% text, open `/paths/control` and Tab to the first stop’s **Radio** lesson link. The focused link occupies **y=317–350**, entirely underneath the sticky controls at **y=0–394**. Its centre hit-tests to **Play the path**. The same problem affects lesson links on Power and Video.
+
+The scroll adjustment handles changing steps, but does not protect ordinary Tab navigation into their links. This fails [WCAG 2.4.11, Focus Not Obscured](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html).
+
+**Suggested fix:** release stickiness when the control group becomes tall, or apply correctly measured scroll clearance to every focusable item. Test Tab traversal through all stop links at 320 px/200%, alongside the existing step-button tests.
+
+Evidence: [focused screenshot], [measurements].
+
+**I2. The release distribution omits required third-party licence notices.**
+
+**Location:** `vite.config.ts:12`, `Dockerfile:16`.
+
+Both generated JavaScript chunks contain neither copyright notices nor licence text. The distribution contains no accompanying licence/notice file. Docker copies that distribution directly into the public server.
+
+React and three.js are substantial parts of those bundles; their installed MIT licences require the notices to accompany copies. This requirement is also explicit in [React’s licence](https://github.com/react/react/blob/main/LICENSE). The font packages contain OFL texts that are not emitted as accompanying files; inspected WOFF metadata contains copyright and a licence URL, rather than the full text.
+
+**Suggested fix:** emit and ship third-party notices for bundled runtime dependencies and fonts, preserving their copyright and licence texts. Verify the generated distribution, rather than only files in `node_modules`. The [OFL permits accompanying text files](https://openfontlicense.org/open-font-license-official-text/).
+
+The photo credits are substantially better: all fourteen have author/licence information, source links where applicable, and crop notices.
+
+**I3. Reading a phone path sheet keeps an entirely offscreen canvas rendering continuously.**
+
+**Location:** `src/features/drone-model/PathLeader.tsx:81`.
+
+Open `/paths/control` on a 390 px phone. The sheet is revealed below the drawing; the canvas measured **y=−962 to −675**, entirely outside the viewport. Playback was stopped—the button said **Play the path**—but the dash animation continued invalidating the whole scene.
+
+Without draw-call instrumentation, Chromium recorded **3.028 seconds of main-thread task time over 3.030 seconds**. Reduced motion lowered that to approximately **0.00023 seconds over two seconds**. The instrumented run separately confirmed thousands of actual WebGL draws. Video behaved similarly.
+
+**Suggested fix:** suspend animation when the canvas is outside the viewport and when the document is hidden; resume on visibility. Also provide an ordinary pause mechanism for the continuing dash animation, or tie it to playback. Preserve a static path while reading.
+
+These are software-rendered Chromium measurements, not a claim about a particular phone’s battery life.
+
+**I4. The reading order introduces important vocabulary before explaining it.**
+
+**Location:** `src/content/intro.ts:62`, `src/content/lessons/fc.ts:15`, `src/content/lessons/battery.ts:20`, `src/content/moves.ts:29`.
+
+A beginner following Next encounters:
+
+- **ExpressLRS** and **analog** in the intro without an explanation of what those categories mean.
+- **Roll and pitch** in the FC lesson before their movement explanations.
+- **Throttle** in the battery lesson before the stick lesson.
+- **Acro** and **armed** on Moves before the Radio sheet explains modes and arming.
+
+The explanations generally exist later, but that does not satisfy the product’s first-use requirement. Existing per-lesson jargon checks do not establish reading-order comprehension.
+
+**Suggested fix:** add brief first-use glosses—for example, “ExpressLRS, the radio control system”—and introduce throttle, rotation axes, arming and acro before relying on them. This requires only short definitions, not flight training.
+
+**I5. GPS Rescue prerequisites are incomplete in the parts chapter.**
+
+**Location:** `src/content/lessons/receiver.ts:17`, `src/content/lessons/extras.ts:15`.
+
+The Receiver sheet presents fitting GPS as the qualification for flying home; Extras adds waiting for satellites. Only the later What if sheet says **“With GPS set up.”**
+
+A beginner using the parts chapter as reference can reasonably infer that fitting GPS and obtaining satellites establishes a working return-home failsafe. Betaflight requires Rescue/failsafe configuration, a home fix and careful testing before reliance. Its [GPS Rescue documentation](https://betaflight.com/docs/wiki/guides/current/GPS-Rescue) states those requirements.
+
+**Suggested fix:** consistently say that GPS _enables a Rescue feature which must be configured and tested_, with a valid home fix before flight. No configuration tutorial is necessary.
+
+### Minor
+
+| ID  | Location                                                         | Verified failure scenario                                                                                                                                                                                                                                                   | Suggested fix                                                                                                                                                                        |
+| --- | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| M1  | `src/content/lessons/battery.ts:18`; `src/content/what-if.ts:60` | Battery says a 6S drone **needs** a 6S battery; What if correctly explains that this build can fly weakly on 4S. The categorical wording conflicts across sheets.                                                                                                           | Say the reference is **designed for 6S**, while distinguishing reduced performance at lower voltage from overvoltage damage.                                                         |
+| M2  | `src/content/intro.ts:55`; `src/content/gear/radio.ts:15`        | Intro describes holding attitude as a property of FPV drones generally; Radio later explains self-levelling Angle mode on the same class of hardware.                                                                                                                       | Qualify the intro as the reference drone’s **acro mode**. [Betaflight distinguishes the modes](https://betaflight.com/docs/wiki/getting-started/setup-guide).                        |
+| M3  | `index.html:8`; `nginx/default.conf:31`                          | Shared links have no declared Open Graph/Twitter title, description or image. There is only an SVG favicon. `robots.txt` and `sitemap.xml` do not exist; requesting either receives the SPA HTML.                                                                           | Add social metadata and the intended crawler files before promoting the site. Add touch/fallback icons if those platforms are supported.                                             |
+| M4  | `nginx/default.conf:23`                                          | Configuration applies year-long `immutable` caching **also to missing-asset 404s**, because the header uses `always`. A failed chunk URL can remain negatively cached even if that asset is restored. This is established by configuration inspection, not a container run. | Limit immutable caching to successful asset responses; add a missing-asset cache-header check.                                                                                       |
+| M5  | `src/features/progress/progress.ts:24`                           | With only `"check"` stored as read and the checker off, the overview skips newcomer onboarding and shows **Continue with sheet 1**, zero chapter counts and Clear progress. Hidden progress still affects release copy.                                                     | Filter stored read IDs through the enabled sheet set. Fresh-browser checker invisibility otherwise passes.                                                                           |
+| M6  | `src/styles/global.css:556`; `src/styles/global.css:579`         | At rest, stick travel boundaries and neutral crosshairs use `#3a3f44` on approximately `#121416`: **1.74:1**. Their extent/centre is faint for low-vision readers, although the thumb and keyboard-focus indicators are clear.                                              | Use a stronger existing token for the meaningful travel/centre marks. I have not classified every faint button border as a WCAG failure: their text already identifies the controls. |
+
+Existing Minor issues—unused viewer downloads, incorrect image descriptors and inert fallback controls—are detailed in the triage below.
+
+## Deferred-findings triage
+
+References identify the section review and its finding number. **Fine to ship** accepts the documented limitation; it does not mean the issue is fixed.
+
+| Review finding                                        | Verification at this HEAD / current location                                                                                                                                                                                                                                                                                                      | Release grade                                                                                             |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| **00 #11 — container hardening**                      | `Dockerfile:13` still uses the standard nginx image, has no `USER`, and uses image tags. ADR 0003 explicitly accepts the root master/unprivileged-worker arrangement. The formerly missing start period is now present at line 18.                                                                                                                | **Fine to ship**                                                                                          |
+| **00 #13 — pre-push checks working tree**             | `.husky/pre-push:10` still runs `pnpm check` against the working tree; CI checks the pushed revision.                                                                                                                                                                                                                                             | **Fine to ship**                                                                                          |
+| **00 #17 — viewer semantics/deprecation**             | The problematic `role="img"` wrapper is gone. The bundled viewer still produces the harmless `THREE.Clock` warning.                                                                                                                                                                                                                               | **Fine to ship**                                                                                          |
+| **01 #5 — out-and-back orbit counts as click**        | `src/features/part-explorer/clicks.ts:9` still accepts R3F’s press/release displacement rather than total drag travel. Returning within four pixels can select a part. Track gesture travel if this becomes troublesome.                                                                                                                          | **Fine to ship**                                                                                          |
+| **01 #11 — constant-only assertion**                  | `src/features/part-explorer/clicks.test.ts:16` still asserts the four-pixel constant. Behavioural threshold tests also exist.                                                                                                                                                                                                                     | **Fine to ship**                                                                                          |
+| **01 #12 — DOM types in node config**                 | `tsconfig.node.json:6` includes DOM types for Playwright evaluation callbacks. This remains an accepted tooling choice.                                                                                                                                                                                                                           | **Fine to ship**                                                                                          |
+| **01 #13 — mixed historical commit**                  | `bc9cc01` remains in history. Its recorded grouping is historical hygiene, not a current runtime defect.                                                                                                                                                                                                                                          | **Fine to ship**                                                                                          |
+| **02 #7 — incomplete contrast-test matrix**           | `src/shared/design/tokens.test.ts:27` still omits the additional balloon/focus/rule-fill pairs; `materials.test.ts:79` still repeats a token contrast assertion. The referenced pairs pass today. Extend coverage when changing colours.                                                                                                          | **Fine to ship**                                                                                          |
+| **02 #8 — overview copy/spec coupling**               | `src/content/ui.ts:118` hard-codes the reference size; `src/content/overview.ts:9` owns its labels separately. Current values agree.                                                                                                                                                                                                              | **Fine to ship**                                                                                          |
+| **02 #9 — mixed historical commit**                   | `ad8a691` remains unchanged in history.                                                                                                                                                                                                                                                                                                           | **Fine to ship**                                                                                          |
+| **02b #2 — transient camera clipping**                | `src/features/drone-viewer/TurnToPart.tsx:72` still interpolates endpoint distances without fitting intermediate directions. Recomputed with current geometry: at aspect 1.8, the VTX→Camera turn reaches vertical NDC **1.118**. Settled views fit. Fit the intermediate direction to eliminate it.                                              | **Fine to ship**                                                                                          |
+| **02c #4 — odd unknown-address notices**              | Browser-confirmed `/parts/` produces an empty quoted name; `/index.html` is described as an unknown part. `src/shared/routing/routes.ts:97`; `src/content/ui.ts:71`. Use generic unknown-page copy eventually.                                                                                                                                    | **Fine to ship**                                                                                          |
+| **02c #5 — “Start again” preserves checks**           | `src/features/part-explorer/OverviewStart.tsx:88` reopens Frame without resetting progress. Confirmed after the complete walk. Rename to “Read again from sheet 1” to remove ambiguity.                                                                                                                                                           | **Fine to ship**                                                                                          |
+| **02c #6 — immediate progress clearing**              | `src/features/part-explorer/OverviewStart.tsx:120` clears immediately without undo. It now clears nineteen numbered sheets plus the intro. Focus recovery works.                                                                                                                                                                                  | **Fine to ship**                                                                                          |
+| **02c #7 — toggle inside navigation landmark**        | `src/features/part-explorer/SheetFooter.tsx:77` still places Mark as read inside the Sheets `<nav>`. Move the landmark around only the links when tidying semantics.                                                                                                                                                                              | **Fine to ship**                                                                                          |
+| **02c #8 — space before spoken colon**                | Chromium accessibility snapshot still names the link **“Previous : Frame · sheet 1”**. `src/features/part-explorer/SheetFooter.tsx:100`. Understandable despite awkward punctuation.                                                                                                                                                              | **Fine to ship**                                                                                          |
+| **02c #9 — modified-click test coverage**             | `src/shared/routing/PartLink.test.tsx:29` covers Ctrl/middle; Meta/Shift/Alt remain untested. The shared guard still handles those modifiers.                                                                                                                                                                                                     | **Fine to ship**                                                                                          |
+| **02c #10 — layout fix in test commit**               | `a2a01f3` remains unchanged in history.                                                                                                                                                                                                                                                                                                           | **Fine to ship**                                                                                          |
+| **02c #11 — Safari list semantics**                   | `src/styles/global.css:1295` still removes connection-list styling without adding an explicit list role. The source condition remains; the VoiceOver effect was **not** independently reproduced here.                                                                                                                                            | **Fine to ship**, pending Safari/VoiceOver verification                                                   |
+| **02d #1 — background dismissal loses focus**         | Browser-confirmed: closing Motors through empty canvas returns to `/` with `document.body` focused. `src/features/part-explorer/PartExplorer.tsx:332`. Route this through the Close handler eventually.                                                                                                                                           | **Fine to ship**                                                                                          |
+| **02d #2 — reduced-motion e2e gap**                   | `e2e/explorer.spec.ts:292` still checks only ESC and an upper render bound; it does not test a camera turn or resuming animation. My live probes verified both behaviours.                                                                                                                                                                        | **Fine to ship**                                                                                          |
+| **03a #8 — protocol parsed from string**              | `src/content/lessons/esc.ts:8` still strips digits from a free-form protocol string. Correct for the sole reference spec. Store a typed rate before adding another protocol.                                                                                                                                                                      | **Fine to ship**                                                                                          |
+| **03a #9 — weak touch-selection assertion**           | `e2e/touch.spec.ts:47` still checks panel visibility rather than which part was hit. Other browser tests check specific model selections.                                                                                                                                                                                                         | **Fine to ship**                                                                                          |
+| **03b #6 — frequency restrictions omitted**           | `src/content/lessons/vtx.ts:18` mentions country-dependent power but not permitted channels. The [CEPT table](https://docdb.cept.org/download/25c41779-cd6e/attachments/2003_REC7003E.pdf) pairs its 25 mW allowance with 5725–5875 MHz. Add “permitted frequencies/channels also vary”; do not imply every available channel is lawful at 25 mW. | **Fine to ship**; worthwhile copy correction                                                              |
+| **03b #7 — one-way frame/extras connection**          | `src/content/lessons/extras.ts:47` links Frame; Frame has no reciprocal Extras link. Ordinary navigation still reaches both.                                                                                                                                                                                                                      | **Fine to ship**                                                                                          |
+| **03b #8 — geometry inside components**               | Placement calculations remain in `src/features/drone-model/parts/Extras.tsx:33` and `Strap.tsx:20`. Extract tested layout functions when changing those parts.                                                                                                                                                                                    | **Fine to ship**                                                                                          |
+| **03b #9 — misplaced battery assertion**              | `src/shared/domain/quantity.test.ts:24` still checks battery quantity inside the Extras test. Coverage exists; grouping is untidy.                                                                                                                                                                                                                | **Fine to ship**                                                                                          |
+| **03b #11 — extents test lacks tight upper bound**    | `src/features/drone-model/extents.test.ts:25` still uses a lower-bound assertion for top height. Other containment checks exist. Add an expected maximum to catch oversized extents.                                                                                                                                                              | **Fine to ship**                                                                                          |
+| **03c #3 — incorrect large-image descriptors**        | `src/features/part-explorer/PartPhoto.tsx:28` still declares every large image `1280w`. Current decoded exceptions are **ESC 1024 px, Motors 761 px, Strap 1160 px**. Extras is now 1280 px. Use actual widths; the old list of affected files is stale.                                                                                          | **Fine to ship**                                                                                          |
+| **04 #3 — intro copy gaps**                           | `src/content/intro.ts:62`, `:68`, `:103` still hard-code ExpressLRS, omit its first-use gloss, and generalize size naming despite whoops commonly using frame millimetres.                                                                                                                                                                        | **Fix before release** for the glossary gap (**I4**); literal/size-naming refinements are otherwise Minor |
+| **04 #4 — open-stack test misses transition**         | `e2e/intro.spec.ts:48` still closes the stack through intervening part sheets before reaching Intro. Test Intro → ESC → browser Back directly.                                                                                                                                                                                                    | **Fine to ship**                                                                                          |
+| **04 #5 — hover persists after unpressing device**    | `src/features/intro/SystemScene.tsx:38` still uses `hovered ?? selected`. The button becomes unpressed while mouse preview remains. This is the documented intended interaction.                                                                                                                                                                  | **Fine to ship**                                                                                          |
+| **04 #6 — position-based device labels**              | `src/features/intro/SystemScene.tsx:80`, `:90`, `:107` still choose labels by array index. Current ordering is correct; use ID lookup before rearranging content.                                                                                                                                                                                 | **Fine to ship**                                                                                          |
+| **04 #7 — stale design sidecar sample**               | `.impeccable/design.json:414` still demonstrates muted, 11-unit, weight-700 intro labels, unlike the implementation. This file does not drive the release UI.                                                                                                                                                                                     | **Fine to ship**                                                                                          |
+| **04 #8 — long documentation line**                   | The same 123-character architecture line remains, now at `docs/architecture/overview.md:43`.                                                                                                                                                                                                                                                      | **Fine to ship**                                                                                          |
+| **04 #9 — CSS fix in test commit**                    | `c8470ee` remains unchanged in history.                                                                                                                                                                                                                                                                                                           | **Fine to ship**                                                                                          |
+| **05c #4 — simulation controls after viewer failure** | Real WebGL-disabled probes reproduced enabled Try it/Reset with no running simulation or outcome feedback. `src/features/part-explorer/WhatIfPanel.tsx:140`. Moves also leaves Show me/Gust/Level active. Disable or hide simulation-only actions when the viewer fails; retain reading and step navigation.                                      | **Fine to ship** as a documented degraded-mode limitation                                                 |
+| **06 #4 — unnecessary viewer preload**                | `src/features/drone-viewer/index.ts:5` downloads approximately 264 kB gzip of unused viewer code on gear pages. Aborting it produces an unhandled page error while Goggles remains usable. Import when a drone view is needed, with rejection handling.                                                                                           | **Fine to ship**, but a useful phone-performance improvement                                              |
+| **06 #6 — drawing strings outside content**           | `src/features/gear/ChargerDrawing.tsx:40` still embeds Charge/Storage literals. No signal has moved into `UI.gear`. Reuse the existing charger labels.                                                                                                                                                                                            | **Fine to ship**                                                                                          |
+
+The following recorded deferrals are **no longer open**, or did not reproduce at this HEAD:
+
+| Review finding                                       | Current evidence                                                                                                          |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **01 #8 — dangling `aria-controls`**                 | `PartList.tsx:106` supplies the reference only while a part panel exists.                                                 |
+| **01 #9 — resize resets camera angle**               | `FitCamera.tsx:46` preserves direction and scales distance; the old `Bounds` reset is gone.                               |
+| **01 #10 — ineffective Escape tests**                | Opening now focuses the lesson heading before Escape; current tests therefore exercise returning from an unmounted sheet. |
+| **02 #5 — enlarged title-value overflow**            | `global.css:2170` permits wrapping in narrow title blocks; current reflow checks pass.                                    |
+| **02 #6 — drawing receives less width than sheet**   | `global.css:1782` caps the sheet at 44%; the old allocation is gone.                                                      |
+| **03a #11 — reduced motion read only once**          | `Lift.tsx:31` uses the live shared hook. Live browser switching worked.                                                   |
+| **03a #12 — extended Item heading overflow**         | At 1280 px, `ItemIt` measured **37.4 px inside its 40 px cell**. The recorded failure was not reproduced.                 |
+| **03b #12 — settled phone prop touches canvas edge** | A settled 390 px canvas had **zero ink pixels on all four outer edges**.                                                  |
+
+The **05a amendment findings are recorded as fixed**; the **05b rear-camera preference was explicitly resolved by the owner**. Section 06’s resolved content/overlap findings were not counted as open. Section 07’s checker implementation was excluded from this review; only its release boundary was examined.
+
+## Declined to judge
+
+- **Docker/nginx execution, live deployment, HTTPS/proxy headers and remote CI status.** Configuration inspection and preview tests do not prove the deployed server’s behaviour.
+- **Physical phone GPU, battery, thermal and memory behaviour.** Performance numbers are Chromium laboratory measurements. Lighthouse was not installed.
+- **Actual screen-reader speech, Safari/VoiceOver, Firefox and native phone text settings.** Findings use Chromium rendering, keyboard operation, accessibility snapshots and source inspection.
+- **Precise aerodynamics, real failsafe timing, hardware reliability, tuning and flight training.** The app deliberately teaches simplified mechanisms.
+- **Checker correctness while enabled.** Explicitly outside release scope.
+- **The owner’s choice of a licence for original code, and independent ownership verification of the supplied photograph.** No project code licence is declared; this is separate from the verified third-party notice omission.
+- Axe’s scrolling-table alert and the detector’s documented SVG/balloon advisories were **not promoted to defects** after contextual verification.
+
+## Resolutions
+
+Fixed on `fix/release-review`, each with a test that failed first (plan:
+`docs/plans/release-1-fixes.md`).
+
+| Finding | Resolution                                                                                                                                                                                                                                                                                                                 |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| I1      | Fixed. Step controls taller than a quarter of the window stop being pinned (`usePinnedWhileShort`). Test: `e2e/paths.spec.ts`, Tab through every stop link of the three paths at 320 × 667 with 200 % text; the link is what the pointer would hit.                                                                        |
+| I2      | Fixed. A build plugin (`scripts/third-party-notices.mjs`) writes `third-party-licenses.txt` from every bundled package and font, and fails the build for a package with no licence (MIT packages without a file get the MIT text with their author). Tests: `scripts/third-party-notices.test.mjs`; `e2e/notices.spec.ts`. |
+| I3      | Fixed. The leader's dashes flow only while the canvas is in view and the page visible (`useOnScreen`). Tests: `src/shared/ui/useOnScreen.test.ts`; `e2e/paths.spec.ts` counts zero WebGL draws in a second with the drawing scrolled away on a phone.                                                                      |
+| I4      | Fixed. First-use glosses: ExpressLRS, analog video and acro in the intro; roll, pitch and yaw in the flight controller; throttle in the battery; armed in How a quad moves. Test: `src/content/reading-order.test.ts`.                                                                                                     |
+| I5      | Fixed. The receiver and extras say GPS Rescue must be set up and tested, with a home position fix before take-off. Test: `src/content/release-copy.test.ts`.                                                                                                                                                               |
+| M1      | Fixed. A 6S drone flies weakly on fewer cells and can burn on more. Same test file.                                                                                                                                                                                                                                        |
+| M2      | Fixed with I4: letting go keeps the angle in acro mode, the way most FPV pilots fly.                                                                                                                                                                                                                                       |
+| M3      | Moved to the release branch (link previews, icons, `robots.txt`).                                                                                                                                                                                                                                                          |
+| M4      | Fixed. Year-long immutable caching applies to successful asset responses only. Test: `e2e/server.spec.ts` (Docker image).                                                                                                                                                                                                  |
+| M5      | Fixed. Read marks count only for sheets in this build. Test: `src/app/checker-off.test.tsx`.                                                                                                                                                                                                                               |
+| M6      | Fixed. The stick pads' edge and centre lines use the muted token (7.2:1). Test: `e2e/moves.spec.ts`.                                                                                                                                                                                                                       |
+| 06 #4   | Fixed. The 3D viewer downloads the first time a sheet draws the drone; a gear sheet opened directly downloads none. Test: `e2e/gear.spec.ts`.                                                                                                                                                                              |
+| 02c #5  | Fixed. "Read again from sheet 1".                                                                                                                                                                                                                                                                                          |
+| 03b #6  | Fixed. The VTX says the country decides the channels as well as the power.                                                                                                                                                                                                                                                 |
+| 03c #3  | Fixed. Each photo file is described by its real width in `srcset`. Test: `PartPhoto.test.tsx`.                                                                                                                                                                                                                             |
+
+The other deferred findings stay as the triage graded them: fine to ship.
+
+After the fixes: `pnpm check` 840 tests; `pnpm test:e2e` 164 passed (release build); the checker's
+10 on a build with it on; Docker image e2e 170 passed.
+
+### Fix check
+
+A Codex check of the fixes (gpt-6.1-sol) accepted ten and asked for changes to three, plus two
+minor points. All were fixed, each with a test that failed first:
+
+- **I1 follow-up (Important):** with the controls unpinned, a step taken from them scrolled the
+  focused button off screen. Controls that scroll with the steps now stay in view when stepping
+  from them (the live region names the step); this also covers the phone flight sheets, where the
+  controls were never pinned. Tests: `e2e/paths.spec.ts` (320 px, 200 % text), `e2e/moves.spec.ts`
+  (390 px).
+- **I2 follow-up (Important):** the MIT text generated for `@react-three/fiber` named its npm
+  author, not the upstream copyright holder (Poimandres). Packages that ship no licence file now
+  get their verbatim upstream text from `scripts/licenses/`, never a generated one. Licence files
+  are found in any case (`license.md`, `LICENSE-MIT`, `COPYING`), the Minor point.
+- **I3 follow-up (Important, WCAG 2.2.2):** the dashes flowed with no way to pause them. They now
+  flow while the path plays and for five seconds after each step change, then hold still; Stop
+  pauses them. Tests: `leader-motion.test.ts`; `e2e/paths.spec.ts` counts zero draws after the
+  burst and after Stop.
+- **Docs (Minor):** the architecture overview no longer says the viewer preloads on every sheet.

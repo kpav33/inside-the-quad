@@ -81,7 +81,8 @@ export const UI = {
     continueIn: (chapter: string, sheet: number, name: string) =>
       `Continue with ${chapter}, sheet ${sheet}: ${name}`,
     allRead: 'Every sheet read. Open any sheet to look something up.',
-    startAgain: 'Start again from sheet 1',
+    /** Reopens sheet 1; the read marks stay (Clear progress removes them). */
+    startAgain: 'Read again from sheet 1',
     /** Read sheets per chapter; a chapter with no sheets (one held back) is left out. */
     count: (chapters: readonly { label: string; read: number; total: number }[]) =>
       chapters

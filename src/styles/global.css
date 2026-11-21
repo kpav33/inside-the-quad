@@ -557,7 +557,8 @@ a {
   position: relative;
   width: var(--stick-size);
   height: var(--stick-size);
-  border: 1px solid var(--color-rule-strong);
+  /* Muted, not a rule: the pad's travel and centre must show at 3:1 (WCAG 1.4.11). */
+  border: 1px solid var(--color-muted);
   background: color-mix(in srgb, var(--color-ground) 82%, transparent);
   cursor: grab;
   pointer-events: auto;
@@ -580,8 +581,8 @@ a {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(var(--color-rule-strong), var(--color-rule-strong)) center / 1px 100% no-repeat,
-    linear-gradient(var(--color-rule-strong), var(--color-rule-strong)) center / 100% 1px no-repeat;
+    linear-gradient(var(--color-muted), var(--color-muted)) center / 1px 100% no-repeat,
+    linear-gradient(var(--color-muted), var(--color-muted)) center / 100% 1px no-repeat;
 }
 
 /* The focused axis' line is drawn in ink, so a keyboard user sees which way the arrows move it. */
@@ -1497,6 +1498,16 @@ a {
   padding-block: var(--space-3);
   border-bottom: 1px solid var(--color-rule);
   background: var(--color-ground);
+}
+
+/* Grown tall with large text on a small screen, the controls scroll with the sheet instead of
+   covering the links a keyboard user tabs to (usePinnedWhileShort). */
+.part-explorer .path-controls[data-unpinned] {
+  position: static;
+}
+
+.part-explorer .path-controls[data-unpinned]::before {
+  display: none;
 }
 
 /* The sheet column's top padding sits above the pinned bar; fill it so no stop text shows there. */
