@@ -1,10 +1,24 @@
 // Writes `third-party-licenses.txt` into the build: every npm package bundled into the app (code
 // and fonts), with its copyright and licence text, as their licences ask when copies are shared.
 // Release review I2. Used by vite.config.ts; collectNotices and formatNotices are tested alone.
-import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const LICENCE_FILES = ['LICENSE', 'LICENSE.md', 'LICENSE.txt', 'LICENCE', 'LICENCE.md', 'license'];
+/** A licence file's name, in any case: LICENSE, licence.md, LICENSE-MIT, COPYING.txt and so on. */
+const LICENCE_FILE = /^(licen[cs]e|copying)([.-][\w.-]+)?$/i;
+
+/**
+ * Upstream licence texts for bundled packages that publish none in their npm package, copied
+ * verbatim from the package's repository at the same version: `scripts/licenses/<name>.txt`,
+ * with `/` written as `__`. Never generated: a notice must carry the real copyright holder.
+ */
+const VENDORED = join(dirname(fileURLToPath(import.meta.url)), 'licenses');
+
+function vendoredLicence(name) {
+  const file = join(VENDORED, `${name.replace('/', '__')}.txt`);
+  return existsSync(file) ? readFileSync(file, 'utf8') : undefined;
+}
 
 /** The folder of the npm package a bundled file belongs to, or null for the app's own files. */
 export function packageRoot(id) {
@@ -17,23 +31,11 @@ export function packageRoot(id) {
   return path.slice(0, last) + '/node_modules/' + name;
 }
 
-/** The standard MIT licence text, for an MIT package that ships no licence file. */
-function mitText(author) {
-  const holder = typeof author === 'object' && author !== null ? author.name : author;
-  return [
-    'MIT License',
-    `Copyright (c) ${holder ?? 'the package authors'}`,
-    'Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:',
-    'The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.',
-    'THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.',
-  ].join('\n\n');
-}
-
 /**
- * One notice per bundled package, sorted by name. A package without a licence file gets the MIT
- * text if it says it is MIT; any other is an error, so nothing ships without its notice.
+ * One notice per bundled package, sorted by name: its own licence file, else the vendored upstream
+ * text. A package with neither fails the build, naming every such package.
  */
-export function collectNotices(ids, { read, exists }) {
+export function collectNotices(ids, { read, list, override }) {
   const roots = new Set(ids.map(packageRoot).filter((root) => root !== null));
   const notices = new Map();
   const missing = [];
@@ -41,8 +43,9 @@ export function collectNotices(ids, { read, exists }) {
     const pkg = JSON.parse(read(join(root, 'package.json')));
     const key = `${pkg.name}@${pkg.version}`;
     if (notices.has(key)) continue;
-    const file = LICENCE_FILES.map((name) => join(root, name)).find(exists);
-    if (!file && pkg.license !== 'MIT') {
+    const file = list(root).find((name) => LICENCE_FILE.test(name));
+    const text = file ? read(join(root, file)) : override(pkg.name);
+    if (text === undefined) {
       missing.push(key);
       continue;
     }
@@ -50,11 +53,13 @@ export function collectNotices(ids, { read, exists }) {
       name: pkg.name,
       version: pkg.version,
       license: pkg.license ?? 'see text',
-      text: file ? read(file).trim() : mitText(pkg.author),
+      text: text.trim(),
     });
   }
   if (missing.length > 0) {
-    throw new Error(`No licence file in ${missing.sort().join(', ')}: add their notices by hand`);
+    throw new Error(
+      `No licence text for ${missing.sort().join(', ')}: add the upstream text to scripts/licenses/`,
+    );
   }
   return [...notices.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -84,7 +89,8 @@ export function thirdPartyNotices() {
       );
       const notices = collectNotices(ids, {
         read: (path) => readFileSync(path, 'utf8'),
-        exists: (path) => existsSync(path),
+        list: (dir) => readdirSync(dir),
+        override: vendoredLicence,
       });
       this.emitFile({
         type: 'asset',

@@ -16,5 +16,7 @@ test('the build ships the third-party licence notices', async ({ request }) => {
     expect(text, name).toContain(name);
   }
   expect(text).toContain('SIL OPEN FONT LICENSE');
+  // Fiber ships no licence file: its vendored upstream text, with the real copyright holder.
+  expect(text).toContain('Copyright (c) 2019-2025 Poimandres');
   expect(text).toContain('Permission is hereby granted');
 });

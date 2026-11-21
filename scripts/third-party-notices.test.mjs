@@ -19,7 +19,11 @@ const read = (path) => {
   if (!(path in files)) throw new Error(`ENOENT ${path}`);
   return files[path];
 };
-const exists = (path) => path in files;
+const list = (dir) =>
+  Object.keys(files)
+    .filter((path) => path.startsWith(`${dir}/`) && !path.slice(dir.length + 1).includes('/'))
+    .map((path) => path.slice(dir.length + 1));
+const noOverride = () => undefined;
 
 describe('third-party notices', () => {
   it('finds the package a bundled file belongs to, scoped or not', () => {
@@ -45,7 +49,7 @@ describe('third-party notices', () => {
         '/app/node_modules/.pnpm/@fontsource+barlow@5.0.0/node_modules/@fontsource/barlow/latin-500.css',
         '/app/src/main.tsx',
       ],
-      { read, exists },
+      { read, list, override: noOverride },
     );
     expect(notices).toEqual([
       {
@@ -58,31 +62,55 @@ describe('third-party notices', () => {
     ]);
   });
 
-  it('writes the MIT text for an MIT package that ships no licence file', () => {
-    const mitOnly = {
-      '/app/node_modules/.pnpm/x@1.0.0/node_modules/x/package.json': JSON.stringify({
-        name: 'x',
+  it('finds a licence file whatever its case or extension', () => {
+    const lower = {
+      '/app/node_modules/.pnpm/a@1.0.0/node_modules/a/package.json': JSON.stringify({
+        name: 'a',
         version: '1.0.0',
-        license: 'MIT',
-        author: 'Ada Lovelace (https://example.org)',
+        license: 'Apache-2.0',
       }),
+      '/app/node_modules/.pnpm/a@1.0.0/node_modules/a/license.md': 'Apache License 2.0',
     };
-    const [notice] = collectNotices(['/app/node_modules/.pnpm/x@1.0.0/node_modules/x/index.js'], {
-      read: (p) => mitOnly[p],
-      exists: (p) => p in mitOnly,
+    const [notice] = collectNotices(['/app/node_modules/.pnpm/a@1.0.0/node_modules/a/index.js'], {
+      read: (p) => lower[p],
+      list: (dir) =>
+        Object.keys(lower)
+          .filter((p) => p.startsWith(`${dir}/`))
+          .map((p) => p.slice(dir.length + 1)),
+      override: noOverride,
     });
-    expect(notice.text).toMatch(
-      /^MIT License\n\nCopyright \(c\) Ada Lovelace \(https:\/\/example.org\)/,
-    );
-    expect(notice.text).toContain('THE SOFTWARE IS PROVIDED "AS IS"');
+    expect(notice.text).toBe('Apache License 2.0');
   });
 
-  it('fails the build for any other bundled package without a licence file, naming them all', () => {
+  it('uses the vendored upstream licence for a package that ships none, never an invented one', () => {
+    const bare = {
+      '/app/node_modules/.pnpm/x@1.0.0/node_modules/x/package.json': JSON.stringify({
+        name: '@scope/x',
+        version: '1.0.0',
+        license: 'MIT',
+        author: 'Someone Else',
+      }),
+    };
+    const fs = {
+      read: (p) => bare[p],
+      list: () => ['package.json'],
+    };
+    const ids = ['/app/node_modules/.pnpm/x@1.0.0/node_modules/x/index.js'];
+    const [notice] = collectNotices(ids, {
+      ...fs,
+      override: (name) =>
+        name === '@scope/x' ? 'MIT License\n\nCopyright (c) Upstream' : undefined,
+    });
+    expect(notice.text).toBe('MIT License\n\nCopyright (c) Upstream');
+    expect(() => collectNotices(ids, { ...fs, override: noOverride })).toThrow(/@scope\/x@1\.0\.0/);
+  });
+
+  it('fails the build for every bundled package without a licence, naming them all', () => {
     const missing = {
       '/app/node_modules/.pnpm/x@1.0.0/node_modules/x/package.json': JSON.stringify({
         name: 'x',
         version: '1.0.0',
-        license: 'Apache-2.0',
+        license: 'MIT',
       }),
       '/app/node_modules/.pnpm/y@2.0.0/node_modules/y/package.json': JSON.stringify({
         name: 'y',
@@ -95,9 +123,15 @@ describe('third-party notices', () => {
           '/app/node_modules/.pnpm/x@1.0.0/node_modules/x/index.js',
           '/app/node_modules/.pnpm/y@2.0.0/node_modules/y/index.js',
         ],
-        { read: (p) => missing[p], exists: (p) => p in missing },
+        { read: (p) => missing[p], list: () => ['package.json'], override: noOverride },
       ),
     ).toThrow(/x@1\.0\.0, y@2\.0\.0/);
+  });
+
+  it('vendors the real upstream licence of @react-three/fiber', async () => {
+    const { readFileSync } = await import('node:fs');
+    const text = readFileSync('scripts/licenses/@react-three__fiber.txt', 'utf8');
+    expect(text).toMatch(/^MIT License\n\nCopyright \(c\) 2019-2025 Poimandres/);
   });
 
   it('writes a plain-text notices file', () => {
