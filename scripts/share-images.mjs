@@ -15,14 +15,20 @@ const root = (path) => fileURLToPath(new URL(`../${path}`, import.meta.url));
 const font = (pkg, file) =>
   `data:font/woff2;base64,${readFileSync(root(`node_modules/@fontsource/${pkg}/files/${file}`)).toString('base64')}`;
 
+// The palette from the app's own tokens, so the card follows a change to them.
+const tokens = readFileSync(root('src/styles/tokens.css'), 'utf8');
+const token = (name) => {
+  const value = new RegExp(`--color-${name}:\\s*(#[0-9a-f]{6})`, 'i').exec(tokens)?.[1];
+  if (!value) throw new Error(`tokens.css has no --color-${name}`);
+  return value;
+};
 const COLORS = {
-  ground: '#121416',
-  sheet: '#1c1f22',
-  rule: '#2a2e32',
-  ruleStrong: '#3a3f44',
-  ink: '#dfe3e6',
-  muted: '#9aa3ab',
-  accent: '#ff5b3a',
+  ground: token('ground'),
+  sheet: token('sheet'),
+  ruleStrong: token('rule-strong'),
+  ink: token('ink'),
+  muted: token('muted'),
+  accent: token('accent'),
 };
 
 function cardHtml(drone) {
