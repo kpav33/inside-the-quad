@@ -23,7 +23,8 @@
     "test:e2e": "playwright test",
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test",
     "prepare": "husky",
-    "photos:fetch": "node scripts/photos/fetch-photos.mjs"
+    "photos:fetch": "node scripts/photos/fetch-photos.mjs",
+    "share:images": "node scripts/share-images.mjs"
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs,cjs}": [

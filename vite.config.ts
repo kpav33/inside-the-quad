@@ -2,13 +2,15 @@
 import { fileURLToPath, URL } from 'node:url';
 
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 
+import { linkPreviews } from './scripts/share-tags.mjs';
 import { thirdPartyNotices } from './scripts/third-party-notices.mjs';
 
-export default defineConfig({
-  // The notices file ships the bundled packages' and fonts' licences (release review I2).
-  plugins: [react(), thirdPartyNotices()],
+export default defineConfig(({ mode }) => ({
+  // The notices file ships the bundled packages' and fonts' licences (release review I2). Link
+  // previews take the site's address from VITE_SITE_URL, a build setting (docs/deploy.md).
+  plugins: [react(), thirdPartyNotices(), linkPreviews(loadEnv(mode, process.cwd(), 'VITE_'))],
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
@@ -34,4 +36,4 @@ export default defineConfig({
       exclude: ['src/**/*.test.{ts,tsx}', 'src/test/**', 'src/main.tsx', 'src/vite-env.d.ts'],
     },
   },
-});
+}));
