@@ -4,8 +4,11 @@ import { fileURLToPath, URL } from 'node:url';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
+import { thirdPartyNotices } from './scripts/third-party-notices.mjs';
+
 export default defineConfig({
-  plugins: [react()],
+  // The notices file ships the bundled packages' and fonts' licences (release review I2).
+  plugins: [react(), thirdPartyNotices()],
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
