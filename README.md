@@ -51,4 +51,6 @@ Read [CLAUDE.md](CLAUDE.md) and [docs/workflow/git.md](docs/workflow/git.md). Co
 ## Deployment
 
 The `Dockerfile` builds a static site served by nginx on port 80, with a health check at
-`/healthz`. See [ADR 0003](docs/decisions/0003-hosting-coolify-docker.md).
+`/healthz`. See [ADR 0003](docs/decisions/0003-hosting-coolify-docker.md). Every build also
+writes `third-party-licenses.txt`, the licence notices of the npm packages and fonts bundled into
+the app (`scripts/third-party-notices.mjs`); the build fails if a bundled package has none.
