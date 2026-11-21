@@ -48,4 +48,15 @@ describe('with Check a build switched off', () => {
     ).toBeInTheDocument();
     expect(window.location.pathname + window.location.search).toBe('/');
   });
+
+  it('ignores a stored read mark for the held-back sheet', async () => {
+    // Release review M5: a "check" mark from a build with it on made a newcomer look returning.
+    window.localStorage.setItem('inside-the-quad.read-parts.v1', '["check"]');
+    window.history.replaceState(null, '', '/');
+    const { App } = await import('./App');
+    render(<App />);
+    await screen.findByTestId('drone-viewer');
+    expect(screen.queryByText(/Continue with/)).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Clear progress' })).toBeNull();
+  });
 });
