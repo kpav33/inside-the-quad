@@ -268,3 +268,21 @@ test('a phone path sheet stops drawing while the drawing is scrolled off screen'
   await page.waitForTimeout(1000);
   expect(await draws()).toBe(offscreen);
 });
+
+test('at 320 × 667 with 200 % text, a step taken from the controls keeps them in view', async ({
+  page,
+}) => {
+  // Fix check: with the controls unpinned, scrolling to the new stop carried the focused Next
+  // step button off screen.
+  await page.setViewportSize({ width: 320, height: 667 });
+  await page.goto('/paths/control');
+  await page.evaluate(() => (document.documentElement.style.fontSize = '200%'));
+  const next = page.getByRole('button', { name: 'Next step' });
+  for (let press = 0; press < 4; press += 1) {
+    await next.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(400);
+    await expect(next).toBeFocused();
+    await expect(next).toBeInViewport();
+  }
+});

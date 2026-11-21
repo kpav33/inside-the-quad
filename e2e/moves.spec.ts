@@ -223,3 +223,17 @@ test('the stick pads show their edge and centre lines at 3:1 or more', async ({ 
   expect(ratios).toHaveLength(2);
   for (const value of ratios) expect(value).toBeGreaterThanOrEqual(3);
 });
+
+test('on a phone, a step taken from the controls keeps them in view', async ({ page }) => {
+  // Fix check: scrolling to the new step carried the focused button off screen.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/moves');
+  const next = page.getByRole('button', { name: 'Next step' });
+  for (let press = 0; press < 3; press += 1) {
+    await next.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(400);
+    await expect(next).toBeFocused();
+    await expect(next).toBeInViewport();
+  }
+});

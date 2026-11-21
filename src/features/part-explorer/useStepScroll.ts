@@ -27,6 +27,10 @@ export function useStepScroll(
     // keeps the step clear of the drawing pinned there.
     const bar = controls.current;
     const style = bar ? getComputedStyle(bar) : null;
+    // Controls that scroll with the steps (grown tall with large text, or a phone's flight sheet)
+    // would be carried off screen with the focus on them: keep them in view instead. The live
+    // region still names the new step.
+    if (bar && style?.position !== 'sticky' && bar.contains(document.activeElement)) return;
     if (bar && style?.position === 'sticky') {
       const pinned = (parseFloat(style.top) || 0) + bar.offsetHeight;
       current.style.scrollMarginTop = `${String(pinned + 8)}px`;
