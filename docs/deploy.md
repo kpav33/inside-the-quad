@@ -17,25 +17,41 @@ changes the repository.
 ## 2. Bunny: the pull zone
 
 1. Billing: add a little credit (the minimum is $1 a month, shared by all zones). Leave
-   **auto-recharge off**.
+   **auto-recharge off**. Prepaid isn't a hard cap: usage is billed after it happens, so the
+   balance can dip below zero and that amount is still owed; Bunny emails daily and disables the
+   account after about four days negative. The bandwidth limit in step 3 is what caps the traffic.
 2. CDN → Add pull zone: a name like `insidethequad`; origin URL = the Coolify address from step 1;
    tier **Standard**; pricing zones: keep Europe and North America on (the cheapest), and turn on
    others only if you want them faster there.
-3. Pull zone → **Limits**: a monthly bandwidth limit, for example 50 GB.
+3. Pull zone → **Limits**: a monthly bandwidth limit, for example 50 GB. When reached, the zone
+   stops serving until next month or until you raise it.
 4. Pull zone → **Caching**: cache expiration **respect origin cache-control** (the image sets
    one-year caching for `/assets/` and `no-cache` for the page).
 5. Open `https://insidethequad.b-cdn.net`: the app should load, and the response headers should
    include the `Content-Security-Policy` from the origin.
 
-After a later deploy nothing needs purging, except when a file in `public/` changed (the preview
-image, `robots.txt`): then **Purge cache** on the pull zone.
+After a later deploy, open the site and check it shows the new version (the page is sent with
+`no-cache`, so the edge should check with the origin). Purge the pull zone if it doesn't, and
+always when a file in `public/` changed (the preview image, `robots.txt`): **Purge cache**.
 
 ## 3. The domain, when bought
 
-1. Pull zone → Hostnames → add `insidethequad.<tld>`; at the registrar, a `CNAME` to the
-   pull zone's `…b-cdn.net` host. Turn on the free SSL certificate and force HTTPS.
-2. Change `VITE_SITE_URL` in Coolify to `https://insidethequad.<tld>` and redeploy, then purge the
-   pull zone.
+A pull zone has no fixed IP, and an ordinary `CNAME` isn't allowed on a bare domain
+(`insidethequad.<tld>`). Pick one:
+
+- **Bunny DNS (simplest for the bare domain):** move the domain's nameservers to Bunny DNS, which
+  can point the root at the pull zone (CNAME flattening). Then pull zone → Hostnames → add
+  `insidethequad.<tld>`.
+- **`www.` at any registrar:** a `CNAME` from `www.insidethequad.<tld>` to the pull zone's
+  `…b-cdn.net` host, the hostname `www.insidethequad.<tld>` on the pull zone, and the registrar's
+  redirect from the bare domain to `https://www.insidethequad.<tld>`.
+
+Then:
+
+1. Wait for DNS to update, turn on the hostname's free SSL certificate in the pull zone, and force
+   HTTPS.
+2. Change `VITE_SITE_URL` in Coolify to the address visitors now use (with or without `www.`),
+   redeploy, then purge the pull zone.
 
 ## 4. GoatCounter
 
