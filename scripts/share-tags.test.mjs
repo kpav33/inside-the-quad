@@ -25,11 +25,13 @@ describe('shareTags', () => {
     const tags = byKey(shareTags(null));
     expect(tags).not.toHaveProperty('og:image');
     expect(tags).not.toHaveProperty('twitter:image');
+    expect(tags).not.toHaveProperty('og:url');
   });
 
   it('gives the image as an absolute address once the site has one', () => {
     const tags = byKey(shareTags('https://insidethequad.example'));
     expect(tags['og:image']).toBe('https://insidethequad.example/og-image.png');
+    expect(tags['og:url']).toBe('https://insidethequad.example/');
     expect(tags['og:image:width']).toBe('1200');
     expect(tags['og:image:height']).toBe('630');
     expect(tags['og:image:alt']).toBeTruthy();

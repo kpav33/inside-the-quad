@@ -44,6 +44,8 @@ export function shareTags(site) {
   ];
   if (site) {
     tags.push(
+      // One page serves every address, so the preview names the site itself.
+      meta('property', 'og:url', `${site}/`),
       meta('property', 'og:image', `${site}${IMAGE.path}`),
       meta('property', 'og:image:width', String(IMAGE.width)),
       meta('property', 'og:image:height', String(IMAGE.height)),
