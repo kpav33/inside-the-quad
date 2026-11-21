@@ -11,6 +11,7 @@ import { ChapterSwitcher } from './ChapterSwitcher';
 import { LESSON_PANEL_ID, WHAT_IF_TITLE_ID } from './ids';
 import { SheetFooter } from './SheetFooter';
 import { TitleBlock } from './TitleBlock';
+import { usePinnedWhileShort } from './usePinnedWhileShort';
 import { useStepScroll } from './useStepScroll';
 
 export interface WhatIfPanelProps {
@@ -60,6 +61,7 @@ export function WhatIfPanel({
   const list = useRef<HTMLOListElement>(null);
   const controls = useRef<HTMLDivElement>(null);
   useStepScroll(list, controls, WHAT_IF_SHEET, step);
+  const pinned = usePinnedWhileShort(controls);
   const faults = useFaults(flight);
   const last = WHAT_IF_STEP_IDS.length - 1;
   const currentId = WHAT_IF_STEP_IDS[step];
@@ -92,7 +94,13 @@ export function WhatIfPanel({
 
       <p className="lesson-lead path-lead">{WHAT_IF.lead}</p>
 
-      <div ref={controls} className="path-controls" role="group" aria-label={t.controlsLabel}>
+      <div
+        ref={controls}
+        data-unpinned={pinned ? undefined : ''}
+        className="path-controls"
+        role="group"
+        aria-label={t.controlsLabel}
+      >
         <button
           type="button"
           className="button-outline"

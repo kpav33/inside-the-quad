@@ -1499,6 +1499,16 @@ a {
   background: var(--color-ground);
 }
 
+/* Grown tall with large text on a small screen, the controls scroll with the sheet instead of
+   covering the links a keyboard user tabs to (usePinnedWhileShort). */
+.part-explorer .path-controls[data-unpinned] {
+  position: static;
+}
+
+.part-explorer .path-controls[data-unpinned]::before {
+  display: none;
+}
+
 /* The sheet column's top padding sits above the pinned bar; fill it so no stop text shows there. */
 .path-controls::before {
   content: '';

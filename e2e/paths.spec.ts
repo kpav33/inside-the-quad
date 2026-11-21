@@ -196,3 +196,32 @@ for (const [width, height] of [
     });
   }
 }
+
+for (const path of ['control', 'power', 'video']) {
+  test(`at 320 × 667 with 200 % text, Tab never hides a ${path} stop's link under the step controls`, async ({
+    page,
+  }) => {
+    // Release review I1 (WCAG 2.4.11): the pinned controls covered the focused link.
+    await page.setViewportSize({ width: 320, height: 667 });
+    await page.goto(`/paths/${path}`);
+    await page.evaluate(() => (document.documentElement.style.fontSize = '200%'));
+    await page.getByRole('heading', { level: 2 }).first().focus();
+    let checked = 0;
+    for (let press = 0; press < 80; press += 1) {
+      await page.keyboard.press('Tab');
+      const hidden = await page.evaluate(() => {
+        const focused = document.activeElement;
+        if (!(focused instanceof HTMLElement) || !focused.closest('.path-stop-lessons'))
+          return null;
+        // A link that wraps has its box's centre between its lines; test its first line.
+        const box = Array.from(focused.getClientRects()).at(0) ?? focused.getBoundingClientRect();
+        const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+        return hit === null || !focused.contains(hit) ? focused.textContent : '';
+      });
+      if (hidden === null) continue;
+      checked += 1;
+      expect(hidden, 'a focused lesson link is covered').toBe('');
+    }
+    expect(checked).toBeGreaterThan(0);
+  });
+}

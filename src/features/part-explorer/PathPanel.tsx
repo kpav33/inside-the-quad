@@ -9,6 +9,7 @@ import { ChapterSwitcher } from './ChapterSwitcher';
 import { LESSON_PANEL_ID, pathTitleId } from './ids';
 import { SheetFooter } from './SheetFooter';
 import { TitleBlock } from './TitleBlock';
+import { usePinnedWhileShort } from './usePinnedWhileShort';
 import { useStepScroll } from './useStepScroll';
 
 export interface PathPanelProps {
@@ -82,6 +83,7 @@ export function PathPanel({
   const list = useRef<HTMLOListElement>(null);
   const controls = useRef<HTMLDivElement>(null);
   useStepScroll(list, controls, path.id, step);
+  const pinned = usePinnedWhileShort(controls);
   const { stops } = path;
   const current = stops[step];
   const last = stops.length - 1;
@@ -111,7 +113,7 @@ export function PathPanel({
 
       <p className="lesson-lead path-lead">{path.lead}</p>
 
-      <div ref={controls} className="path-controls">
+      <div ref={controls} data-unpinned={pinned ? undefined : ''} className="path-controls">
         <button
           type="button"
           className="button-outline"
