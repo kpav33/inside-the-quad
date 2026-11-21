@@ -976,6 +976,12 @@ a {
   text-decoration-color: var(--color-ink);
 }
 
+.overview-visits {
+  max-width: 40ch;
+  font-size: var(--step--1);
+  color: var(--color-muted);
+}
+
 .overview-clear {
   min-height: var(--target-min);
   padding: 0;

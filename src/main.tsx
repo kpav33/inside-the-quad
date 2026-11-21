@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import { startAnalytics } from '@/app/analytics';
 import { App } from '@/app/App';
 import '@fontsource/atkinson-hyperlegible/latin-400.css';
 import '@fontsource/atkinson-hyperlegible/latin-700.css';
@@ -14,6 +15,8 @@ const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error('Root element #root not found');
 }
+
+startAnalytics();
 
 createRoot(rootElement).render(
   <StrictMode>

@@ -602,6 +602,17 @@ describe('PartExplorer', () => {
     expect(window.location.pathname).toBe('/');
   });
 
+  it('says on the overview how visits are counted', async () => {
+    await renderExplorer();
+    expect(
+      screen.getByText('Visits are counted with GoatCounter, without cookies.'),
+    ).toBeInTheDocument();
+    const [introLink] = screen.getAllByRole('link', { name: 'What is an FPV drone?' });
+    if (introLink) await userEvent.click(introLink);
+    expect(screen.getByRole('heading', { level: 2, name: 'What is an FPV drone?' })).toBeVisible();
+    expect(screen.queryByText(/GoatCounter/)).toBeNull();
+  });
+
   it('offers sheet 1 to a new visitor', async () => {
     await renderExplorer();
     const start = screen.getByRole('link', { name: 'Start with sheet 1: Frame' });

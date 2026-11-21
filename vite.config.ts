@@ -12,6 +12,8 @@ export default defineConfig({
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
+  // The analytics e2e reaches the preview under a name that isn't local (e2e/analytics.spec.ts).
+  preview: { allowedHosts: ['itq.test'] },
   build: {
     // three.js alone is ~900 kB minified. It lives in the lazily loaded viewer
     // chunk, so the initial page stays small; keep the warning for anything else.
