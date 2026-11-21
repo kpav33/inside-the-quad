@@ -5,8 +5,8 @@
 The first release: how a 5-inch FPV drone works, part by part, around a 3D model you can turn
 and click.
 
-- **What is an FPV drone?** An intro for complete beginners: what FPV means, the kit, and how
-  this app is laid out.
+- **What is an FPV drone?** An intro for complete beginners: FPV against camera drones, the
+  whole system, the sizes, and why this app uses a 5-inch quad.
 - **The parts.** Eleven lesson sheets, from the frame to the extras: what each part does, how it
   works, what its numbers mean and what it connects to. Each opens on the drone, with its
   connections lit and the rest faded, and shows a photo of a real part (credited, from Wikimedia
