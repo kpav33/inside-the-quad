@@ -233,3 +233,23 @@ The other deferred findings stay as the triage graded them: fine to ship.
 
 After the fixes: `pnpm check` 840 tests; `pnpm test:e2e` 164 passed (release build); the checker's
 10 on a build with it on; Docker image e2e 170 passed.
+
+### Fix check
+
+A Codex check of the fixes (gpt-6.1-sol) accepted ten and asked for changes to three, plus two
+minor points. All were fixed, each with a test that failed first:
+
+- **I1 follow-up (Important):** with the controls unpinned, a step taken from them scrolled the
+  focused button off screen. Controls that scroll with the steps now stay in view when stepping
+  from them (the live region names the step); this also covers the phone flight sheets, where the
+  controls were never pinned. Tests: `e2e/paths.spec.ts` (320 px, 200 % text), `e2e/moves.spec.ts`
+  (390 px).
+- **I2 follow-up (Important):** the MIT text generated for `@react-three/fiber` named its npm
+  author, not the upstream copyright holder (Poimandres). Packages that ship no licence file now
+  get their verbatim upstream text from `scripts/licenses/`, never a generated one. Licence files
+  are found in any case (`license.md`, `LICENSE-MIT`, `COPYING`), the Minor point.
+- **I3 follow-up (Important, WCAG 2.2.2):** the dashes flowed with no way to pause them. They now
+  flow while the path plays and for five seconds after each step change, then hold still; Stop
+  pauses them. Tests: `leader-motion.test.ts`; `e2e/paths.spec.ts` counts zero draws after the
+  burst and after Stop.
+- **Docs (Minor):** the architecture overview no longer says the viewer preloads on every sheet.
