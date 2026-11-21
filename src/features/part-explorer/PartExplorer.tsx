@@ -530,6 +530,7 @@ export function PartExplorer() {
                 intro.clear();
               }}
             />
+            <p className="overview-visits">{UI.overview.visits}</p>
           </div>
         )}
       </div>

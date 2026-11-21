@@ -92,6 +92,8 @@ export const UI = {
     /** The chapters' names in the overview count. */
     countLabel: { parts: 'Parts', paths: 'How it works', gear: 'Gear', build: 'Build' },
     clear: 'Clear progress',
+    /** The overview's note on visit counts (src/app/analytics.ts). */
+    visits: 'Visits are counted with GoatCounter, without cookies.',
   },
   titleBlock: {
     label: 'Title block',

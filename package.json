@@ -1,7 +1,8 @@
 {
   "name": "inside-the-quad",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
+  "license": "MIT",
   "description": "Interactive web app that teaches beginners how an FPV drone works, part by part.",
   "type": "module",
   "packageManager": "pnpm@11.17.0",
@@ -23,7 +24,8 @@
     "test:e2e": "playwright test",
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test",
     "prepare": "husky",
-    "photos:fetch": "node scripts/photos/fetch-photos.mjs"
+    "photos:fetch": "node scripts/photos/fetch-photos.mjs",
+    "share:images": "node scripts/share-images.mjs"
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs,cjs}": [

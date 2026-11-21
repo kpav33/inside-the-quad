@@ -7,6 +7,8 @@ RUN corepack enable
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --ignore-scripts
 COPY . .
+# The site's address, for link previews (docs/deploy.md). Empty: previews without an image.
+ARG VITE_SITE_URL=
 RUN pnpm build
 
 # ---- Runtime stage ----

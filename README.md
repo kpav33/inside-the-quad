@@ -29,6 +29,12 @@ pnpm dev        # http://localhost:5173
 
 First e2e run: `pnpm exec playwright install chromium`.
 
+## Licence
+
+The code is under the [MIT licence](LICENSE). That covers this repository's own code and
+text. It doesn't cover the photos (below), or the fonts and packages the app bundles, which keep
+their own licences (listed in `third-party-licenses.txt` in every build).
+
 ## Photos
 
 The real part photos in `src/assets/photos/` are third-party works from Wikimedia Commons under
@@ -41,7 +47,7 @@ re-downloads them, checks their licences, and rewrites the files and credits.
 
 Vite · React 19 · TypeScript (strict) · three.js via react-three-fiber and drei · Vitest + Testing
 Library · Playwright · ESLint + Prettier · husky, lint-staged and commitlint · Docker + nginx,
-deployed on Coolify.
+deployed on Coolify behind Bunny CDN · GoatCounter for visit counts.
 
 ## Contributing
 
@@ -51,6 +57,8 @@ Read [CLAUDE.md](CLAUDE.md) and [docs/workflow/git.md](docs/workflow/git.md). Co
 ## Deployment
 
 The `Dockerfile` builds a static site served by nginx on port 80, with a health check at
-`/healthz`. See [ADR 0003](docs/decisions/0003-hosting-coolify-docker.md). Every build also
+`/healthz`, behind the Bunny CDN. See [ADR 0003](docs/decisions/0003-hosting-coolify-docker.md),
+[ADR 0005](docs/decisions/0005-bunny-cdn.md) and the steps in [docs/deploy.md](docs/deploy.md). The
+build setting `VITE_SITE_URL` (the site's address) gives link previews their image. Every build also
 writes `third-party-licenses.txt`, the licence notices of the npm packages and fonts bundled into
 the app (`scripts/third-party-notices.mjs`); the build fails if a bundled package has none.
