@@ -1,13 +1,14 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
   countedPath,
   countPages,
+  countUrl,
+  externalReferrer,
   GOATCOUNTER_ENDPOINT,
-  GOATCOUNTER_SCRIPT,
   isLocalHost,
-  loadCounter,
   pageCounter,
+  sendCount,
 } from './analytics';
 
 describe('countedPath', () => {
@@ -88,49 +89,89 @@ describe('isLocalHost', () => {
   });
 });
 
-describe('loadCounter', () => {
-  afterEach(() => {
-    document.head.querySelectorAll('script').forEach((script) => {
-      script.remove();
-    });
-    delete window.goatcounter;
+const SCREEN = { width: 390, height: 844, pixelRatio: 3 };
+
+describe('countUrl', () => {
+  const read = (url: string) => new URL(url);
+
+  it('sends the path and the screen size to the insidethequad counter', () => {
+    const url = read(countUrl('/paths/control', { screen: SCREEN, referrer: null, random: 'abc' }));
+    expect(`${url.origin}${url.pathname}`).toBe(GOATCOUNTER_ENDPOINT);
+    expect(url.searchParams.get('p')).toBe('/paths/control');
+    expect(url.searchParams.get('s')).toBe('390,844,3');
+    expect(url.searchParams.get('rnd')).toBe('abc');
   });
 
-  it('adds the GoatCounter script with its own count switched off', () => {
-    loadCounter();
-    const script = document.head.querySelector<HTMLScriptElement>('script');
-    expect(script?.src).toBe(GOATCOUNTER_SCRIPT);
-    expect(script?.async).toBe(true);
-    expect(script?.dataset.goatcounter).toBe(GOATCOUNTER_ENDPOINT);
-    expect(JSON.parse(script?.dataset.goatcounterSettings ?? '{}')).toEqual({ no_onload: true });
+  it('sends nothing else: no query, no title, no referrer unless given', () => {
+    const url = read(countUrl('/', { screen: SCREEN, referrer: null, random: 'abc' }));
+    expect([...url.searchParams.keys()].sort()).toEqual(['p', 'rnd', 's']);
   });
 
-  it('holds counts made before the script arrives and sends them when it does', () => {
-    const send = loadCounter();
-    send('/');
-    send('/intro');
-    const count = vi.fn();
-    window.goatcounter = { count };
-    document.head.querySelector('script')?.dispatchEvent(new Event('load'));
-    send('/parts/frame');
-    expect(count.mock.calls).toEqual([
-      [{ path: '/' }],
-      [{ path: '/intro' }],
-      [{ path: '/parts/frame' }],
-    ]);
-  });
-
-  it('sends nothing and throws nothing when the script never arrives', () => {
-    const send = loadCounter();
-    expect(() => {
-      send('/');
-    }).not.toThrow();
-    document.head.querySelector('script')?.dispatchEvent(new Event('error'));
-    expect(window.goatcounter).toBeUndefined();
+  it('sends a referrer when given', () => {
+    const url = read(
+      countUrl('/', { screen: SCREEN, referrer: 'https://news.example', random: 'abc' }),
+    );
+    expect(url.searchParams.get('r')).toBe('https://news.example');
   });
 });
 
-it('the counter is the insidethequad site', () => {
-  expect(GOATCOUNTER_ENDPOINT).toBe('https://insidethequad.goatcounter.com/count');
-  expect(GOATCOUNTER_SCRIPT).toBe('https://gc.zgo.at/count.js');
+describe('externalReferrer', () => {
+  const here = 'https://insidethequad.example';
+
+  it('keeps only the origin of another site', () => {
+    expect(externalReferrer('https://news.example/a/b?user=me#x', here)).toBe(
+      'https://news.example',
+    );
+  });
+
+  it('is null for this site, none, or something unreadable', () => {
+    expect(externalReferrer('https://insidethequad.example/intro?x=1', here)).toBeNull();
+    expect(externalReferrer('', here)).toBeNull();
+    expect(externalReferrer('not a url', here)).toBeNull();
+  });
+});
+
+describe('sendCount', () => {
+  it('sends by beacon when the browser takes it', () => {
+    const sendBeacon = vi.fn(() => true);
+    const makeImage = vi.fn();
+    sendCount('https://insidethequad.goatcounter.com/count?p=%2F', { sendBeacon }, makeImage);
+    expect(sendBeacon).toHaveBeenCalledWith('https://insidethequad.goatcounter.com/count?p=%2F');
+    expect(makeImage).not.toHaveBeenCalled();
+  });
+
+  it('falls back to an image when there is no beacon or it is refused', () => {
+    const makeImage = vi.fn(() => ({ src: '' }));
+    sendCount('https://x.example/count?p=%2F', {}, makeImage);
+    sendCount('https://x.example/count?p=%2Fintro', { sendBeacon: () => false }, makeImage);
+    expect(makeImage.mock.results.map((r) => (r.value as { src: string }).src)).toEqual([
+      'https://x.example/count?p=%2F',
+      'https://x.example/count?p=%2Fintro',
+    ]);
+  });
+
+  it('never throws, so a blocked counter cannot break the app', () => {
+    expect(() => {
+      sendCount(
+        'https://x.example/count',
+        {
+          sendBeacon: () => {
+            throw new TypeError('blocked');
+          },
+        },
+        () => {
+          throw new Error('no images');
+        },
+      );
+    }).not.toThrow();
+  });
+});
+
+it('touches no browser storage', () => {
+  const getItem = vi.spyOn(Storage.prototype, 'getItem');
+  const setItem = vi.spyOn(Storage.prototype, 'setItem');
+  countUrl('/', { screen: SCREEN, referrer: null, random: 'abc' });
+  sendCount('https://x.example/count', { sendBeacon: () => true });
+  expect(getItem).not.toHaveBeenCalled();
+  expect(setItem).not.toHaveBeenCalled();
 });

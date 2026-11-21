@@ -117,9 +117,11 @@ nginx/              Production server config (copied into the Docker image)
   balloons are DOM over the canvas, and the camera uses a sphere fit so any attitude fits. The
   canvas asks for frames only until the flight settles.
 - Visits are counted with GoatCounter (`app/analytics.ts`, started from `main.tsx`): no cookies,
-  nothing stored. The app counts each sheet at its own address (a stepped sheet without its step,
-  never the query), only in a production build and never on a local address. The CSP in
-  `nginx/security-headers.conf` allows its script and endpoint.
+  nothing stored, and no GoatCounter script (it would send the query and full referrer). The app
+  sends each count itself to the count address, by beacon or image: the sheet's own address (a
+  stepped sheet without its step, never the query), the screen size, and on a visit's first page
+  the origin of another site the visitor came from. Only in a production build and never on a
+  local address. The CSP's `connect-src` and `img-src` allow the count address.
 - Build-time scripts in `scripts/`, added as Vite plugins: `third-party-notices.mjs` writes the
   licence notices, `share-tags.mjs` adds the link preview tags from `VITE_SITE_URL`.
   `share-images.mjs` redraws `public/og-image.png` and `apple-touch-icon.png` by hand
