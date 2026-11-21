@@ -1,9 +1,10 @@
 import { Line } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import { COLOR, MODEL_LOOK } from '@/shared/design/tokens';
 import type { DroneSpec } from '@/shared/domain/drone-spec';
+import { useOnScreen } from '@/shared/ui/useOnScreen';
 import { usePrefersReducedMotion } from '@/shared/ui/usePrefersReducedMotion';
 
 import { dashOffset, LEADER_DASH_M } from './leader-motion';
@@ -46,18 +47,21 @@ interface LineHandle {
 }
 
 /**
- * One line of the leader. A dashed line's dashes run toward its end unless motion is reduced. A
- * line to an off-drone end follows that end, which sits beside the drone on screen whatever the
- * view (see `endOnScreen`).
+ * One line of the leader. A dashed line's dashes run toward its end unless motion is reduced or
+ * the drawing can't be seen (`flowing` false: scrolled away, or the page hidden), so an unseen
+ * canvas asks for no frames. A line to an off-drone end follows that end, which sits beside the
+ * drone on screen whatever the view (see `endOnScreen`).
  */
 function LeaderLine({
   segment,
   outline,
   dashed,
+  flowing,
 }: {
   segment: Segment;
   outline: readonly Vec3[];
   dashed: boolean;
+  flowing: boolean;
 }) {
   const line = useRef<LineHandle | null>(null);
   const invalidate = useThree((state) => state.invalidate);
@@ -81,9 +85,13 @@ function LeaderLine({
     if (dashed) {
       current.material.dashOffset = dashOffset(clock.elapsedTime, reduceMotion);
       // The canvas draws on demand: keep asking for frames while the dashes move.
-      if (!reduceMotion) invalidate();
+      if (!reduceMotion && flowing) invalidate();
     }
   });
+  // Seen again: ask for a frame, which starts the dashes moving again.
+  useEffect(() => {
+    if (dashed && flowing) invalidate();
+  }, [dashed, flowing, invalidate]);
   return (
     <Line
       ref={line as never}
@@ -114,6 +122,7 @@ export function PathLeader({ spec, leader }: { spec: DroneSpec; leader: Leader }
     [spec, stops, step],
   );
   const current = useMemo(() => outOf(spec, stops, step), [spec, stops, step]);
+  const flowing = useOnScreen(useThree((state) => state.gl.domElement));
 
   return (
     <group>
@@ -123,6 +132,7 @@ export function PathLeader({ spec, leader }: { spec: DroneSpec; leader: Leader }
           segment={segment}
           outline={outline}
           dashed={false}
+          flowing={false}
         />
       ))}
       {current.map((segment, index) => (
@@ -131,6 +141,7 @@ export function PathLeader({ spec, leader }: { spec: DroneSpec; leader: Leader }
           segment={segment}
           outline={outline}
           dashed
+          flowing={flowing}
         />
       ))}
     </group>

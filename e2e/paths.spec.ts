@@ -225,3 +225,46 @@ for (const path of ['control', 'power', 'video']) {
     expect(checked).toBeGreaterThan(0);
   });
 }
+
+test('a phone path sheet stops drawing while the drawing is scrolled off screen', async ({
+  page,
+}) => {
+  // Release review I3: the leader's flowing dashes kept redrawing an offscreen canvas.
+  await page.addInitScript(() => {
+    const counted = window as unknown as { draws: number };
+    counted.draws = 0;
+    for (const proto of [WebGLRenderingContext.prototype, WebGL2RenderingContext.prototype]) {
+      for (const name of ['drawArrays', 'drawElements'] as const) {
+        // eslint-disable-next-line @typescript-eslint/unbound-method -- re-bound with apply below
+        const original = proto[name] as (...args: unknown[]) => void;
+        (proto as unknown as Record<string, unknown>)[name] = function (
+          this: unknown,
+          ...args: unknown[]
+        ) {
+          counted.draws += 1;
+          original.apply(this, args);
+        };
+      }
+    }
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/paths/control');
+  const canvas = page.locator('canvas');
+  await expect(canvas).toBeVisible();
+  const draws = () => page.evaluate(() => (window as unknown as { draws: number }).draws);
+  // On screen, the dashes flow.
+  await canvas.scrollIntoViewIfNeeded();
+  const before = await draws();
+  await page.waitForTimeout(600);
+  expect(await draws()).toBeGreaterThan(before);
+  // Scrolled away, nothing is drawn.
+  await page.evaluate(() => {
+    const box = document.querySelector('canvas')?.getBoundingClientRect();
+    window.scrollBy(0, (box?.bottom ?? 0) + 50);
+  });
+  // Let the frames already asked for finish.
+  await page.waitForTimeout(800);
+  const offscreen = await draws();
+  await page.waitForTimeout(1000);
+  expect(await draws()).toBe(offscreen);
+});
