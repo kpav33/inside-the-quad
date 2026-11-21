@@ -33,7 +33,7 @@ export const MOVES: MovesContent = {
   steps: {
     throttle: {
       name: 'Throttle: up and down',
-      text: 'Push the left stick up and all four motors speed up together. More thrust than the drone weighs lifts it; less lets it sink. The motors never stop while the drone is armed: at zero throttle they still turn slowly.',
+      text: 'Push the left stick up and all four motors speed up together. More thrust than the drone weighs lifts it; less lets it sink. The motors never stop while the drone is armed (switched on to fly, with the arm switch on your radio): at zero throttle they still turn slowly.',
       lessons: ['motors'],
     },
     roll: {
