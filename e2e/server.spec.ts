@@ -61,3 +61,13 @@ test('missing assets return 404 instead of the app', async ({ request }) => {
   const response = await request.get('/assets/does-not-exist.js');
   expect(response.status()).toBe(404);
 });
+
+test('a missing asset is not cached as immutable', async ({ request }) => {
+  // Release review M4: a 404 for a chunk must not stick in caches once the file exists again.
+  const response = await request.get('/assets/missing-chunk-0000.js');
+  expect(response.status()).toBe(404);
+  expect(response.headers()['cache-control'] ?? '').not.toContain('immutable');
+  for (const header of SECURITY_HEADERS) {
+    expect(response.headers(), header).toHaveProperty(header);
+  }
+});
