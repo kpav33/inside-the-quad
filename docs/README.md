@@ -9,6 +9,7 @@
 | [workflow/](workflow/)               | Git, commit messages, testing, definition of done, reviews | Before committing, testing, merging   |
 | [plans/](plans/)                     | One implementation plan per section                        | When starting or continuing a section |
 | [reviews/](reviews/)                 | Independent review report per completed section            | When merging a section, or auditing   |
+| [deploy.md](deploy.md)               | Going live: Coolify, Bunny CDN, the domain, GoatCounter    | Deploying, or changing hosting        |
 
 ## Lifecycle of a section
 

@@ -18,9 +18,10 @@ Template:
 ## Consequences
 ```
 
-| ADR                                    | Title                                    | Status   |
-| -------------------------------------- | ---------------------------------------- | -------- |
-| [0001](0001-tech-stack.md)             | Tech stack                               | accepted |
-| [0002](0002-procedural-3d-model.md)    | Build the 3D drone procedurally in code  | accepted |
-| [0003](0003-hosting-coolify-docker.md) | Host as a static Docker image on Coolify | accepted |
-| [0004](0004-own-routing-hook.md)       | Path URLs through our own routing hook   | accepted |
+| ADR                                    | Title                                       | Status   |
+| -------------------------------------- | ------------------------------------------- | -------- |
+| [0001](0001-tech-stack.md)             | Tech stack                                  | accepted |
+| [0002](0002-procedural-3d-model.md)    | Build the 3D drone procedurally in code     | accepted |
+| [0003](0003-hosting-coolify-docker.md) | Host as a static Docker image on Coolify    | accepted |
+| [0004](0004-own-routing-hook.md)       | Path URLs through our own routing hook      | accepted |
+| [0005](0005-bunny-cdn.md)              | Serve through Bunny CDN in front of Coolify | accepted |

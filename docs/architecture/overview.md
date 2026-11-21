@@ -6,7 +6,7 @@ A static single-page app (SPA). No backend. Built by Vite and served by nginx fr
 
 ```
 src/
-  app/              App shell: layout, top-level composition
+  app/              App shell: layout, top-level composition; analytics.ts counts visits
   content/          Teaching content as typed data
     lessons/        One Lesson per part, answering the four scope questions
     intro.ts        The intro sheet's copy, scene and size labels
@@ -116,6 +116,14 @@ nginx/              Production server config (copied into the Docker image)
   about its middle, `drone-model/MotorArcs.tsx` draws each prop's arc at its motor's speed, motor
   balloons are DOM over the canvas, and the camera uses a sphere fit so any attitude fits. The
   canvas asks for frames only until the flight settles.
+- Visits are counted with GoatCounter (`app/analytics.ts`, started from `main.tsx`): no cookies,
+  nothing stored. The app counts each sheet at its own address (a stepped sheet without its step,
+  never the query), only in a production build and never on a local address. The CSP in
+  `nginx/security-headers.conf` allows its script and endpoint.
+- Build-time scripts in `scripts/`, added as Vite plugins: `third-party-notices.mjs` writes the
+  licence notices, `share-tags.mjs` adds the link preview tags from `VITE_SITE_URL`.
+  `share-images.mjs` redraws `public/og-image.png` and `apple-touch-icon.png` by hand
+  (`pnpm share:images`).
 - The part list is the accessible equivalent of clicking in 3D, so the canvas is hidden from
   assistive technology and everything still works if WebGL fails.
 
